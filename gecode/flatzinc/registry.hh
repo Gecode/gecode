@@ -37,13 +37,13 @@
 #include <string>
 #include <map>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Map from constraint identifier to constraint posting functions
     class GECODE_FLATZINC_EXPORT Registry {
     public:
         /// Type of constraint posting function
-        typedef void (*poster)(FlatZincSpace&, const ConExpr&, AST::Node*);
+        using poster = void (*)(FlatZincSpace&, const ConExpr&, AST::Node*);
         /// Add posting function \a p with identifier \a id
         void add(const std::string& id, poster p);
         /// Post constraint specified by \a ce
@@ -55,9 +55,9 @@ namespace Gecode { namespace FlatZinc {
     };
 
     /// Return global registry object
-    GECODE_FLATZINC_EXPORT Registry& registry(void);
+    GECODE_FLATZINC_EXPORT Registry& registry();
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

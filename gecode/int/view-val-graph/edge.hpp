@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     template <class View>
     forceinline
@@ -76,28 +76,28 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     }
     template <class View>
     forceinline void
-    Edge<View>::use(void) {
+    Edge<View>::use() {
         sd.set();
     }
     template <class View>
     forceinline void
-    Edge<View>::free(void) {
+    Edge<View>::free() {
         sd.unset();
     }
 
     template <class View>
     forceinline Edge<View>*
-    Edge<View>::next_edge(void) const {
+    Edge<View>::next_edge() const {
         return _next_edge;
     }
     template <class View>
     forceinline Edge<View>**
-    Edge<View>::next_edge_ref(void) {
+    Edge<View>::next_edge_ref() {
         return &_next_edge;
     }
     template <class View>
     forceinline Edge<View>*
-    Edge<View>::next(void) const {
+    Edge<View>::next() const {
         return static_cast<Edge<View>*>(BiLink::next());
     }
 
@@ -113,6 +113,6 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         return home.ralloc(s);
     }
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop

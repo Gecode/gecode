@@ -32,7 +32,7 @@
 
 #include <gecode/gist/drawingcursor.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// Red color for failed nodes
     const QColor DrawingCursor::red(218, 37, 29);
@@ -70,7 +70,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    DrawingCursor::process_current_node(void) {
+    DrawingCursor::process_current_node() {
         Gist::VisualNode* n = node();
         double parent_x = x - static_cast<double>(n->get_offset());
         double parent_y = y - static_cast<double>(Layout::dist_y) + node_width;
@@ -257,6 +257,6 @@ namespace Gecode { namespace Gist {
         }
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

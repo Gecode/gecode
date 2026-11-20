@@ -30,14 +30,14 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Value sets
      *
      */
     forceinline
-    ValSet::ValSet(void)
+    ValSet::ValSet()
         : fst(nullptr), lst(nullptr), n(0) {}
 
     forceinline void
@@ -50,15 +50,16 @@ namespace Gecode { namespace Int {
                     c->min(v);
                     n++;
                     return;
-                } else {
-                    *p = new (home) RangeList(v, v, c);
-                    n++;
-                    return;
                 }
-            } else if (v <= c->max()) {
+                *p = new (home) RangeList(v, v, c);
+                n++;
+                return;
+            }
+            if (v <= c->max()) {
                 // Value already included
                 return;
-            } else if (v == c->max() + 1) {
+            }
+            if (v == c->max() + 1) {
                 if ((c->next() != nullptr) && (v + 1 == c->next()->min())) {
                     c->next()->min(c->min());
                     *p = c->next();
@@ -68,10 +69,9 @@ namespace Gecode { namespace Int {
                 }
                 n++;
                 return;
-            } else {
-                p = c->next_ref();
-                c = *p;
             }
+            p = c->next_ref();
+            c = *p;
         }
         *p = new (home) RangeList(v, v, nullptr);
         n++;
@@ -79,22 +79,22 @@ namespace Gecode { namespace Int {
     }
 
     forceinline int
-    ValSet::size(void) const {
+    ValSet::size() const {
         return n;
     }
 
     forceinline bool
-    ValSet::empty(void) const {
+    ValSet::empty() const {
         return n == 0;
     }
 
     forceinline int
-    ValSet::min(void) const {
+    ValSet::min() const {
         return fst->min();
     }
 
     forceinline int
-    ValSet::max(void) const {
+    ValSet::max() const {
         return lst->max();
     }
 
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int {
     }
 
     forceinline void
-    ValSet::flush(void) {
+    ValSet::flush() {
         fst = lst = nullptr;
     }
 
@@ -135,26 +135,26 @@ namespace Gecode { namespace Int {
         : c(vs.fst) {}
 
     forceinline bool
-    ValSet::Ranges::operator()(void) const {
+    ValSet::Ranges::operator()() const {
         return c != nullptr;
     }
 
     forceinline void
-    ValSet::Ranges::operator++(void) {
+    ValSet::Ranges::operator++() {
         c = c->next();
     }
 
     forceinline int
-    ValSet::Ranges::min(void) const {
+    ValSet::Ranges::min() const {
         return c->min();
     }
     forceinline int
-    ValSet::Ranges::max(void) const {
+    ValSet::Ranges::max() const {
         return c->max();
     }
 
     forceinline unsigned int
-    ValSet::Ranges::width(void) const {
+    ValSet::Ranges::width() const {
         return c->width();
     }
 
@@ -178,6 +178,6 @@ namespace Gecode { namespace Int {
         return Iter::Ranges::subset(xr, vsr);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

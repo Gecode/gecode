@@ -32,22 +32,28 @@
 
 #include "test/flatzinc.hh"
 
+#include <exception>
 #include <memory>
 #include <cmath>
 #include <iomanip>
 #include <limits>
 
-namespace Test { namespace FlatZinc {
+namespace Test::FlatZinc {
+
+    static_assert(std::is_base_of_v<std::exception, Gecode::FlatZinc::Error>,
+                  "FlatZinc errors must be catchable as standard exceptions");
+    static_assert(std::is_base_of_v<std::exception, Gecode::FlatZinc::AST::TypeError>,
+                  "FlatZinc type errors must be catchable as standard exceptions");
 
     namespace {
 
         /// Verify that FlatZinc table conversion uses automatic representation.
         class TupleSetAutoRepresentation : public Base {
         public:
-            TupleSetAutoRepresentation(void) : Base("FlatZinc::TupleSet::AutoRepresentation") {}
+            TupleSetAutoRepresentation() : Base("FlatZinc::TupleSet::AutoRepresentation") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
 
                 const int n = 4096;
@@ -88,15 +94,15 @@ namespace Test { namespace FlatZinc {
                 s->constrain(*best);
                 if ((s->status() == Gecode::SS_FAILED) || s->fv[0].assigned())
                     return false;
-                bound = (source.find("minimize") != std::string::npos) ? s->fv[0].max() : s->fv[0].min();
+                bound = source.contains("minimize") ? s->fv[0].max() : s->fv[0].min();
                 return true;
             }
 
         public:
-            FloatCutExcludesIncumbent(void) : Base("FlatZinc::Float::CutExcludesIncumbent") {}
+            FloatCutExcludesIncumbent() : Base("FlatZinc::Float::CutExcludesIncumbent") {}
 
             bool
-            run(void) override {
+            run() override {
                 Gecode::FloatNum min_bound, max_bound;
                 return cut_bound("var 0.0..1.0: x :: output_var;\nsolve minimize x;\n", min_bound) &&
                        cut_bound("var 0.0..1.0: x :: output_var;\nsolve maximize x;\n", max_bound) &&
@@ -118,10 +124,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            IntegerObjectiveComparison(void) : Base("FlatZinc::IntegerObjectiveComparison") {}
+            IntegerObjectiveComparison() : Base("FlatZinc::IntegerObjectiveComparison") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> one = model("var 1..1: x; solve minimize x;\n");
                 std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> two = model("var 2..2: x; solve minimize x;\n");
@@ -136,6 +142,7 @@ namespace Test { namespace FlatZinc {
                     (void)one->compare(*high);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> sat = model("var 1..1: x; solve satisfy;\n");
                 if (!sat)
@@ -144,6 +151,7 @@ namespace Test { namespace FlatZinc {
                     (void)sat->compare(*sat);
                     return false;
                 } catch (const SpaceNoComparison&) {
+                    // Expected
                 }
                 return true;
             }
@@ -178,10 +186,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            FloatObjectiveComparison(void) : Base("FlatZinc::FloatObjectiveComparison") {}
+            FloatObjectiveComparison() : Base("FlatZinc::FloatObjectiveComparison") {}
 
             bool
-            run(void) override {
+            run() override {
                 using namespace Gecode;
                 using Gecode::FlatZinc::FlatZincSpace;
                 const FloatNum next = std::nextafter(1.0, 2.0);
@@ -206,17 +214,17 @@ namespace Test { namespace FlatZinc {
                     return false;
 
                 const FloatVal probes[] = {FloatVal(8.4), FloatVal(8.5), FloatVal(8.9), FloatVal(9.0)};
-                for (unsigned int i = 0; i < sizeof(probes) / sizeof(probes[0]); i++) {
-                    if (admitted(probes[i], *m10, true, 1.0) != admitted(probes[i], *m10b, true, 1.0))
+                for (const FloatVal& probe : probes) {
+                    if (admitted(probe, *m10, true, 1.0) != admitted(probe, *m10b, true, 1.0))
                         return false;
-                    if (admitted(probes[i], *m9, true, 1.0) && !admitted(probes[i], *m10, true, 1.0))
+                    if (admitted(probe, *m9, true, 1.0) && !admitted(probe, *m10, true, 1.0))
                         return false;
                 }
                 const FloatVal max_probes[] = {FloatVal(11.0), FloatVal(11.1), FloatVal(11.5), FloatVal(11.6)};
-                for (unsigned int i = 0; i < sizeof(max_probes) / sizeof(max_probes[0]); i++) {
-                    if (admitted(max_probes[i], *x10, false, 1.0) != admitted(max_probes[i], *x10b, false, 1.0))
+                for (const FloatVal& max_probe : max_probes) {
+                    if (admitted(max_probe, *x10, false, 1.0) != admitted(max_probe, *x10b, false, 1.0))
                         return false;
-                    if (admitted(max_probes[i], *x11, false, 1.0) && !admitted(max_probes[i], *x10, false, 1.0))
+                    if (admitted(max_probe, *x11, false, 1.0) && !admitted(max_probe, *x10, false, 1.0))
                         return false;
                 }
                 std::unique_ptr<FlatZincSpace> zero = model(10.0, true);
@@ -237,11 +245,13 @@ namespace Test { namespace FlatZinc {
                     (void)m10->compare(*different_step);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 try {
                     (void)m10->compare(*x10);
                     return false;
                 } catch (const SpaceIncompatibleObjectives&) {
+                    // Expected
                 }
                 return true;
             }
@@ -267,10 +277,10 @@ namespace Test { namespace FlatZinc {
             }
 
         public:
-            GistStatisticsMode(void) : Base("FlatZinc::Options::GistStatisticsMode", TestTags::check()) {}
+            GistStatisticsMode() : Base("FlatZinc::Options::GistStatisticsMode", TestTags::check()) {}
 
             bool
-            run(void) override {
+            run() override {
                 return (mode({"-s"}) == Gecode::SM_STATISTICS) && (mode({"-mode", "gist", "-s"}) == Gecode::SM_GIST) &&
                        (mode({"-s", "-mode", "gist"}) == Gecode::SM_GIST);
             }
@@ -310,7 +320,7 @@ namespace Test { namespace FlatZinc {
           _expected_message(std::move(expected_message)) {}
 
     bool
-    FlatZincTest::run(void) {
+    FlatZincTest::run() {
         using namespace Gecode;
         Support::Timer t_total;
         t_total.start();
@@ -349,11 +359,11 @@ namespace Test { namespace FlatZinc {
                 if (opt.log)
                     olog << "FlatZinc produced the following output:\n" << output << "\n";
                 return false;
-            } else {
-                if (opt.log)
-                    olog << "Could not parse input\n";
-                return false;
             }
+            if (opt.log)
+                olog << "Could not parse input\n";
+            return false;
+
         } catch (Gecode::FlatZinc::Error& e) {
             if (opt.log)
                 olog << ind(2) << "FlatZinc error : " << e.to_string() << '\n';
@@ -363,7 +373,7 @@ namespace Test { namespace FlatZinc {
     }
 
     bool
-    FlatZincErrorTest::run(void) {
+    FlatZincErrorTest::run() {
         using namespace Gecode;
         Support::Timer t_total;
         t_total.start();
@@ -393,18 +403,18 @@ namespace Test { namespace FlatZinc {
             const std::string& message = e.to_string();
             if (opt.log)
                 olog << ind(2) << "Expected FlatZinc error : " << message << '\n';
-            return (os.str().find("----------") == std::string::npos) &&
-                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
+            return (!os.str().contains("----------")) &&
+                   (_expected_message.empty() || (message.contains(_expected_message)));
         } catch (Gecode::Exception& e) {
             const std::string message = e.what();
             if (opt.log)
                 olog << ind(2) << "Expected Gecode exception : " << message << '\n';
-            return (os.str().find("----------") == std::string::npos) &&
-                   (_expected_message.empty() || (message.find(_expected_message) != std::string::npos));
+            return (!os.str().contains("----------")) &&
+                   (_expected_message.empty() || (message.contains(_expected_message)));
         }
         return false;
     }
 
-}} // namespace Test::FlatZinc
+} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

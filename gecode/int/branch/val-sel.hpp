@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     template <class View>
     forceinline
@@ -111,8 +111,8 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View, class Random>
     forceinline bool
-    ValSelRnd<View, Random>::notice(void) const {
-        return !std::is_trivially_destructible<Random>::value;
+    ValSelRnd<View, Random>::notice() const {
+        return !std::is_trivially_destructible_v<Random>;
     }
     template <class View, class Random>
     forceinline void
@@ -130,10 +130,9 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelRangeMin::val(const Space&, IntView x, int) {
         if (x.range()) {
             return (x.width() == 2) ? x.min() : (x.min() + (x.max() - x.min()) / 2);
-        } else {
-            ViewRanges<View> r(x);
-            return r.max();
         }
+        ViewRanges<View> r(x);
+        return r.max();
     }
 
     forceinline
@@ -146,17 +145,16 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelRangeMax::val(const Space&, IntView x, int) {
         if (x.range()) {
             return (x.width() == 2) ? x.max() : (x.max() - (x.max() - x.min()) / 2);
-        } else {
-            int min;
-            ViewRanges<IntView> r(x);
-            do {
-                min = r.min();
-                ++r;
-            } while (r());
-            return min;
         }
+        int min;
+        ViewRanges<IntView> r(x);
+        do {
+            min = r.min();
+            ++r;
+        } while (r());
+        return min;
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

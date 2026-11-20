@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     template <class View, class Val>
     forceinline
@@ -77,9 +77,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
             if (ES_NOFIX == status) {
                 return home.ES_NOFIX_DISPOSE(ac, a);
-            } else {
-                return home.ES_FIX_DISPOSE(ac, a);
             }
+            return home.ES_FIX_DISPOSE(ac, a);
         }
 
         if ((status == ES_FAILED) && disabled()) {
@@ -174,6 +173,6 @@ namespace Gecode { namespace Int { namespace Sequence {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 // STATISTICS: int-prop

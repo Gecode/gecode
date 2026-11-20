@@ -32,7 +32,7 @@
 
 #include <gecode/set/branch.hh>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     ViewSel<SetView>*
     view_selection(Space& home, const SetVarBranch& svb) {
@@ -155,6 +155,6 @@ namespace Gecode { namespace Set { namespace Branch {
         return nullptr;
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

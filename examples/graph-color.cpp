@@ -320,7 +320,7 @@ public:
     }
     /// Cost function
     IntVar
-    cost(void) const override {
+    cost() const override {
         return m;
     }
     /// Constructor for cloning \a s
@@ -330,7 +330,7 @@ public:
     }
     /// Copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new GraphColor(*this);
     }
     /// Print the solution

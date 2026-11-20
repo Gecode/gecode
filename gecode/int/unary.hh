@@ -47,7 +47,7 @@
  * \brief %Int for unary resources
  */
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// %Unary (mandatory) task with fixed processing time
     class ManFixPTask {
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPTask(void);
+        ManFixPTask();
         /// Initialize with start time \a s and processing time \a p
         ManFixPTask(IntVar s, int p);
         /// Initialize with start time \a s and processing time \a p
@@ -73,31 +73,31 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         /// Return start time
-        IntVar st(void) const;
+        IntVar st() const;
         /// Whether task is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether task is excluded
-        bool excluded(void) const;
+        bool excluded() const;
         /// Whether task can still be optional
-        bool optional(void) const;
+        bool optional() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether task is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name Value update
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPSETask(void);
+        ManFixPSETask();
         /**
          * \brief Initialize task
          *
@@ -174,17 +174,17 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         //@}
 
         /// \name Value update
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPTask(void);
+        OptFixPTask();
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
         OptFixPTask(IntVar s, int p, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPSETask(void);
+        OptFixPSETask();
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
         OptFixPSETask(TaskType t, IntVar s, int p, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, and mandatory flag \a m
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFlexTask(void) = default;
+        ManFlexTask() = default;
         /// Initialize with start time \a s, processing time \a p, end time \a e
         ManFlexTask(IntVar s, IntVar p, IntVar e);
         /// Initialize with start time \a s, processing time \a p, end time \a e
@@ -289,35 +289,35 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         /// Return start time
-        IntVar st(void) const;
+        IntVar st() const;
         /// Return processing time
-        IntVar p(void) const;
+        IntVar p() const;
         /// Return end time
-        IntVar e(void) const;
+        IntVar e() const;
         /// Whether task is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether task is excluded
-        bool excluded(void) const;
+        bool excluded() const;
         /// Whether task can still be optional
-        bool optional(void) const;
+        bool optional() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether task is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name Value update
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFlexTask(void) = default;
+        OptFlexTask() = default;
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
         OptFlexTask(IntVar s, IntVar p, IntVar e, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
@@ -386,47 +386,47 @@ namespace Gecode { namespace Int { namespace Unary {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTask& t);
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/task.hpp>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// Forward mandatory fixed task view
-    typedef ManFixPTask ManFixPTaskFwd;
+    using ManFixPTaskFwd = ManFixPTask;
 
     /// Backward (dual) mandatory fixed task view
-    typedef FwdToBwd<ManFixPTaskFwd> ManFixPTaskBwd;
+    using ManFixPTaskBwd = FwdToBwd<ManFixPTaskFwd>;
 
     /// Forward mandatory fixed task view
-    typedef ManFixPSETask ManFixPSETaskFwd;
+    using ManFixPSETaskFwd = ManFixPSETask;
 
     /// Backward (dual) mandatory fixed task view
-    typedef FwdToBwd<ManFixPSETaskFwd> ManFixPSETaskBwd;
+    using ManFixPSETaskBwd = FwdToBwd<ManFixPSETaskFwd>;
 
     /// Forward optional fixed task view
-    typedef OptFixPTask OptFixPTaskFwd;
+    using OptFixPTaskFwd = OptFixPTask;
 
     /// Backward (dual) optional fixed task view
-    typedef FwdToBwd<OptFixPTaskFwd> OptFixPTaskBwd;
+    using OptFixPTaskBwd = FwdToBwd<OptFixPTaskFwd>;
 
     /// Forward optional fixed task view
-    typedef OptFixPSETask OptFixPSETaskFwd;
+    using OptFixPSETaskFwd = OptFixPSETask;
 
     /// Backward (dual) optional fixed task view
-    typedef FwdToBwd<OptFixPSETaskFwd> OptFixPSETaskBwd;
+    using OptFixPSETaskBwd = FwdToBwd<OptFixPSETaskFwd>;
 
     /// Forward mandatory flexible task view
-    typedef ManFlexTask ManFlexTaskFwd;
+    using ManFlexTaskFwd = ManFlexTask;
 
     /// Backward (dual) mandatory flexible task view
-    typedef FwdToBwd<ManFlexTaskFwd> ManFlexTaskBwd;
+    using ManFlexTaskBwd = FwdToBwd<ManFlexTaskFwd>;
 
     /// Forward optional flexible task view
-    typedef OptFlexTask OptFlexTaskFwd;
+    using OptFlexTaskFwd = OptFlexTask;
 
     /// Backward (dual) optional flexible task view
-    typedef FwdToBwd<OptFlexTaskFwd> OptFlexTaskBwd;
+    using OptFlexTaskBwd = FwdToBwd<OptFlexTaskFwd>;
 
     /**
      * \brief Print backward task view in format est:p:lct
@@ -472,18 +472,18 @@ namespace Gecode { namespace Int { namespace Unary {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTaskBwd& t);
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/task-view.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task view traits for forward task views
     template <>
     class TaskViewTraits<Unary::ManFixPTaskFwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPTask Task;
+        using Task = Unary::ManFixPTask;
     };
 
     /// Task view traits for backward task views
@@ -491,7 +491,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFixPTaskBwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPTask Task;
+        using Task = Unary::ManFixPTask;
     };
 
     /// Task view traits for forward task views
@@ -499,7 +499,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFixPSETaskFwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPSETask Task;
+        using Task = Unary::ManFixPSETask;
     };
 
     /// Task view traits for backward task views
@@ -507,7 +507,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFixPSETaskBwd> {
     public:
         /// The task type
-        typedef Unary::ManFixPSETask Task;
+        using Task = Unary::ManFixPSETask;
     };
 
     /// Task view traits for forward optional task views
@@ -515,7 +515,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPTaskFwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPTask Task;
+        using Task = Unary::OptFixPTask;
     };
 
     /// Task view traits for backward task views
@@ -523,7 +523,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPTaskBwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPTask Task;
+        using Task = Unary::OptFixPTask;
     };
 
     /// Task view traits for forward optional task views
@@ -531,7 +531,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPSETaskFwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPSETask Task;
+        using Task = Unary::OptFixPSETask;
     };
 
     /// Task view traits for backward task views
@@ -539,7 +539,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFixPSETaskBwd> {
     public:
         /// The task type
-        typedef Unary::OptFixPSETask Task;
+        using Task = Unary::OptFixPSETask;
     };
 
     /// Task view traits for forward task views
@@ -547,7 +547,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFlexTaskFwd> {
     public:
         /// The task type
-        typedef Unary::ManFlexTask Task;
+        using Task = Unary::ManFlexTask;
     };
 
     /// Task view traits for backward task views
@@ -555,7 +555,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::ManFlexTaskBwd> {
     public:
         /// The task type
-        typedef Unary::ManFlexTask Task;
+        using Task = Unary::ManFlexTask;
     };
 
     /// Task view traits for forward optional task views
@@ -563,7 +563,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFlexTaskFwd> {
     public:
         /// The task type
-        typedef Unary::OptFlexTask Task;
+        using Task = Unary::OptFlexTask;
     };
 
     /// Task view traits for backward task views
@@ -571,7 +571,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Unary::OptFlexTaskBwd> {
     public:
         /// The task type
-        typedef Unary::OptFlexTask Task;
+        using Task = Unary::OptFlexTask;
     };
 
     /// Task traits for mandatory fixed tasks
@@ -579,9 +579,9 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::ManFixPTask> {
     public:
         /// The forward task view type
-        typedef Unary::ManFixPTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::ManFixPTaskFwd;
         /// The backward task view type
-        typedef Unary::ManFixPTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::ManFixPTaskBwd;
     };
 
     /// Task traits for mandatory fixed tasks
@@ -589,9 +589,9 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::ManFixPSETask> {
     public:
         /// The forward task view type
-        typedef Unary::ManFixPSETaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::ManFixPSETaskFwd;
         /// The backward task view type
-        typedef Unary::ManFixPSETaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::ManFixPSETaskBwd;
     };
 
     /// Task traits for optional fixed tasks
@@ -599,11 +599,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::OptFixPTask> {
     public:
         /// The forward task view type
-        typedef Unary::OptFixPTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::OptFixPTaskFwd;
         /// The backward task view type
-        typedef Unary::OptFixPTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::OptFixPTaskBwd;
         /// The corresponding mandatory task
-        typedef Unary::ManFixPTask ManTask;
+        using ManTask = Unary::ManFixPTask;
     };
 
     /// Task traits for optional fixed tasks
@@ -611,11 +611,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::OptFixPSETask> {
     public:
         /// The forward task view type
-        typedef Unary::OptFixPSETaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::OptFixPSETaskFwd;
         /// The backward task view type
-        typedef Unary::OptFixPSETaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::OptFixPSETaskBwd;
         /// The corresponding mandatory task
-        typedef Unary::ManFixPTask ManTask;
+        using ManTask = Unary::ManFixPTask;
     };
 
     /// Task traits for mandatory flexible tasks
@@ -623,9 +623,9 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::ManFlexTask> {
     public:
         /// The forward task view type
-        typedef Unary::ManFlexTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::ManFlexTaskFwd;
         /// The backward task view type
-        typedef Unary::ManFlexTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::ManFlexTaskBwd;
     };
 
     /// Task traits for optional flexible tasks
@@ -633,16 +633,16 @@ namespace Gecode { namespace Int {
     class TaskTraits<Unary::OptFlexTask> {
     public:
         /// The forward task view type
-        typedef Unary::OptFlexTaskFwd TaskViewFwd;
+        using TaskViewFwd = Unary::OptFlexTaskFwd;
         /// The backward task view type
-        typedef Unary::OptFlexTaskBwd TaskViewBwd;
+        using TaskViewBwd = Unary::OptFlexTaskBwd;
         /// The corresponding mandatory task
-        typedef Unary::ManFlexTask ManTask;
+        using ManTask = Unary::ManFlexTask;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// Node for an omega tree
     class OmegaNode {
@@ -675,7 +675,7 @@ namespace Gecode { namespace Int { namespace Unary {
         /// Remove task with index \a i
         void remove(int i);
         /// Return earliest completion time of all tasks
-        int ect(void) const;
+        int ect() const;
         /// Return earliest completion time of all tasks but \a i
         int ect(int i) const;
     };
@@ -721,20 +721,20 @@ namespace Gecode { namespace Int { namespace Unary {
         /// Remove task with index \a i from lambda
         void remove_lambda(int i);
         /// Whether has responsible task
-        bool lempty(void) const;
+        bool lempty() const;
         /// Return responsible task
-        int responsible(void) const;
+        int responsible() const;
         /// Return earliest completion time of all tasks
-        int ect(void) const;
+        int ect() const;
         /// Return earliest completion time of all tasks excluding lambda tasks
-        int lect(void) const;
+        int lect() const;
     };
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/tree.hpp>
 
-namespace Gecode { namespace Int { namespace Unary {
+namespace Gecode::Int::Unary {
 
     /// Check mandatory tasks \a t for overload
     template <class ManTask>
@@ -825,7 +825,7 @@ namespace Gecode { namespace Int { namespace Unary {
     template <class OptTask>
     ExecStatus post_optional(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
 
-}}} // namespace Gecode::Int::Unary
+} // namespace Gecode::Int::Unary
 
 #include <gecode/int/unary/overload.hpp>
 #include <gecode/int/unary/time-tabling.hpp>

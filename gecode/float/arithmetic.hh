@@ -46,7 +46,7 @@
  * \brief %Arithmetic propagators
  */
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
     /**
      * \brief Bounds consistent positive square propagator
@@ -407,7 +407,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         static ExecStatus post(Home home, ViewArray<View>& x, View y);
     };
 
-}}} // namespace Gecode::Float::Arithmetic
+} // namespace Gecode::Float::Arithmetic
 
 #include <gecode/float/arithmetic/sqr-sqrt.hpp>
 #include <gecode/float/arithmetic/abs.hpp>

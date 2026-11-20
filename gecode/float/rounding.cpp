@@ -41,13 +41,13 @@
 #include <gmp.h>
 #include <mpfr.h>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /// Type signature of mpfr function
-    typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
+    using mpfr_func = int(mpfr_t, const __mpfr_struct*, mp_rnd_t);
 
     /// Routine to call mpfr function with proper rounding
-    forceinline double
+    static forceinline double
     invoke_mpfr(FloatNum x, mpfr_func f, mp_rnd_t r) {
         mpfr_t xx;
         mpfr_init_set_d(xx, x, GMP_RNDN);
@@ -82,7 +82,7 @@ namespace Gecode { namespace Float {
 
 #undef GECODE_GENR_FUNC
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #endif
 

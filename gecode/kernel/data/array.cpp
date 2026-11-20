@@ -32,7 +32,7 @@
 
 #include <gecode/kernel.hh>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     bool
     duplicates(void** p, int n) {
@@ -53,7 +53,7 @@ namespace Gecode { namespace Kernel {
         do {
             if (p[i] == q[j])
                 return true;
-            else if (p[i] < q[j])
+            if (p[i] < q[j])
                 i++;
             else
                 j++;
@@ -61,6 +61,6 @@ namespace Gecode { namespace Kernel {
         return false;
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-other

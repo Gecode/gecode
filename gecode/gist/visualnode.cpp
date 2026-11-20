@@ -37,7 +37,7 @@
 
 #include <utility>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     Shape* Shape::leaf;
     Shape* Shape::hidden;
@@ -46,7 +46,7 @@ namespace Gecode { namespace Gist {
     class ShapeAllocator {
     public:
         /// Constructor
-        ShapeAllocator(void) {
+        ShapeAllocator() {
             Shape::leaf = Shape::allocate(1);
             (*Shape::leaf)[0] = Extent(Layout::extent);
             Shape::leaf->compute_bounding_box();
@@ -56,7 +56,7 @@ namespace Gecode { namespace Gist {
             (*Shape::hidden)[1] = Extent(Layout::extent);
             Shape::hidden->compute_bounding_box();
         }
-        ~ShapeAllocator(void) {
+        ~ShapeAllocator() {
             Shape::deallocate(Shape::leaf);
             Shape::deallocate(Shape::hidden);
         }
@@ -86,7 +86,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    VisualNode::dispose(void) {
+    VisualNode::dispose() {
         Shape::deallocate(shape);
         SpaceNode::dispose();
     }
@@ -179,7 +179,7 @@ namespace Gecode { namespace Gist {
             std::vector<std::pair<VisualNode*, int>> path;
             VisualNode* p = this;
             while (p) {
-                path.push_back(std::pair<VisualNode*, int>(p, p->get_alternative(na)));
+                path.emplace_back(p, p->get_alternative(na));
                 p = p->get_parent(na);
             }
             while (!path.empty()) {
@@ -232,9 +232,8 @@ namespace Gecode { namespace Gist {
         Extent the_extent;
         if (get_shape()->get_extent_at_depth(depth, the_extent)) {
             return (the_extent.l <= x && x <= the_extent.r);
-        } else {
-            return false;
         }
+        return false;
     }
 
     VisualNode*
@@ -404,9 +403,8 @@ namespace Gecode { namespace Gist {
             if (number_of_shapes == 0) {
                 set_shape(Shape::leaf);
                 return;
-            } else {
-                extent = Extent(Layout::extent);
             }
+            extent = Extent(Layout::extent);
         }
 
         int max_depth = 0;
@@ -509,6 +507,6 @@ namespace Gecode { namespace Gist {
         }
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

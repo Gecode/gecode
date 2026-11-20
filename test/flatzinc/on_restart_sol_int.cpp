@@ -32,12 +32,12 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("on_restart::sol_int",
                                    R"FZN(
 predicate gecode_on_restart_status(var int: s);
@@ -76,6 +76,6 @@ y = 2;
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

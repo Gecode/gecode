@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Precede {
+namespace Gecode::Set::Precede {
 
     template <class View>
     forceinline
@@ -240,6 +240,6 @@ namespace Gecode { namespace Set { namespace Precede {
         return (c.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Precede
+} // namespace Gecode::Set::Precede
 
 // STATISTICS: set-prop

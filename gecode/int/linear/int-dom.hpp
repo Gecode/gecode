@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /**
      * \brief %Set for support information
@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Default constructor
-        SupportSet(void) = default;
+        SupportSet() = default;
         /// Initialize support set with cardinality \a n
         void init(Region& r, unsigned int n);
         /// Record that there is support at position \a i
@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Linear {
             /// Initialize iterator
             ResultIter(const SupportSet& s0, const IntView& x);
             /// Increment to next supported value
-            void operator++(void);
+            void operator++();
         };
 
     public:
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Initialize view
         void init(Region& r, int a, const IntView& x, Val l, Val u);
         /// Record value at current position as supported
-        void support(void);
+        void support();
         /// Tell back new variable domain according to support found
         ModEvent tell(Space& home);
     };
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
     }
     forceinline void
-    SupportSet::ResultIter::operator++(void) {
+    SupportSet::ResultIter::operator++() {
         do {
             ViewValues<IntView>::operator++();
             ++p;
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     template <class Val>
     forceinline void
-    SupportIter<Val>::support(void) {
+    SupportIter<Val>::support() {
         s.support(p);
     }
     template <class Val>
@@ -384,8 +384,7 @@ namespace Gecode { namespace Int { namespace Linear {
     DomEq<Val, View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) != ME_INT_DOM)
             return PropCost::linear(PropCost::LO, x.size() + y.size());
-        else
-            return PropCost::crazy(PropCost::HI, x.size() + y.size());
+        return PropCost::crazy(PropCost::HI, x.size() + y.size());
     }
 
     template <class Val, class View>
@@ -485,6 +484,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop

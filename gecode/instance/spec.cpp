@@ -40,9 +40,10 @@
 #include <cstring>
 #include <fstream>
 #include <locale>
+#include <memory>
 #include <sstream>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     std::string
     read_file(const std::string& path) {
@@ -102,7 +103,7 @@ namespace Gecode { namespace Instance {
             /// Whether no white space precedes the token
             bool glued;
             /// Initialize
-            Token(void) : kind(Kind::END), i(0), f(0.0), line(0), glued(false) {}
+            Token() : kind(Kind::END), i(0), f(0.0), line(0), glued(false) {}
         };
 
         /**
@@ -124,8 +125,7 @@ namespace Gecode { namespace Instance {
             case '\n':
                 fail_at(origin, line, "unterminated string");
             default:
-                fail_at(origin, line,
-                        std::string("unknown escape '\\") + e + "' in string (use \\n, \\t, \\\\, or \\\")");
+                fail_at(origin, line, std::string("unknown escape '\\") + e + R"(' in string (use \n, \t, \\, or \"))");
             }
         }
 
@@ -151,7 +151,7 @@ namespace Gecode { namespace Instance {
         /// Test whether \a n is the name of a Gecode constant
         bool
         is_gecode_name(const std::string& n) {
-            return n.compare(0, gecode_prefix.size(), gecode_prefix) == 0;
+            return n.starts_with(gecode_prefix);
         }
 
         /// Split spec \a src, which starts on line \a line, into tokens
@@ -288,7 +288,7 @@ namespace Gecode { namespace Instance {
         /// Test whether pattern item \a it ends with a word character
         bool
         ends_word(const Pattern::Item& it) {
-            typedef Pattern::Item::Kind Kind;
+            using Kind = Pattern::Item::Kind;
             return (it.kind == Kind::CAP) || (it.kind == Kind::VAR) ||
                    ((it.kind == Kind::LIT) && is_alnum(it.text[it.text.size() - 1]));
         }
@@ -296,7 +296,7 @@ namespace Gecode { namespace Instance {
         /// Test whether pattern item \a it starts with a word character
         bool
         starts_word(const Pattern::Item& it) {
-            typedef Pattern::Item::Kind Kind;
+            using Kind = Pattern::Item::Kind;
             return (it.kind == Kind::CAP) || (it.kind == Kind::VAR) || ((it.kind == Kind::LIT) && is_alnum(it.text[0]));
         }
 
@@ -304,7 +304,7 @@ namespace Gecode { namespace Instance {
         /// capture to \a types
         Pattern
         compile(const std::string& src, Seq<std::string>& types) {
-            typedef Pattern::Item Item;
+            using Item = Pattern::Item;
             Pattern pat;
             pat.source = src;
             size_t p = 0;
@@ -449,11 +449,11 @@ namespace Gecode { namespace Instance {
             static const int max_nesting = 256;
 
             const Token&
-            peek(void) const {
+            peek() const {
                 return toks[p];
             }
             const Token&
-            next(void) {
+            next() {
                 const Token& t = toks[p];
                 if (p + 1 < toks.size())
                     p++;
@@ -482,7 +482,7 @@ namespace Gecode { namespace Instance {
             /// Test whether a '-' or '.' joining the words of a format name such as
             /// dimacs-cnf comes next
             bool
-            at_name_joiner(void) const {
+            at_name_joiner() const {
                 if (!(punct("-") || punct(".")) || !peek().glued || (p + 1 >= toks.size()))
                     return false;
                 const Token& t = toks[p + 1];
@@ -522,7 +522,7 @@ namespace Gecode { namespace Instance {
                 return next().text;
             }
             Pattern
-            pattern(void) {
+            pattern() {
                 int line = peek().line;
                 std::string s = string("a line pattern");
                 Pattern pat;
@@ -566,7 +566,7 @@ namespace Gecode { namespace Instance {
                     fail(std::string(what) + " are nested too deeply");
             }
             Block
-            block(void) {
+            block() {
                 expect_punct("{");
                 enter(depth, "blocks");
                 // The types defined in the block are only visible inside it
@@ -585,7 +585,7 @@ namespace Gecode { namespace Instance {
             }
             std::unique_ptr<Expr>
             integer(long long int v) {
-                std::unique_ptr<Expr> e(new Expr(Expr::Kind::INT));
+                std::unique_ptr<Expr> e = std::make_unique<Expr>(Expr::Kind::INT);
                 e->i = v;
                 return e;
             }
@@ -605,7 +605,7 @@ namespace Gecode { namespace Instance {
              */
 
             /// A function completing statement \a s, which starts with \a kw
-            typedef void (Parser::*Parse)(Stmt& s, const std::string& kw);
+            using Parse = void (Parser::*)(Stmt& s, const std::string& kw);
 
             /// A statement that starts with a keyword
             class Keyword {
@@ -675,14 +675,14 @@ namespace Gecode { namespace Instance {
             }
 
             std::unique_ptr<Stmt>
-            statement(void) {
+            statement() {
                 const Token& t = peek();
                 each_ok = repeat_start;
                 repeat_start = false;
                 if (t.kind != Token::Kind::IDENT)
                     fail("expected a statement, found " + describe(t));
                 if (at_declaration(p)) {
-                    std::unique_ptr<Stmt> s(new Stmt(Stmt::Kind::READ, t.line));
+                    std::unique_ptr<Stmt> s = std::make_unique<Stmt>(Stmt::Kind::READ, t.line);
                     declaration(*s);
                     return s;
                 }
@@ -691,7 +691,7 @@ namespace Gecode { namespace Instance {
                     fail("unknown statement '" + t.text + "'");
                 if (e->setting && (depth > 0))
                     fail("the setting '" + t.text + "' must be at the top level of the spec");
-                std::unique_ptr<Stmt> s(new Stmt(e->kind, t.line));
+                std::unique_ptr<Stmt> s = std::make_unique<Stmt>(e->kind, t.line);
                 std::string kw = next().text;
                 (this->*e->parse)(*s, kw);
                 return s;
@@ -748,7 +748,7 @@ namespace Gecode { namespace Instance {
             }
             /// Test whether the upper bound of a range comes next
             bool
-            at_upper_bound(void) const {
+            at_upper_bound() const {
                 const Token& t = peek();
                 switch (t.kind) {
                 case Token::Kind::IDENT:
@@ -783,7 +783,7 @@ namespace Gecode { namespace Instance {
              * bound of lo..<hi).
              */
             Type
-            type(void) {
+            type() {
                 Type t;
                 if (peek().kind == Token::Kind::IDENT) {
                     const std::string& n = peek().text;
@@ -1036,7 +1036,7 @@ namespace Gecode { namespace Instance {
              * Expressions, by precedence climbing
              */
             std::unique_ptr<Expr>
-            expr(void) {
+            expr() {
                 return binary(0);
             }
             /// Store the binary operator \a t in \a op, and return its precedence
@@ -1073,7 +1073,7 @@ namespace Gecode { namespace Instance {
                         break;
                     enter(nesting, "expressions");
                     levels++;
-                    std::unique_ptr<Expr> e(new Expr(Expr::Kind::BINARY));
+                    std::unique_ptr<Expr> e = std::make_unique<Expr>(Expr::Kind::BINARY);
                     e->op = op;
                     e->s = next().text;
                     e->args.push(std::move(lhs));
@@ -1084,11 +1084,11 @@ namespace Gecode { namespace Instance {
                 return lhs;
             }
             std::unique_ptr<Expr>
-            unary(void) {
+            unary() {
                 enter(nesting, "expressions");
                 std::unique_ptr<Expr> e;
                 if (punct("-") || punct("!")) {
-                    e.reset(new Expr(Expr::Kind::UNARY));
+                    e = std::make_unique<Expr>(Expr::Kind::UNARY);
                     e->op = punct("-") ? Expr::Op::NEG : Expr::Op::NOT;
                     e->s = next().text;
                     e->args.push(unary());
@@ -1101,11 +1101,11 @@ namespace Gecode { namespace Instance {
             /// a ^ b, which binds tighter than unary operators and groups to the
             /// right; b is a unary expression, so 2^-1 is 2^(-1)
             std::unique_ptr<Expr>
-            power(void) {
+            power() {
                 std::unique_ptr<Expr> e = postfix();
                 if (!punct("^"))
                     return e;
-                std::unique_ptr<Expr> x(new Expr(Expr::Kind::BINARY));
+                std::unique_ptr<Expr> x = std::make_unique<Expr>(Expr::Kind::BINARY);
                 x->op = Expr::Op::POW;
                 x->s = next().text;
                 x->args.push(std::move(e));
@@ -1114,7 +1114,7 @@ namespace Gecode { namespace Instance {
             }
             /// Indices and fields a[i][j].f...
             std::unique_ptr<Expr>
-            postfix(void) {
+            postfix() {
                 std::unique_ptr<Expr> e = primary();
                 // Each index or field adds a level above e
                 int levels = 0;
@@ -1123,7 +1123,7 @@ namespace Gecode { namespace Instance {
                     next();
                     enter(nesting, "expressions");
                     levels++;
-                    std::unique_ptr<Expr> x(new Expr(field ? Expr::Kind::FIELD : Expr::Kind::INDEX));
+                    std::unique_ptr<Expr> x = std::make_unique<Expr>(field ? Expr::Kind::FIELD : Expr::Kind::INDEX);
                     x->args.push(std::move(e));
                     if (field) {
                         x->s = ident("a field name");
@@ -1186,7 +1186,7 @@ namespace Gecode { namespace Instance {
             /// f(x in a: e), after "f("
             std::unique_ptr<Expr>
             comprehension(const std::string& f) {
-                std::unique_ptr<Expr> e(new Expr(Expr::Kind::COMPREHENSION));
+                std::unique_ptr<Expr> e = std::make_unique<Expr>(Expr::Kind::COMPREHENSION);
                 e->s = f;
                 BoundName b;
                 b.line = peek().line;
@@ -1209,17 +1209,17 @@ namespace Gecode { namespace Instance {
                 return e;
             }
             std::unique_ptr<Expr>
-            primary(void) {
+            primary() {
                 const Token& t = peek();
                 if (t.kind == Token::Kind::INT)
                     return integer(next().i);
                 if (t.kind == Token::Kind::FLOAT) {
-                    std::unique_ptr<Expr> e(new Expr(Expr::Kind::FLOAT));
+                    std::unique_ptr<Expr> e = std::make_unique<Expr>(Expr::Kind::FLOAT);
                     e->f = next().f;
                     return e;
                 }
                 if (t.kind == Token::Kind::STRING) {
-                    std::unique_ptr<Expr> e(new Expr(Expr::Kind::STR));
+                    std::unique_ptr<Expr> e = std::make_unique<Expr>(Expr::Kind::STR);
                     e->s = next().text;
                     return e;
                 }
@@ -1240,7 +1240,7 @@ namespace Gecode { namespace Instance {
                         next();
                         if (at_comprehension(n))
                             return comprehension(n);
-                        std::unique_ptr<Expr> e(new Expr(Expr::Kind::CALL));
+                        std::unique_ptr<Expr> e = std::make_unique<Expr>(Expr::Kind::CALL);
                         e->s = n;
                         if (!punct(")")) {
                             e->args.push(expr());
@@ -1253,7 +1253,7 @@ namespace Gecode { namespace Instance {
                         check_call(*e, line);
                         return e;
                     }
-                    std::unique_ptr<Expr> e(new Expr(Expr::Kind::NAME));
+                    std::unique_ptr<Expr> e = std::make_unique<Expr>(Expr::Kind::NAME);
                     e->s = n;
                     return e;
                 }
@@ -1359,7 +1359,7 @@ namespace Gecode { namespace Instance {
      *
      */
 
-    Spec::Spec(void) : impl(std::make_shared<SpecImpl>("", "<empty>")) {}
+    Spec::Spec() : impl(std::make_shared<SpecImpl>("", "<empty>")) {}
 
     Spec
     Spec::parse(const std::string& text, const std::string& origin) {
@@ -1374,7 +1374,7 @@ namespace Gecode { namespace Instance {
     }
 
     std::string
-    Spec::name(void) const {
+    Spec::name() const {
         return impl->name;
     }
 
@@ -1398,6 +1398,6 @@ namespace Gecode { namespace Instance {
         return impl->read(text, origin, p, true);
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

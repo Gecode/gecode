@@ -56,7 +56,7 @@ namespace Gecode {
         /// \name Constructors
         //@{
         /// Default constructor (noop)
-        RangeList(void);
+        RangeList();
         /// Initialize with minimum \a min and maximum \a max
         RangeList(int min, int max);
         /// Initialize with minimum \a min and maximum \a max and successor \a n
@@ -66,16 +66,16 @@ namespace Gecode {
         /// \name Access
         //@{
         /// Return minimum
-        int min(void) const;
+        int min() const;
         /// Return maximum
-        int max(void) const;
+        int max() const;
         /// Return width (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
 
         /// Return next element
-        RangeList* next(void) const;
+        RangeList* next() const;
         /// Return pointer to next element
-        RangeList** next_ref(void);
+        RangeList** next_ref();
         //@}
 
         /// \name Update
@@ -128,7 +128,7 @@ namespace Gecode {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    RangeList::RangeList(void) {}
+    RangeList::RangeList() {}
 
     forceinline
     RangeList::RangeList(int min, int max, RangeList* n)
@@ -139,12 +139,12 @@ namespace Gecode {
         : _min(min), _max(max) {}
 
     forceinline RangeList*
-    RangeList::next(void) const {
+    RangeList::next() const {
         return static_cast<RangeList*>(FreeList::next());
     }
 
     forceinline RangeList**
-    RangeList::next_ref(void) {
+    RangeList::next_ref() {
         return reinterpret_cast<RangeList**>(FreeList::next_ref());
     }
 
@@ -162,15 +162,15 @@ namespace Gecode {
     }
 
     forceinline int
-    RangeList::min(void) const {
+    RangeList::min() const {
         return _min;
     }
     forceinline int
-    RangeList::max(void) const {
+    RangeList::max() const {
         return _max;
     }
     forceinline unsigned int
-    RangeList::width(void) const {
+    RangeList::width() const {
         return static_cast<unsigned int>(_max - _min + 1);
     }
 

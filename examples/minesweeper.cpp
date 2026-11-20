@@ -68,7 +68,7 @@ private:
         return b[h * size + w];
     }
     /// Access position (\a h,\a w) in the matrix.
-    const BoolVar
+    BoolVar
     pos(int h, int w) const {
         return b[h * size + w];
     }
@@ -136,7 +136,7 @@ public:
     }
     /// Copy space during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new MineSweeper(*this);
     }
 };
@@ -295,8 +295,7 @@ namespace {
         int res = (c - 'A') + 10;
         if (res > n)
             return 0;
-        else
-            return res;
+        return res;
     }
     //@}
 } // namespace

@@ -56,7 +56,7 @@ public:
     }
     /// Print help message
     void
-    help(void) override {
+    help() override {
         Options::help();
         std::cerr << "\t(unsigned int) default: " << c << '\n'
                   << "\t\tparameter c (number of boxes)" << '\n'
@@ -111,7 +111,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Schur(*this);
     }
 };

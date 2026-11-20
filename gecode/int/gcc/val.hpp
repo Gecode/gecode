@@ -35,7 +35,7 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     template <class Card>
     forceinline
@@ -111,10 +111,10 @@ namespace Gecode { namespace Int { namespace GCC {
         // number of unassigned views
         int non = x.size();
 
-        for (int i = 0; i < x.size(); i++)
-            if (x[i].assigned()) {
+        for (auto& xi : x)
+            if (xi.assigned()) {
                 int idx;
-                if (!lookup_value(k, x[i].val(), idx)) {
+                if (!lookup_value(k, xi.val(), idx)) {
                     return ES_FAILED;
                 }
                 count[idx]++;
@@ -291,6 +291,6 @@ namespace Gecode { namespace Int { namespace GCC {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

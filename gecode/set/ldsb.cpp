@@ -56,15 +56,15 @@ namespace Gecode {
     }
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     template <>
     ModEvent
     prune<Set::SetView>(Space& home, Set::SetView x, int v) {
         return x.exclude(home, v);
     }
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
-namespace Gecode { namespace Set { namespace LDSB {
+namespace Gecode::Set::LDSB {
 
     /// Map from variable implementation to index
     class VariableMap : public std::map<VarImpBase*, int> {};
@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace LDSB {
      * The create_set_sym function is an almost exact copy of
      * create_int_sym/create_bool_sym.
      */
-    SymmetryImp<SetView>*
+    static SymmetryImp<SetView>*
     create_set_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
@@ -127,22 +127,22 @@ namespace Gecode { namespace Set { namespace LDSB {
      *
      * Stores their number in \a nsyms and returns nullptr if there are none.
      */
-    SymmetryImp<SetView>**
+    static SymmetryImp<SetView>**
     create_set_syms(Space& home, const Symmetries& syms, const VariableMap& variable_map, int& nsyms) {
         nsyms = 0;
-        for (int i = 0; i < syms.size(); i++)
-            if (!is_empty(syms[i]))
+        for (const auto& sym : syms)
+            if (!is_empty(sym))
                 nsyms++;
         if (nsyms == 0)
             return nullptr;
         SymmetryImp<SetView>** array = home.alloc<SymmetryImp<SetView>*>(nsyms);
         int created = 0;
-        for (int i = 0; i < syms.size(); i++)
-            if (!is_empty(syms[i]))
-                array[created++] = create_set_sym(home, syms[i], variable_map);
+        for (const auto& sym : syms)
+            if (!is_empty(sym))
+                array[created++] = create_set_sym(home, sym, variable_map);
         return array;
     }
-}}} // namespace Gecode::Set::LDSB
+} // namespace Gecode::Set::LDSB
 
 namespace Gecode {
 

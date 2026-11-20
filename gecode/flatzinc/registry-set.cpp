@@ -40,7 +40,7 @@
 #include <gecode/set.hh>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
 #ifdef GECODE_HAS_SET_VARS
     namespace {
@@ -406,8 +406,8 @@ namespace Gecode { namespace FlatZinc {
             if ((x.size() < 2) || (cardinality <= 1)) {
                 // The intersection bound is trivial here. atmost_one skips cardinality
                 // for fewer than two sets, and its filter divides by cardinality - 1.
-                for (int i = 0; i < x.size(); i++)
-                    Gecode::cardinality(s, x[i], cardinality, cardinality);
+                for (auto xi : x)
+                    Gecode::cardinality(s, xi, cardinality, cardinality);
             } else {
                 atmost_one(s, x, static_cast<unsigned int>(cardinality));
             }
@@ -520,6 +520,6 @@ namespace Gecode { namespace FlatZinc {
     } // namespace RegistryDetail
 #endif
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-any

@@ -45,22 +45,22 @@ namespace Gecode {
         : ValBranch<IntVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline IntValBranch::Select
-    IntValBranch::select(void) const {
+    IntValBranch::select() const {
         return s;
     }
 
     inline IntValBranch
-    INT_VAL_MIN(void) {
+    INT_VAL_MIN() {
         return IntValBranch(IntValBranch::SEL_MIN);
     }
 
     inline IntValBranch
-    INT_VAL_MED(void) {
+    INT_VAL_MED() {
         return IntValBranch(IntValBranch::SEL_MED);
     }
 
     inline IntValBranch
-    INT_VAL_MAX(void) {
+    INT_VAL_MAX() {
         return IntValBranch(IntValBranch::SEL_MAX);
     }
 
@@ -70,22 +70,22 @@ namespace Gecode {
     }
 
     inline IntValBranch
-    INT_VAL_SPLIT_MIN(void) {
+    INT_VAL_SPLIT_MIN() {
         return IntValBranch(IntValBranch::SEL_SPLIT_MIN);
     }
 
     inline IntValBranch
-    INT_VAL_SPLIT_MAX(void) {
+    INT_VAL_SPLIT_MAX() {
         return IntValBranch(IntValBranch::SEL_SPLIT_MAX);
     }
 
     inline IntValBranch
-    INT_VAL_RANGE_MIN(void) {
+    INT_VAL_RANGE_MIN() {
         return IntValBranch(IntValBranch::SEL_RANGE_MIN);
     }
 
     inline IntValBranch
-    INT_VAL_RANGE_MAX(void) {
+    INT_VAL_RANGE_MAX() {
         return IntValBranch(IntValBranch::SEL_RANGE_MAX);
     }
 
@@ -95,12 +95,12 @@ namespace Gecode {
     }
 
     inline IntValBranch
-    INT_VALUES_MIN(void) {
+    INT_VALUES_MIN() {
         return IntValBranch(IntValBranch::SEL_VALUES_MIN);
     }
 
     inline IntValBranch
-    INT_VALUES_MAX(void) {
+    INT_VALUES_MAX() {
         return IntValBranch(IntValBranch::SEL_VALUES_MAX);
     }
 
@@ -117,17 +117,17 @@ namespace Gecode {
         : ValBranch<BoolVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline BoolValBranch::Select
-    BoolValBranch::select(void) const {
+    BoolValBranch::select() const {
         return s;
     }
 
     inline BoolValBranch
-    BOOL_VAL_MIN(void) {
+    BOOL_VAL_MIN() {
         return BoolValBranch(BoolValBranch::SEL_MIN);
     }
 
     inline BoolValBranch
-    BOOL_VAL_MAX(void) {
+    BOOL_VAL_MAX() {
         return BoolValBranch(BoolValBranch::SEL_MAX);
     }
 

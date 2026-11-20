@@ -37,23 +37,23 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     forceinline
-    FloatDelta::FloatDelta(void)
+    FloatDelta::FloatDelta()
         : _min(1), _max(0) {}
     forceinline
     FloatDelta::FloatDelta(FloatNum min, FloatNum max)
         : _min(min), _max(max) {}
     forceinline FloatNum
-    FloatDelta::min(void) const {
+    FloatDelta::min() const {
         return _min;
     }
     forceinline FloatNum
-    FloatDelta::max(void) const {
+    FloatDelta::max() const {
         return _max;
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

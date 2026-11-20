@@ -32,7 +32,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     /*
      * The propagation controller
@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     forceinline bool
-    DomCtrl<View>::available(void) {
+    DomCtrl<View>::available() {
         return g;
     }
 
@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     ExecStatus
-    DomCtrl<View>::sync(void) {
+    DomCtrl<View>::sync() {
         g.purge();
         return g.sync() ? ES_OK : ES_FAILED;
     }
@@ -67,6 +67,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return g.prune(home, assigned);
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

@@ -35,7 +35,7 @@
 #include <climits>
 #include <unordered_map>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     namespace {
 
@@ -87,7 +87,7 @@ namespace Gecode { namespace Instance {
             /// Upper bound, included
             long long int hi;
             /// Initialize without bounds
-            Range(void) : low(false), high(false), lo(0), hi(0) {}
+            Range() : low(false), high(false), lo(0), hi(0) {}
             /// Test whether \a v is in the range
             bool
             contains(long long int v) const {
@@ -95,7 +95,7 @@ namespace Gecode { namespace Instance {
             }
             /// Test whether there are bounds
             bool
-            bounded(void) const {
+            bounded() const {
                 return low || high;
             }
         };
@@ -111,7 +111,7 @@ namespace Gecode { namespace Instance {
             Domain(const Type& t, const Range& r) : type(t), range(r) {}
             /// Return a description of the values, for messages
             std::string
-            describe(void) const {
+            describe() const {
                 std::string d = Instance::describe(type.read);
                 if (range.bounded())
                     d = "an int in " + (range.low ? std::to_string(range.lo) : "") + ".." +
@@ -603,7 +603,7 @@ namespace Gecode { namespace Instance {
             /// Match item \a k of \a p at position \a c of line \a l
             bool
             match_item(const Pattern& p, int k, const std::string& l, size_t& c, Seq<Capture>& caps) {
-                typedef Pattern::Item Item;
+                using Item = Pattern::Item;
                 const Item& it = p.items[k];
                 switch (it.kind) {
                 case Item::Kind::SPACE: {
@@ -1004,7 +1004,7 @@ namespace Gecode { namespace Instance {
              * the name, and may not be while the name is not defined yet.
              */
             bool
-            may_be_skipped(void) const {
+            may_be_skipped() const {
                 if (current == 0)
                     return false;
                 if (catalog)
@@ -1328,12 +1328,12 @@ namespace Gecode { namespace Instance {
                                 fail("expected a symbol for row " + std::to_string(i + 1) + ", column " +
                                      std::to_string(j + 1) + ", found end of input");
                             ch = in.text[in.pos];
-                            if (t.strip.find(ch) == std::string::npos)
+                            if (!t.strip.contains(ch))
                                 break;
                             in.advance(in.pos + 1);
                         }
                         size_t k = t.alphabet.find(ch);
-                        if (t.blank.find(ch) != std::string::npos) {
+                        if (t.blank.contains(ch)) {
                             g.ints.push(0);
                         } else if (k != std::string::npos) {
                             long long int v;
@@ -1370,6 +1370,6 @@ namespace Gecode { namespace Instance {
         return r;
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

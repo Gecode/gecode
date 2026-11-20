@@ -41,7 +41,7 @@
  * Todo: make the propagators incremental.
  */
 
-namespace Gecode { namespace Set { namespace Distinct {
+namespace Gecode::Set::Distinct {
 
     /*
      * "AtMostOneIntersection" propagator
@@ -148,6 +148,6 @@ namespace Gecode { namespace Set { namespace Distinct {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Distinct
+} // namespace Gecode::Set::Distinct
 
 // STATISTICS: set-prop

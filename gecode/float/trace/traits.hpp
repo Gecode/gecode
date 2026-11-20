@@ -36,9 +36,9 @@ namespace Gecode {
     template <>
     class TraceTraits<Float::FloatView> {
     public:
-        typedef Float::FloatTraceView TraceView;
-        typedef FloatTraceDelta TraceDelta;
-        typedef FloatNum SlackValue;
+        using TraceView = Float::FloatTraceView;
+        using TraceDelta = FloatTraceDelta;
+        using SlackValue = FloatNum;
     };
 
 } // namespace Gecode

@@ -45,7 +45,7 @@
  * \brief %Channel propagators
  */
 
-namespace Gecode { namespace Float { namespace Channel {
+namespace Gecode::Float::Channel {
 
     /**
      * \brief %Propagator for bounds consistent integer part operator
@@ -73,7 +73,7 @@ namespace Gecode { namespace Float { namespace Channel {
         static ExecStatus post(Home home, A x0, B x1);
     };
 
-}}} // namespace Gecode::Float::Channel
+} // namespace Gecode::Float::Channel
 
 #include <gecode/float/channel/channel.hpp>
 

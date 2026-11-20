@@ -37,10 +37,10 @@
 #include <gecode/set/rel-op.hh>
 #include <gecode/set/int.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     template <class View0, class View1>
-    forceinline void
+    static forceinline void
     rel_post(Home home, View0 x0, SetRelType r, View1 x1) {
         using namespace Set::Rel;
         using namespace Set::RelOp;
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set {
     }
 
     template <class View0, class View1, ReifyMode rm>
-    forceinline void
+    static forceinline void
     rel_re(Home home, View0 x, SetRelType r, View1 y, BoolVar b) {
         using namespace Set::Rel;
         using namespace Set::RelOp;
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set {
         }
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 namespace Gecode {
 

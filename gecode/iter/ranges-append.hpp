@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief %Range iterator for appending two range iterators
@@ -53,7 +53,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Append(void) = default;
+        Append() = default;
         /// Initialize with iterator \a i and \a j
         Append(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -63,7 +63,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -90,17 +90,17 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NaryAppend(void) = default;
-        /// Initialize with \a n iterators in \a i
-        NaryAppend(I* i, int n);
-        /// Initialize with \a n iterators in \a i
-        void init(I* i, int n);
+        NaryAppend() = default;
+        /// Initialize with \a n iterators in \a r0
+        NaryAppend(I* r0, int n);
+        /// Initialize with \a n iterators in \a r0
+        void init(I* r0, int n);
         //@}
 
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -111,7 +111,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, class J>
     inline void
-    Append<I, J>::operator++(void) {
+    Append<I, J>::operator++() {
         if (i()) {
             mi = i.min();
             ma = i.max();
@@ -157,7 +157,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     inline void
-    NaryAppend<I>::operator++(void) {
+    NaryAppend<I>::operator++() {
         mi = r[active].min();
         ma = r[active].max();
         ++r[active];
@@ -205,6 +205,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         }
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

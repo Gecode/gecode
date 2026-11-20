@@ -36,7 +36,7 @@
 #include <gecode/gist.hh>
 #include <gecode/gist/qtgist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// Display information about %Gist
     class AboutGist : public QDialog {
@@ -57,8 +57,6 @@ namespace Gecode { namespace Gist {
         Options opt;
         /// Whether search is currently running
         bool is_searching;
-        /// Measure search time
-        Support::Timer search_timer;
         /// Status bar label for maximum depth indicator
         QLabel* depth_label;
         /// Status bar label for number of solutions
@@ -94,19 +92,18 @@ namespace Gecode { namespace Gist {
         /// About dialog
         AboutGist about_gist;
 
-    protected Q_SLOTS:
         /// The status has changed (e.g., new solutions have been found)
         void status_changed(const Statistics& stats, bool finished);
         /// Open the about dialog
-        void about(void);
+        void about();
         /// Open the preferences dialog
         void preferences(bool setup = false);
         /// Populate the inspector menus from the actions found in Gist
-        void populate_inspector_selection(void);
+        void populate_inspector_selection();
         /// Populate the inspector menus from the actions found in Gist
-        void populate_inspectors(void);
+        void populate_inspectors();
         /// Populate the bookmarks menus from the actions found in Gist
-        void populate_bookmarks(void);
+        void populate_bookmarks();
 
     public:
         /// Constructor
@@ -117,7 +114,7 @@ namespace Gecode { namespace Gist {
         void closeEvent(QCloseEvent* event) override;
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

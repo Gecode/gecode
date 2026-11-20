@@ -630,23 +630,23 @@ static const flex_int32_t yy_rule_can_match_eol[57] =
  *
  */
 #line 39 "./gecode/flatzinc/lexer.lxx"
-#if defined __GNUC__
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wsign-compare"
-#elif defined _MSC_VER
+#endif
+#ifdef _MSC_VER
 #pragma warning(push, 1)
 #endif
-
-void yyerror(void*, const char*);
-#define yyerror(s) yyerror(yyextra, s)
 
 #include <cerrno>
 #include <cstdlib>
 
 #include <gecode/flatzinc/parser.hh>
 
-bool parse_int(const char* text, int& value) {
+#define yyerror(s) yyerror(yyextra, s)
+
+static bool parse_int(const char* text, int& value) {
   long int result = strtol(text,nullptr,0);
   if ( (result == LONG_MAX || result == LONG_MIN) && errno == ERANGE )
     return false;
@@ -656,7 +656,7 @@ bool parse_int(const char* text, int& value) {
   return true;
 }
 
-int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
+static int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 #define YY_INPUT(buf, result, max_size) \
   result = yy_input_proc(buf, max_size, yyscanner);
 #line 662 "gecode/flatzinc/lexer.yy.cpp"
@@ -1035,10 +1035,10 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 78 "./gecode/flatzinc/lexer.lxx"
-{ if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
@@ -1048,10 +1048,10 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 #line 87 "./gecode/flatzinc/lexer.lxx"
-{  if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
@@ -1061,10 +1061,10 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 96 "./gecode/flatzinc/lexer.lxx"
-{ if (parse_int(yytext,yylval->int_value))
+{
+                    if (parse_int(yytext,yylval->int_value))
                       return FZ_INT_LIT;
-                    else
-                      yyerror(("The literal '" + std::string(yytext)
+                    yyerror(("The literal '" + std::string(yytext)
                       + "' of the type int is out of range ("
                       + std::to_string(Gecode::Int::Limits::min)
                       + ".." + std::to_string(Gecode::Int::Limits::max)
@@ -2511,7 +2511,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #line 158 "./gecode/flatzinc/lexer.lxx"
 
-int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
+static int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
   Gecode::FlatZinc::ParserState* parm =
     static_cast<Gecode::FlatZinc::ParserState*>(yyget_extra(yyscanner));
   return parm->fill_buffer(buf, size);

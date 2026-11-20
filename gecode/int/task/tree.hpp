@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline int
     plus(int x, int y) {
@@ -48,12 +48,12 @@ namespace Gecode { namespace Int {
 
     template <class TaskView, class Node>
     forceinline int
-    TaskTree<TaskView, Node>::n_inner(void) const {
+    TaskTree<TaskView, Node>::n_inner() const {
         return tasks.size() - 1;
     }
     template <class TaskView, class Node>
     forceinline int
-    TaskTree<TaskView, Node>::n_nodes(void) const {
+    TaskTree<TaskView, Node>::n_nodes() const {
         return 2 * tasks.size() - 1;
     }
 
@@ -105,20 +105,20 @@ namespace Gecode { namespace Int {
 
     template <class TaskView, class Node>
     forceinline const Node&
-    TaskTree<TaskView, Node>::root(void) const {
+    TaskTree<TaskView, Node>::root() const {
         return node[0];
     }
 
     template <class TaskView, class Node>
     forceinline void
-    TaskTree<TaskView, Node>::init(void) {
+    TaskTree<TaskView, Node>::init() {
         for (int i = n_inner(); i--;)
             node[i].init(node[n_left(i)], node[n_right(i)]);
     }
 
     template <class TaskView, class Node>
     forceinline void
-    TaskTree<TaskView, Node>::update(void) {
+    TaskTree<TaskView, Node>::update() {
         for (int i = n_inner(); i--;)
             node[i].update(node[n_left(i)], node[n_right(i)]);
     }
@@ -168,6 +168,6 @@ namespace Gecode { namespace Int {
             _leaf[i] = t._leaf[i];
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

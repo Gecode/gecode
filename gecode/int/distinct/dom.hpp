@@ -32,7 +32,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     template <class View>
     forceinline
@@ -64,8 +64,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     Dom<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::linear(PropCost::LO, x.size());
-        else
-            return PropCost::quadratic(PropCost::HI, x.size());
+        return PropCost::quadratic(PropCost::HI, x.size());
     }
 
     template <class View>
@@ -126,6 +125,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

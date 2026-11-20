@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     template <class View0, class View1, class View2>
     forceinline
@@ -126,18 +126,15 @@ namespace Gecode { namespace Set { namespace RelOp {
         if (shared(x0, x1, x2)) {
             if (allassigned) {
                 return home.ES_SUBSUMED(*this);
-            } else {
-                return ES_NOFIX;
             }
-        } else {
-            if (x0.assigned() + x1.assigned() + x2.assigned() >= 2) {
-                return home.ES_SUBSUMED(*this);
-            } else {
-                return ES_FIX;
-            }
+            return ES_NOFIX;
         }
+        if (x0.assigned() + x1.assigned() + x2.assigned() >= 2) {
+            return home.ES_SUBSUMED(*this);
+        }
+        return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

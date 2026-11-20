@@ -36,7 +36,7 @@
 #include <gecode/gist/nodecursor.hh>
 #include <gecode/gist/visualnode.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief A cursor that computes a tree layout for VisualNodes
     class LayoutCursor : public NodeCursor<VisualNode> {
@@ -47,13 +47,13 @@ namespace Gecode { namespace Gist {
         /// \name Cursor interface
         //@{
         /// Test if the cursor may move to the first child node
-        bool may_move_downwards(void);
+        bool may_move_downwards();
         /// Compute layout for current node
-        void process_current_node(void);
+        void process_current_node();
         //@}
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #include <gecode/gist/layoutcursor.hpp>
 

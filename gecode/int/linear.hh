@@ -44,7 +44,7 @@
  * \brief %Linear propagators
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Binary propagators
@@ -72,9 +72,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a p
         LinBin(Space& home, LinBin& p);
         /// Constructor for rewriting \a p during cloning
-        LinBin(Space& home, Propagator& p, A x0, B x1, Val c);
+        LinBin(Space& home, Propagator& p, A y0, B y1, Val c);
         /// Constructor for creation
-        LinBin(Home home, A x0, B x1, Val c);
+        LinBin(Home home, A y0, B y1, Val c);
 
     public:
         /// Cost function (defined as low binary)
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a p
         ReLinBin(Space& home, ReLinBin& p);
         /// Constructor for creation
-        ReLinBin(Home home, A x0, B x1, Val c, Ctrl b);
+        ReLinBin(Home home, A y0, B y1, Val c, Ctrl b);
 
     public:
         /// Cost function (defined as low binary)
@@ -329,11 +329,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, A x0, B x1, Val c, BoolView b);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/int-bin.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Ternary propagators
@@ -363,9 +363,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a p
         LinTer(Space& home, LinTer& p);
         /// Constructor for creation
-        LinTer(Home home, A x0, B x1, C x2, Val c);
+        LinTer(Home home, A y0, B y1, C y2, Val c);
         /// Constructor for rewriting \a p during cloning
-        LinTer(Space& home, Propagator& p, A x0, B x1, C x2, Val c);
+        LinTer(Space& home, Propagator& p, A y0, B y1, C y2, Val c);
 
     public:
         /// Cost function (defined as low ternary)
@@ -484,11 +484,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/int-ter.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * n-ary propagators
@@ -777,12 +777,12 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/int-nary.hpp>
 #include <gecode/int/linear/int-dom.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Boolean linear propagators
@@ -807,7 +807,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Righthandside
         int c;
         /// Normalize by removing unused views
-        void normalize(void);
+        void normalize();
         /// Constructor for cloning \a p
         LinBoolInt(Space& home, LinBoolInt& p);
         /// Constructor for creation
@@ -916,7 +916,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
-        static ExecStatus post(Home home, ViewArray<VX>& b, int c);
+        static ExecStatus post(Home home, ViewArray<VX>& x, int c);
         /// Delete propagator and return its size
         size_t dispose(Space& home) override;
     };
@@ -939,7 +939,7 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Control variable
         VB b;
         /// Normalize by removing unused views
-        void normalize(void);
+        void normalize();
         /// Constructor for cloning \a p
         ReLinBoolInt(Space& home, ReLinBoolInt& p);
         /// Constructor for creation
@@ -1024,11 +1024,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/bool-int.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /**
      * \brief Base-class for Boolean linear propagators
@@ -1138,11 +1138,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/bool-view.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /// Coefficient and Boolean view
     class ScaleBool {
@@ -1163,7 +1163,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Default constructor
-        ScaleBoolArray(void) = default;
+        ScaleBoolArray() = default;
         /// Create array with \a n elements
         ScaleBoolArray(Space& home, int n);
         /// Subscribe propagator \a p
@@ -1175,17 +1175,17 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Update \a sba during copying
         void update(Space& home, ScaleBoolArray& sba);
         /// Return pointer to first element
-        ScaleBool* fst(void) const;
+        ScaleBool* fst() const;
         /// Return pointer after last element
-        ScaleBool* lst(void) const;
+        ScaleBool* lst() const;
         /// Set pointer to first element
         void fst(ScaleBool* f);
         /// Set pointer after last element
         void lst(ScaleBool* l);
         /// Test whether array is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return number of elements
-        int size(void) const;
+        int size() const;
 
     private:
         /// For sorting array in decreasing order of coefficients
@@ -1196,14 +1196,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Sort array in decreasing order of coefficients
-        void sort(void);
+        void sort();
     };
 
     /// Empty array of scale Boolean views
     class EmptyScaleBoolArray {
     public:
         /// Default constructor
-        EmptyScaleBoolArray(void) = default;
+        EmptyScaleBoolArray() = default;
         /// Create array with \a n elements
         EmptyScaleBoolArray(Space& home, int n);
         /// Subscribe propagator \a p
@@ -1215,19 +1215,19 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Update \a sba during copying
         void update(Space& home, EmptyScaleBoolArray& esba);
         /// Return pointer to first element
-        ScaleBool* fst(void) const;
+        ScaleBool* fst() const;
         /// Return pointer after last element
-        ScaleBool* lst(void) const;
+        ScaleBool* lst() const;
         /// Set pointer to first element
         void fst(ScaleBool* f);
         /// Set pointer after last element
         void lst(ScaleBool* l);
         /// Test whether array is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Return number of elements
-        int size(void) const;
+        int size() const;
         /// Sort array in decreasing order of coefficients
-        void sort(void);
+        void sort();
     };
 
     /**
@@ -1340,11 +1340,11 @@ namespace Gecode { namespace Int { namespace Linear {
         static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
     };
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/bool-scale.hpp>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /**
      * \brief Class for describing linear term \f$a\cdot x\f$
@@ -1567,7 +1567,7 @@ namespace Gecode { namespace Int { namespace Linear {
     GECODE_INT_EXPORT void post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y, Reify r,
                                 IntPropLevel ipl = IPL_DEF);
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 #include <gecode/int/linear/post.hpp>
 

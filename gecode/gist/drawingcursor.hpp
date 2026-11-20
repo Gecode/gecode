@@ -30,17 +30,17 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     inline void
-    DrawingCursor::move_upwards(void) {
+    DrawingCursor::move_upwards() {
         x -= node()->get_offset();
         y -= Layout::dist_y;
         NodeCursor<VisualNode>::move_upwards();
     }
 
     forceinline bool
-    DrawingCursor::is_clipped(void) {
+    DrawingCursor::is_clipped() {
         if (clipping_rect.width() == 0 && clipping_rect.x() == 0 && clipping_rect.height() == 0 &&
             clipping_rect.y() == 0)
             return false;
@@ -51,24 +51,24 @@ namespace Gecode { namespace Gist {
     }
 
     inline bool
-    DrawingCursor::may_move_downwards(void) {
+    DrawingCursor::may_move_downwards() {
         return NodeCursor<VisualNode>::may_move_downwards() && !node()->is_hidden() &&
                node()->children_layout_is_done() && !is_clipped();
     }
 
     inline void
-    DrawingCursor::move_downwards(void) {
+    DrawingCursor::move_downwards() {
         NodeCursor<VisualNode>::move_downwards();
         x += node()->get_offset();
         y += Layout::dist_y;
     }
 
     inline void
-    DrawingCursor::move_sidewards(void) {
+    DrawingCursor::move_sidewards() {
         x -= node()->get_offset();
         NodeCursor<VisualNode>::move_sidewards();
         x += node()->get_offset();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 // STATISTICS: gist-any

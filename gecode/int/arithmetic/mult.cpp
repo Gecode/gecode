@@ -32,7 +32,7 @@
 
 #include <gecode/int/arithmetic.hh>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /*
      * Bounds consistent multiplication
@@ -184,8 +184,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             long long int b = mll(x0.min(), x1.max());
             long long int c = mll(x0.max(), x1.min());
             long long int d = mll(x0.max(), x1.max());
-            GECODE_ME_CHECK(x2.gq(home, std::min(std::min(a, b), std::min(c, d))));
-            GECODE_ME_CHECK(x2.lq(home, std::max(std::max(a, b), std::max(c, d))));
+            GECODE_ME_CHECK(x2.gq(home, std::min({a, b, c, d})));
+            GECODE_ME_CHECK(x2.lq(home, std::max({a, b, c, d})));
             (void)new (home) MultBnd(home, x0, x1, x2);
         }
         return ES_OK;
@@ -213,8 +213,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MultDom::cost(const Space&, const ModEventDelta& med) const {
         if (IntView::me(med) == ME_INT_DOM)
             return PropCost::ternary(PropCost::HI);
-        else
-            return PropCost::ternary(PropCost::LO);
+        return PropCost::ternary(PropCost::LO);
     }
 
     ExecStatus
@@ -361,8 +360,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             long long int b = mll(x0.min(), x1.max());
             long long int c = mll(x0.max(), x1.min());
             long long int d = mll(x0.max(), x1.max());
-            GECODE_ME_CHECK(x2.gq(home, std::min(std::min(a, b), std::min(c, d))));
-            GECODE_ME_CHECK(x2.lq(home, std::max(std::max(a, b), std::max(c, d))));
+            GECODE_ME_CHECK(x2.gq(home, std::min({a, b, c, d})));
+            GECODE_ME_CHECK(x2.lq(home, std::max({a, b, c, d})));
             (void)new (home) MultDom(home, x0, x1, x2);
         }
         return ES_OK;
@@ -377,6 +376,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return MultPlusDom<MinusView, IntView, MinusView>::post(home, MinusView(x0), x1, MinusView(x2));
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

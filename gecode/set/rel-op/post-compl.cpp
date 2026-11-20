@@ -36,7 +36,7 @@
 #include <gecode/set.hh>
 #include <gecode/set/rel-op.hh>
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     void
     post_compl(Home home, SetView x, SetOpType op, SetView y, SetView z) {
@@ -44,6 +44,6 @@ namespace Gecode { namespace Set { namespace RelOp {
         rel_eq<SetView, SetView, ComplementView<SetView>>(home, x, op, y, cz);
     }
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

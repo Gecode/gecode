@@ -43,7 +43,7 @@ using namespace Gecode;
 class TestSpace : public Space {
 public:
     IntVarArray variables;
-    TestSpace(void) : variables(*this, 2, 0, 2) {
+    TestSpace() : variables(*this, 2, 0, 2) {
         branch(*this, variables, INT_VAR_NONE(), INT_VAL_MIN());
     }
     TestSpace(TestSpace& other) : Space(other) {
@@ -75,5 +75,5 @@ main(int argc, char** argv) {
     widget_window.resize(500, 300);
     widget_window.show();
 
-    return app.exec();
+    return QApplication::exec();
 }

@@ -146,10 +146,9 @@ namespace Gecode {
         if (x.assigned()) {
             c(home);
             return home.failed() ? ES_FAILED : ES_OK;
-        } else {
-            (void)new (home) UnaryWait<View>(home, x, std::move(c));
-            return ES_OK;
         }
+        (void)new (home) UnaryWait<View>(home, x, std::move(c));
+        return ES_OK;
     }
     template <class View>
     size_t
@@ -212,13 +211,11 @@ namespace Gecode {
             GECODE_VALID_FUNCTION(c());
             c()(home);
             return home.failed() ? ES_FAILED : home.ES_SUBSUMED(*this);
-        } else {
-            // Create new subscription
-            x.move_lst(0);
-            assert(!x[0].assigned());
-            x[0].subscribe(home, *this, PC_GEN_ASSIGNED, false);
-            return ES_OK;
-        }
+        } // Create new subscription
+        x.move_lst(0);
+        assert(!x[0].assigned());
+        x[0].subscribe(home, *this, PC_GEN_ASSIGNED, false);
+        return ES_OK;
     }
     template <class View>
     forceinline ExecStatus
@@ -231,15 +228,13 @@ namespace Gecode {
         if (x.size() == 0) {
             c(home);
             return home.failed() ? ES_FAILED : ES_OK;
-        } else {
-            x.unique();
-            if (x.size() == 1) {
-                return UnaryWait<View>::post(home, x[0], std::move(c));
-            } else {
-                (void)new (home) NaryWait<View>(home, x, std::move(c));
-                return ES_OK;
-            }
         }
+        x.unique();
+        if (x.size() == 1) {
+            return UnaryWait<View>::post(home, x[0], std::move(c));
+        }
+        (void)new (home) NaryWait<View>(home, x, std::move(c));
+        return ES_OK;
     }
     template <class View>
     size_t

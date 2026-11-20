@@ -100,12 +100,12 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new GoldenSpiral(*this);
     }
     /// Cost function
     FloatVar
-    cost(void) const override {
+    cost() const override {
         return f[0];
     }
     /// Print solution coordinates

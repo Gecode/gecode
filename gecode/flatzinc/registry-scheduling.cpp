@@ -37,7 +37,7 @@
 #include <gecode/flatzinc/registry-internal.hh>
 #include <gecode/minimodel.hh>
 
-namespace Gecode { namespace FlatZinc { namespace RegistryDetail {
+namespace Gecode::FlatZinc::RegistryDetail {
 
     void
     post_cumulatives(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -218,6 +218,6 @@ namespace Gecode { namespace FlatZinc { namespace RegistryDetail {
         }
     }
 
-}}} // namespace Gecode::FlatZinc::RegistryDetail
+} // namespace Gecode::FlatZinc::RegistryDetail
 
 // STATISTICS: flatzinc-any

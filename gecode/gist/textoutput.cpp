@@ -39,7 +39,7 @@
 #include <gecode/gist/textoutput.hh>
 #include <gecode/gist/gecodelogo.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief An outputstream that prints on a QTextEdit
     class GistOutputStream : public std::basic_ostream<char, std::char_traits<char>> {
@@ -50,23 +50,25 @@ namespace Gecode { namespace Gist {
 
         public:
             void
-            flush(void) {
+            flush() {
                 QTextBlockFormat bf = editor->textCursor().blockFormat();
                 bf.setBottomMargin(0);
                 editor->textCursor().setBlockFormat(bf);
                 editor->append(buffer);
                 buffer.clear();
             }
+            Buf(QTextEdit* e) : editor(e) {}
+
+        protected:
             int
-            overflow(int v = std::char_traits<char>::eof()) override {
+            overflow(int v) override {
                 if (v == '\n') {
                     flush();
                 } else {
-                    buffer += (char)v;
+                    buffer += static_cast<char>(v);
                 }
                 return v;
             }
-            Buf(QTextEdit* e) : editor(e) {}
         };
 
         Buf _buf;
@@ -76,7 +78,7 @@ namespace Gecode { namespace Gist {
             clear();
         }
         void
-        flush(void) {
+        flush() {
             _buf.flush();
         }
     };
@@ -130,17 +132,17 @@ namespace Gecode { namespace Gist {
         resize(600, 300);
     }
 
-    TextOutputI::~TextOutputI(void) {
+    TextOutputI::~TextOutputI() {
         delete os;
     }
 
     std::ostream&
-    TextOutputI::get_stream(void) {
+    TextOutputI::get_stream() {
         return *os;
     }
 
     void
-    TextOutputI::flush(void) {
+    TextOutputI::flush() {
         static_cast<GistOutputStream*>(os)->flush();
     }
 
@@ -154,7 +156,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    TextOutputI::change_stay_on_top(void) {
+    TextOutputI::change_stay_on_top() {
         QPoint p = pos();
         if (stay_on_top->isChecked()) {
             setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
@@ -165,6 +167,6 @@ namespace Gecode { namespace Gist {
         show();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

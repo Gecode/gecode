@@ -32,7 +32,7 @@
 
 #include <gecode/int/channel.hh>
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     /// Iterates the values to be removed as defined by an array of Boolean views
     class BoolIter {
@@ -48,11 +48,11 @@ namespace Gecode { namespace Int { namespace Channel {
         /// Initialize iterator
         BoolIter(const ViewArray<BoolView>& x0, int o0);
         /// Test whether further values available
-        bool operator()(void) const;
+        bool operator()() const;
         /// Return value
-        int val(void) const;
+        int val() const;
         /// Move to the next value
-        void operator++(void);
+        void operator++();
     };
 
     forceinline
@@ -62,16 +62,16 @@ namespace Gecode { namespace Int { namespace Channel {
             i++;
     }
     forceinline bool
-    BoolIter::operator()(void) const {
+    BoolIter::operator()() const {
         return i < x.size();
     }
     forceinline int
-    BoolIter::val(void) const {
+    BoolIter::val() const {
         assert(x[i].zero());
         return i + o;
     }
     forceinline void
-    BoolIter::operator++(void) {
+    BoolIter::operator++() {
         do {
             i++;
         } while ((i < x.size()) && !x[i].zero());
@@ -95,8 +95,7 @@ namespace Gecode { namespace Int { namespace Channel {
     LinkMulti::cost(const Space&, const ModEventDelta& med) const {
         if ((status == S_ONE) || (IntView::me(med) == ME_INT_VAL))
             return PropCost::unary(PropCost::LO);
-        else
-            return PropCost::linear(PropCost::LO, x.size());
+        return PropCost::linear(PropCost::LO, x.size());
     }
 
     void
@@ -237,6 +236,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

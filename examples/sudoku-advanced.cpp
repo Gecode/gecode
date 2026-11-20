@@ -179,7 +179,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SudokuInt(*this);
     }
 
@@ -191,8 +191,9 @@ public:
             if (x[i].assigned()) {
                 print_value(os, x[i].val());
                 os << " ";
-            } else
+            } else {
                 os << ". ";
+            }
             if ((i + 1) % nn == 0)
                 os << '\n' << "  ";
         }
@@ -343,7 +344,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SudokuSet(*this);
     }
 
@@ -402,7 +403,7 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SudokuMixed(*this);
     }
 

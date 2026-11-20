@@ -215,7 +215,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new PerfectSquare(*this);
     }
     /// Print solution

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     template <class View>
     forceinline
@@ -50,8 +50,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitEq<View>::ngl(Space& home, unsigned int a, View x, int n) const {
         if (a == 0)
             return new (home) EqNGL<View>(home, x, n);
-        else
-            return nullptr;
+        return nullptr;
     }
     template <class View>
     forceinline void
@@ -77,8 +76,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitLq<View>::ngl(Space& home, unsigned int a, View x, int n) const {
         if (a == 0)
             return new (home) LqNGL<View>(home, x, n);
-        else
-            return nullptr;
+        return nullptr;
     }
     template <class View>
     forceinline void
@@ -104,8 +102,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGq<View>::ngl(Space& home, unsigned int a, View x, int n) const {
         if (a == 0)
             return new (home) GqNGL<View>(home, x, n);
-        else
-            return nullptr;
+        return nullptr;
     }
     template <class View>
     forceinline void
@@ -131,8 +128,7 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGr<View>::ngl(Space& home, unsigned int a, View x, int n) const {
         if (a == 0)
             return new (home) GqNGL<View>(home, x, n + 1);
-        else
-            return nullptr;
+        return nullptr;
     }
     template <class View>
     forceinline void
@@ -140,6 +136,6 @@ namespace Gecode { namespace Int { namespace Branch {
         o << "var[" << i << "] " << ((a == 0) ? ">" : "<=") << " " << n;
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

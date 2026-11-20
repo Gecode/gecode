@@ -37,7 +37,7 @@
 
 #include <gecode/gist/gecodelogo.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     AboutGist::AboutGist(QWidget* parent) : QDialog(parent) {
 
@@ -201,7 +201,7 @@ namespace Gecode { namespace Gist {
         connect(c, SIGNAL(status_changed(const Statistics&, bool)), this,
                 SLOT(status_changed(const Statistics&, bool)));
 
-        connect(c, SIGNAL(search_finished(void)), this, SLOT(close(void)));
+        connect(c, SIGNAL(search_finished()), this, SLOT(close()));
 
         preferences(true);
         show();
@@ -224,32 +224,12 @@ namespace Gecode { namespace Gist {
             pref_action->setEnabled(true);
         } else if (is_searching && finished) {
             is_searching = false;
-            double ms = search_timer.stop();
-            double s = std::floor(ms / 1000.0);
-            ms -= s * 1000.0;
-            double m = std::floor(s / 60.0);
-            s -= m * 60.0;
-            double h = std::floor(m / 60.0);
-            m -= h * 60.0;
-
-            // QString t;
-            // if (static_cast<int>(h) != 0)
-            //   t += QString().setNum(static_cast<int>(h))+"h ";
-            // if (static_cast<int>(m) != 0)
-            //   t += QString().setNum(static_cast<int>(m))+"m ";
-            // if (static_cast<int>(s) != 0)
-            //   t += QString().setNum(static_cast<int>(s));
-            // else
-            //   t += "0";
-            // t += "."+QString().setNum(static_cast<int>(ms))+"s";
-            // statusBar()->showMessage(QString("Ready (search time ")+t+")");
             statusBar()->showMessage("Ready");
             pref_action->setEnabled(true);
         } else if (!is_searching && !finished) {
             pref_action->setEnabled(false);
             statusBar()->showMessage("Searching");
             is_searching = true;
-            search_timer.start();
         }
         depth_label->setNum(stats.max_depth);
         solved_label->setNum(stats.solutions);
@@ -259,7 +239,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::about(void) {
+    GistMainWindow::about() {
         about_gist.show();
     }
 
@@ -283,7 +263,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::populate_inspector_selection(void) {
+    GistMainWindow::populate_inspector_selection() {
         double_click_inspectors_menu->clear();
         double_click_inspectors_menu->addActions(c->double_click_inspector_group->actions());
         solution_inspectors_menu->clear();
@@ -295,7 +275,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::populate_bookmarks(void) {
+    GistMainWindow::populate_bookmarks() {
         bookmarks_menu->clear();
         bookmarks_menu->addAction(c->bookmark_node);
         bookmarks_menu->addSeparator();
@@ -303,7 +283,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    GistMainWindow::populate_inspectors(void) {
+    GistMainWindow::populate_inspectors() {
         inspect_node_menu->clear();
         inspect_node_menu->addAction(c->inspect);
         inspect_node_menu->addSeparator();
@@ -314,6 +294,6 @@ namespace Gecode { namespace Gist {
         inspect_node_before_fp_menu->addActions(c->inspect_before_fp_group->actions());
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

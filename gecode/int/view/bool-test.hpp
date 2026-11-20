@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Test sharing between Boolean and negated Boolean views
@@ -53,6 +53,6 @@ namespace Gecode { namespace Int {
         return (b0 == b1) ? BT_SAME : BT_NONE;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

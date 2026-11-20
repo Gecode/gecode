@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Manage memory organized into block lists (allocator)
@@ -58,19 +58,19 @@ namespace Gecode { namespace Support {
         /// Size of allocated blocks
         size_t _size;
         /// Allocate additional block
-        void allocate(void);
+        void allocate();
 
     public:
         /// Initialize
         BlockAllocator(A& a);
         /// Free all allocated blocks
-        ~BlockAllocator(void);
+        ~BlockAllocator();
         /// Return allocator used
-        A& allocator(void);
+        A& allocator();
         /// Return memory of size required by \a T
-        T* operator()(void);
+        T* operator()();
         /// Return size of memory required by allocator
-        size_t size(void) const;
+        size_t size() const;
     };
 
     /**
@@ -82,6 +82,10 @@ namespace Gecode { namespace Support {
      */
     template <class T, class A, int blocksize = 512>
     class BlockClient {
+        friend T;
+        /// Default constructor, for the derived class \a T only
+        BlockClient() = default;
+
     public:
         /// Allocate memory from block allocator \a ba
         static void* operator new(size_t s, BlockAllocator<T, A, blocksize>& ba);
@@ -102,7 +106,7 @@ namespace Gecode { namespace Support {
     }
 
     template <class T, class A, int blocksize>
-    forceinline BlockAllocator<T, A, blocksize>::~BlockAllocator(void) {
+    forceinline BlockAllocator<T, A, blocksize>::~BlockAllocator() {
         while (b != nullptr) {
             Block* f = b;
             b = b->next;
@@ -112,13 +116,13 @@ namespace Gecode { namespace Support {
 
     template <class T, class A, int blocksize>
     forceinline A&
-    BlockAllocator<T, A, blocksize>::allocator(void) {
+    BlockAllocator<T, A, blocksize>::allocator() {
         return a;
     }
 
     template <class T, class A, int blocksize>
     forceinline T*
-    BlockAllocator<T, A, blocksize>::operator()(void) {
+    BlockAllocator<T, A, blocksize>::operator()() {
         T* t = --n;
         if (t == &b->b[0])
             allocate();
@@ -127,7 +131,7 @@ namespace Gecode { namespace Support {
 
     template <class T, class A, int blocksize>
     void
-    BlockAllocator<T, A, blocksize>::allocate(void) {
+    BlockAllocator<T, A, blocksize>::allocate() {
         // Allocate another block
         Block* nb = static_cast<Block*>(a.ralloc(sizeof(Block)));
         nb->next = b;
@@ -138,7 +142,7 @@ namespace Gecode { namespace Support {
 
     template <class T, class A, int blocksize>
     forceinline size_t
-    BlockAllocator<T, A, blocksize>::size(void) const {
+    BlockAllocator<T, A, blocksize>::size() const {
         return _size;
     }
 
@@ -154,6 +158,6 @@ namespace Gecode { namespace Support {
         return ba();
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

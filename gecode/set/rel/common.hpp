@@ -54,7 +54,7 @@
         GECODE_ME_CHECK(me);                                                                                           \
     }
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     template <class VX, class VY>
     forceinline bool
@@ -75,6 +75,7 @@ namespace Gecode { namespace Set { namespace Rel {
     }
     forceinline bool
     subsumes_me(ModEvent me0, ModEvent me1, ModEvent me) {
+        // NOLINTNEXTLINE(readability-suspicious-call-argument): combining is symmetric
         ModEvent cme = SetVarImp::me_combine(me0, me1);
         return SetVarImp::me_combine(cme, me) == cme;
     }
@@ -132,6 +133,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return subsumes_me(me0, ME_SET_CARD);
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

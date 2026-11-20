@@ -36,11 +36,11 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     template <class Collect>
     forceinline
-    Asset<Collect>::Completion::Completion(void) {
+    Asset<Collect>::Completion::Completion() {
         // An asset has not been submitted yet.  This initial signal lets the
         // first submission use the same consume-before-reuse handshake as all
         // subsequent submissions.
@@ -49,18 +49,18 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     forceinline void
-    Asset<Collect>::Completion::terminated(void) {
+    Asset<Collect>::Completion::terminated() {
         done.signal();
     }
 
     template <class Collect>
     forceinline void
-    Asset<Collect>::Completion::wait(void) {
+    Asset<Collect>::Completion::wait() {
         done.wait();
     }
 
     forceinline
-    CollectAll::CollectAll(void)
+    CollectAll::CollectAll()
         : solutions(heap) {}
     forceinline bool
     CollectAll::add(Space* s, Asset<CollectAll>*) {
@@ -73,20 +73,20 @@ namespace Gecode { namespace Search { namespace Par {
         return false;
     }
     forceinline bool
-    CollectAll::empty(void) const {
+    CollectAll::empty() const {
         return solutions.empty();
     }
     forceinline Space*
     CollectAll::get(Asset<CollectAll>*&) {
         return solutions.pop();
     }
-    forceinline CollectAll::~CollectAll(void) {
+    forceinline CollectAll::~CollectAll() {
         while (!solutions.empty())
             delete solutions.pop();
     }
 
     forceinline
-    CollectBest::CollectBest(void)
+    CollectBest::CollectBest()
         : b(nullptr), reporter(nullptr) {}
     forceinline bool
     CollectBest::add(Space* s, Asset<CollectBest>* r) {
@@ -109,7 +109,7 @@ namespace Gecode { namespace Search { namespace Par {
         return true;
     }
     forceinline bool
-    CollectBest::empty(void) const {
+    CollectBest::empty() const {
         return reporter == nullptr;
     }
     forceinline Space*
@@ -119,7 +119,7 @@ namespace Gecode { namespace Search { namespace Par {
         reporter = nullptr;
         return b->clone();
     }
-    forceinline CollectBest::~CollectBest(void) {
+    forceinline CollectBest::~CollectBest() {
         delete b;
     }
 
@@ -129,7 +129,7 @@ namespace Gecode { namespace Search { namespace Par {
         stat[0] = s;
     }
 
-    forceinline PortfolioStatistics::~PortfolioStatistics(void) {
+    forceinline PortfolioStatistics::~PortfolioStatistics() {
         heap.free<Statistics>(stat, n);
     }
 
@@ -139,12 +139,12 @@ namespace Gecode { namespace Search { namespace Par {
           _cause(PortfolioStopCause::None) {}
 
     forceinline void
-    PortfolioStop::reset(void) {
+    PortfolioStop::reset() {
         _cause.store(PortfolioStopCause::None, std::memory_order_relaxed);
     }
 
     forceinline PortfolioStopCause
-    PortfolioStop::cause(void) const {
+    PortfolioStop::cause() const {
         return _cause.load(std::memory_order_relaxed);
     }
 
@@ -161,32 +161,32 @@ namespace Gecode { namespace Search { namespace Par {
         : Support::Runnable(false), portfolio(p), engine(e), stop(so), _coverage(c), _parked(false) {}
     template <class Collect>
     forceinline SpokeCoverage
-    Asset<Collect>::coverage(void) const {
+    Asset<Collect>::coverage() const {
         return _coverage;
     }
     template <class Collect>
     forceinline Statistics
-    Asset<Collect>::statistics(void) const {
+    Asset<Collect>::statistics() const {
         return engine->statistics();
     }
     template <class Collect>
     forceinline EndReason
-    Asset<Collect>::end_reason(void) const {
+    Asset<Collect>::end_reason() const {
         return engine->end_reason();
     }
     template <class Collect>
     forceinline Support::Terminator*
-    Asset<Collect>::terminator(void) const {
+    Asset<Collect>::terminator() const {
         return const_cast<Completion*>(&completion);
     }
     template <class Collect>
     forceinline void
-    Asset<Collect>::wait(void) {
+    Asset<Collect>::wait() {
         completion.wait();
     }
     template <class Collect>
     forceinline void
-    Asset<Collect>::wake(void) {
+    Asset<Collect>::wake() {
         static_cast<PortfolioStop*>(stop)->wake();
     }
     template <class Collect>
@@ -196,7 +196,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
     template <class Collect>
     forceinline PortfolioStopCause
-    Asset<Collect>::cause(void) const {
+    Asset<Collect>::cause() const {
         return static_cast<const PortfolioStop*>(stop)->cause();
     }
     template <class Collect>
@@ -206,11 +206,11 @@ namespace Gecode { namespace Search { namespace Par {
     }
     template <class Collect>
     forceinline bool
-    Asset<Collect>::parked(void) const {
+    Asset<Collect>::parked() const {
         return _parked;
     }
     template <class Collect>
-    Asset<Collect>::~Asset(void) {
+    Asset<Collect>::~Asset() {
         delete engine;
         delete stop;
     }
@@ -292,7 +292,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     forceinline void
-    PBS<Collect>::fail(void) {
+    PBS<Collect>::fail() {
         m.acquire();
         if (failure == nullptr)
             failure = std::current_exception();
@@ -306,7 +306,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     void
-    Asset<Collect>::run(void) {
+    Asset<Collect>::run() {
         try {
             Space* s;
             do {
@@ -320,7 +320,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     Space*
-    PBS<Collect>::next(void) {
+    PBS<Collect>::next() {
         m.acquire();
         if (failure != nullptr) {
             std::exception_ptr f = failure;
@@ -413,13 +413,13 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Collect>
     EndReason
-    PBS<Collect>::end_reason(void) const {
+    PBS<Collect>::end_reason() const {
         return end;
     }
 
     template <class Collect>
     Statistics
-    PBS<Collect>::statistics(void) const {
+    PBS<Collect>::statistics() const {
         assert(n_busy == 0);
         Statistics s(stat);
         for (unsigned int i = 0U; i < n_assets; i++)
@@ -446,7 +446,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     template <class Collect>
-    PBS<Collect>::~PBS(void) {
+    PBS<Collect>::~PBS() {
         // A report can make n_busy zero before Asset::run and Thread::Run::exec
         // have returned.  Wait for the completion handshake before deleting the
         // PBS-owned assets.
@@ -458,6 +458,6 @@ namespace Gecode { namespace Search { namespace Par {
         heap.free<Asset<Collect>*>(assets, n_assets);
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

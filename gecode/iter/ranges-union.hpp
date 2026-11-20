@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for computing union (binary)
@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Union(void) = default;
+        Union() = default;
         /// Initialize with iterator \a i and \a j
         Union(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -61,7 +61,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -85,7 +85,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NaryUnion(void);
+        NaryUnion();
         /// Initialize with single iterator \a i
         template <class I>
         NaryUnion(Region& r, I& i);
@@ -121,7 +121,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, class J>
     inline void
-    Union<I, J>::operator++(void) {
+    Union<I, J>::operator++() {
         const bool i_valid = i();
         const bool j_valid = j();
         if (!i_valid && !j_valid) {
@@ -294,7 +294,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
 
     forceinline
-    NaryUnion::NaryUnion(void)
+    NaryUnion::NaryUnion()
         : f(nullptr) {}
 
     template <class I>
@@ -370,10 +370,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     forceinline NaryUnion&
     NaryUnion::operator=(const NaryUnion& m) {
-        f = nullptr;
-        return static_cast<NaryUnion&>(RangeListIter::operator=(m));
+        if (this != &m) {
+            f = nullptr;
+            RangeListIter::operator=(m);
+        }
+        return *this;
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

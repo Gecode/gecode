@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Duplicate of an integer view
     class IntTraceView {
@@ -40,22 +40,22 @@ namespace Gecode { namespace Int {
 
     public:
         /// Default constructor (initializes with no view)
-        IntTraceView(void);
+        IntTraceView();
         /// Duplicate view \a y
         IntTraceView(Space& home, IntView y);
         /// Give access to ranges
-        RangeList* ranges(void) const;
+        RangeList* ranges() const;
         /// Update duplicated view from view \a y and modification delta \a d
         void prune(Space& home, IntView y, const Delta& d);
         /// Update during cloning
-        void update(Space& home, IntTraceView x);
+        void update(Space& home, IntTraceView y);
         /// Return slack measure
         static unsigned long long int slack(IntView x);
     };
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    IntTraceView::IntTraceView(void) {}
+    IntTraceView::IntTraceView() {}
 
     forceinline
     IntTraceView::IntTraceView(Space& home, IntView y) {
@@ -64,7 +64,7 @@ namespace Gecode { namespace Int {
     }
 
     forceinline RangeList*
-    IntTraceView::ranges(void) const {
+    IntTraceView::ranges() const {
         return dom;
     }
 
@@ -120,6 +120,6 @@ namespace Gecode { namespace Int {
         return x.width() - 1;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-trace

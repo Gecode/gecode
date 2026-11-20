@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     // Minimum merit
     forceinline
@@ -102,7 +102,7 @@ namespace Gecode { namespace Set { namespace Branch {
         return x.afc() / static_cast<double>(x.unknown_size());
     }
     forceinline bool
-    MeritAFCSize::notice(void) const {
+    MeritAFCSize::notice() const {
         return false;
     }
     forceinline void
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Branch {
         return action[i] / static_cast<double>(x.unknown_size());
     }
     forceinline bool
-    MeritActionSize::notice(void) const {
+    MeritActionSize::notice() const {
         return true;
     }
     forceinline void
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Branch {
         return chb[i] / static_cast<double>(x.unknown_size());
     }
     forceinline bool
-    MeritCHBSize::notice(void) const {
+    MeritCHBSize::notice() const {
         return true;
     }
     forceinline void
@@ -151,6 +151,6 @@ namespace Gecode { namespace Set { namespace Branch {
         chb.~CHB();
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

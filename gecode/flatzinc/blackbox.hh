@@ -46,31 +46,28 @@
 #include <gecode/float.hh>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     class BlackBoxContext;
 
     /// Model-local context shared by blackbox propagators and search support.
     class BlackBoxContextHandle : public SharedHandle {
     public:
-        BlackBoxContextHandle(void) : SharedHandle() {}
+        BlackBoxContextHandle() = default;
         BlackBoxContextHandle(const BlackBoxContextHandle& handle) = default;
-        BlackBoxContextHandle&
-        operator=(const BlackBoxContextHandle& handle) {
-            return static_cast<BlackBoxContextHandle&>(SharedHandle::operator=(handle));
-        }
+        BlackBoxContextHandle& operator=(const BlackBoxContextHandle& handle) = default;
 
         /// Initialize this context if it is empty.
-        void init(void);
+        void init();
         /// Return the backend selected for one constraint as an opaque handle.
         SharedHandle backend_for_constraint(const std::string& mode, const std::string& target,
                                             const std::vector<std::string>& args) const;
         /// Record the first exception raised during blackbox propagation.
         void fail(std::exception_ptr e) const;
         /// Whether blackbox propagation raised an exception.
-        bool failed(void) const;
+        bool failed() const;
         /// Rethrow the first recorded propagation exception.
-        void rethrow(void) const;
+        void rethrow() const;
     };
 
     /// Access to the model-local blackbox context while posting and searching.
@@ -92,7 +89,7 @@ namespace Gecode { namespace FlatZinc {
                          const std::string& mode, const std::string& target, const std::vector<std::string>& args,
                          const std::vector<int>& reason);
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif // GECODE_FLATZINC_BLACKBOX_HH
 

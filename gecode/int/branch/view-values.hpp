@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /// %Choice storing position and values for integer views
     class GECODE_VTABLE_EXPORT PosValuesChoice : public PosChoice {
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Branch {
         int val(unsigned int a) const;
         /// Deallocate
         GECODE_INT_EXPORT
-        ~PosValuesChoice(void) override;
+        ~PosValuesChoice() override;
         /// Archive into \a e
         GECODE_INT_EXPORT
         void archive(Archive& e) const override;
@@ -195,6 +195,6 @@ namespace Gecode { namespace Int { namespace Branch {
         }
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

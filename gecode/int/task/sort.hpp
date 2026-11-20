@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Sort by earliest start times
     template <class TaskView, bool inc>
@@ -197,6 +197,6 @@ namespace Gecode { namespace Int {
         }
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

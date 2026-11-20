@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Array with arbitrary number of elements
@@ -48,8 +48,8 @@ namespace Gecode { namespace Support {
         int n;
         /// Array elements
         T* x;
-        /// Resize to at least \a n + 1 elements
-        void resize(int n);
+        /// Resize to at least \a i + 1 elements
+        void resize(int i);
 
     public:
         /// Initialize with size \a n
@@ -59,10 +59,10 @@ namespace Gecode { namespace Support {
         /// Copy elements from array \a da
         DynamicArray(const DynamicArray<T, A>& da);
         /// Release memory
-        ~DynamicArray(void);
+        ~DynamicArray();
 
         /// Assign array (copy elements from \a a)
-        const DynamicArray<T, A>& operator=(const DynamicArray<T, A>& da);
+        DynamicArray<T, A>& operator=(const DynamicArray<T, A>& da);
 
         /// Return element at position \a i (possibly resize)
         T& operator[](int i);
@@ -74,7 +74,7 @@ namespace Gecode { namespace Support {
         const T& operator[](unsigned int i) const;
 
         /// Cast in to pointer of type \a T
-        operator T*(void);
+        operator T*();
     };
 
     template <class T, class A>
@@ -95,12 +95,12 @@ namespace Gecode { namespace Support {
     }
 
     template <class T, class A>
-    forceinline DynamicArray<T, A>::~DynamicArray(void) {
+    forceinline DynamicArray<T, A>::~DynamicArray() {
         a.free(x, n);
     }
 
     template <class T, class A>
-    forceinline const DynamicArray<T, A>&
+    forceinline DynamicArray<T, A>&
     DynamicArray<T, A>::operator=(const DynamicArray<T, A>& da) {
         if (this != &da) {
             if (n < da.n) {
@@ -151,10 +151,10 @@ namespace Gecode { namespace Support {
 
     template <class T, class A>
     forceinline DynamicArray<T, A>::
-    operator T*(void) {
+    operator T*() {
         return x;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

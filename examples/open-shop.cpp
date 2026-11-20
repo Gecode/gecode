@@ -79,7 +79,7 @@ protected:
         int p; //< Processing time
         /// Default constructor
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        Task(void) {}
+        Task() {}
         /// Constructor
         Task(int j0, int m0, int p0) : j(j0), m(m0), p(p0) {}
     };
@@ -265,13 +265,13 @@ public:
 
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new OpenShop(*this);
     }
 
     /// Minimize the makespan
     IntVar
-    cost(void) const override {
+    cost() const override {
         return makespan;
     }
 

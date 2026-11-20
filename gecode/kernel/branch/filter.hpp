@@ -43,7 +43,7 @@ namespace Gecode {
     class BrancherFilter {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
 
     protected:
         SharedData<BranchFilter<Var>> f;
@@ -54,11 +54,11 @@ namespace Gecode {
         /// Initialize during cloning
         BrancherFilter(BrancherFilter& bf);
         /// Whether filtering is enabled
-        operator bool(void) const;
+        operator bool() const;
         /// Invoke filter function
         bool operator()(const Space& home, View x, int i) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete object
         void dispose(Space& home);
     };
@@ -68,21 +68,21 @@ namespace Gecode {
     class BrancherNoFilter {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
 
-    public:
         /// Initialize from the empty filter \a bf
         BrancherNoFilter(const BranchFilter<Var>& bf);
         /// Initialize from the empty filter \a bf, moved in as for BrancherFilter
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty filter holds nothing to move
         BrancherNoFilter(BranchFilter<Var>&& bf);
         /// Initialize during cloning
         BrancherNoFilter(BrancherNoFilter& bf);
         /// Whether filtering is enabled
-        operator bool(void) const;
+        operator bool() const;
         /// Invoke filter function
         bool operator()(const Space& home, View x, int i) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete object
         void dispose(Space& home);
     };
@@ -102,7 +102,7 @@ namespace Gecode {
 
     template <class View>
     forceinline BrancherFilter<View>::
-    operator bool(void) const {
+    operator bool() const {
         return true;
     }
 
@@ -116,7 +116,7 @@ namespace Gecode {
 
     template <class View>
     forceinline bool
-    BrancherFilter<View>::notice(void) const {
+    BrancherFilter<View>::notice() const {
         return true;
     }
 
@@ -135,6 +135,7 @@ namespace Gecode {
 
     template <class View>
     forceinline
+    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty filter holds nothing to move
     BrancherNoFilter<View>::BrancherNoFilter(BranchFilter<Var>&& bf) {
         assert(!bf);
         (void)bf;
@@ -147,7 +148,7 @@ namespace Gecode {
 
     template <class View>
     forceinline BrancherNoFilter<View>::
-    operator bool(void) const {
+    operator bool() const {
         return false;
     }
 
@@ -158,7 +159,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    BrancherNoFilter<View>::notice(void) const {
+    BrancherNoFilter<View>::notice() const {
         return false;
     }
 

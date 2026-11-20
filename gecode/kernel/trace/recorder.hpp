@@ -59,11 +59,11 @@ namespace Gecode {
     class ViewTraceRecorder : public Propagator {
     public:
         /// The corresponding duplicate view type
-        typedef typename TraceTraits<View>::TraceView TraceView;
+        using TraceView = TraceTraits<View>::TraceView;
         /// The corresponding trace delta type
-        typedef typename TraceTraits<View>::TraceDelta TraceDelta;
+        using TraceDelta = TraceTraits<View>::TraceDelta;
         /// The corresponding slack value type
-        typedef typename TraceTraits<View>::SlackValue SlackValue;
+        using SlackValue = TraceTraits<View>::SlackValue;
         /// Collection of slack values
         class Slack {
             template <class ViewForTraceRecorder>
@@ -79,11 +79,11 @@ namespace Gecode {
 
         public:
             /// Return initial slack value
-            SlackValue initial(void) const;
+            SlackValue initial() const;
             /// Return previous slack value
-            SlackValue previous(void) const;
+            SlackValue previous() const;
             /// Return current slack value
-            SlackValue current(void) const;
+            SlackValue current() const;
         };
 
     protected:
@@ -99,7 +99,7 @@ namespace Gecode {
             /// Constructor for cloning \a a
             Idx(Space& home, Idx& a);
             /// Get index of view
-            int idx(void) const;
+            int idx() const;
         };
         /// Duplicate views (old information)
         ViewArray<TraceView> o;
@@ -138,11 +138,11 @@ namespace Gecode {
         /// \name Trace information
         //@{
         /// Return variable being traced at position \a i
-        const typename View::VarType operator[](int i) const;
+        View::VarType operator[](int i) const;
         /// Return number of variables being traced
-        int size(void) const;
+        int size() const;
         /// Provide access to slack information
-        const Slack& slack(void) const;
+        const Slack& slack() const;
         //@}
     };
 
@@ -165,7 +165,6 @@ namespace Gecode {
         /// Constructor for cloning \a p
         TraceRecorder(Space& home, TraceRecorder& p);
 
-    public:
         /// Constructor for creation
         TraceRecorder(Home home, const TraceFilter& tf, int te, Tracer& t);
         /// Copy propagator during cloning
@@ -183,11 +182,11 @@ namespace Gecode {
         /// \name Trace information
         //@{
         /// Return trace filter
-        const TraceFilter& filter(void) const;
+        const TraceFilter& filter() const;
         /// Which events to trace
-        int events(void) const;
+        int events() const;
         /// Return tracer
-        Tracer& tracer(void) const;
+        Tracer& tracer() const;
         //@}
     };
 
@@ -196,19 +195,19 @@ namespace Gecode {
      *
      */
     template <class View>
-    forceinline const typename View::VarType
+    forceinline View::VarType
     ViewTraceRecorder<View>::operator[](int i) const {
         const typename View::VarType x(n[i].varimp());
         return x;
     }
     template <class View>
     forceinline int
-    ViewTraceRecorder<View>::size(void) const {
+    ViewTraceRecorder<View>::size() const {
         return n.size();
     }
     template <class View>
-    forceinline const typename ViewTraceRecorder<View>::Slack&
-    ViewTraceRecorder<View>::slack(void) const {
+    forceinline const ViewTraceRecorder<View>::Slack&
+    ViewTraceRecorder<View>::slack() const {
         return s;
     }
 
@@ -217,18 +216,18 @@ namespace Gecode {
      *
      */
     template <class View>
-    forceinline typename ViewTraceRecorder<View>::SlackValue
-    ViewTraceRecorder<View>::Slack::initial(void) const {
+    forceinline ViewTraceRecorder<View>::SlackValue
+    ViewTraceRecorder<View>::Slack::initial() const {
         return i;
     }
     template <class View>
-    forceinline typename ViewTraceRecorder<View>::SlackValue
-    ViewTraceRecorder<View>::Slack::previous(void) const {
+    forceinline ViewTraceRecorder<View>::SlackValue
+    ViewTraceRecorder<View>::Slack::previous() const {
         return p;
     }
     template <class View>
-    forceinline typename ViewTraceRecorder<View>::SlackValue
-    ViewTraceRecorder<View>::Slack::current(void) const {
+    forceinline ViewTraceRecorder<View>::SlackValue
+    ViewTraceRecorder<View>::Slack::current() const {
         return c;
     }
 
@@ -247,7 +246,7 @@ namespace Gecode {
         : Advisor(home, a), _idx(a._idx) {}
     template <class View>
     forceinline int
-    ViewTraceRecorder<View>::Idx::idx(void) const {
+    ViewTraceRecorder<View>::Idx::idx() const {
         return _idx;
     }
 
@@ -370,15 +369,15 @@ namespace Gecode {
      *
      */
     forceinline const TraceFilter&
-    TraceRecorder::filter(void) const {
+    TraceRecorder::filter() const {
         return tf;
     }
     forceinline int
-    TraceRecorder::events(void) const {
+    TraceRecorder::events() const {
         return te;
     }
     forceinline Tracer&
-    TraceRecorder::tracer(void) const {
+    TraceRecorder::tracer() const {
         return t;
     }
 

@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     forceinline
     ValCommitLqGq::ValCommitLqGq(Space& home, const ValBranch<Var>& vb)
@@ -48,14 +48,11 @@ namespace Gecode { namespace Float { namespace Branch {
         if ((a == 0) == nl.l) {
             if ((x.min() == nl.n) || (x.max() == nl.n))
                 return x.eq(home, x.min());
-            else
-                return x.lq(home, nl.n);
-        } else {
-            if ((x.min() == nl.n) || (x.max() == nl.n))
-                return x.eq(home, x.max());
-            else
-                return x.gq(home, nl.n);
+            return x.lq(home, nl.n);
         }
+        if ((x.min() == nl.n) || (x.max() == nl.n))
+            return x.eq(home, x.max());
+        return x.gq(home, nl.n);
     }
     forceinline NGL*
     ValCommitLqGq::ngl(Space&, unsigned int, FloatView, FloatNumBranch) const {
@@ -66,6 +63,6 @@ namespace Gecode { namespace Float { namespace Branch {
         o << "var[" << i << "] " << (((a == 0) == nl.l) ? "<=" : ">=") << "(" << nl.n << ")";
     }
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch

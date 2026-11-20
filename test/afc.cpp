@@ -36,6 +36,7 @@
 #include "test/test.hh"
 
 #include <memory>
+#include <stdexcept>
 
 namespace Test {
 
@@ -50,7 +51,7 @@ namespace Test {
 
         public:
             /// Constructor for creation
-            TestSpace(void) : x(*this, 0, 10), y(*this, 0, 10) {}
+            TestSpace() : x(*this, 0, 10), y(*this, 0, 10) {}
             /// Constructor for cloning \a s
             TestSpace(TestSpace& s) : Space(s) {
                 x.update(*this, s.x);
@@ -58,12 +59,12 @@ namespace Test {
             }
             /// Post arbitrary propagator
             void
-            post(void) {
+            post() {
                 Gecode::rel(*this, x, Gecode::IRT_LT, y);
             }
             /// Copy during cloning
             Space*
-            copy(void) override {
+            copy() override {
                 return new TestSpace(*this);
             }
         };
@@ -81,16 +82,16 @@ namespace Test {
         }
         /// Return random index
         int
-        index(void) {
+        index() {
             return _rand(n);
         }
 
     public:
         /// Initialize test
-        AFC(void) : Test::Base("AFC") {}
+        AFC() : Test::Base("AFC") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             // Array of spaces for tests
             TestSpace* s[n];
             // How many spaces exist in s
@@ -151,14 +152,14 @@ namespace Test {
         public:
             Gecode::IntVar x, y;
             Gecode::BoolVar b;
-            TestSpace(void) : x(*this, 0, 10), y(*this, 0, 10), b(*this, 0, 1) {}
+            TestSpace() : x(*this, 0, 10), y(*this, 0, 10), b(*this, 0, 1) {}
             TestSpace(TestSpace& s) : Space(s) {
                 x.update(*this, s.x);
                 y.update(*this, s.y);
                 b.update(*this, s.b);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new TestSpace(*this);
             }
             /// Find a surviving propagator by its identifier
@@ -184,7 +185,7 @@ namespace Test {
 
         /// Check nesting, unwinding, isolation, and posting in a clone
         bool
-        scopes(void) {
+        scopes() {
             using namespace Gecode;
             TestSpace s, other;
             if (s.post().afc() != 1.0)
@@ -197,8 +198,9 @@ namespace Test {
                     Space::NoGPI inner(s);
                     if (s.post().afc() != 0.0)
                         return false;
-                    throw 1;
-                } catch (int) {
+                    throw std::logic_error("Expected");
+                } catch (const std::logic_error&) {
+                    // Expected
                 }
                 if (s.post().afc() != 0.0)
                     return false;
@@ -220,8 +222,9 @@ namespace Test {
                     Space::UseGPI use(s);
                     if (s.post().afc() != 1.0)
                         return false;
-                    throw 1;
-                } catch (int) {
+                    throw std::logic_error("Expected");
+                } catch (const std::logic_error&) {
+                    // Expected
                 }
                 if (s.post().afc() != 0.0)
                     return false;
@@ -232,17 +235,18 @@ namespace Test {
             }
             try {
                 Space::NoGPI context(s);
-                throw 1;
-            } catch (int) {
+                throw std::logic_error("Expected");
+            } catch (const std::logic_error&) {
+                // Expected
             }
             return s.post().afc() == 1.0;
         }
 
         /// Check local groups, disabled pointer tags, and lifetime after cloning
         bool
-        lifetime(void) {
+        lifetime() {
             using namespace Gecode;
-            std::unique_ptr<TestSpace> s(new TestSpace);
+            std::unique_ptr<TestSpace> s = std::make_unique<TestSpace>();
             PropagatorGroup a, b;
             unsigned int id;
             {
@@ -330,9 +334,9 @@ namespace Test {
         }
 
     public:
-        NoGPI(void) : Test::Base("AFC::NoGPI") {}
+        NoGPI() : Test::Base("AFC::NoGPI") {}
         bool
-        run(void) override {
+        run() override {
             return scopes() && lifetime() && failure(false) && failure(true) && rewrite(false) && rewrite(true);
         }
     };

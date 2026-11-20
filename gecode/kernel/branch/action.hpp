@@ -55,24 +55,23 @@ namespace Gecode {
             double* a;
             /// Initialize action values
             template <class View>
-            Storage(Home home, ViewArray<View>& x, double d,
-                    const typename BranchTraits<typename View::VarType>::Merit& bm);
+            Storage(Home home, ViewArray<View>& x, double d, const BranchTraits<typename View::VarType>::Merit& bm);
             /// Update action value at position \a i
             void update(int i);
             /// Delete object
             GECODE_KERNEL_EXPORT
-            ~Storage(void) override;
+            ~Storage() override;
         };
         /// Return object of correct type
-        Storage& object(void) const;
+        Storage& object() const;
         /// Set object to \a o
         void object(Storage& o);
         /// Update action value at position \a i
         void update(int i);
         /// Acquire mutex
-        void acquire(void);
+        void acquire();
         /// Release mutex
-        void release(void);
+        void release();
 
     public:
         /// \name Constructors and initialization
@@ -84,7 +83,7 @@ namespace Gecode {
          * yet initialized action storage is init and the assignment operator.
          *
          */
-        Action(void) = default;
+        Action() = default;
         /// Copy constructor
         GECODE_KERNEL_EXPORT
         Action(const Action& a) = default;
@@ -99,7 +98,7 @@ namespace Gecode {
          */
         template <class View>
         Action(Home home, ViewArray<View>& x, double d, bool p, bool f,
-               const typename BranchTraits<typename View::VarType>::Merit& bm);
+               const BranchTraits<typename View::VarType>::Merit& bm);
         /**
          * \brief Initialize for views \a x and decay factor \a d and action as defined by \a bm
          *
@@ -108,21 +107,21 @@ namespace Gecode {
          */
         template <class View>
         void init(Home home, ViewArray<View>& x, double d, bool p, bool f,
-                  const typename BranchTraits<typename View::VarType>::Merit& bm);
+                  const BranchTraits<typename View::VarType>::Merit& bm);
         /// Default (empty) action information
         GECODE_KERNEL_EXPORT static const Action def;
         //@}
 
         /// Destructor
         GECODE_KERNEL_EXPORT
-        ~Action(void) = default;
+        ~Action() = default;
 
         /// \name Information access
         //@{
         /// Return action value at position \a i
         double operator[](int i) const;
         /// Return number of action values
-        int size(void) const;
+        int size() const;
         //@}
 
         /// \name Decay factor for aging
@@ -153,17 +152,17 @@ namespace Gecode {
             /// Constructor for cloning \a a
             Idx(Space& home, Idx& a);
             /// Mark index as propagated
-            void propagate(void);
+            void propagate();
             /// Mark index as failed
-            void fail(void);
+            void fail();
             /// Whether index has been propagated
-            bool propagated(void) const;
+            bool propagated() const;
             /// Whether index has been failed
-            bool failed(void) const;
+            bool failed() const;
             /// Clear any information
-            void clear(void);
+            void clear();
             /// Get index of view
-            int idx(void) const;
+            int idx() const;
         };
         /// Access to action information
         Action a;
@@ -214,32 +213,32 @@ namespace Gecode {
         : Advisor(home, a), _info(a._info) {}
     template <class View, bool p, bool f>
     forceinline void
-    Action::Recorder<View, p, f>::Idx::propagate(void) {
+    Action::Recorder<View, p, f>::Idx::propagate() {
         _info |= 1U;
     }
     template <class View, bool p, bool f>
     forceinline void
-    Action::Recorder<View, p, f>::Idx::fail(void) {
+    Action::Recorder<View, p, f>::Idx::fail() {
         _info |= 2U;
     }
     template <class View, bool p, bool f>
     forceinline bool
-    Action::Recorder<View, p, f>::Idx::propagated(void) const {
+    Action::Recorder<View, p, f>::Idx::propagated() const {
         return (_info & 1U) != 0;
     }
     template <class View, bool p, bool f>
     forceinline bool
-    Action::Recorder<View, p, f>::Idx::failed(void) const {
+    Action::Recorder<View, p, f>::Idx::failed() const {
         return (_info & 2U) != 0;
     }
     template <class View, bool p, bool f>
     forceinline void
-    Action::Recorder<View, p, f>::Idx::clear(void) {
+    Action::Recorder<View, p, f>::Idx::clear() {
         _info &= ~3U;
     }
     template <class View, bool p, bool f>
     forceinline int
-    Action::Recorder<View, p, f>::Idx::idx(void) const {
+    Action::Recorder<View, p, f>::Idx::idx() const {
         return static_cast<int>(_info >> 2);
     }
 
@@ -272,7 +271,7 @@ namespace Gecode {
     template <class View>
     forceinline
     Action::Storage::Storage(Home home, ViewArray<View>& x, double d,
-                             const typename BranchTraits<typename View::VarType>::Merit& bm)
+                             const BranchTraits<typename View::VarType>::Merit& bm)
         : n(x.size()), invd(1.0 / d), a((n > 0) ? heap.alloc<double>(n) : nullptr) {
         if (bm)
             for (int i = 0; i < n; i++) {
@@ -302,7 +301,7 @@ namespace Gecode {
      */
 
     forceinline Action::Storage&
-    Action::object(void) const {
+    Action::object() const {
         return static_cast<Action::Storage&>(*SharedHandle::object());
     }
 
@@ -321,22 +320,22 @@ namespace Gecode {
         return object().a[i];
     }
     forceinline int
-    Action::size(void) const {
+    Action::size() const {
         return object().n;
     }
     forceinline void
-    Action::acquire(void) {
-        object().m.acquire();
+    Action::acquire() {
+        Gecode::Action::Storage::m.acquire();
     }
     forceinline void
-    Action::release(void) {
-        object().m.release();
+    Action::release() {
+        Gecode::Action::Storage::m.release();
     }
 
     template <class View>
     forceinline
     Action::Action(Home home, ViewArray<View>& x, double d, bool p, bool f,
-                   const typename BranchTraits<typename View::VarType>::Merit& bm) {
+                   const BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         if (!p && !f)
             return;
@@ -353,7 +352,7 @@ namespace Gecode {
     template <class View>
     forceinline void
     Action::init(Home home, ViewArray<View>& x, double d, bool p, bool f,
-                 const typename BranchTraits<typename View::VarType>::Merit& bm) {
+                 const BranchTraits<typename View::VarType>::Merit& bm) {
         assert(!*this);
         if (!p && !f)
             return;
@@ -434,9 +433,8 @@ namespace Gecode {
         if (p) {
             a.propagate();
             return ES_NOFIX;
-        } else {
-            return x[a.idx()].assigned() ? home.ES_FIX_DISPOSE(c, a) : ES_FIX;
         }
+        return x[a.idx()].assigned() ? home.ES_FIX_DISPOSE(c, a) : ES_FIX;
     }
 
     template <class View, bool p, bool f>

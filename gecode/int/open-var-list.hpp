@@ -53,7 +53,7 @@ namespace Gecode {
         Var* x;
         int n;
         int capacity;
-        typedef std::unordered_set<const void*> VarImpSet;
+        using VarImpSet = std::unordered_set<const void*>;
         VarImpSet identities;
         // Only committed positions are indexed. Assigned variables need no alias
         // check, so their entries need not be removed.
@@ -140,7 +140,7 @@ namespace Gecode {
         }
 
         void
-        reserve(void) {
+        reserve() {
             if (n == capacity) {
                 int next = (capacity < 4) ? 4 : capacity + std::min(capacity / 2, Int::Limits::max - capacity);
                 x = heap.realloc<Var>(x, capacity, next);
@@ -210,13 +210,13 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Materialize positions required by the minimum eventual length
     template <class Var>
     class OpenMaterialize : public Propagator, private LocalHandle {
     protected:
-        typedef typename OpenVarList<Var>::Object Object;
+        using Object = OpenVarList<Var>::Object;
         IntView length;
 
         OpenMaterialize(Home home, Object* source) : Propagator(home), LocalHandle(source), length(source->length) {
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int {
         }
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 namespace Gecode {
 
@@ -305,7 +305,7 @@ namespace Gecode {
 
     template <class Var>
     int
-    OpenVarList<Var>::known_length(void) const {
+    OpenVarList<Var>::known_length() const {
         return static_cast<Object*>(object())->n;
     }
 
@@ -319,7 +319,7 @@ namespace Gecode {
 
     template <class Var>
     IntVar
-    OpenVarList<Var>::length(void) const {
+    OpenVarList<Var>::length() const {
         return static_cast<Object*>(object())->length;
     }
 
@@ -385,7 +385,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Construct an element view without changing the shared source list
     template <class View>
@@ -400,7 +400,7 @@ namespace Gecode { namespace Int {
         return MinusView(IntView(x));
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 namespace Gecode {
 
@@ -415,7 +415,7 @@ namespace Gecode {
 
     template <class View>
     int
-    OpenViewList<View>::known_length(void) const {
+    OpenViewList<View>::known_length() const {
         return static_cast<Object*>(object())->n;
     }
 
@@ -429,7 +429,7 @@ namespace Gecode {
 
     template <class View>
     Int::IntView
-    OpenViewList<View>::length(void) const {
+    OpenViewList<View>::length() const {
         return Int::IntView(static_cast<Object*>(object())->length);
     }
 

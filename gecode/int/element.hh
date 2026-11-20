@@ -44,7 +44,7 @@
  * \brief %Element propagators
  */
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     /**
      * \brief %Element propagator for array of integers
@@ -70,9 +70,9 @@ namespace Gecode { namespace Int { namespace Element {
             Idx idx;      ///< The index
             Val val;      ///< The value
             /// Mark that this pair should be removed
-            void mark(void);
+            void mark();
             /// Return whether this pair is marked for removal
-            bool marked(void) const;
+            bool marked() const;
         };
         /**
          * \brief Value iterator for indices in index-value map
@@ -88,11 +88,11 @@ namespace Gecode { namespace Int { namespace Element {
             /// Initialize with start
             IterIdxUnmark(IdxVal* iv);
             /// Test whether more pairs to be iterated
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move to next index value pair (next index)
-            void operator++(void);
+            void operator++();
             /// Return index of current index value pair
-            Idx val(void) const;
+            Idx val() const;
         };
         /**
          * \brief Value iterator for values in index-value map
@@ -108,11 +108,11 @@ namespace Gecode { namespace Int { namespace Element {
             /// Initialize with start
             IterVal(IdxVal* iv);
             /// Test whether more pairs to be iterated
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move to next index value pair (next value)
-            void operator++(void);
+            void operator++();
             /// Return value of current index value pair
-            Val val(void) const;
+            Val val() const;
         };
         /**
          * \brief Value iterator for values in index-value map
@@ -130,11 +130,11 @@ namespace Gecode { namespace Int { namespace Element {
             /// Initialize with start
             IterValUnmark(IdxVal* iv);
             /// Test whether more pairs to be iterated
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move to next index value pair (next value)
-            void operator++(void);
+            void operator++();
             /// Return value of current index value pair
-            Val val(void) const;
+            Val val() const;
         };
         /// Sorting pointers to (index,value) pairs in value order
         class ByVal {
@@ -150,13 +150,13 @@ namespace Gecode { namespace Int { namespace Element {
         /// View for index
         V0 x0;
         /// Type for index size
-        typedef typename Gecode::Support::IntTypeTraits<Idx>::utype IdxSize;
+        using IdxSize = Gecode::Support::IntTypeTraits<Idx>::utype;
         /// Size of \a x0 at last execution
         IdxSize s0;
         /// View for result
         V1 x1;
         /// Type for value size
-        typedef typename Gecode::Support::IntTypeTraits<Val>::utype ValSize;
+        using ValSize = Gecode::Support::IntTypeTraits<Val>::utype;
         /// Size of \a x1 at last execution
         ValSize s1;
         /// Shared array of integer values
@@ -164,15 +164,15 @@ namespace Gecode { namespace Int { namespace Element {
         /// The index-value data structure
         IdxVal* iv;
         /// Prune index according to \a x0
-        void prune_idx(void);
+        void prune_idx();
         /// Prune values according to \a x1
-        void prune_val(void);
+        void prune_val();
         /// Prune when \a x1 is assigned
         static ExecStatus assigned_val(Space& home, IntSharedArray& c, V0 x0, V1 x1);
         /// Constructor for cloning \a p
         Int(Space& home, Int& p);
         /// Constructor for creation
-        Int(Home home, IntSharedArray& i, V0 x0, V1 x1);
+        Int(Home home, IntSharedArray& c0, V0 y0, V1 y1);
 
     public:
         /// Perform copying during cloning
@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Element {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$i_{x_0}=x_1\f$
-        static ExecStatus post(Home home, IntSharedArray& i, V0 x0, V1 x1);
+        static ExecStatus post(Home home, IntSharedArray& c, V0 x0, V1 x1);
         /// Delete propagator and return its size
         size_t dispose(Space& home) override;
     };
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int { namespace Element {
         /// Constructor for cloning \a p
         View(Space& home, View& p);
         /// Constructor for creation
-        View(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
+        View(Home home, IdxViewArray<VA>& iv, VB y0, VC y1);
 
     public:
         // Cost function (defined as low linear)
@@ -342,7 +342,7 @@ namespace Gecode { namespace Int { namespace Element {
         GECODE_INT_EXPORT ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 #include <gecode/int/element/int.hpp>
 #include <gecode/int/element/view.hpp>

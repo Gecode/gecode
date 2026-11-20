@@ -36,7 +36,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     class IntVarImp;
     class BoolVarImp;
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int {
         int _max; ///< Largest value just pruned
     public:
         /// Create integer delta as providing no information
-        IntDelta(void);
+        IntDelta();
         /// Create integer delta with \a min and \a max
         IntDelta(int min, int max);
         /// Create integer delta with \a min
@@ -64,20 +64,20 @@ namespace Gecode { namespace Int {
 
     private:
         /// Return minimum
-        int min(void) const;
+        int min() const;
         /// Return maximum
-        int max(void) const;
+        int max() const;
         /// Return width
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Test whether any domain change has happened
-        bool any(void) const;
+        bool any() const;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/var-imp/delta.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     class IntVarImpFwd;
     class IntVarImpBwd;
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int {
             /// \name Constructors
             //@{
             /// Default constructor (noop)
-            RangeList(void);
+            RangeList();
             /// Initialize with minimum \a min and maximum \a max
             RangeList(int min, int max);
             /// Initialize with minimum \a min and maximum \a max and predecessor \a p and successor \a n
@@ -122,11 +122,11 @@ namespace Gecode { namespace Int {
             /// \name Access
             //@{
             /// Return minimum
-            int min(void) const;
+            int min() const;
             /// Return maximum
-            int max(void) const;
+            int max() const;
             /// Return width (distance between maximum and minimum)
-            unsigned int width(void) const;
+            unsigned int width() const;
 
             /// Return next element (from previous \a p)
             RangeList* next(const RangeList* p) const;
@@ -192,17 +192,16 @@ namespace Gecode { namespace Int {
         /// Link the last element
         RangeList* _lst;
         /// Return first element of rangelist
-        RangeList* fst(void) const;
+        RangeList* fst() const;
         /// Set first element of rangelist
         void fst(RangeList* f);
         /// Return last element of rangelist
-        RangeList* lst(void) const;
+        RangeList* lst() const;
         /// Set last element of rangelist
         void lst(RangeList* l);
         /// Size of holes in the domain
         unsigned int holes;
 
-    protected:
         /// Constructor for cloning \a x
         IntVarImp(Space& home, IntVarImp& x);
 
@@ -215,22 +214,22 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
         /// Return median of domain (greatest element not greater than the median)
-        GECODE_INT_EXPORT int med(void) const;
+        GECODE_INT_EXPORT int med() const;
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
     private:
@@ -241,9 +240,9 @@ namespace Gecode { namespace Int {
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether variable is assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
         /// Test whether \a n is contained in domain
         bool in(int n) const;
@@ -255,14 +254,14 @@ namespace Gecode { namespace Int {
         /// \name Range list access for iteration
         //@{
         /// Return range list for forward iteration
-        const RangeList* ranges_fwd(void) const;
+        const RangeList* ranges_fwd() const;
         /// Return range list for backward iteration
-        const RangeList* ranges_bwd(void) const;
+        const RangeList* ranges_bwd() const;
         //@}
 
     private:
         /// Test whether \a n is closer to the minimum or maximum
-        bool closer_min(int b) const;
+        bool closer_min(int n) const;
         /// \name Domain update by value (full domain)
         //@{
         /// Restrict domain values to be less or equal than \a n
@@ -289,13 +288,13 @@ namespace Gecode { namespace Int {
 
         /// Restrict domain values to be different from \a n
         ModEvent nq(Space& home, int n);
-        /// Restrict domain values to be different from \a n
-        ModEvent nq(Space& home, long long int n);
+        /// Restrict domain values to be different from \a d
+        ModEvent nq(Space& home, long long int d);
 
         /// Restrict domain values to be equal to \a n
         ModEvent eq(Space& home, int n);
-        /// Restrict domain values to be equal to \a n
-        ModEvent eq(Space& home, long long int n);
+        /// Restrict domain values to be equal to \a m
+        ModEvent eq(Space& home, long long int m);
         //@}
 
         /**
@@ -403,7 +402,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVarImpFwd(void) = default;
+        IntVarImpFwd() = default;
         /// Initialize with ranges from variable implementation \a x
         IntVarImpFwd(const IntVarImp* x);
         /// Initialize with ranges from variable implementation \a x
@@ -413,19 +412,19 @@ namespace Gecode { namespace Int {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -447,7 +446,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntVarImpBwd(void) = default;
+        IntVarImpBwd() = default;
         /// Initialize with ranges from variable implementation \a x
         IntVarImpBwd(const IntVarImp* x);
         /// Initialize with ranges from variable implementation \a x
@@ -457,23 +456,23 @@ namespace Gecode { namespace Int {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to previous range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/var-imp/int.hpp>
 
@@ -483,10 +482,10 @@ namespace Gecode {
     class BoolVar;
 } // namespace Gecode
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Type for status of a Boolean variable
-    typedef unsigned int BoolStatus;
+    using BoolStatus = unsigned int;
 
     /**
      * \brief Boolean variable implementation
@@ -531,46 +530,46 @@ namespace Gecode { namespace Int {
         /// Status of domain not yet assigned
         static const BoolStatus unassigned_status = 2;
         /// Return current domain status
-        BoolStatus status(void) const;
+        BoolStatus status() const;
         //@}
 
         /// \name Value access
         //@{
         /// Return minimum of domain
-        int min(void) const;
+        int min() const;
         /// Return maximum of domain
-        int max(void) const;
+        int max() const;
         /// Return assigned value (only if assigned)
-        int val(void) const;
+        int val() const;
         /// Return median of domain (greatest element not greater than the median)
-        int med(void) const;
+        int med() const;
 
         /// Return size (cardinality) of domain
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return width of domain (distance between maximum and minimum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         /// Return regret of domain minimum (distance to next larger value)
-        unsigned int regret_min(void) const;
+        unsigned int regret_min() const;
         /// Return regret of domain maximum (distance to next smaller value)
-        unsigned int regret_max(void) const;
+        unsigned int regret_max() const;
         //@}
 
         /// \name Boolean domain tests
         //@{
         /// Test whether variable is assigned to zero
-        bool zero(void) const;
+        bool zero() const;
         /// Test whether variable is assigned to one
-        bool one(void) const;
+        bool one() const;
         /// Test whether variable is not yet assigned
-        bool none(void) const;
+        bool none() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether domain is a range
-        bool range(void) const;
+        bool range() const;
         /// Test whether variable is assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
         /// Test whether \a n is contained in domain
         bool in(int n) const;
@@ -649,7 +648,6 @@ namespace Gecode { namespace Int {
         GECODE_INT_EXPORT ModEvent one_none(Space& home);
         //@}
 
-    public:
         /// \name Dependencies
         //@{
         /**
@@ -724,7 +722,7 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/var-imp/bool.hpp>
 

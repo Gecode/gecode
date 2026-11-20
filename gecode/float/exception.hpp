@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /**
      * \defgroup FuncThrowFloat Float exceptions
@@ -120,6 +120,6 @@ namespace Gecode { namespace Float {
 
     //@}
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-other

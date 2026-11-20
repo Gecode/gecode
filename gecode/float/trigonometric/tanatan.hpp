@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Trigonometric {
+namespace Gecode::Float::Trigonometric {
     /*
      * ATan projection function
      *
@@ -244,6 +244,6 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
-}}} // namespace Gecode::Float::Trigonometric
+} // namespace Gecode::Float::Trigonometric
 
 // STATISTICS: float-prop

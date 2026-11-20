@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     template <class S>
     VarComparator<S>::VarComparator(const std::string& name) : TextOutput(name) {}
@@ -40,7 +40,7 @@ namespace Gecode { namespace Gist {
     VarComparator<S>::compare(const Space& s0, const Space& s1) {
         std::ostringstream result;
         dynamic_cast<const S&>(s0).compare(s1, result);
-        if (result.str() != "") {
+        if (!result.str().empty()) {
             init();
             add_html("<pre>\n");
             get_stream() << result.str() << '\n';
@@ -50,13 +50,13 @@ namespace Gecode { namespace Gist {
 
     template <class S>
     std::string
-    VarComparator<S>::name(void) {
+    VarComparator<S>::name() {
         return TextOutput::name();
     }
 
     template <class S>
     void
-    VarComparator<S>::finalize(void) {
+    VarComparator<S>::finalize() {
         TextOutput::finalize();
     }
 
@@ -115,7 +115,7 @@ namespace Gecode { namespace Gist {
             std::ostringstream xni;
             xni << x_n << "[" << i << "]";
             std::string cmp = compare(xni.str(), x[i], y[i]);
-            if (cmp != "") {
+            if (!cmp.empty()) {
                 if (!first) {
                     ret << ", ";
                 } else {
@@ -142,18 +142,18 @@ namespace Gecode { namespace Gist {
 
     template <class S>
     std::string
-    Print<S>::name(void) {
+    Print<S>::name() {
         return TextOutput::name();
     }
 
     template <class S>
     void
-    Print<S>::finalize(void) {
+    Print<S>::finalize() {
         TextOutput::finalize();
     }
 
     forceinline
-    Options::I_::I_(void)
+    Options::I_::I_()
         : _click(heap, 1), n_click(0), _solution(heap, 1), n_solution(0), _move(heap, 1), n_move(0), _compare(heap, 1),
           n_compare(0) {}
 
@@ -200,6 +200,6 @@ namespace Gecode { namespace Gist {
         return Gist::explore(root, true, opt);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

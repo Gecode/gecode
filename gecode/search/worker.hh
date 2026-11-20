@@ -33,9 +33,10 @@
 #ifndef GECODE_SEARCH_WORKER_HH
 #define GECODE_SEARCH_WORKER_HH
 
+#include <algorithm>
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /**
      * \brief %Search worker statistics
@@ -49,17 +50,17 @@ namespace Gecode { namespace Search {
 
     public:
         /// Initialize
-        Worker(void);
+        Worker();
         /// Reset stop information
-        void start(void);
+        void start();
         /// Check whether engine must be stopped
         bool stop(const Options& o);
         /// Check stop and wait for admission of a sequential worker
         bool stop_seq(Options& o);
         /// Check whether engine has been stopped
-        bool stopped(void) const;
+        bool stopped() const;
         /// Return why next() returned no solution: Limit if stopped, otherwise Exhausted
-        EndReason end_reason(void) const;
+        EndReason end_reason() const;
         /// Reset statistics with root depth \a d
         void reset(unsigned long int d = 0);
         /// Record stack depth \a d
@@ -69,11 +70,11 @@ namespace Gecode { namespace Search {
     };
 
     forceinline
-    Worker::Worker(void)
+    Worker::Worker()
         : _stopped(false), root_depth(0) {}
 
     forceinline void
-    Worker::start(void) {
+    Worker::start() {
         _stopped = false;
     }
 
@@ -97,12 +98,12 @@ namespace Gecode { namespace Search {
     }
 
     forceinline bool
-    Worker::stopped(void) const {
+    Worker::stopped() const {
         return _stopped;
     }
 
     forceinline EndReason
-    Worker::end_reason(void) const {
+    Worker::end_reason() const {
         return _stopped ? EndReason::Limit : EndReason::Exhausted;
     }
 
@@ -110,14 +111,12 @@ namespace Gecode { namespace Search {
     Worker::reset(unsigned long int d) {
         Statistics::reset();
         root_depth = d;
-        if (depth < d)
-            depth = d;
+        depth = std::max(depth, d);
     }
 
     forceinline void
     Worker::stack_depth(unsigned long int d) {
-        if (depth < root_depth + d)
-            depth = root_depth + d;
+        depth = std::max(depth, root_depth + d);
     }
 
     forceinline unsigned long int
@@ -125,7 +124,7 @@ namespace Gecode { namespace Search {
         return root_depth + d;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #endif
 

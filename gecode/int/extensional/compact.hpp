@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /*
      * Shared compact-table advisor
@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     CompactAdvisorIndex<false>::CompactAdvisorIndex(int) {}
 
     forceinline int
-    CompactAdvisorIndex<false>::index(void) const {
+    CompactAdvisorIndex<false>::index() const {
         return 0;
     }
 
@@ -54,13 +54,13 @@ namespace Gecode { namespace Int { namespace Extensional {
         : _index(i) {}
 
     forceinline int
-    CompactAdvisorIndex<true>::index(void) const {
+    CompactAdvisorIndex<true>::index() const {
         return _index;
     }
 
     template <class View, bool pos, bool indexed>
     forceinline void
-    CompactAdvisor<View, pos, indexed>::adjust(void) {
+    CompactAdvisor<View, pos, indexed>::adjust() {
         if (pos) {
             {
                 int n = view().min();
@@ -109,19 +109,19 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class View, bool pos, bool indexed>
     forceinline int
-    CompactAdvisor<View, pos, indexed>::index(void) const {
+    CompactAdvisor<View, pos, indexed>::index() const {
         return CompactAdvisorIndex<indexed>::index();
     }
 
     template <class View, bool pos, bool indexed>
-    forceinline const typename CompactAdvisor<View, pos, indexed>::Range*
-    CompactAdvisor<View, pos, indexed>::fst(void) const {
+    forceinline const CompactAdvisor<View, pos, indexed>::Range*
+    CompactAdvisor<View, pos, indexed>::fst() const {
         return _fst;
     }
 
     template <class View, bool pos, bool indexed>
-    forceinline const typename CompactAdvisor<View, pos, indexed>::Range*
-    CompactAdvisor<View, pos, indexed>::lst(void) const {
+    forceinline const CompactAdvisor<View, pos, indexed>::Range*
+    CompactAdvisor<View, pos, indexed>::lst() const {
         return _lst;
     }
 
@@ -141,8 +141,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         : s(std::to_underlying(t)) {}
 
     template <class Advisor>
-    forceinline typename CompactStatus<Advisor>::StatusType
-    CompactStatus<Advisor>::type(void) const {
+    forceinline CompactStatus<Advisor>::StatusType
+    CompactStatus<Advisor>::type() const {
         return static_cast<StatusType>(s & 0b11);
     }
 
@@ -165,13 +165,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class Advisor>
     forceinline void
-    CompactStatus<Advisor>::none(void) {
+    CompactStatus<Advisor>::none() {
         s = std::to_underlying(NONE);
     }
 
     template <class Advisor>
     forceinline void
-    CompactStatus<Advisor>::propagating(void) {
+    CompactStatus<Advisor>::propagating() {
         s = std::to_underlying(PROPAGATING);
     }
 
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             }
         }
 
-        if (std::is_same<Table, BitSet<unsigned char>>::value)
+        if (std::is_same_v<Table, BitSet<unsigned char>>)
             return Factory::template copy<BitSet<unsigned char>>(home, source);
 
         switch (Gecode::Support::u_type(width)) {
@@ -238,7 +238,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         case Gecode::Support::IT_SHORT:
             return Factory::template copy<BitSet<unsigned short int>>(home, source);
         case Gecode::Support::IT_INT:
-            if (std::is_same<Table, BitSet<unsigned int>>::value)
+            if (std::is_same_v<Table, BitSet<unsigned int>>)
                 return Factory::template copy<BitSet<unsigned int>>(home, source);
             GECODE_NEVER;
         default:
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      *
      */
     template <class View, bool pos>
-    const typename Compact<View, pos>::Range*
+    const Compact<View, pos>::Range*
     Compact<View, pos>::range(CTAdvisor& a, int n) {
         assert((n > a.fst()->max) && (n < a.lst()->min));
 
@@ -387,12 +387,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         if (pos) {
             assert((f->min <= n) && (n <= f->max));
             return f;
-        } else {
-            if ((f <= l) && (f->min <= n) && (n <= f->max))
-                return f;
-            else
-                return nullptr;
         }
+        if ((f <= l) && (f->min <= n) && (n <= f->max))
+            return f;
+        return nullptr;
     }
 
     template <class View, bool pos>
@@ -430,7 +428,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class View, bool pos>
     forceinline void
-    Compact<View, pos>::ValidSupports::find(void) {
+    Compact<View, pos>::ValidSupports::find() {
         assert(!pos);
         assert(value <= max_value);
         while (true) {
@@ -490,7 +488,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline void
-    Compact<View, pos>::ValidSupports::operator++(void) {
+    Compact<View, pos>::ValidSupports::operator++() {
         value++;
         if (pos) {
             if (value <= view_ranges.max()) {
@@ -517,18 +515,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::ValidSupports::operator()(void) const {
+    Compact<View, pos>::ValidSupports::operator()() const {
         return value <= max_value;
     }
     template <class View, bool pos>
     forceinline const BitSetData*
-    Compact<View, pos>::ValidSupports::support(void) const {
+    Compact<View, pos>::ValidSupports::support() const {
         assert(support_words == support_range->supports(n_words, value));
         return support_words;
     }
     template <class View, bool pos>
     forceinline int
-    Compact<View, pos>::ValidSupports::val(void) const {
+    Compact<View, pos>::ValidSupports::val() const {
         return value;
     }
 
@@ -551,7 +549,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline void
-    Compact<View, pos>::LostSupports::operator++(void) {
+    Compact<View, pos>::LostSupports::operator++() {
         value++;
         support_words += n_words;
         while ((value <= last_value) && (value > support_range->max)) {
@@ -562,12 +560,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::LostSupports::operator()(void) const {
+    Compact<View, pos>::LostSupports::operator()() const {
         return value <= last_value;
     }
     template <class View, bool pos>
     forceinline const TupleSet::BitSetData*
-    Compact<View, pos>::LostSupports::support(void) const {
+    Compact<View, pos>::LostSupports::support() const {
         assert((value >= support_range->min) && (value <= support_range->max));
         assert(support_words == support_range->supports(n_words, value));
         return support_words;
@@ -575,12 +573,12 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::all(void) const {
+    Compact<View, pos>::all() const {
         return compact_all(c);
     }
     template <class View, bool pos>
     forceinline bool
-    Compact<View, pos>::at_most_one(void) const {
+    Compact<View, pos>::at_most_one() const {
         return compact_atmostone(c);
     }
 
@@ -693,7 +691,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         static ExecStatus
         advise(Actor& actor, Space& home, Advisor& advisor0, const Delta& delta) {
-            typename Actor::CTAdvisor& advisor = static_cast<typename Actor::CTAdvisor&>(advisor0);
+            typename Actor::CTAdvisor& advisor = static_cast<Actor::CTAdvisor&>(advisor0);
             if (actor.table.empty())
                 return actor.disabled() ? home.ES_NOFIX_DISPOSE(actor.c, advisor) : ES_FAILED;
 
@@ -830,7 +828,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         static ExecStatus
         advise(Actor& actor, Space& home, Advisor& advisor0) {
-            typename Actor::CTAdvisor& advisor = static_cast<typename Actor::CTAdvisor&>(advisor0);
+            typename Actor::CTAdvisor& advisor = static_cast<Actor::CTAdvisor&>(advisor0);
             if (actor.table.empty())
                 return home.ES_NOFIX_DISPOSE(actor.c, advisor);
 
@@ -903,7 +901,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         static ExecStatus
         advise(Actor& actor, Space& home, Advisor& advisor0) {
-            typename Actor::CTAdvisor& advisor = static_cast<typename Actor::CTAdvisor&>(advisor0);
+            typename Actor::CTAdvisor& advisor = static_cast<Actor::CTAdvisor&>(advisor0);
             if (actor.table.empty() || actor.b.assigned())
                 return home.ES_NOFIX_DISPOSE(actor.c, advisor);
 
@@ -952,7 +950,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class Table>
     Actor*
     PosCompact<View, Table>::copy(Space& home) {
-        typedef CompactActorFactory<PosCompact, View> Factory;
+        using Factory = CompactActorFactory<PosCompact, View>;
         return compact_copy<Factory, Table>(home, *this);
     }
 
@@ -1054,7 +1052,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class Table>
     Actor*
     NegCompact<View, Table>::copy(Space& home) {
-        typedef CompactActorFactory<NegCompact, View> Factory;
+        using Factory = CompactActorFactory<NegCompact, View>;
         return compact_copy<Factory, Table>(home, *this);
     }
 
@@ -1159,7 +1157,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, class Table, class CtrlView, ReifyMode rm>
     Actor*
     ReCompact<View, Table, CtrlView, rm>::copy(Space& home) {
-        typedef ReCompactActorFactory<ReCompact, View, CtrlView, rm> Factory;
+        using Factory = ReCompactActorFactory<ReCompact, View, CtrlView, rm>;
         return compact_copy<Factory, Table>(home, *this);
     }
 
@@ -1289,9 +1287,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     template <class View, bool pos>
     class CompactCompressed : public Propagator {
     protected:
-        typedef TupleSet::Range Range;
-        typedef TupleSet::CSupportWord CSupportWord;
-        typedef CompactAdvisor<View, pos, true> CTAdvisor;
+        using Range = TupleSet::Range;
+        using CSupportWord = TupleSet::CSupportWord;
+        using CTAdvisor = CompactAdvisor<View, pos, true>;
 
         class ValidSupports {
         protected:
@@ -1305,7 +1303,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             const CSupportWord* support_end;
             bool valid;
             void
-            find(void) {
+            find() {
                 while (view_ranges() && (support_range <= last_support_range)) {
                     if (value < view_ranges.min())
                         value = view_ranges.min();
@@ -1358,20 +1356,20 @@ namespace Gecode { namespace Int { namespace Extensional {
                 }
             }
             void
-            operator++(void) {
+            operator++() {
                 value++;
                 find();
             }
             bool
-            operator()(void) const {
+            operator()() const {
                 return valid;
             }
             int
-            val(void) const {
+            val() const {
                 return value;
             }
             CompressedSupport
-            support(void) const {
+            support() const {
                 return CompressedSupport(support_begin, support_end);
             }
         };
@@ -1388,10 +1386,9 @@ namespace Gecode { namespace Int { namespace Extensional {
             const CSupportWord* support_end;
             bool valid;
             void
-            find(void) {
+            find() {
                 while ((value <= last_value) && (support_range <= last_support_range)) {
-                    if (value < support_range->min)
-                        value = support_range->min;
+                    value = std::max(value, support_range->min);
                     if (value > last_value)
                         break;
                     while ((support_range <= last_support_range) && (value > support_range->max))
@@ -1419,30 +1416,29 @@ namespace Gecode { namespace Int { namespace Extensional {
                 find();
             }
             void
-            operator++(void) {
+            operator++() {
                 value++;
                 find();
             }
             bool
-            operator()(void) const {
+            operator()() const {
                 return valid;
             }
             CompressedSupport
-            support(void) const {
+            support() const {
                 return CompressedSupport(support_begin, support_end);
             }
         };
 
         bool
-        all(void) const {
+        all() const {
             return compact_all(c);
         }
         bool
-        at_most_one(void) const {
+        at_most_one() const {
             return compact_atmostone(c);
         }
 
-    protected:
         const unsigned int n_words;
         TupleSet ts;
         Council<CTAdvisor> c;
@@ -1497,11 +1493,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class PosCompactAlgorithm;
 
     public:
-        typedef View ViewType;
-        typedef CompactCompressed<View, true> Base;
-        typedef typename Base::ValidSupports ValidSupports;
-        typedef typename Base::CTAdvisor CTAdvisor;
-        typedef typename Base::LostSupports LostSupports;
+        using ViewType = View;
+        using Base = CompactCompressed<View, true>;
+        using ValidSupports = Base::ValidSupports;
+        using CTAdvisor = Base::CTAdvisor;
+        using LostSupports = Base::LostSupports;
 
         using Base::all;
         using Base::at_most_one;
@@ -1510,8 +1506,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         using Base::supports;
         using Base::ts;
 
-        typedef CompactStatus<CTAdvisor> Status;
-        typedef typename Status::StatusType StatusType;
+        using Status = CompactStatus<CTAdvisor>;
+        using StatusType = Status::StatusType;
 
         Status status;
         Table table;
@@ -1527,7 +1523,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         Actor*
         copy(Space& home) override {
-            typedef CompactActorFactory<PosCompactCompressed, View> Factory;
+            using Factory = CompactActorFactory<PosCompactCompressed, View>;
             return compact_copy<Factory, Table>(home, *this);
         }
 
@@ -1607,10 +1603,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class NegCompactAlgorithm;
 
     public:
-        typedef View ViewType;
-        typedef CompactCompressed<View, false> Base;
-        typedef typename Base::ValidSupports ValidSupports;
-        typedef typename Base::CTAdvisor CTAdvisor;
+        using ViewType = View;
+        using Base = CompactCompressed<View, false>;
+        using ValidSupports = Base::ValidSupports;
+        using CTAdvisor = Base::CTAdvisor;
 
         using Base::at_most_one;
         using Base::c;
@@ -1630,7 +1626,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         Actor*
         copy(Space& home) override {
-            typedef CompactActorFactory<NegCompactCompressed, View> Factory;
+            using Factory = CompactActorFactory<NegCompactCompressed, View>;
             return compact_copy<Factory, Table>(home, *this);
         }
 
@@ -1709,11 +1705,11 @@ namespace Gecode { namespace Int { namespace Extensional {
         friend class ReCompactAlgorithm;
 
     public:
-        typedef View ViewType;
+        using ViewType = View;
         static constexpr ReifyMode mode = rm;
-        typedef CompactCompressed<View, false> Base;
-        typedef typename Base::ValidSupports ValidSupports;
-        typedef typename Base::CTAdvisor CTAdvisor;
+        using Base = CompactCompressed<View, false>;
+        using ValidSupports = Base::ValidSupports;
+        using CTAdvisor = Base::CTAdvisor;
 
         using Base::c;
         using Base::full;
@@ -1738,7 +1734,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
         Actor*
         copy(Space& home) override {
-            typedef ReCompactActorFactory<ReCompactCompressed, View, CtrlView, rm> Factory;
+            using Factory = ReCompactActorFactory<ReCompactCompressed, View, CtrlView, rm>;
             return compact_copy<Factory, Table>(home, *this);
         }
 
@@ -1842,6 +1838,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 // STATISTICS: int-prop

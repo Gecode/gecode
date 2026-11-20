@@ -32,7 +32,7 @@
 
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Order {
+namespace Gecode::Int::Order {
 
     forceinline
     OrderProp::OrderProp(Home home, IntView _s0, int _p0, IntView _s1, int _p1, BoolView _b)
@@ -68,6 +68,6 @@ namespace Gecode { namespace Int { namespace Order {
         b.update(home, p.b);
     }
 
-}}} // namespace Gecode::Int::Order
+} // namespace Gecode::Int::Order
 
 // STATISTICS: int-prop

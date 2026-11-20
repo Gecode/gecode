@@ -48,43 +48,43 @@ namespace Gecode {
         : VarImpVar<Int::BoolVarImp>(y.varimp()) {}
 
     forceinline int
-    BoolVar::val(void) const {
+    BoolVar::val() const {
         if (!x->assigned())
             throw Int::ValOfUnassignedVar("BoolVar::val");
         return x->val();
     }
     forceinline int
-    BoolVar::min(void) const {
+    BoolVar::min() const {
         return x->min();
     }
     forceinline int
-    BoolVar::med(void) const {
+    BoolVar::med() const {
         return x->med();
     }
     forceinline int
-    BoolVar::max(void) const {
+    BoolVar::max() const {
         return x->max();
     }
 
     forceinline unsigned int
-    BoolVar::width(void) const {
+    BoolVar::width() const {
         return x->width();
     }
     forceinline unsigned int
-    BoolVar::size(void) const {
+    BoolVar::size() const {
         return x->size();
     }
     forceinline unsigned int
-    BoolVar::regret_min(void) const {
+    BoolVar::regret_min() const {
         return x->regret_min();
     }
     forceinline unsigned int
-    BoolVar::regret_max(void) const {
+    BoolVar::regret_max() const {
         return x->regret_max();
     }
 
     forceinline bool
-    BoolVar::range(void) const {
+    BoolVar::range() const {
         return x->range();
     }
     forceinline bool
@@ -93,15 +93,15 @@ namespace Gecode {
     }
 
     forceinline bool
-    BoolVar::zero(void) const {
+    BoolVar::zero() const {
         return x->zero();
     }
     forceinline bool
-    BoolVar::one(void) const {
+    BoolVar::one() const {
         return x->one();
     }
     forceinline bool
-    BoolVar::none(void) const {
+    BoolVar::none() const {
         return x->none();
     }
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief %Range iterator cache
@@ -46,7 +46,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Cache(void) = default;
+        Cache() = default;
         /// Copy constructor
         Cache(const Cache& m) = default;
         /// Initialize with ranges from \a i
@@ -83,11 +83,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
         init(r, i);
     }
 
-    forceinline Cache&
-    Cache::operator=(const Cache& m) {
-        return static_cast<Cache&>(RangeListIter::operator=(m));
-    }
+    forceinline Cache& Cache::operator=(const Cache& m) = default;
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

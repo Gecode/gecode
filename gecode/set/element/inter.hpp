@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Element {
+namespace Gecode::Set::Element {
 
     template <class View, class View0, class View1>
     forceinline
@@ -237,7 +237,7 @@ namespace Gecode { namespace Set { namespace Element {
             // In the second iteration, this time backwards, compute
             // sofarAfter as the intersection of all glb(x_j) with j>i
             for (int i = n; i--;) {
-                if (sofar_after.size() == 0)
+                if (sofar_after.empty())
                     break;
 
                 // extra = inter(before[i], sofarAfter) - lub(x1)
@@ -302,6 +302,6 @@ namespace Gecode { namespace Set { namespace Element {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Element
+} // namespace Gecode::Set::Element
 
 // STATISTICS: set-prop

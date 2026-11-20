@@ -38,7 +38,7 @@
 #include <gecode/search/par/bab.hh>
 #endif
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_bab_engine(Space* s, const Options& o) {
@@ -47,14 +47,12 @@ namespace Gecode { namespace Search {
         if (to.threads == 1.0) {
             if (to.tracer)
                 return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s, to);
-            else
-                return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s, to);
-        } else {
-            if (to.tracer)
-                return new Par::BAB<EdgeTraceRecorder>(s, to);
-            else
-                return new Par::BAB<NoTraceRecorder>(s, to);
+            return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s, to);
         }
+        if (to.tracer)
+            return new Par::BAB<EdgeTraceRecorder>(s, to);
+        return new Par::BAB<NoTraceRecorder>(s, to);
+
 #else
         if (to.tracer)
             return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s, to);
@@ -63,6 +61,6 @@ namespace Gecode { namespace Search {
 #endif
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

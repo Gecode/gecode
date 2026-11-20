@@ -32,7 +32,7 @@
 
 #include <gecode/gist/preferences.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     PreferencesDialog::PreferencesDialog(const Options& opt, QWidget* parent) : QDialog(parent) {
         QSettings settings("gecode.dev", "Gist");
@@ -134,7 +134,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    PreferencesDialog::write_back(void) {
+    PreferencesDialog::write_back() {
         hide_failed = hide_check->isChecked();
         zoom = zoom_check->isChecked();
         refresh = refresh_box->value();
@@ -156,7 +156,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    PreferencesDialog::defaults(void) {
+    PreferencesDialog::defaults() {
         hide_failed = true;
         zoom = false;
         refresh = 500;
@@ -180,6 +180,6 @@ namespace Gecode { namespace Gist {
         refresh_box->setEnabled(state != Qt::Checked);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

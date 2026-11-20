@@ -32,7 +32,7 @@
 
 #include <mpfr.h>
 
-namespace Gecode { namespace Float { namespace Transcendental {
+namespace Gecode::Float::Transcendental {
 
     // Round endpoints explicitly; compiler optimizations can ignore changes to
     // the hardware rounding mode.
@@ -69,10 +69,10 @@ namespace Gecode { namespace Float { namespace Transcendental {
         mpfr_init2(q, std::numeric_limits<FloatNum>::digits);
         // log(base) does not contain zero. Divide all four endpoint pairs with
         // outward rounding, including when 0 < base < 1.
-        for (int i = 0; i < 2; i++) {
-            mpfr_set_d(x, n[i], GMP_RNDN);
-            for (int j = 0; j < 2; j++) {
-                mpfr_set_d(y, d[j], GMP_RNDN);
+        for (double ni : n) {
+            mpfr_set_d(x, ni, GMP_RNDN);
+            for (double j : d) {
+                mpfr_set_d(y, j, GMP_RNDN);
                 mpfr_div(q, x, y, GMP_RNDD);
                 lower = std::min(lower, mpfr_get_d(q, GMP_RNDD));
                 mpfr_div(q, x, y, GMP_RNDU);
@@ -100,9 +100,9 @@ namespace Gecode { namespace Float { namespace Transcendental {
     Exp<A, B>::post(Home home, A x0, B x1) {
         if (x0 == x1) {
             return ES_FAILED;
-        } else {
-            GECODE_ME_CHECK(x1.gq(home, 0.0));
         }
+        GECODE_ME_CHECK(x1.gq(home, 0.0));
+
         GECODE_ME_CHECK(x1.eq(home, exp(x0.domain())));
         if (x1.max() == 0.0)
             return ES_FAILED;
@@ -181,6 +181,6 @@ namespace Gecode { namespace Float { namespace Transcendental {
         return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Float::Transcendental
+} // namespace Gecode::Float::Transcendental
 
 // STATISTICS: float-prop

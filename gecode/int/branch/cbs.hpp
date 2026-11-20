@@ -32,7 +32,7 @@
 
 #ifdef GECODE_HAS_CBS
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     template <class View>
     forceinline void
@@ -215,8 +215,7 @@ namespace Gecode { namespace Int { namespace Branch {
         int val = pvc.val();
         if (a == 0)
             return me_failed(x[pos].eq(home, val)) ? ES_FAILED : ES_OK;
-        else
-            return me_failed(x[pos].nq(home, val)) ? ES_FAILED : ES_OK;
+        return me_failed(x[pos].nq(home, val)) ? ES_FAILED : ES_OK;
     }
 
     template <class View>
@@ -230,7 +229,7 @@ namespace Gecode { namespace Int { namespace Branch {
             o << "x[" << pos << "] != " << val;
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #endif
 

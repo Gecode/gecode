@@ -1,3 +1,5 @@
+#include <algorithm>
+
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -36,7 +38,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     template <class Card>
     forceinline
@@ -76,8 +78,7 @@ namespace Gecode { namespace Int { namespace GCC {
         int n_k = Card::propagate ? k.size() : 0;
         if (IntView::me(med) == ME_INT_VAL)
             return PropCost::linear(PropCost::LO, y.size() + n_k);
-        else
-            return PropCost::quadratic(PropCost::LO, x.size() + n_k);
+        return PropCost::quadratic(PropCost::LO, x.size() + n_k);
     }
 
     template <class Card>
@@ -261,12 +262,11 @@ namespace Gecode { namespace Int { namespace GCC {
                  */
                 // CLEARLY THIS WAS NOT STABLE == UNSTABLE
                 if (hall[z].d == lps.sumup(hall[y].bounds, hall[z].bounds - 1)) {
-                    if (hall[y].h > y)
-                        /*
-                         * y is not the end of the potentially stable set
-                         * thus ensure that the potentially stable superset is marked
-                         */
-                        y = hall[y].h;
+                    y = std::max(hall[y].h, y); /*
+                                                 * y is not the end of the potentially stable set
+                                                 * thus ensure that the potentially stable superset is marked
+                                                 */
+
                     // Equivalent to pathmax since the path is fully compressed
                     pathset_h(hall, hall[y].h, j - 1, y);
                     // mark the new unstable set [j,y]
@@ -365,9 +365,7 @@ namespace Gecode { namespace Int { namespace GCC {
                 }
                 // UNSTABLE SET
                 if (hall[z].d == lps.sumup(hall[z].bounds, hall[y].bounds - 1)) {
-                    if (hall[y].h < y) {
-                        y = hall[y].h;
-                    }
+                    y = std::min(hall[y].h, y);
                     int succj = j + 1;
                     // mark new unstable set [y,j]
                     pathset_h(hall, hall[y].h, succj, y);
@@ -816,6 +814,6 @@ namespace Gecode { namespace Int { namespace GCC {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

@@ -36,7 +36,7 @@
 
 #include <iostream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \defgroup TaskActorSetView Set views
@@ -60,7 +60,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetView(void) = default;
+        SetView() = default;
         /// Initialize from set variable \a y
         SetView(const SetVar& y);
         /// Initialize from set variable implementation \a y
@@ -71,26 +71,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -109,25 +109,25 @@ namespace Gecode { namespace Set {
         ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
-         * between and including \a i and \a j
+         * between and including \a from and \a to
          */
-        ModEvent include(Space& home, int i, int j);
+        ModEvent include(Space& home, int from, int to);
         /**
          * \brief Restrict least upper bound to not contain all elements
-         * between and including \a i and \a j
+         * between and including \a from and \a to
          */
-        ModEvent exclude(Space& home, int i, int j);
-        /// Update greatest lower bound to contain \a i
-        ModEvent include(Space& home, int i);
-        /// Restrict least upper bound to not contain \a i
-        ModEvent exclude(Space& home, int i);
+        ModEvent exclude(Space& home, int from, int to);
+        /// Update greatest lower bound to contain \a n
+        ModEvent include(Space& home, int n);
+        /// Restrict least upper bound to not contain \a n
+        ModEvent exclude(Space& home, int n);
         /**
          * \brief Update least upper bound to contain at most all elements
-         * between and including \a i and \a j
+         * between and including \a from and \a to
          */
-        ModEvent intersect(Space& home, int i, int j);
-        /// Update least upper bound to contain at most the element \a i
-        ModEvent intersect(Space& home, int i);
+        ModEvent intersect(Space& home, int from, int to);
+        /// Update least upper bound to contain at most the element \a n
+        ModEvent intersect(Space& home, int n);
         //@}
 
         /// \name Domain update by range iterator
@@ -195,34 +195,34 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ConstSetView(void);
-        /// Construct with \a s as the domain
-        ConstSetView(Space& home, const IntSet& s);
+        ConstSetView();
+        /// Construct with \a dom as the domain
+        ConstSetView(Space& home, const IntSet& dom);
         //@}
 
         /// \name Value access
         //@{
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -235,10 +235,10 @@ namespace Gecode { namespace Set {
 
         /// \name Domain update by value
         //@{
-        /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent card_min(Space& home, unsigned int m);
-        /// Restrict cardinality to be less than or equal to \a m
-        ModEvent card_max(Space& home, unsigned int m);
+        /// Restrict cardinality to be greater than or equal to \a c
+        ModEvent card_min(Space& home, unsigned int c);
+        /// Restrict cardinality to be less than or equal to \a c
+        ModEvent card_max(Space& home, unsigned int c);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -249,17 +249,17 @@ namespace Gecode { namespace Set {
          * between and including \a i and \a j
          */
         ModEvent exclude(Space& home, int i, int j);
-        /// Update greatest lower bound to contain \a i
-        ModEvent include(Space& home, int i);
-        /// Restrict least upper bound to not contain \a i
-        ModEvent exclude(Space& home, int i);
+        /// Update greatest lower bound to contain \a c
+        ModEvent include(Space& home, int c);
+        /// Restrict least upper bound to not contain \a c
+        ModEvent exclude(Space& home, int c);
         /**
          * \brief Update least upper bound to contain at most all elements
          * between and including \a i and \a j
          */
         ModEvent intersect(Space& home, int i, int j);
-        /// Update least upper bound to contain at most the element \a i
-        ModEvent intersect(Space& home, int i);
+        /// Update least upper bound to contain at most the element \a c
+        ModEvent intersect(Space& home, int c);
         //@}
 
         /// \name Domain update by range iterator
@@ -278,8 +278,8 @@ namespace Gecode { namespace Set {
 
         /// \name Cloning
         //@{
-        /// Update this view to be a clone of view \a y
-        void update(Space& home, ConstSetView& y);
+        /// Update this view to be a clone of view \a p
+        void update(Space& home, ConstSetView& p);
         //@}
 
         /// \name Delta information for advisors
@@ -332,32 +332,32 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        EmptyView(void) = default;
+        EmptyView() = default;
         //@}
 
         /// \name Value access
         //@{
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -370,8 +370,8 @@ namespace Gecode { namespace Set {
 
         /// \name Domain update by value
         //@{
-        /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent card_min(Space& home, unsigned int m);
+        /// Restrict cardinality to be greater than or equal to \a c
+        ModEvent card_min(Space& home, unsigned int c);
         /// Restrict cardinality to be less than or equal to \a m
         ModEvent card_max(Space& home, unsigned int m);
         /**
@@ -455,33 +455,33 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        UniverseView(void) = default;
+        UniverseView() = default;
         //@}
 
         /// \name Value access
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
@@ -494,10 +494,10 @@ namespace Gecode { namespace Set {
 
         /// \name Domain update by value
         //@{
-        /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent card_min(Space& home, unsigned int m);
-        /// Restrict cardinality to be less than or equal to \a m
-        ModEvent card_max(Space& home, unsigned int m);
+        /// Restrict cardinality to be greater than or equal to \a c
+        ModEvent card_min(Space& home, unsigned int c);
+        /// Restrict cardinality to be less than or equal to \a c
+        ModEvent card_max(Space& home, unsigned int c);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -589,7 +589,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SingletonView(void) = default;
+        SingletonView() = default;
         /// Initialize with integer view \a y
         SingletonView(Gecode::Int::IntView& y);
         /// Initialize with integer variable \a y
@@ -600,63 +600,63 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
         //@{
-        /// Test whether \a i is in the greatest lower bound
-        bool contains(int i) const;
-        /// Test whether \a i is not in the least upper bound
-        bool not_contains(int i) const;
+        /// Test whether \a n is in the greatest lower bound
+        bool contains(int n) const;
+        /// Test whether \a n is not in the least upper bound
+        bool not_contains(int n) const;
         //@}
 
         /// \name Domain update by value
         //@{
-        /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent card_min(Space& home, unsigned int m);
-        /// Restrict cardinality to be less than or equal to \a m
-        ModEvent card_max(Space& home, unsigned int m);
+        /// Restrict cardinality to be greater than or equal to \a c
+        ModEvent card_min(Space& home, unsigned int c);
+        /// Restrict cardinality to be less than or equal to \a c
+        ModEvent card_max(Space& home, unsigned int c);
         /**
          * \brief Update greatest lower bound to include all elements
-         * between and including \a i and \a j
+         * between and including \a k and \a k
          */
-        ModEvent include(Space& home, int i, int j);
+        ModEvent include(Space& home, int j, int k);
         /**
          * \brief Restrict least upper bound to not contain all elements
-         * between and including \a i and \a j
+         * between and including \a k and \a k
          */
-        ModEvent exclude(Space& home, int i, int j);
-        /// Update greatest lower bound to contain \a i
-        ModEvent include(Space& home, int i);
-        /// Restrict least upper bound to not contain \a i
-        ModEvent exclude(Space& home, int i);
+        ModEvent exclude(Space& home, int j, int k);
+        /// Update greatest lower bound to contain \a c
+        ModEvent include(Space& home, int c);
+        /// Restrict least upper bound to not contain \a c
+        ModEvent exclude(Space& home, int c);
         /**
          * \brief Update least upper bound to contain at most all elements
          * between and including \a i and \a j
          */
         ModEvent intersect(Space& home, int i, int j);
-        /// Update least upper bound to contain at most the element \a i
-        ModEvent intersect(Space& home, int i);
+        /// Update least upper bound to contain at most the element \a c
+        ModEvent intersect(Space& home, int c);
         //@}
 
         /// \name Domain update by range iterator
@@ -759,7 +759,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ComplementView(void) = default;
+        ComplementView() = default;
         /// Initialize with set view \a y
         explicit ComplementView(View& y);
         //@}
@@ -768,63 +768,63 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return \a n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
         //@{
-        /// Test whether \a i is in the greatest lower bound
-        bool contains(int i) const;
-        /// Test whether \a i is not in the least upper bound
-        bool not_contains(int i) const;
+        /// Test whether \a n is in the greatest lower bound
+        bool contains(int n) const;
+        /// Test whether \a n is not in the least upper bound
+        bool not_contains(int n) const;
         //@}
 
         /// \name Domain update by value
         //@{
-        /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent card_min(Space& home, unsigned int m);
-        /// Restrict cardinality to be less than or equal to \a m
-        ModEvent card_max(Space& home, unsigned int m);
+        /// Restrict cardinality to be greater than or equal to \a c
+        ModEvent card_min(Space& home, unsigned int c);
+        /// Restrict cardinality to be less than or equal to \a c
+        ModEvent card_max(Space& home, unsigned int c);
         /**
          * \brief Update greatest lower bound to include all elements
-         * between and including \a i and \a j
+         * between and including \a k and \a k
          */
-        ModEvent include(Space& home, int i, int j);
+        ModEvent include(Space& home, int j, int k);
         /**
          * \brief Restrict least upper bound to not contain all elements
-         * between and including \a i and \a j
+         * between and including \a k and \a k
          */
-        ModEvent exclude(Space& home, int i, int j);
-        /// Update greatest lower bound to contain \a i
-        ModEvent include(Space& home, int i);
-        /// Restrict least upper bound to not contain \a i
-        ModEvent exclude(Space& home, int i);
+        ModEvent exclude(Space& home, int j, int k);
+        /// Update greatest lower bound to contain \a c
+        ModEvent include(Space& home, int c);
+        /// Restrict least upper bound to not contain \a c
+        ModEvent exclude(Space& home, int c);
         /**
          * \brief Update least upper bound to contain at most all elements
          * between and including \a i and \a j
          */
         ModEvent intersect(Space& home, int i, int j);
-        /// Update least upper bound to contain at most the element \a i
-        ModEvent intersect(Space& home, int i);
+        /// Update least upper bound to contain at most the element \a c
+        ModEvent intersect(Space& home, int c);
         //@}
 
         /// \name Domain update by range iterator
@@ -936,7 +936,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        CachedView(void) = default;
+        CachedView() = default;
         /// Initialize with set view \a y
         explicit CachedView(const View& y);
         //@}
@@ -945,34 +945,34 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return maximum cardinality
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return \a n-th smallest element of the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the number of elements in the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         /// Return the number of unknown elements
-        unsigned int unknown_size(void) const;
+        unsigned int unknown_size() const;
         //@}
 
         /// \name Domain tests
         //@{
-        /// Test whether \a i is in the greatest lower bound
-        bool contains(int i) const;
-        /// Test whether \a i is not in the least upper bound
-        bool not_contains(int i) const;
+        /// Test whether \a n is in the greatest lower bound
+        bool contains(int n) const;
+        /// Test whether \a n is not in the least upper bound
+        bool not_contains(int n) const;
         //@}
 
         /// \name Domain update by value
@@ -1073,9 +1073,9 @@ namespace Gecode { namespace Set {
         /// Update least upper bound cache to current domain
         void cache_lub(Space& home);
         /// Check whether greatest lower bound cache differs from current domain
-        bool glb_modified(void) const;
+        bool glb_modified() const;
         /// Check whether least upper bound cache differs from current domain
-        bool lub_modified(void) const;
+        bool lub_modified() const;
         //@}
 
         /// \name Cloning
@@ -1134,7 +1134,7 @@ namespace Gecode { namespace Set {
         LubDiffRanges(const CachedView<View>& x);
     };
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var/set.hpp>
 

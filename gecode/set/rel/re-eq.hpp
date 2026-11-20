@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
+namespace Gecode::Set::Rel {
 
     template <class View0, class View1, class CtrlView, ReifyMode rm>
     forceinline
@@ -125,11 +125,10 @@ namespace Gecode { namespace Set { namespace Rel {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
                 return home.ES_SUBSUMED(*this);
-            } else {
-                if (rm != RM_RIMP)
-                    GECODE_ME_CHECK(b.zero_none(home));
-                return home.ES_SUBSUMED(*this);
             }
+            if (rm != RM_RIMP)
+                GECODE_ME_CHECK(b.zero_none(home));
+            return home.ES_SUBSUMED(*this);
         }
 
         // check whether cardinalities still allow equality
@@ -162,6 +161,6 @@ namespace Gecode { namespace Set { namespace Rel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Rel
+} // namespace Gecode::Set::Rel
 
 // STATISTICS: set-prop

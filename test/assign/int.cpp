@@ -36,7 +36,7 @@
 
 #include <string>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// %Test assignment with distinct propagator
     class Int : public IntTest {
@@ -65,7 +65,7 @@ namespace Test { namespace Assign {
 
     /// Merit that prefers the variable at position \a p
     template <int p>
-    double
+    static double
     int_merit_at(const Gecode::Space&, Gecode::IntVar, int i) {
         return (i == p) ? 1.0 : 0.0;
     }
@@ -85,13 +85,13 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new IntOrderSpace(*this);
         }
     };
 
     /// Whether assigning one first in \a s sets exactly the last \a n variables
-    bool
+    static bool
     assigned_last_first(IntOrderSpace* s, int n) {
         Gecode::DFS<IntOrderSpace> e(s);
         delete s;
@@ -114,7 +114,7 @@ namespace Test { namespace Assign {
         IntTieBreak(int n0) : Base("Int::Assign::TieBreak::" + std::to_string(n0)), n(n0) {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             TieBreak<IntVarBranch> vars(INT_VAR_MERIT_MAX(&int_merit_at<4>));
             if (n > 1)
@@ -140,10 +140,10 @@ namespace Test { namespace Assign {
     class IntVarSelection : public Base {
     public:
         /// Create and register test
-        IntVarSelection(void) : Base("Int::Assign::VarSelection") {}
+        IntVarSelection() : Base("Int::Assign::VarSelection") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             IntOrderSpace* s = new IntOrderSpace(1);
             assign(*s, s->x, INT_VAR_MERIT_MAX(&int_merit_at<4>), INT_ASSIGN_MAX());
@@ -155,6 +155,6 @@ namespace Test { namespace Assign {
         IntVarSelection var_selection;
     } // namespace
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 // STATISTICS: test-branch

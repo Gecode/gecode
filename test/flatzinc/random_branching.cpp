@@ -40,13 +40,13 @@
 #include <string>
 #include <vector>
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Integer and Boolean variables share one randomized value brancher.
     class IntBoolSpace : public Gecode::Space {
     public:
         Gecode::IntVarArray x;
         Gecode::BoolVarArray b;
-        IntBoolSpace(void) : x(*this, 5, 0, 3), b(*this, 3, 0, 1) {
+        IntBoolSpace() : x(*this, 5, 0, 3), b(*this, 3, 0, 1) {
             using namespace Gecode;
             Gecode::FlatZinc::branch(*this, x, b, Gecode::FlatZinc::int_bool_var_afc_size_max(0.99),
                                      INT_VAL_RND(Rnd(3)));
@@ -56,7 +56,7 @@ namespace Test { namespace FlatZinc { namespace {
             b.update(*this, s.b);
         }
         Space*
-        copy(void) override {
+        copy() override {
             return new IntBoolSpace(*this);
         }
     };
@@ -81,9 +81,9 @@ namespace Test { namespace FlatZinc { namespace {
     /// Check that random value selection does not depend on recomputation
     class RandomIntBoolBranch : public Base {
     public:
-        RandomIntBoolBranch(void) : Base("FlatZinc::random_intbool_branch") {}
+        RandomIntBoolBranch() : Base("FlatZinc::random_intbool_branch") {}
         bool
-        run(void) override {
+        run() override {
             const std::string cloned = solutions(1);
             return (cloned == solutions(4)) && (cloned == solutions(100));
         }
@@ -110,7 +110,7 @@ namespace Test { namespace FlatZinc { namespace {
     random_options(const std::string& seed) {
         const std::string state = parsed_state<Opt>({seed, "18446744073709551615"});
         const std::string arbitrary = "splitmix-v1:fedcba9876543210:0123456789abcdef";
-        return (state.rfind("splitmix-v1:ffffffffffffffff:", 0) == 0) &&
+        return state.starts_with("splitmix-v1:ffffffffffffffff:") &&
                (parsed_state<Opt>({seed, "0xffffffffffffffff"}) == state) &&
                (parsed_state<Opt>({"-state", state}) == state) &&
                (parsed_state<Opt>({"-state", arbitrary}) == arbitrary);
@@ -119,12 +119,12 @@ namespace Test { namespace FlatZinc { namespace {
     /// Check the random options of the driver and of FlatZinc
     class RandomOptions : public Base {
     public:
-        RandomOptions(void) : Base("FlatZinc::random_options") {}
+        RandomOptions() : Base("FlatZinc::random_options") {}
         bool
-        run(void) override {
+        run() override {
             return random_options<Gecode::Options>("-seed") && random_options<Gecode::FlatZinc::FlatZincOptions>("-r");
         }
     } random_options_test;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

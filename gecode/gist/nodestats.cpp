@@ -36,7 +36,7 @@
 #include <gecode/gist/nodevisitor.hh>
 #include <gecode/gist/drawingcursor.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     NodeStatInspector::NodeStatInspector(QWidget* parent) : QWidget(parent) {
         setWindowFlags(Qt::Tool);
@@ -120,11 +120,11 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    NodeStatInspector::show_stats(void) {
+    NodeStatInspector::show_stats() {
         show();
         activateWindow();
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

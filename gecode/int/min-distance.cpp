@@ -40,7 +40,7 @@ namespace Gecode {
 
     IntDistance::Data::Data(int n0, std::function<int(int, int)> f) : n(n0), function(std::move(f)) {}
 
-    IntDistance::Data::~Data(void) = default;
+    IntDistance::Data::~Data() = default;
 
     IntDistance::IntDistance(int n, const IntArgs& matrix) {
         Int::Limits::positive(n, "IntDistance");
@@ -64,10 +64,10 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace MinDistance {
+namespace Gecode::Int::MinDistance {
 
     /// Validate the organization and number of positions
-    void
+    static void
     check(const IntVarArgs& x, MinDistancePropKind kind) {
         if (x.size() < 2)
             throw TooFewArguments("Int::minimum_distance");
@@ -77,13 +77,13 @@ namespace Gecode { namespace Int { namespace MinDistance {
     }
 
     /// Shared posting for the two public overloads
-    ExecStatus
+    static ExecStatus
     post(Home home, const IntVarArgs& x, IntView z, const IntDistance& d, const IntSharedArray& r,
          MinDistancePropKind kind, IntPropLevel ipl) {
         ViewArray<IntView> views(home, x);
-        for (int i = 0; i < views.size(); i++) {
-            GECODE_ME_CHECK(views[i].gq(home, 0));
-            GECODE_ME_CHECK(views[i].le(home, d.size()));
+        for (auto& view : views) {
+            GECODE_ME_CHECK(view.gq(home, 0));
+            GECODE_ME_CHECK(view.le(home, d.size()));
         }
         GECODE_ME_CHECK(z.gq(home, 0));
         if (views.assigned())
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace MinDistance {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::MinDistance
+} // namespace Gecode::Int::MinDistance
 
 namespace Gecode {
 

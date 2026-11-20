@@ -36,7 +36,7 @@
 #include <limits>
 #include <type_traits>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Unsigned integer for pointer encodings
@@ -76,9 +76,9 @@ namespace Gecode { namespace Support {
     class IntTypeTraits<signed char> {
     public:
         /// Corresponding unsigned type
-        typedef unsigned char utype;
+        using utype = unsigned char;
         /// Corresponding signed type
-        typedef signed char stype;
+        using stype = signed char;
         /// Minimal value
         static const signed char min = SCHAR_MIN;
         /// Maximal value
@@ -91,9 +91,9 @@ namespace Gecode { namespace Support {
     class IntTypeTraits<unsigned char> {
     public:
         /// Corresponding unsigned type
-        typedef unsigned char utype;
+        using utype = unsigned char;
         /// Corresponding signed type
-        typedef signed char stype;
+        using stype = signed char;
         /// Minimal value
         static const unsigned char min = 0;
         /// Maximal value
@@ -106,9 +106,9 @@ namespace Gecode { namespace Support {
     class IntTypeTraits<signed short int> {
     public:
         /// Corresponding unsigned type
-        typedef unsigned short int utype;
+        using utype = unsigned short int;
         /// Corresponding signed type
-        typedef signed short int stype;
+        using stype = signed short int;
         /// Minimal value
         static const signed short int min = SHRT_MIN;
         /// Maximal value
@@ -121,9 +121,9 @@ namespace Gecode { namespace Support {
     class IntTypeTraits<unsigned short int> {
     public:
         /// Corresponding unsigned type
-        typedef unsigned short int utype;
+        using utype = unsigned short int;
         /// Corresponding signed type
-        typedef signed short int stype;
+        using stype = signed short int;
         /// Minimal value
         static const unsigned short int min = 0;
         /// Maximal value
@@ -136,9 +136,9 @@ namespace Gecode { namespace Support {
     class IntTypeTraits<signed int> {
     public:
         /// Corresponding unsigned type
-        typedef unsigned int utype;
+        using utype = unsigned int;
         /// Corresponding signed type
-        typedef signed int stype;
+        using stype = signed int;
         /// Minimal value
         static const signed int min = INT_MIN;
         /// Maximal value
@@ -151,9 +151,9 @@ namespace Gecode { namespace Support {
     class IntTypeTraits<unsigned int> {
     public:
         /// Corresponding unsigned type
-        typedef unsigned int utype;
+        using utype = unsigned int;
         /// Corresponding signed type
-        typedef signed int stype;
+        using stype = signed int;
         /// Minimal value
         static const unsigned int min = 0;
         /// Maximal value
@@ -166,22 +166,20 @@ namespace Gecode { namespace Support {
     u_type(unsigned int n) {
         if (n < UCHAR_MAX)
             return IT_CHAR;
-        else if (n < USHRT_MAX)
+        if (n < USHRT_MAX)
             return IT_SHORT;
-        else
-            return IT_INT;
+        return IT_INT;
     }
 
     forceinline IntType
     s_type(int n) {
         if ((n > SCHAR_MIN) && (n < SCHAR_MAX))
             return IT_CHAR;
-        else if ((n > SHRT_MIN) && (n < SHRT_MAX))
+        if ((n > SHRT_MIN) && (n < SHRT_MAX))
             return IT_SHORT;
-        else
-            return IT_INT;
+        return IT_INT;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

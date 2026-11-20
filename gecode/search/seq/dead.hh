@@ -35,13 +35,13 @@
 #ifndef GECODE_SEARCH_SEQ_DEAD_HH
 #define GECODE_SEARCH_SEQ_DEAD_HH
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Create an engine without solutions whose next() ends for reason \a r
     GECODE_SEARCH_EXPORT
     Engine* dead(const Options& o, const Statistics& stat, EndReason r);
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sorted {
+namespace Gecode::Int::Sorted {
 
     /**
      * \brief Glover's maximum matching in a bipartite graph
@@ -51,7 +51,8 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     template <class View>
     inline bool
-    glover(ViewArray<View>& x, ViewArray<View>& y, int tau[], int phi[], OfflineMinItem sequence[], int vertices[]) {
+    glover(ViewArray<View>& x, ViewArray<View>& y, const int tau[], int phi[], OfflineMinItem sequence[],
+           int vertices[]) {
 
         int xs = x.size();
         OfflineMin seq(sequence, vertices, xs);
@@ -160,6 +161,6 @@ namespace Gecode { namespace Int { namespace Sorted {
         return true;
     }
 
-}}} // namespace Gecode::Int::Sorted
+} // namespace Gecode::Int::Sorted
 
 // STATISTICS: int-prop

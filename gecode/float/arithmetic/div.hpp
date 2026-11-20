@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
     /*
      * Bounds consistent division operator
@@ -75,6 +75,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Float::Arithmetic
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop

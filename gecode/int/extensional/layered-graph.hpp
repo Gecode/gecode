@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <limits>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /**
      * \brief Traits class for variables
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     class VarTraits<IntVar> {
     public:
         /// The variable type of an IntView
-        typedef Int::IntView View;
+        using View = Int::IntView;
     };
 
     /**
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     class VarTraits<BoolVar> {
     public:
         /// The variable type of an IntView
-        typedef Int::BoolView View;
+        using View = Int::BoolView;
     };
 
     /*
@@ -74,40 +74,38 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     template <class View, class Val, class Degree, class StateIdx>
     forceinline void
-    LayeredGraph<View, Val, Degree, StateIdx>::State::init(void) {
+    LayeredGraph<View, Val, Degree, StateIdx>::State::init() {
         i_deg = o_deg = 0;
     }
 
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::i_state(int i, StateIdx is) {
         return layers[i].states[is];
     }
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::i_state(int i, const Edge& e) {
         return i_state(i, e.i_state);
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline bool
-    LayeredGraph<View, Val, Degree, StateIdx>::i_dec(
-        int i, const typename LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
+    LayeredGraph<View, Val, Degree, StateIdx>::i_dec(int i, const LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
         return --i_state(i, e).o_deg == 0;
     }
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::o_state(int i, StateIdx os) {
         return layers[i + 1].states[os];
     }
     template <class View, class Val, class Degree, class StateIdx>
-    forceinline typename LayeredGraph<View, Val, Degree, StateIdx>::State&
+    forceinline LayeredGraph<View, Val, Degree, StateIdx>::State&
     LayeredGraph<View, Val, Degree, StateIdx>::o_state(int i, const Edge& e) {
         return o_state(i, e.o_state);
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline bool
-    LayeredGraph<View, Val, Degree, StateIdx>::o_dec(
-        int i, const typename LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
+    LayeredGraph<View, Val, Degree, StateIdx>::o_dec(int i, const LayeredGraph<View, Val, Degree, StateIdx>::Edge& e) {
         return --o_state(i, e).i_deg == 0;
     }
 
@@ -126,17 +124,17 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline bool
-    LayeredGraph<View, Val, Degree, StateIdx>::LayerValues ::operator()(void) const {
+    LayeredGraph<View, Val, Degree, StateIdx>::LayerValues ::operator()() const {
         return s1 < s2;
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline void
-    LayeredGraph<View, Val, Degree, StateIdx>::LayerValues::operator++(void) {
+    LayeredGraph<View, Val, Degree, StateIdx>::LayerValues::operator++() {
         s1++;
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline int
-    LayeredGraph<View, Val, Degree, StateIdx>::LayerValues::val(void) const {
+    LayeredGraph<View, Val, Degree, StateIdx>::LayerValues::val() const {
         return s1->val;
     }
 
@@ -160,11 +158,11 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     template <class View, class Val, class Degree, class StateIdx>
     forceinline
-    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::IndexRange(void)
+    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::IndexRange()
         : _fst(INT_MAX), _lst(INT_MIN) {}
     template <class View, class Val, class Degree, class StateIdx>
     forceinline void
-    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::reset(void) {
+    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::reset() {
         _fst = INT_MAX;
         _lst = INT_MIN;
     }
@@ -182,7 +180,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline bool
-    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::empty(void) const {
+    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::empty() const {
         return _fst > _lst;
     }
     template <class View, class Val, class Degree, class StateIdx>
@@ -199,12 +197,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline int
-    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::fst(void) const {
+    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::fst() const {
         return _fst;
     }
     template <class View, class Val, class Degree, class StateIdx>
     forceinline int
-    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::lst(void) const {
+    LayeredGraph<View, Val, Degree, StateIdx>::IndexRange::lst() const {
         return _lst;
     }
 
@@ -223,7 +221,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     template <class View, class Val, class Degree, class StateIdx>
     forceinline void
-    LayeredGraph<View, Val, Degree, StateIdx>::audit(void) {
+    LayeredGraph<View, Val, Degree, StateIdx>::audit() {
 #ifdef GECODE_AUDIT
         // Check states and edge information to be consistent
         unsigned int n_e = 0; // Number of edges
@@ -303,7 +301,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                         j++;
                     }
                 }
-                if ((layers[i].size = j) == 0)
+                layers[i].size = j;
+                if (j == 0)
                     return ES_FAILED;
                 std::swap(i_reachable, o_reachable);
                 std::swap(i_reached, o_reached);
@@ -389,7 +388,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                     total_edges += n_support_edges;
                 }
             }
-            if ((layers[i].size = n_supports) == 0)
+            layers[i].size = n_supports;
+            if (n_supports == 0)
                 return ES_FAILED;
             layers[i].n_states = static_cast<StateIdx>(n_i_mapped);
             total_states += n_i_mapped;
@@ -405,8 +405,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             std::swap(n_i_mapped, n_o_mapped);
         }
 
-        if ((total_states > static_cast<unsigned long long int>((std::numeric_limits<unsigned int>::max)())) ||
-            (total_edges > static_cast<unsigned long long int>((std::numeric_limits<unsigned int>::max)())))
+        if ((total_states > static_cast<unsigned long long int>(std::numeric_limits<unsigned int>::max())) ||
+            (total_edges > static_cast<unsigned long long int>(std::numeric_limits<unsigned int>::max())))
             throw OutOfLimits("Int::regular");
         n_states = static_cast<unsigned int>(total_states);
         n_edges = static_cast<unsigned int>(total_edges);
@@ -475,9 +475,8 @@ namespace Gecode { namespace Int { namespace Extensional {
             if (View::modification_event(d) == ME_INT_VAL) {
                 a.dispose(home, c);
                 return c.empty() ? ES_NOFIX : ES_FIX;
-            } else {
-                return ES_FIX;
             }
+            return ES_FIX;
         }
 
         bool i_mod = false;
@@ -586,9 +585,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                 return c.empty() ? ES_NOFIX : ES_FIX;
             }
             return ES_FIX;
-        } else {
-            return (View::modification_event(d) == ME_INT_VAL) ? home.ES_NOFIX_DISPOSE(c, a) : ES_NOFIX;
         }
+        return (View::modification_event(d) == ME_INT_VAL) ? home.ES_NOFIX_DISPOSE(c, a) : ES_NOFIX;
     }
 
     template <class View, class Val, class Degree, class StateIdx>
@@ -685,8 +683,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         // Check subsumption
         if (c.empty())
             return home.ES_SUBSUMED(*this);
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class View, class Val, class Degree, class StateIdx>
@@ -971,6 +968,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 // STATISTICS: int-prop

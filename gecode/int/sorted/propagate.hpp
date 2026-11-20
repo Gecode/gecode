@@ -33,7 +33,7 @@
 #include <gecode/int/rel.hh>
 #include <gecode/int/distinct.hh>
 
-namespace Gecode { namespace Int { namespace Sorted {
+namespace Gecode::Int::Sorted {
 
     /*
      * Summary of the propagation algorithm as implemented in the
@@ -111,7 +111,8 @@ namespace Gecode { namespace Int { namespace Sorted {
                     if (y[j].min() > max) {
                         allbnd[i].max = j - 1;
                         break;
-                    } else if (y[j].min() <= max && min <= y[j].max()) {
+                    }
+                    if (y[j].min() <= max && min <= y[j].max()) {
                         allbnd[i].max = j;
                         break;
                     }
@@ -625,6 +626,6 @@ namespace Gecode { namespace Int { namespace Sorted {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Sorted
+} // namespace Gecode::Int::Sorted
 
 // STATISTICS: int-prop

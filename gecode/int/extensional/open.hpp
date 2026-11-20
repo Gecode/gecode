@@ -37,7 +37,7 @@
 #include <limits>
 #include <utility>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Shortest accepting suffix length from each state, or -1 if none exists
     inline SharedArray<int>
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Extensional {
             const int k = dfa.n_states();
             const unsigned long long cells =
                 static_cast<unsigned long long>(n + 1) * static_cast<unsigned long long>(k);
-            if (cells > static_cast<unsigned long long>((std::numeric_limits<unsigned long>::max)()))
+            if (cells > static_cast<unsigned long long>(std::numeric_limits<unsigned long>::max()))
                 throw OutOfLimits("Int::extensional");
 
             unsigned char* backward = r.alloc<unsigned char>(static_cast<unsigned long>(cells));
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
     };
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 #endif
 

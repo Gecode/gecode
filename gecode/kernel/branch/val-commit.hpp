@@ -43,19 +43,18 @@ namespace Gecode {
     class ValCommit {
     public:
         /// View type
-        typedef View_ View;
+        using View = View_;
         /// Corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         /// Value type
-        typedef Val_ Val;
+        using Val = Val_;
 
-    public:
         /// Constructor for initialization
         ValCommit(Space& home, const ValBranch<Var>& vb);
         /// Constructor for cloning
         ValCommit(Space& home, ValCommit<View, Val>& vs);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value commit
         void dispose(Space& home);
     };
@@ -63,13 +62,13 @@ namespace Gecode {
     /// Class for user-defined value commit
     template <class View>
     class ValCommitFunction : public ValCommit<View, typename BranchTraits<typename View::VarType>::ValType> {
-        typedef typename ValCommit<View, typename BranchTraits<typename View::VarType>::ValType>::Val Val;
+        using Val = ValCommit<View, typename BranchTraits<typename View::VarType>::ValType>::Val;
 
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         /// The corresponding commit function
-        typedef typename BranchTraits<Var>::Commit CommitFunction;
+        using CommitFunction = BranchTraits<Var>::Commit;
 
     protected:
         /// The user-defined commit function
@@ -87,7 +86,7 @@ namespace Gecode {
         /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
         void print(const Space& home, unsigned int a, View x, int i, const Val& n, std::ostream& o) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value commit
         void dispose(Space& home);
     };
@@ -102,7 +101,7 @@ namespace Gecode {
     ValCommit<View, Val>::ValCommit(Space&, ValCommit<View, Val>&) {}
     template <class View, class Val>
     forceinline bool
-    ValCommit<View, Val>::notice(void) const {
+    ValCommit<View, Val>::notice() const {
         return false;
     }
     template <class View, class Val>
@@ -141,7 +140,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    ValCommitFunction<View>::notice(void) const {
+    ValCommitFunction<View>::notice() const {
         return true;
     }
     template <class View>

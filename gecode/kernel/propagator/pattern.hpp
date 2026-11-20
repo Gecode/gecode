@@ -58,9 +58,9 @@ namespace Gecode {
         /// Constructor for cloning \a p
         UnaryPropagator(Space& home, UnaryPropagator& p);
         /// Constructor for rewriting \a p during cloning
-        UnaryPropagator(Space& home, Propagator& p, View x0);
+        UnaryPropagator(Space& home, Propagator& p, View y0);
         /// Constructor for creation
-        UnaryPropagator(Home home, View x0);
+        UnaryPropagator(Home home, View y0);
 
     public:
         /// Cost function (defined as PC_UNARY_LO)
@@ -88,9 +88,9 @@ namespace Gecode {
         /// Constructor for cloning \a p
         BinaryPropagator(Space& home, BinaryPropagator& p);
         /// Constructor for creation
-        BinaryPropagator(Home home, View x0, View x1);
+        BinaryPropagator(Home home, View y0, View y1);
         /// Constructor for rewriting \a p during cloning
-        BinaryPropagator(Space& home, Propagator& p, View x0, View x1);
+        BinaryPropagator(Space& home, Propagator& p, View y0, View y1);
 
     public:
         /// Cost function (defined as low binary)
@@ -118,9 +118,9 @@ namespace Gecode {
         /// Constructor for cloning \a p
         TernaryPropagator(Space& home, TernaryPropagator& p);
         /// Constructor for creation
-        TernaryPropagator(Home home, View x0, View x1, View x2);
+        TernaryPropagator(Home home, View y0, View y1, View y2);
         /// Constructor for rewriting \a p during cloning
-        TernaryPropagator(Space& home, Propagator& p, View x0, View x1, View x2);
+        TernaryPropagator(Space& home, Propagator& p, View y0, View y1, View y2);
 
     public:
         /// Cost function (defined as low ternary)
@@ -150,7 +150,7 @@ namespace Gecode {
         /// Constructor for rewriting \a p during cloning
         NaryPropagator(Space& home, Propagator& p, ViewArray<View>& x);
         /// Constructor for creation
-        NaryPropagator(Home home, ViewArray<View>& x);
+        NaryPropagator(Home home, ViewArray<View>& y);
 
     public:
         /// Cost function (defined as low linear)
@@ -214,9 +214,9 @@ namespace Gecode {
         /// Constructor for cloning
         MixBinaryPropagator(Space& home, MixBinaryPropagator& p);
         /// Constructor for creation
-        MixBinaryPropagator(Home home, View0 x0, View1 x1);
+        MixBinaryPropagator(Home home, View0 y0, View1 y1);
         /// Constructor for rewriting \a p during cloning
-        MixBinaryPropagator(Space& home, Propagator& p, View0 x0, View1 x1);
+        MixBinaryPropagator(Space& home, Propagator& p, View0 y0, View1 y1);
 
     public:
         /// Cost function (defined as low binary)
@@ -249,9 +249,9 @@ namespace Gecode {
         /// Constructor for cloning
         MixTernaryPropagator(Space& home, MixTernaryPropagator& p);
         /// Constructor for creation
-        MixTernaryPropagator(Home home, View0 x0, View1 x1, View2 x2);
+        MixTernaryPropagator(Home home, View0 y0, View1 y1, View2 y2);
         /// Constructor for rewriting \a p during cloning
-        MixTernaryPropagator(Space& home, Propagator& p, View0 x0, View1 x1, View2 x2);
+        MixTernaryPropagator(Space& home, Propagator& p, View0 y0, View1 y1, View2 y2);
 
     public:
         /// Cost function (defined as low ternary)

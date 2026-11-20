@@ -34,6 +34,7 @@
  *
  */
 
+// NOLINTNEXTLINE(misc-anonymous-namespace-in-header): included by one example
 namespace {
     extern const char* examples[];
     extern const unsigned int n_examples;
@@ -1785,8 +1786,7 @@ namespace {
         int res = (c - 'A') + 10;
         if (res > n)
             return 0;
-        else
-            return res;
+        return res;
     }
     //@}
 
@@ -1852,7 +1852,7 @@ instances {
         }
         /// Whether an instance was found
         bool
-        valid(void) const {
+        valid() const {
             return nn > 0;
         }
     };

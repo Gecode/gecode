@@ -35,7 +35,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Class to define an optional from a mandatory task
     template <class ManTask>
@@ -48,22 +48,22 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManToOptTask(void) = default;
+        ManToOptTask() = default;
         //@}
 
         /// \name Value access
         //@{
         /// Whether task is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether task is excluded
-        bool excluded(void) const;
+        bool excluded() const;
         /// Whether task can still be optional
-        bool optional(void) const;
+        bool optional() const;
         //@}
 
         //@{
         /// Test whether task is assigned
-        bool assigned(void) const;
+        bool assigned() const;
         //@}
 
         /// \name Value update
@@ -91,11 +91,11 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/man-to-opt.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task mapper: turns a task view into its dual
     template <class TaskView>
@@ -104,17 +104,17 @@ namespace Gecode { namespace Int {
         /// \name Value access
         //@{
         /// Return earliest start time
-        int est(void) const;
+        int est() const;
         /// Return earliest completion time
-        int ect(void) const;
+        int ect() const;
         /// Return latest start time
-        int lst(void) const;
+        int lst() const;
         /// Return latest completion time
-        int lct(void) const;
+        int lct() const;
         /// Return minimum processing time
-        int pmin(void) const;
+        int pmin() const;
         /// Return maximum processing time
-        int pmax(void) const;
+        int pmax() const;
         //@}
 
         /// \name Value update
@@ -132,11 +132,11 @@ namespace Gecode { namespace Int {
         //@}
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/fwd-to-bwd.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief Traits class for mapping task views to tasks
@@ -156,9 +156,9 @@ namespace Gecode { namespace Int {
     template <class Task>
     class TaskTraits {};
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task array
     template <class Task>
@@ -173,19 +173,19 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        TaskArray(void);
+        TaskArray();
         /// Allocate memory for \a n tasks (no initialization)
         TaskArray(Space& home, int n);
         /// Initialize from task array \a a (share elements)
-        TaskArray(const TaskArray<Task>& a);
+        TaskArray(const TaskArray<Task>& a) = default;
         /// Initialize from task array \a a (share elements)
-        const TaskArray<Task>& operator=(const TaskArray<Task>& a);
+        TaskArray<Task>& operator=(const TaskArray<Task>& a) = default;
         //@}
 
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         /// Set size of array (number of elements) to \a n, must not be larger
         void size(int n);
         //@}
@@ -214,7 +214,6 @@ namespace Gecode { namespace Int {
         void update(Space&, TaskArray& a);
         //@}
 
-    public:
         static void* operator new(size_t) = delete;
         static void operator delete(void*, size_t) = delete;
     };
@@ -231,7 +230,7 @@ namespace Gecode { namespace Int {
     class TaskViewArray {
     protected:
         /// The underlying task type
-        typedef typename TaskViewTraits<TaskView>::Task Task;
+        using Task = TaskViewTraits<TaskView>::Task;
         /// Access to task array
         TaskArray<Task>& t;
 
@@ -245,7 +244,7 @@ namespace Gecode { namespace Int {
         /// \name Array information
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         /// Set size of array (number of elements) to \a n, must not be larger
         void size(int n);
         //@}
@@ -257,7 +256,7 @@ namespace Gecode { namespace Int {
         /// Return task view at position \a i
         const TaskView& operator[](int i) const;
         //@}
-    public:
+
         static void* operator new(size_t) = delete;
         static void operator delete(void*, size_t) = delete;
     };
@@ -270,11 +269,11 @@ namespace Gecode { namespace Int {
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os,
                                                  const TaskViewArray<TaskView>& t);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/array.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// How to sort tasks
     enum class SortTaskOrder {
@@ -297,11 +296,11 @@ namespace Gecode { namespace Int {
     template <class TaskView, SortTaskOrder sto, bool inc>
     void sort(int* map, int n, const TaskViewArray<TaskView>& t);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/sort.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Allows to iterate over task views according to a specified order
     template <class TaskView, SortTaskOrder sto, bool inc>
@@ -312,7 +311,7 @@ namespace Gecode { namespace Int {
         /// Current position
         int i;
         /// Default constructor (no initialization)
-        TaskViewIter(void) = default;
+        TaskViewIter() = default;
 
     public:
         /// Initialize iterator
@@ -320,17 +319,17 @@ namespace Gecode { namespace Int {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a task
-        bool operator()(void) const;
+        bool operator()() const;
         /// How many tasks are left to be iterated
-        int left(void) const;
+        int left() const;
         /// Move iterator to next task
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name %Task access
         //@{
         /// Return current task position
-        int task(void) const;
+        int task() const;
         //@}
     };
 
@@ -346,11 +345,11 @@ namespace Gecode { namespace Int {
         ManTaskViewIter(Region& r, const TaskViewArray<OptTaskView>& t);
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/iter.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Safe addition in case \a x is -Int::Limits::infinity
     int plus(int x, int y);
@@ -376,9 +375,9 @@ namespace Gecode { namespace Int {
         int* _leaf;
 
         /// Return number of inner nodes
-        int n_inner(void) const;
+        int n_inner() const;
         /// Return number of nodes for balanced binary tree
-        int n_nodes(void) const;
+        int n_nodes() const;
         /// Whether node \a i is index of root
         static bool n_root(int i);
         /// Whether node \a i is leaf
@@ -394,17 +393,16 @@ namespace Gecode { namespace Int {
         /// Return index of parent of node \a i
         static int n_parent(int i);
 
-    protected:
         /// Return leaf for task \a i
         Node& leaf(int i);
         /// Return root node
-        const Node& root(void) const;
+        const Node& root() const;
         /// Update tree after leaf for task \a i has changed (\a l whether i refers to a leaf)
         void update(int i, bool l = true);
         /// Initialize tree after leaves have been initialized
-        void init(void);
+        void init();
         /// Update all inner nodes of tree after leaves have been initialized
-        void update(void);
+        void update();
         /// Initialize tree for tasks \a t
         TaskTree(Region& r, const TaskViewArray<TaskView>& t);
         /// Initialize tree using tree \a t
@@ -412,11 +410,11 @@ namespace Gecode { namespace Int {
         TaskTree(Region& r, const TaskTree<TaskView, Node2>& t);
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/tree.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief %Propagator for tasks
@@ -484,12 +482,12 @@ namespace Gecode { namespace Int {
         static const PropCond pc = PC_INT_DOM;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/prop.hpp>
 #include <gecode/int/task/purge.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Time-tabling event for task
     class Event {
@@ -515,11 +513,11 @@ namespace Gecode { namespace Int {
         /// Initialize event
         void init(Type e, int t, int i);
         /// Return event type
-        Type type(void) const;
+        Type type() const;
         /// Return event time
-        int time(void) const;
+        int time() const;
         /// Return event index
-        int idx(void) const;
+        int idx() const;
         /// Order among events
         bool operator<(const Event& e) const;
         /// Allocate from \a r and initialize event array with tasks \a t
@@ -534,7 +532,7 @@ namespace Gecode { namespace Int {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const Event& e);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/task/event.hpp>
 

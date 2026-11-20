@@ -38,7 +38,7 @@
 #include <gecode/float/linear.hh>
 #include <gecode/float/rel.hh>
 
-namespace Gecode { namespace Float { namespace Linear {
+namespace Gecode::Float::Linear {
 
     void
     estimate(Term* t, int n, const FloatVal& c, FloatNum& l, FloatNum& u) {
@@ -47,19 +47,15 @@ namespace Gecode { namespace Float { namespace Linear {
             est += t[i].a * t[i].x.domain();
         FloatNum min = est.min();
         FloatNum max = est.max();
-        if (min < Limits::min)
-            min = Limits::min;
-        if (min > Limits::max)
-            min = Limits::max;
+        min = std::max(min, Limits::min);
+        min = std::min(min, Limits::max);
         l = min;
-        if (max < Limits::min)
-            max = Limits::min;
-        if (max > Limits::max)
-            max = Limits::max;
+        max = std::max(max, Limits::min);
+        max = std::min(max, Limits::max);
         u = max;
     }
 
-    forceinline bool
+    static forceinline bool
     overflow(Term* t, int n, const FloatVal& c) {
         FloatVal est = c;
         for (int i = n; i--;)
@@ -79,7 +75,7 @@ namespace Gecode { namespace Float { namespace Linear {
     };
 
     /// Extend terms by adding view for result
-    FloatView
+    static FloatView
     extend(Home home, Region& r, Term*& t, int& n) {
         FloatNum min, max;
         estimate(t, n, 0.0, min, max);
@@ -99,7 +95,7 @@ namespace Gecode { namespace Float { namespace Linear {
      *
      */
     template <class View>
-    forceinline void
+    static forceinline void
     post_nary(Home home, ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, const FloatVal& c) {
         switch (frt) {
         case FRT_EQ:
@@ -113,7 +109,7 @@ namespace Gecode { namespace Float { namespace Linear {
         }
     }
 
-    void
+    static void
     post_linear(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
         Limits::check(c, "Float::linear");
 
@@ -278,6 +274,6 @@ namespace Gecode { namespace Float { namespace Linear {
         post_linear(home, t, n, FRT_EQ, 0.0);
     }
 
-}}} // namespace Gecode::Float::Linear
+} // namespace Gecode::Float::Linear
 
 // STATISTICS: float-post

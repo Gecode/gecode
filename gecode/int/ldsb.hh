@@ -41,15 +41,15 @@
  * \namespace Gecode::Int::LDSB
  * \brief Symmetry breaking for integer variables
  */
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     /// A Literal is a pair of variable index and value.
     class Literal {
     public:
         /// Constructor for an empty literal
-        Literal(void);
+        Literal();
         /// Constructor
-        Literal(int _var, int _val);
+        Literal(int idx, int _val);
 
         /// Variable index.  The ViewArray that the index is meant
         /// for is assumed to be known by context.
@@ -75,41 +75,41 @@ namespace Gecode { namespace Int { namespace LDSB {
      * that sequence (both zero-based).
      */
     GECODE_INT_EXPORT
-    std::pair<int, int> find_var(int* indices, unsigned int n_values, unsigned int seq_size, int index);
-}}} // namespace Gecode::Int::LDSB
+    std::pair<int, int> find_var(const int* indices, unsigned int n_values, unsigned int seq_size, int index);
+} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
     /// Traits of %ArgArray<VarImpBase*>
     template <>
     class ArrayTraits<ArgArray<VarImpBase*>> {
     public:
-        typedef ArgArray<VarImpBase*> StorageType;
-        typedef VarImpBase* ValueType;
-        typedef ArgArray<VarImpBase*> ArgsType;
+        using StorageType = ArgArray<VarImpBase*>;
+        using ValueType = VarImpBase*;
+        using ArgsType = ArgArray<VarImpBase*>;
     };
 
     /// An array of literals
-    typedef ArgArray<Int::LDSB::Literal> LiteralArgs;
+    using LiteralArgs = ArgArray<Int::LDSB::Literal>;
     /// Traits of %LiteralArgs
     template <>
     class ArrayTraits<LiteralArgs> {
     public:
-        typedef LiteralArgs StorageType;
-        typedef Int::LDSB::Literal ValueType;
-        typedef LiteralArgs ArgsType;
+        using StorageType = LiteralArgs;
+        using ValueType = Int::LDSB::Literal;
+        using ArgsType = LiteralArgs;
     };
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     /// Implementation of a symmetry at the modelling level
     class GECODE_INT_EXPORT SymmetryObject {
     public:
         /// Number of references that point to this symmetry object.
         int nrefs;
         /// Default constructor
-        SymmetryObject(void);
+        SymmetryObject();
         /// Destructor
-        virtual ~SymmetryObject(void);
+        virtual ~SymmetryObject();
     };
     /// Implementation of a variable symmetry at the modelling level
     class GECODE_INT_EXPORT VariableSymmetryObject : public SymmetryObject {
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Constructor for creation
         VariableSymmetryObject(ArgArray<VarImpBase*> vars);
         /// Destructor
-        ~VariableSymmetryObject(void) override;
+        ~VariableSymmetryObject() override;
     };
     /// Implementation of a value symmetry at the modelling level
     class GECODE_INT_EXPORT ValueSymmetryObject : public SymmetryObject {
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Disposal
         virtual size_t dispose(Space& home) = 0;
         /// Unused destructor
-        virtual ~SymmetryImp(void);
+        virtual ~SymmetryImp();
         /// Placement new operator
         static void* operator new(size_t s, Space& home);
         /// Return memory to space
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     public:
         /// Constructor for creation
-        VariableSymmetryImp(Space& home, int* vs, unsigned int n);
+        VariableSymmetryImp(Space& home, int* _indices, unsigned int n);
         /// Copy constructor
         VariableSymmetryImp(Space& home, const VariableSymmetryImp& other);
         /// Disposal
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     public:
         /// Constructor for creation
-        VariableSequenceSymmetryImp(Space& home, int* _indices, unsigned int n, unsigned int seqsize);
+        VariableSequenceSymmetryImp(Space& home, const int* _indices, unsigned int n, unsigned int seqsize);
         /// Copy constructor
         VariableSequenceSymmetryImp(Space& home, const VariableSequenceSymmetryImp& s);
         /// Disposal
@@ -289,7 +289,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     public:
         ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&) = delete;
         /// Constructor for creation
-        ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n, unsigned int seqsize);
+        ValueSequenceSymmetryImp(Space& home, const int* _values, unsigned int n, unsigned int seqsize);
         /// Copy constructor
         ValueSequenceSymmetryImp(Space& home, const ValueSequenceSymmetryImp<View>& vss);
         /// Disposal
@@ -318,11 +318,11 @@ namespace Gecode { namespace Int { namespace LDSB {
         LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n, const Literal* literals,
                    int nliterals);
         /// Destructor
-        ~LDSBChoice(void) override;
+        ~LDSBChoice() override;
         /// Return literals
-        const Literal* literals(void) const;
+        const Literal* literals() const;
         /// Return number of literals
-        int nliterals(void) const;
+        int nliterals() const;
         /// Archive into \a e
         void archive(Archive& e) const override;
     };
@@ -379,7 +379,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     template <class View>
     ModEvent prune(Space& home, View x, int v);
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 #include <gecode/int/ldsb/brancher.hpp>
 #include <gecode/int/ldsb/sym-imp.hpp>

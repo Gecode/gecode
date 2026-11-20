@@ -33,15 +33,15 @@
 #include <gecode/int/ldsb.hh>
 
 namespace Gecode {
-    SymmetryHandle::SymmetryHandle(void) : ref(nullptr) {}
+    SymmetryHandle::SymmetryHandle() : ref(nullptr) {}
     SymmetryHandle::SymmetryHandle(Int::LDSB::SymmetryObject* o) : ref(o) {}
     SymmetryHandle::SymmetryHandle(const SymmetryHandle& h) : ref(h.ref) {
         if (ref != nullptr)
             increment();
     }
-    const SymmetryHandle&
+    SymmetryHandle&
     SymmetryHandle::operator=(const SymmetryHandle& h) {
-        if (h.ref == ref)
+        if ((this == &h) || (h.ref == ref))
             return *this;
         if (ref != nullptr)
             decrement();
@@ -50,16 +50,16 @@ namespace Gecode {
             increment();
         return *this;
     }
-    SymmetryHandle::~SymmetryHandle(void) {
+    SymmetryHandle::~SymmetryHandle() {
         if (ref != nullptr)
             decrement();
     }
     void
-    SymmetryHandle::increment(void) {
+    SymmetryHandle::increment() {
         (ref->nrefs)++;
     }
     void
-    SymmetryHandle::decrement(void) {
+    SymmetryHandle::decrement() {
         (ref->nrefs)--;
         if (ref->nrefs == 0)
             delete ref;
@@ -67,10 +67,10 @@ namespace Gecode {
     }
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
-    SymmetryObject::SymmetryObject(void) : nrefs(1) {}
-    SymmetryObject::~SymmetryObject(void) = default;
+    SymmetryObject::SymmetryObject() : nrefs(1) {}
+    SymmetryObject::~SymmetryObject() = default;
 
     VariableSymmetryObject::VariableSymmetryObject(ArgArray<VarImpBase*> vars) {
         nxs = vars.size();
@@ -78,24 +78,24 @@ namespace Gecode { namespace Int { namespace LDSB {
         for (int i = 0; i < nxs; i++)
             xs[i] = vars[i];
     }
-    VariableSymmetryObject::~VariableSymmetryObject(void) {
+    VariableSymmetryObject::~VariableSymmetryObject() {
         delete[] xs;
     }
 
     ValueSymmetryObject::ValueSymmetryObject(IntSet vs) : values(vs) {}
 
-    VariableSequenceSymmetryObject::VariableSequenceSymmetryObject(ArgArray<VarImpBase*> x, int ss) : seq_size(ss) {
-        nxs = x.size();
+    VariableSequenceSymmetryObject::VariableSequenceSymmetryObject(ArgArray<VarImpBase*> vars, int ss) : seq_size(ss) {
+        nxs = vars.size();
         xs = new VarImpBase*[nxs];
         for (int i = 0; i < nxs; i++)
-            xs[i] = x[i];
+            xs[i] = vars[i];
     }
-    VariableSequenceSymmetryObject::~VariableSequenceSymmetryObject(void) {
+    VariableSequenceSymmetryObject::~VariableSequenceSymmetryObject() {
         delete[] xs;
     }
 
     ValueSequenceSymmetryObject::ValueSequenceSymmetryObject(const IntArgs& vs, int ss) : values(vs), seq_size(ss) {}
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

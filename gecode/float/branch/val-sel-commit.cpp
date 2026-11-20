@@ -32,7 +32,7 @@
 
 #include <gecode/float/branch.hh>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     ValSelCommitBase<FloatView, FloatNumBranch>*
     value_selection_commit(Space& home, const FloatValBranch& fvb) {
@@ -74,6 +74,6 @@ namespace Gecode { namespace Float { namespace Branch {
         }
     }
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 // STATISTICS: float-branch

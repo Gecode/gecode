@@ -33,7 +33,7 @@
  *
  */
 
-#if defined(_WIN32)
+#ifdef _WIN32
 #if !defined(_WIN32_WINNT) || (_WIN32_WINNT < 0x0600)
 #undef _WIN32_WINNT
 #define _WIN32_WINNT 0x0600
@@ -42,7 +42,7 @@
 #undef WINVER
 #define WINVER 0x0600
 #endif
-#elif !defined(_GNU_SOURCE)
+#elifndef _GNU_SOURCE
 #define _GNU_SOURCE 1
 #endif
 
@@ -81,7 +81,7 @@
 #include <thread>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     namespace {
 
@@ -180,7 +180,7 @@ namespace Gecode { namespace FlatZinc {
 #else
             (void)stdcall_bytes;
             T symbol = nullptr;
-            *(void**)(&symbol) = dlsym(library, name);
+            *reinterpret_cast<void**>(&symbol) = dlsym(library, name);
             return symbol;
 #endif
         }
@@ -315,6 +315,7 @@ namespace Gecode { namespace FlatZinc {
                 try {
                     library_fzn_free(root_instance);
                 } catch (...) {
+                    // Ignored: cleanup has no way to report a failure
                 }
             }
             close_library(loaded);
@@ -329,12 +330,14 @@ namespace Gecode { namespace FlatZinc {
                 try {
                     library_fzn_free(instance->value);
                 } catch (...) {
+                    // Ignored: cleanup has no way to report a failure
                 }
             }
 #endif
             try {
                 library_fzn_free(root_instance);
             } catch (...) {
+                // Ignored: cleanup has no way to report a failure
             }
         }
 #ifdef GECODE_HAS_THREADS
@@ -347,7 +350,7 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_THREADS
     BlackBoxLibrary::Instance*
-    BlackBoxLibrary::instance(void) {
+    BlackBoxLibrary::instance() {
         const std::thread::id owner = std::this_thread::get_id();
         Support::Lock lock(mutex);
         // Each live thread has exclusive access to its selected instance.
@@ -368,6 +371,7 @@ namespace Gecode { namespace FlatZinc {
                 try {
                     library_fzn_free(value);
                 } catch (...) {
+                    // Ignored: cleanup has no way to report a failure
                 }
             }
             throw;
@@ -404,7 +408,7 @@ namespace Gecode { namespace FlatZinc {
     BlackBoxExec::BlackBoxExec(const std::string& program0, const std::vector<std::string>& args0)
         : program(program0), args(args0) {}
 
-    BlackBoxExec::~BlackBoxExec(void) {
+    BlackBoxExec::~BlackBoxExec() {
         Support::Lock lock(mutex);
         for (BlackBoxProcessSession* s : sessions) {
             delete s;
@@ -413,7 +417,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     BlackBoxProcessSession&
-    BlackBoxExec::session(void) {
+    BlackBoxExec::session() {
         Support::Lock lock(mutex);
         for (BlackBoxProcessSession* s : sessions) {
             if (s->owned_by_current_thread()) {
@@ -451,7 +455,7 @@ namespace Gecode { namespace FlatZinc {
 
     void
     decode_blackbox_response(const std::string& response, BlackBoxCall& call) {
-        if (response.find('\0') != std::string::npos) {
+        if (response.contains('\0')) {
             throw Error("BlackBoxExec", "Blackbox process response contains NUL data.");
         }
         // Parse the response in a single left-to-right pass: comma-separated
@@ -560,6 +564,6 @@ namespace Gecode { namespace FlatZinc {
         decode_blackbox_response(response, call);
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-other

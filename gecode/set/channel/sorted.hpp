@@ -38,7 +38,7 @@
 #include <gecode/int.hh>
 #include <gecode/set/rel.hh>
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
     template <class View>
     forceinline
@@ -190,6 +190,6 @@ namespace Gecode { namespace Set { namespace Channel {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Set::Channel
+} // namespace Gecode::Set::Channel
 
 // STATISTICS: set-prop

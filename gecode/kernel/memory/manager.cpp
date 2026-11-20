@@ -32,10 +32,10 @@
 
 #include <gecode/kernel.hh>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     Support::Mutex&
-    SharedMemory::m(void) {
+    SharedMemory::m() {
         static Support::Mutex _m;
         return _m;
     }
@@ -47,6 +47,6 @@ namespace Gecode { namespace Kernel {
         alloc_fill(sm, sz, false);
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-memory

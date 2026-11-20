@@ -145,7 +145,7 @@ public:
     }
     /// Return solution cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return c_total;
     }
     /// Constructor for cloning \a s
@@ -154,7 +154,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SumCostWarehouses(*this);
     }
     /// Print solution
@@ -185,7 +185,7 @@ public:
     }
     /// Return solution cost
     IntVarArgs
-    cost(void) const override {
+    cost() const override {
         return {c_open, c_stores};
     }
     /// Constructor for cloning \a s
@@ -195,7 +195,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new LexCostWarehouses(*this);
     }
     /// Print solution

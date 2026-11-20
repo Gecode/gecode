@@ -49,7 +49,7 @@ namespace Gecode {
         /// Initialize with location \a l and information \a i
         Exception(const char* l, const char* i) noexcept;
         /// Return information
-        const char* what(void) const noexcept override;
+        const char* what() const noexcept override;
     };
 
     /**
@@ -62,7 +62,7 @@ namespace Gecode {
     class GECODE_SUPPORT_EXPORT MemoryExhausted : public Exception {
     public:
         /// Initialize
-        MemoryExhausted(void);
+        MemoryExhausted();
     };
     /// %Exception: dynamic cast failed
     class GECODE_SUPPORT_EXPORT DynamicCastFailed : public Exception {

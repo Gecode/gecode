@@ -34,7 +34,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     template <class OptTask, class Cap, class PL>
     forceinline
@@ -71,7 +71,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 if (t[0].mandatory()) {
                     GECODE_ME_CHECK(c.gq(home, t[0].c()));
                     return ES_OK;
-                } else if (c.min() >= t[0].c()) {
+                }
+                if (c.min() >= t[0].c()) {
                     return ES_OK;
                 }
             } else {
@@ -178,6 +179,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

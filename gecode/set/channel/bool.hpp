@@ -32,16 +32,16 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
     template <class View>
     template <class A>
     forceinline
     ChannelBool<View>::IndexAdvisor::IndexAdvisor(Space& home, ChannelBool<View>& p, Council<A>& c, int index)
         : Advisor(home, p, c), idx(index) {
-        if (idx == -1)
+        if (idx == -1) {
             p.y.subscribe(home, *this);
-        else {
+        } else {
             p.x[idx].subscribe(home, *this);
         }
     }
@@ -53,7 +53,7 @@ namespace Gecode { namespace Set { namespace Channel {
 
     template <class View>
     forceinline int
-    ChannelBool<View>::IndexAdvisor::index(void) const {
+    ChannelBool<View>::IndexAdvisor::index() const {
         return idx;
     }
 
@@ -62,9 +62,9 @@ namespace Gecode { namespace Set { namespace Channel {
     forceinline void
     ChannelBool<View>::IndexAdvisor::dispose(Space& home, Council<A>& c) {
         ChannelBool<View>& p = static_cast<ChannelBool<View>&>(propagator());
-        if (idx == -1)
+        if (idx == -1) {
             p.y.cancel(home, *this);
-        else {
+        } else {
             p.x[idx].cancel(home, *this);
         }
         Advisor::dispose(home, c);
@@ -151,12 +151,12 @@ namespace Gecode { namespace Set { namespace Channel {
     ExecStatus
     ChannelBool<View>::propagate(Space& home, const ModEventDelta&) {
         running = true;
-        if (zeros.size() > 0) {
+        if (!zeros.empty()) {
             BndSetRanges zi(zeros);
             GECODE_ME_CHECK(y.exclude_i(home, zi));
             zeros.init(home);
         }
-        if (ones.size() > 0) {
+        if (!ones.empty()) {
             BndSetRanges oi(ones);
             GECODE_ME_CHECK(y.include_i(home, oi));
             ones.init(home);
@@ -263,10 +263,9 @@ namespace Gecode { namespace Set { namespace Channel {
         }
         if (y.assigned())
             return home.ES_NOFIX_DISPOSE(co, a);
-        else
-            return ES_NOFIX;
+        return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Set::Channel
+} // namespace Gecode::Set::Channel
 
 // STATISTICS: set-prop

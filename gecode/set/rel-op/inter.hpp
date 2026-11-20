@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace RelOp {
+namespace Gecode::Set::RelOp {
 
     /*
      * "Ternary intersection" propagator
@@ -157,15 +157,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 
         if (shared(x0, x1, x2)) {
             return (x0ass && x1ass && x2ass) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
-        } else {
-            if (x0ass && x1ass && x2ass)
-                return home.ES_SUBSUMED(*this);
-            if (x0ass != x0.assigned() || x1ass != x1.assigned() || x2ass != x2.assigned()) {
-                return ES_NOFIX;
-            } else {
-                return ES_FIX;
-            }
         }
+        if (x0ass && x1ass && x2ass)
+            return home.ES_SUBSUMED(*this);
+        if (x0ass != x0.assigned() || x1ass != x1.assigned() || x2ass != x2.assigned()) {
+            return ES_NOFIX;
+        }
+        return ES_FIX;
     }
 
     template <class View0, class View1, class View2>
@@ -329,7 +327,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                         repeat = true;
                     }
                     x.move_lst(i);
-                    if (int_of_dets.size() == 0) {
+                    if (int_of_dets.empty()) {
                         GECODE_ME_CHECK(y.card_max(home, 0));
                         int_of_dets.dispose(home);
                         return home.ES_SUBSUMED(*this);
@@ -351,6 +349,6 @@ namespace Gecode { namespace Set { namespace RelOp {
         return shared ? ES_NOFIX : ES_FIX;
     }
 
-}}} // namespace Gecode::Set::RelOp
+} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

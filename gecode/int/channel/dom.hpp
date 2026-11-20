@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     /**
      * \brief Combine view with information for domain propagation
@@ -54,13 +54,13 @@ namespace Gecode { namespace Int { namespace Channel {
         /// Initialize
         void init(View x, int n);
         /// Update during cloning
-        void update(Space& home, DomInfo<View, Offset>& vcb);
+        void update(Space& home, DomInfo<View, Offset>& di);
         /// Check whether propagation for assignment is to be done
-        bool doval(void) const;
+        bool doval() const;
         /// Check whether propagation for domain is to be done
-        bool dodom(void) const;
+        bool dodom() const;
         /// Record that view got assigned
-        void assigned(void);
+        void assigned();
         /// Record that one value got removed
         void removed(int i);
         /// Update the size and bounds information after pruning
@@ -87,19 +87,19 @@ namespace Gecode { namespace Int { namespace Channel {
 
     template <class View, class Offset>
     forceinline bool
-    DomInfo<View, Offset>::doval(void) const {
+    DomInfo<View, Offset>::doval() const {
         return (size != 1) && view.assigned();
     }
 
     template <class View, class Offset>
     forceinline bool
-    DomInfo<View, Offset>::dodom(void) const {
+    DomInfo<View, Offset>::dodom() const {
         return size != view.size();
     }
 
     template <class View, class Offset>
     forceinline void
-    DomInfo<View, Offset>::assigned(void) {
+    DomInfo<View, Offset>::assigned() {
         size = 1;
     }
 
@@ -181,8 +181,7 @@ namespace Gecode { namespace Int { namespace Channel {
     Dom<View, Offset, shared>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::quadratic(PropCost::LO, 2 * n);
-        else
-            return PropCost::quadratic(PropCost::HI, 2 * n);
+        return PropCost::quadratic(PropCost::HI, 2 * n);
     }
 
     template <class View, class Offset, bool shared>
@@ -217,18 +216,15 @@ namespace Gecode { namespace Int { namespace Channel {
                     assert(ya.empty());
                 } while (!xa.empty() || !ya.empty());
                 return home.ES_NOFIX_PARTIAL(*this, View::med(ME_INT_DOM));
-            } else {
-                do {
-                    // Propagate assigned views for x
-                    GECODE_ES_CHECK(
-                        (prop_val<View, Offset, DomInfo<View, Offset>>(home, n, x, ox, y, oy, n_na, xa, ya)));
-                    // Propagate assigned views for y
-                    GECODE_ES_CHECK(
-                        (prop_val<View, Offset, DomInfo<View, Offset>>(home, n, y, oy, x, ox, n_na, ya, xa)));
-                    assert(ya.empty());
-                } while (!xa.empty());
-                return home.ES_FIX_PARTIAL(*this, View::med(ME_INT_DOM));
             }
+            do {
+                // Propagate assigned views for x
+                GECODE_ES_CHECK((prop_val<View, Offset, DomInfo<View, Offset>>(home, n, x, ox, y, oy, n_na, xa, ya)));
+                // Propagate assigned views for y
+                GECODE_ES_CHECK((prop_val<View, Offset, DomInfo<View, Offset>>(home, n, y, oy, x, ox, n_na, ya, xa)));
+                assert(ya.empty());
+            } while (!xa.empty());
+            return home.ES_FIX_PARTIAL(*this, View::med(ME_INT_DOM));
         }
 
         // Process changed views for y
@@ -291,9 +287,8 @@ namespace Gecode { namespace Int { namespace Channel {
                 if (!xy[i].view.assigned())
                     return ES_NOFIX;
             return home.ES_SUBSUMED(*this);
-        } else {
-            return (n_na == 0) ? home.ES_SUBSUMED(*this) : ES_FIX;
         }
+        return (n_na == 0) ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
 
     template <class View, class Offset, bool shared>
@@ -315,6 +310,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

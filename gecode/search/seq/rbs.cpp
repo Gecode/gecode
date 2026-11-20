@@ -38,7 +38,7 @@
 
 #include <memory>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     namespace {
 
@@ -76,7 +76,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     NoGoods&
-    RBS::hub_nogoods(void) {
+    RBS::hub_nogoods() {
         // The no-goods hold in the hub only for a spoke of full coverage
         if (coverage != SpokeCoverage::Full)
             return NoGoods::eng;
@@ -142,7 +142,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Space*
-    RBS::next(void) {
+    RBS::next() {
         // A proof or a decision to finish ends the search
         if ((end == EndReason::Exhausted) || (end == EndReason::Incomplete))
             return nullptr;
@@ -203,7 +203,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Search::Statistics
-    RBS::statistics(void) const {
+    RBS::statistics() const {
         return stop->metastatistics() + e->statistics();
     }
 
@@ -222,7 +222,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     EndReason
-    RBS::end_reason(void) const {
+    RBS::end_reason() const {
         /*
          * What might happen during parallel search is that the engine has
          * been stopped by the cutoff but the meta engine reports a limit,
@@ -233,7 +233,7 @@ namespace Gecode { namespace Search { namespace Seq {
         return end;
     }
 
-    RBS::~RBS(void) {
+    RBS::~RBS() {
         delete e;
         delete hub;
         delete last;
@@ -241,6 +241,6 @@ namespace Gecode { namespace Search { namespace Seq {
         delete stop;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

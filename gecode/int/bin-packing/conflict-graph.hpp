@@ -35,10 +35,10 @@
 #include <gecode/int/rel.hh>
 #include <gecode/int/distinct.hh>
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
     forceinline int
-    ConflictGraph::nodes(void) const {
+    ConflictGraph::nodes() const {
         return b.size();
     }
 
@@ -105,17 +105,17 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    ConflictGraph::Node::Node(void) {}
+    ConflictGraph::Node::Node() {}
 
     forceinline
     ConflictGraph::Nodes::Nodes(const NodeSet& ns0)
         : ns(ns0), c(ns.next(0)) {}
     forceinline void
-    ConflictGraph::Nodes::operator++(void) {
+    ConflictGraph::Nodes::operator++() {
         c = ns.next(c + 1);
     }
     forceinline int
-    ConflictGraph::Nodes::operator()(void) const {
+    ConflictGraph::Nodes::operator()() const {
         return static_cast<int>(c);
     }
 
@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     forceinline ExecStatus
-    ConflictGraph::clique(void) {
+    ConflictGraph::clique() {
         // Remember clique
         if ((cur.c > max.c) || ((cur.c == max.c) && (cur.w > max.w))) {
             max.n.copy(nodes(), cur.n);
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         int i = 0;
         for (Nodes c(cur.n); c() < nodes(); ++c)
             bv[i++] = b[c()];
-        assert(i == static_cast<int>(cur.c));
+        assert(std::cmp_equal(i, cur.c));
         return Distinct::Dom<IntView>::post(home, bv);
     }
 
@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     forceinline ExecStatus
-    ConflictGraph::post(void) {
+    ConflictGraph::post() {
         // Find some simple cliques of sizes 2 and 3.
         Region reg;
         {
@@ -344,17 +344,17 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     inline IntSet
-    ConflictGraph::maximum_clique(void) const {
+    ConflictGraph::maximum_clique() const {
         Region reg;
         int* n = reg.alloc<int>(max.c);
         int j = 0;
         for (Nodes i(max.n); i() < nodes(); ++i)
             n[j++] = i();
-        assert(j == static_cast<int>(max.c));
+        assert(std::cmp_equal(j, max.c));
         IntSet s(n, static_cast<int>(max.c));
         return s;
     }
 
-}}} // namespace Gecode::Int::BinPacking
+} // namespace Gecode::Int::BinPacking
 
 // STATISTICS: int-prop

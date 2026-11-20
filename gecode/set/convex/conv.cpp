@@ -36,7 +36,7 @@
 
 #include <gecode/set/convex.hh>
 
-namespace Gecode { namespace Set { namespace Convex {
+namespace Gecode::Set::Convex {
 
     Actor*
     Convex::copy(Space& home) {
@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Convex {
         Iter::Ranges::Cache ub_range_it_c(r, ub_range_it);
 
         for (; ub_range_it_c(); ++ub_range_it_c) {
-            if (ub_range_it_c.width() < (unsigned int)x0.card_min() ||
+            if (ub_range_it_c.width() < x0.card_min() ||
                 ub_range_it_c.min() > x0.glb_min() // No need to test for empty lb.
                 || ub_range_it_c.max() < x0.glb_max()) {
                 GECODE_ME_CHECK(x0.exclude(home, ub_range_it_c.min(), ub_range_it_c.max()));
@@ -85,6 +85,6 @@ namespace Gecode { namespace Set { namespace Convex {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Set::Convex
+} // namespace Gecode::Set::Convex
 
 // STATISTICS: set-prop

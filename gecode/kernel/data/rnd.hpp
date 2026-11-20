@@ -76,7 +76,7 @@ namespace Gecode {
 
     public:
         /// Generator seeded with 1
-        RndGenerator(void) : r(1) {}
+        RndGenerator() : r(1) {}
         /// Seed explicitly, so an integer never converts to a generator
         explicit RndGenerator(uint64_t seed) : r(seed) {}
         /// Use the state of \a source
@@ -107,15 +107,15 @@ namespace Gecode {
             r.seed(value);
         }
         void
-        time(void) {
+        time() {
             seed(static_cast<uint64_t>(::time(nullptr)));
         }
         void
-        hw(void) {
-            seed((uint64_t(Support::hwrnd()) << 32) | Support::hwrnd());
+        hw() {
+            seed((static_cast<uint64_t>(Support::hwrnd()) << 32) | Support::hwrnd());
         }
         std::string
-        state(void) const {
+        state() const {
             return r.state_string();
         }
         void
@@ -123,7 +123,7 @@ namespace Gecode {
             r.state(text);
         }
         static const char*
-        name(void) {
+        name() {
             return Engine::name();
         }
         template <class Type>

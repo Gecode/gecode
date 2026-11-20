@@ -34,17 +34,17 @@
 
 namespace Gecode {
 
-    namespace Int { namespace NoOverlap {
+    namespace Int::NoOverlap {
 
-        bool
+        static bool
         optional(const BoolVarArgs& m) {
-            for (int i = 0; i < m.size(); i++)
-                if (m[i].none())
+            for (auto mi : m)
+                if (mi.none())
                     return true;
             return false;
         }
 
-    }} // namespace Int::NoOverlap
+    } // namespace Int::NoOverlap
 
     void
     no_overlap(Home home, const IntVarArgs& x, const IntArgs& w, const IntVarArgs& y, const IntArgs& h, IntPropLevel) {

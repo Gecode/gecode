@@ -1,3 +1,5 @@
+#include <utility>
+
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -30,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     template <class View>
     forceinline
@@ -78,8 +80,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     Bnd<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_VAL)
             return PropCost::linear(PropCost::LO, y.size());
-        else
-            return PropCost::quadratic(PropCost::LO, x.size());
+        return PropCost::quadratic(PropCost::LO, x.size());
     }
 
     template <class View>
@@ -195,7 +196,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View, class IntType>
     forceinline ExecStatus
-    prop_bnd(Space& home, ViewArray<View>& x, int* minsorted, int* maxsorted) {
+    prop_bnd(Space& home, ViewArray<View>& x, const int* minsorted, const int* maxsorted) {
         const int n = x.size();
 
         Region r;
@@ -314,7 +315,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
         unsigned int d = static_cast<unsigned int>(max_x) - static_cast<unsigned int>(min_x) + 1;
 
-        if (d < static_cast<unsigned int>(n))
+        if (std::cmp_less(d, n))
             return ES_FAILED;
 
         if (d > 2 * static_cast<unsigned int>(n)) {
@@ -361,8 +362,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         // The Hall bounds reach max_x+3, which overflows int near the limit
         if ((d > (static_cast<unsigned int>(Int::Limits::max) / 2U)) || (max_x > Int::Limits::max - 2))
             return prop_bnd<View, long long int>(home, x, minsorted, maxsorted);
-        else
-            return prop_bnd<View, int>(home, x, minsorted, maxsorted);
+        return prop_bnd<View, int>(home, x, minsorted, maxsorted);
     }
 
     template <class View>
@@ -480,6 +480,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

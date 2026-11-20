@@ -40,7 +40,7 @@ namespace Gecode {
 
     namespace {
         /// Check if types agree
-        static bool
+        bool
         same(SetExpr::NodeType t0, SetExpr::NodeType t1) {
             return (t0 == t1) || (t1 == SetExpr::NT_VAR) || (t1 == SetExpr::NT_CONST) || (t1 == SetExpr::NT_LEXP);
         }
@@ -65,10 +65,10 @@ namespace Gecode {
         LinIntExpr e;
 
         /// Default constructor
-        Node(void);
+        Node();
         /// Decrement reference count and possibly free memory
         GECODE_MINIMODEL_EXPORT
-        bool decrement(void);
+        bool decrement();
         /// Memory management
         static void* operator new(size_t size);
         /// Memory management
@@ -79,7 +79,7 @@ namespace Gecode {
      * Operations for nodes
      *
      */
-    SetExpr::Node::Node(void) : use(1) {}
+    SetExpr::Node::Node() : use(1) {}
 
     void*
     SetExpr::Node::operator new(size_t size) {
@@ -91,7 +91,7 @@ namespace Gecode {
     }
 
     bool
-    SetExpr::Node::decrement(void) {
+    SetExpr::Node::decrement() {
         if (--use == 0) {
             if ((l != nullptr) && l->decrement())
                 delete l;
@@ -106,8 +106,8 @@ namespace Gecode {
         /// %Node for negation normalform (%NNF)
         class NNF {
         public:
-            typedef SetExpr::NodeType NodeType;
-            typedef SetExpr::Node Node;
+            using NodeType = SetExpr::NodeType;
+            using Node = SetExpr::Node;
             /// Type of node
             NodeType t;
             /// Number of positive literals for node type
@@ -184,8 +184,9 @@ namespace Gecode {
                         rel(home, u.a.x->x, srt, bc);
                         break;
                     }
-                } else
+                } else {
                     rel(home, u.a.x->x, srt, s);
+                }
                 break;
             case SetExpr::NT_CONST: {
                 IntSet ss;
@@ -225,9 +226,9 @@ namespace Gecode {
                 if (i == 2) {
                     rel(home, bs[0], SOT_INTERSECTION, bs[1], srt, s);
                 } else {
-                    if (srt == SRT_EQ)
+                    if (srt == SRT_EQ) {
                         rel(home, SOT_INTERSECTION, bs, s);
-                    else {
+                    } else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                         rel(home, SOT_INTERSECTION, bs, bc);
                         rel(home, bc, srt, s);
@@ -241,9 +242,9 @@ namespace Gecode {
                 if (i == 2) {
                     rel(home, bs[0], SOT_UNION, bs[1], srt, s);
                 } else {
-                    if (srt == SRT_EQ)
+                    if (srt == SRT_EQ) {
                         rel(home, SOT_UNION, bs, s);
-                    else {
+                    } else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                         rel(home, SOT_UNION, bs, bc);
                         rel(home, bc, srt, s);
@@ -274,18 +275,18 @@ namespace Gecode {
                         } else {
                             SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                             rel(home, SOT_DISJOINT_UNION, bs, br);
-                            if (srt == SRT_EQ)
+                            if (srt == SRT_EQ) {
                                 rel(home, br, SRT_COMPLEMENT, s);
-                            else {
+                            } else {
                                 SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                                 rel(home, br, srt, bc);
                                 rel(home, bc, SRT_COMPLEMENT, s);
                             }
                         }
                     } else {
-                        if (srt == SRT_EQ)
+                        if (srt == SRT_EQ) {
                             rel(home, SOT_DISJOINT_UNION, bs, s);
-                        else {
+                        } else {
                             SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                             rel(home, SOT_DISJOINT_UNION, bs, br);
                             rel(home, br, srt, s);
@@ -316,8 +317,9 @@ namespace Gecode {
                         rel(home, u.a.x->x, srt, bc, b);
                         break;
                     }
-                } else
+                } else {
                     rel(home, u.a.x->x, srt, s, b);
+                }
                 break;
             case SetExpr::NT_CONST: {
                 IntSet ss;
@@ -394,11 +396,11 @@ namespace Gecode {
                 if (neg) {
                     SetVar br(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                     rel(home, SOT_DISJOINT_UNION, bs, br);
-                    if (srt == SRT_COMPLEMENT)
+                    if (srt == SRT_COMPLEMENT) {
                         rel(home, br, SRT_EQ, s, b);
-                    else if (srt == SRT_EQ)
+                    } else if (srt == SRT_EQ) {
                         rel(home, br, SRT_COMPLEMENT, s, b);
-                    else {
+                    } else {
                         SetVar bc(home, IntSet::empty, IntSet(Set::Limits::min, Set::Limits::max));
                         rel(home, br, srt, bc);
                         rel(home, bc, SRT_COMPLEMENT, s, b);
@@ -615,7 +617,7 @@ namespace Gecode {
         }
     }
 
-    const SetExpr&
+    SetExpr&
     SetExpr::operator=(const SetExpr& e) {
         if (this != &e) {
             if (n != nullptr && n->decrement())
@@ -626,7 +628,7 @@ namespace Gecode {
         return *this;
     }
 
-    SetExpr::~SetExpr(void) {
+    SetExpr::~SetExpr() {
         if (n != nullptr && n->decrement())
             delete n;
     }
@@ -646,12 +648,12 @@ namespace Gecode {
     void
     SetExpr::post(Home home, SetRelType srt, const SetExpr& e) const {
         Region r;
-        return NNF::nnf(r, n, false)->post(home, srt, NNF::nnf(r, e.n, false));
+        NNF::nnf(r, n, false)->post(home, srt, NNF::nnf(r, e.n, false));
     }
     void
     SetExpr::post(Home home, BoolVar b, bool t, SetRelType srt, const SetExpr& e) const {
         Region r;
-        return NNF::nnf(r, n, false)->post(home, b, t, srt, NNF::nnf(r, e.n, false));
+        NNF::nnf(r, n, false)->post(home, b, t, srt, NNF::nnf(r, e.n, false));
     }
 
     SetExpr

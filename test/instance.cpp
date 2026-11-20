@@ -40,12 +40,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <fstream>
 #include <functional>
 #include <sstream>
 #include <string>
 
-namespace Test { namespace Instance {
+namespace Test::Instance {
 
     using Gecode::IntArgs;
     using Gecode::Instance::Data;
@@ -59,18 +60,18 @@ namespace Test { namespace Instance {
      */
 
     /// Read \a text with the spec \a spec
-    Data
+    static Data
     read(const char* spec, const char* text, const Params& p = Params()) {
         return Spec::parse(spec, "test.reader").read_text(text, "test.txt", p);
     }
 
     /// Check that \a f throws an Error whose message contains \a what
-    bool
-    fails(const std::function<void(void)>& f, const char* what) {
+    static bool
+    fails(const std::function<void()>& f, const char* what) {
         try {
             f();
         } catch (const Error& e) {
-            if (std::string(e.what()).find(what) != std::string::npos)
+            if (std::string(e.what()).contains(what))
                 return true;
             olog << "unexpected error message:\n" << e.what() << "\n";
             return false;
@@ -80,19 +81,19 @@ namespace Test { namespace Instance {
     }
 
     /// Check that reading \a text with \a spec fails with \a what
-    bool
+    static bool
     fails(const char* spec, const char* text, const char* what) {
-        return fails([&](void) { (void)read(spec, text); }, what);
+        return fails([&]() { (void)read(spec, text); }, what);
     }
 
     /// Check that parsing \a spec fails with \a what
-    bool
+    static bool
     rejects(const char* spec, const char* what) {
-        return fails([&](void) { (void)Spec::parse(spec, "s"); }, what);
+        return fails([&]() { (void)Spec::parse(spec, "s"); }, what);
     }
 
     /// Compare integer array \a a with the values \a v
-    bool
+    static bool
     equal(const IntArgs& a, std::initializer_list<int> v) {
         if (a.size() != static_cast<int>(v.size()))
             return false;
@@ -113,14 +114,14 @@ namespace Test { namespace Instance {
     class Case : public Base {
     protected:
         /// The test
-        std::function<bool(void)> f;
+        std::function<bool()> f;
 
     public:
         /// Create test \a n running \a f0
-        Case(const std::string& n, std::function<bool(void)> f0) : Base("Instance::" + n), f(std::move(f0)) {}
+        Case(const std::string& n, std::function<bool()> f0) : Base("Instance::" + n), f(std::move(f0)) {}
         /// Run the test
         bool
-        run(void) override {
+        run() override {
             try {
                 return f();
             } catch (const Error& e) {
@@ -130,7 +131,7 @@ namespace Test { namespace Instance {
         }
     };
 
-    Case scalars("Read::Scalars", [](void) {
+    Case scalars("Read::Scalars", []() {
         Data d = read("a: int  b: float  c: num  e: num  w: word  r: rest", "  -7 2.5\n 3 4.5e1 hello  the rest  \n");
         CHECK(d.integer("a") == -7);
         CHECK(d.number("b") == 2.5);
@@ -144,7 +145,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case arrays("Read::Arrays", [](void) {
+    Case arrays("Read::Arrays", []() {
         Data d = read("n: int  m: int  a[n][m]: int  _: int  f[2]: float offset 1", "2 3\n1 2\n3 4 5 6\n99 1.5 2");
         CHECK(d.depth("a") == 2);
         CHECK(d.size("a") == 2);
@@ -158,7 +159,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case layouts("Read::Layouts", [](void) {
+    Case layouts("Read::Layouts", []() {
         // The symmetric matrix 0 1 2 / 1 0 3 / 2 3 0 in all layouts
         const char* spec = "f: word  w[3][3]: int layout f";
         const char* inputs[] = {
@@ -185,7 +186,7 @@ namespace Test { namespace Instance {
         return fails(spec, "DIAGONAL 1 2 3", "unknown matrix layout");
     });
 
-    Case lists("Read::Lists", [](void) {
+    Case lists("Read::Lists", []() {
         Data d = read("list a: int until 0  list b: int until eol  list c: int until eol  list w: word until \"END\"",
                       "1 2\n 3 0 4 5\n6 7\nx y END");
         CHECK(equal(d.ints("a"), {1, 2, 3}));
@@ -196,7 +197,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case patterns("Read::Patterns", [](void) {
+    Case patterns("Read::Patterns", []() {
         Data d = read("line \"# size={n:int} box={w:int}x{h:int}\"\n"
                       "find \"NAME : {name:rest}\"\n"
                       "line \"p {_} {v:int} {c:num} ...\"",
@@ -213,7 +214,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case params("Read::Params", [](void) {
+    Case params("Read::Params", []() {
         const char* spec = "param which  param k = 2\n"
                            "find \"instance {$which}\"  x[k]: int  ignore trailing";
         const char* text = "instance a\n1 2\ninstance b\n3 4\n";
@@ -230,13 +231,13 @@ namespace Test { namespace Instance {
         r.set("which=a,,k=1,");
         CHECK(equal(read(spec, text, r).ints("x"), {1}));
         CHECK(fails(
-            [](void) {
+            []() {
                 Params e;
                 e.set("which=a,k");
             },
             "parameter 'k' must have the form name=value"));
         CHECK(fails(
-            [](void) {
+            []() {
                 Params e;
                 e.set("=a");
             },
@@ -244,7 +245,7 @@ namespace Test { namespace Instance {
         return fails(spec, text, "parameter 'which' must be given");
     });
 
-    Case repeats("Read::Repeat", [](void) {
+    Case repeats("Read::Repeat", []() {
         Data d = read("n: int\n"
                       "repeat n { index 1  k: int  s[k]: int offset -1 }\n"
                       "repeat until \"999\" { a: int }\n"
@@ -272,7 +273,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case sections("Read::Sections", [](void) {
+    Case sections("Read::Sections", []() {
         const char* spec = "sections until \"EOF\" {\n"
                            "  \"N : {n:int}\"\n"
                            "  \"DATA\" { x[n]: int }\n"
@@ -293,22 +294,22 @@ namespace Test { namespace Instance {
                     "test.txt:4:1: a second line matching \"N : {n:int}\" (the first is on line 1)"));
         CHECK(fails(spec, "NAME : a\nN : 1\nDATA\n4\nNAME : b\n", "a second line matching \"NAME : {name:word}\""));
         // A last arm ends the statement, and may be optional
-        const char* last = "sections { \"a {a:int}\"  \"end\" last }  y: int";
+        const char* last = R"(sections { "a {a:int}"  "end" last }  y: int)";
         CHECK(read(last, "a 1\nend\n5").integer("y") == 5);
         CHECK(fails(last, "a 1\n5", "expected one of"));
         CHECK(fails(last, "a 1", "expected a line matching \"end\" before the end of the input"));
         CHECK(fails(last, "end\n5",
                     "test.txt:1:1: expected a line matching \"a {a:int}\" before the line matching \"end\""));
-        const char* optional_last = "sections { \"a {a:int}\"  \"end\" optional last }";
+        const char* optional_last = R"(sections { "a {a:int}"  "end" optional last })";
         CHECK(read(optional_last, "a 1").integer("a") == 1);
         CHECK(read(optional_last, "a 1\nend").integer("a") == 1);
         return true;
     });
 
-    Case alphabets("Read::Alphabets", [](void) {
-        Data d = read("g[2][3]: alphabet \"123ABC\" blank \".\"", "1.A\nC 2 .");
+    Case alphabets("Read::Alphabets", []() {
+        Data d = read(R"(g[2][3]: alphabet "123ABC" blank ".")", "1.A\nC 2 .");
         CHECK(equal(d.ints("g"), {1, 0, 4, 6, 2, 0}));
-        Data e = read("g[2][2]: alphabet \"ab\" base 0 strip \"|-\"", "a|b\n---\nb|a");
+        Data e = read(R"(g[2][2]: alphabet "ab" base 0 strip "|-")", "a|b\n---\nb|a");
         CHECK(equal(e.ints("g"), {0, 1, 1, 0}));
         // Alphabet options do not take the statements that follow
         CHECK(read("g[1][2]: alphabet \"ab\"  ignore trailing", "ab x").size("g") == 1);
@@ -322,7 +323,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case ranges("Read::Ranges", [](void) {
+    Case ranges("Read::Ranges", []() {
         Data d = read("n: 1..  a[n]: 0..<n  b: ..0  c: -2..-1", "2 0 1 -5 -2");
         CHECK(equal(d.ints("a"), {0, 1}));
         CHECK(d.integer("b") == -5);
@@ -345,7 +346,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case types("Spec::Types", [](void) {
+    Case types("Spec::Types", []() {
         Data d = read("type time = 0..gecode.int_max / 2\n"
                       "n: 1..\n"
                       "repeat n { ready: time  due: time }\n"
@@ -381,7 +382,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case control("Read::Control", [](void) {
+    Case control("Read::Control", []() {
         Data d = read("n: int\n"
                       "if n > 1 { w: word } else { let w = \"none\" }\n"
                       "let m = n * 3 + 1\n"
@@ -401,7 +402,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case lexical("Read::Lexical", [](void) {
+    Case lexical("Read::Lexical", []() {
         Data d = read("comment \"c\" \"#\"\n"
                       "stop \"%\"\n"
                       "tokens \";\"\n"
@@ -415,9 +416,9 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case robustness("Read::Robustness", [](void) {
+    Case robustness("Read::Robustness", []() {
         // Separators, and a string terminator for a list of numbers
-        Data d = read("separators \",\"  list a: int until eol  list b: int until \"EOF\"", "1,2, 3\n4 5 EOF");
+        Data d = read(R"(separators ","  list a: int until eol  list b: int until "EOF")", "1,2, 3\n4 5 EOF");
         CHECK(equal(d.ints("a"), {1, 2, 3}));
         CHECK(equal(d.ints("b"), {4, 5}));
         // Names with dashes only for formats; '-' is otherwise subtraction
@@ -447,7 +448,7 @@ namespace Test { namespace Instance {
         CHECK(fails("list a: int until 0", "5x 0", "expected int, found '5x'"));
         CHECK(fails("list a: int until 0", "1 - 0", "expected int, found '-'"));
         CHECK(fails("a[2]: int", "1", "expected int, found end of input"));
-        CHECK(fails([](void) { (void)Spec::parse("line \"a ... b\"", "s"); }, "'...' must end the pattern"));
+        CHECK(fails([]() { (void)Spec::parse("line \"a ... b\"", "s"); }, "'...' must end the pattern"));
         CHECK(fails("repeat 2 { k: int  if k > 0 { x: int } }", "1 5 0", "'x' is defined in only some repetitions"));
         // A wrong count fails at the end of the input, without allocating
         CHECK(fails("n: int  a[n][1]: int", "1000000000 1 2", "found end of input"));
@@ -458,7 +459,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case instances("Read::Instances", [](void) {
+    Case instances("Read::Instances", []() {
         const char* spec = "comment \"+++\"\n"
                            "instances {\n"
                            "  sections skip other {\n"
@@ -475,7 +476,7 @@ namespace Test { namespace Instance {
         CHECK(equal(read(spec, text, by_name).ints("x"), {7}));
         CHECK(equal(read(spec, text, by_number).ints("x"), {1, 2}));
         CHECK(read(spec, text, by_number).text("name") == "a");
-        CHECK(fails([&](void) { (void)read(spec, text, bad); }, "there is no instance '3' (the file has 2 instances)"));
+        CHECK(fails([&]() { (void)read(spec, text, bad); }, "there is no instance '3' (the file has 2 instances)"));
         CHECK(fails(spec, text, "the file has 2 instances; select one"));
         // A single instance needs no selection, and needs no name
         CHECK(equal(read(spec, "3\n4 5 6\n").ints("x"), {4, 5, 6}));
@@ -490,15 +491,15 @@ namespace Test { namespace Instance {
         // Trailing input that holds no instance is an error
         CHECK(fails(spec, "1\n2\njunk\n", "expected a line matching \"{n:int}\""));
         CHECK(fails("instances { a: int }", "", "the file contains no instance"));
-        CHECK(fails([](void) { (void)Spec::parse("instances { a: int } b: int", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("instances { a: int } b: int", "s"); },
                     "'instances' must be the last statement"));
-        CHECK(fails([](void) { (void)Spec::parse("repeat 2 { instances { a: int } }", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("repeat 2 { instances { a: int } }", "s"); },
                     "'instances' must be at the top level"));
         CHECK(fails("instances { if 0 > 1 { a: int } }", "5", "an instance must read some input"));
         return true;
     });
 
-    Case arithmetic("Read::Arithmetic", [](void) {
+    Case arithmetic("Read::Arithmetic", []() {
         Data d = read("a[3]: int  g: float  h: float\n"
                       "let s = sum(a)  let lo = min(a)  let hi = max(a, 7)\n"
                       "check g < 0 && -h < -3.5 \"floats compare\"",
@@ -518,7 +519,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case progress("Read::Progress", [](void) {
+    Case progress("Read::Progress", []() {
         // Repeats whose body reads no input
         CHECK(fails("repeat until eof { let x = 1 }", "1", "the body of a repeat until read no input"));
         CHECK(read("repeat until \"END\" { if 1 > 2 { w: word } }", "END").size("w") == 0);
@@ -532,7 +533,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case shapes("Read::Shapes", [](void) {
+    Case shapes("Read::Shapes", []() {
         // Empty values keep their declared depth and type
         Data d = read("repeat 2 { x[0][3]: float }", "");
         CHECK(d.depth("x") == 3);
@@ -550,76 +551,74 @@ namespace Test { namespace Instance {
         CHECK(e.integer("v", {1, 0, 0}) == 3);
         CHECK(e.size("v", {1, 0}) == 2);
         CHECK(equal(e.ints("v", {1, 0}), {3, 4}));
-        CHECK(fails([&](void) { (void)e.text("s", {0, 2, 0}); }, "index out of range"));
+        CHECK(fails([&]() { (void)e.text("s", {0, 2, 0}); }, "index out of range"));
         // Word lists end at an integer terminator
         CHECK(read("list w: word until 0", "a b 0").size("w") == 2);
         return true;
     });
 
-    Case parameters("Read::Parameters", [](void) {
+    Case parameters("Read::Parameters", []() {
         Params p;
         p.set("k", "1.5");
         CHECK(read("param k  check k > 1 && k < 2", "", p).number("k") == 1.5);
         Params q;
         q.set("kk", "7");
-        CHECK(fails([&](void) { (void)read("param k = 1", "", q); }, "the spec has no parameter 'kk'"));
+        CHECK(fails([&]() { (void)read("param k = 1", "", q); }, "the spec has no parameter 'kk'"));
         // A given value has the type of the default
         Params r;
         r.set("s", "3");
         r.set("i", "4");
-        Data d = read("param s = \"x\"  param i = 1  check s == \"3\" && i == 4", "", r);
+        Data d = read(R"(param s = "x"  param i = 1  check s == "3" && i == 4)", "", r);
         CHECK(d.text("s") == "3");
         Params t;
         t.set("i", "4.5");
-        CHECK(fails([&](void) { (void)read("param i = 1", "", t); }, "parameter 'i' must be an integer"));
+        CHECK(fails([&]() { (void)read("param i = 1", "", t); }, "parameter 'i' must be an integer"));
         return true;
     });
 
-    Case checks("Spec::Checks", [](void) {
+    Case checks("Spec::Checks", []() {
         // Errors in specs are found when they are parsed
-        CHECK(fails([](void) { (void)Spec::parse("n: int if n > 5 { let y = sqrt(n) }", "s"); },
-                    "unknown function 'sqrt'"));
         CHECK(
-            fails([](void) { (void)Spec::parse("let y = count(1, 2)", "s"); }, "wrong arguments for function 'count'"));
-        CHECK(fails([](void) { (void)Spec::parse("line \"{bad-name:int}\"", "s"); }, "is not a name"));
-        CHECK(fails(
-            [](void) { (void)Spec::parse("let y = " + std::string(300, '(') + "1" + std::string(300, ')'), "s"); },
-            "nested too deeply"));
+            fails([]() { (void)Spec::parse("n: int if n > 5 { let y = sqrt(n) }", "s"); }, "unknown function 'sqrt'"));
+        CHECK(fails([]() { (void)Spec::parse("let y = count(1, 2)", "s"); }, "wrong arguments for function 'count'"));
+        CHECK(fails([]() { (void)Spec::parse("line \"{bad-name:int}\"", "s"); }, "is not a name"));
+        CHECK(fails([]() { (void)Spec::parse("let y = " + std::string(300, '(') + "1" + std::string(300, ')'), "s"); },
+                    "nested too deeply"));
         // Long operator chains and else-if chains are deep trees as well
         std::string sum = "let y = 1", chain = "n: int  if n == 0 { }";
         for (int i = 0; i < 300; i++) {
             sum += " + 1";
             chain += " else if n == " + std::to_string(i + 1) + " { }";
         }
-        CHECK(fails([&](void) { (void)Spec::parse(sum, "s"); }, "nested too deeply"));
-        CHECK(fails([&](void) { (void)Spec::parse(chain, "s"); }, "nested too deeply"));
-        CHECK(fails([](void) { (void)Spec::parse("let _ = 1", "s"); }, "'_' cannot be defined here"));
-        CHECK(fails([](void) { (void)Spec::parse("w: word offset 1", "s"); }, "'offset' needs numbers"));
+        CHECK(fails([&]() { (void)Spec::parse(sum, "s"); }, "nested too deeply"));
+        CHECK(fails([&]() { (void)Spec::parse(chain, "s"); }, "nested too deeply"));
+        CHECK(fails([]() { (void)Spec::parse("let _ = 1", "s"); }, "'_' cannot be defined here"));
+        CHECK(fails([]() { (void)Spec::parse("w: word offset 1", "s"); }, "'offset' needs numbers"));
         return true;
     });
 
-    Case strings("Spec::Strings", [](void) {
+    Case strings("Spec::Strings", []() {
         // The escapes \n, \t, \\, and \"
-        Data d = read("let s = \"a\\nb\\tc\\\\d\\\"e\"", "");
+        Data d = read(R"(let s = "a\nb\tc\\d\"e")", "");
         CHECK(d.text("s") == "a\nb\tc\\d\"e");
         // Other escapes and a backslash before a newline are errors on their line
-        CHECK(fails([](void) { (void)Spec::parse("a: int\nlet s = \"a\\db\"", "s"); }, "s:2: unknown escape '\\d'"));
-        CHECK(fails([](void) { (void)Spec::parse("a: int\nlet s = \"a\\\nb\"\nb: int", "s"); },
-                    "s:2: unterminated string"));
+        CHECK(fails([]() { (void)Spec::parse("a: int\nlet s = \"a\\db\"", "s"); }, "s:2: unknown escape '\\d'"));
+        CHECK(
+            fails([]() { (void)Spec::parse("a: int\nlet s = \"a\\\nb\"\nb: int", "s"); }, "s:2: unterminated string"));
         // Escapes do not disturb the line numbers of later errors
-        CHECK(fails([](void) { (void)Spec::parse("let s = \"a\\\\\"\nlet t = \"\\\"\"\nx: int untl", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("let s = \"a\\\\\"\nlet t = \"\\\"\"\nx: int untl", "s"); },
                     "s:3: unknown statement 'untl'"));
         return true;
     });
 
-    Case settings("Spec::Settings", [](void) {
+    Case settings("Spec::Settings", []() {
         // Settings apply to the rest of the input, so they are not in blocks
         const char* nested[] = {"repeat 2 { comment \"c\"  a: int }", "if 1 > 0 { stop \"%\" }",
                                 "n: int  if n > 0 { } else if n < 0 { tokens \";\" }",
                                 "instances { separators \",\"  a: int }", "sections { \"x\" { ignore trailing } }"};
         for (const char* s : nested)
-            CHECK(fails([&](void) { (void)Spec::parse(s, "s"); }, "must be at the top level of the spec"));
-        CHECK(fails([](void) { (void)Spec::parse("a: int\nrepeat a {\n  comment \"c\"\n}", "s"); },
+            CHECK(fails([&]() { (void)Spec::parse(s, "s"); }, "must be at the top level of the spec"));
+        CHECK(fails([]() { (void)Spec::parse("a: int\nrepeat a {\n  comment \"c\"\n}", "s"); },
                     "s:3: the setting 'comment' must be at the top level"));
         // Literal tokens are not a setting
         CHECK(read("repeat 2 { expect \"x\"  a: int }", "x 1 x 2").size("a") == 2);
@@ -627,15 +626,15 @@ namespace Test { namespace Instance {
     });
 
     /// Signals that help was shown
-    struct HelpShown {};
+    struct HelpShown : std::exception {};
 
     /// Observe help requests of options \a Opt without terminating the test runner
     template <class Opt>
     class HelpOptions : public Opt {
     public:
-        HelpOptions(void) : Opt("Strict parsing test") {}
+        HelpOptions() : Opt("Strict parsing test") {}
         void
-        help(void) override {
+        help() override {
             Opt::help();
             throw HelpShown();
         }
@@ -643,7 +642,7 @@ namespace Test { namespace Instance {
 
     /// Test whether strict parsing of \a argv rejects argument \a arg
     template <class Opt>
-    bool
+    static bool
     rejects(HelpOptions<Opt>& options, int argc, char* argv[], const char* arg) {
         bool help_shown = false;
         std::ostringstream output;
@@ -658,11 +657,11 @@ namespace Test { namespace Instance {
         }
         std::cerr.rdbuf(previous);
         std::string expected = std::string("Unrecognised argument \"") + arg + "\"";
-        return help_shown && (output.str().find(expected) != std::string::npos) &&
-               (output.str().find("Options for Strict parsing test:") != std::string::npos);
+        return help_shown && output.str().contains(expected) &&
+               output.str().contains("Options for Strict parsing test:");
     }
 
-    Case strict_options("Driver::Options::Strict", [](void) {
+    Case strict_options("Driver::Options::Strict", []() {
         Gecode::Options options("Test");
         char name[] = "test", iterations[] = "-iterations", value[] = "200";
         char unknown[] = "--typo", help[] = "--help", positional[] = "instance.txt";
@@ -688,7 +687,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case strict_size_options("Driver::SizeOptions::Strict", [](void) {
+    Case strict_size_options("Driver::SizeOptions::Strict", []() {
         char name[] = "test", iterations[] = "-iterations", value[] = "200";
         char size[] = "7", other[] = "8", unknown[] = "--typo", word[] = "seven";
 
@@ -718,7 +717,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case strict_instance_options("Driver::InstanceOptions::Strict", [](void) {
+    Case strict_instance_options("Driver::InstanceOptions::Strict", []() {
         char name[] = "test", iterations[] = "-iterations", value[] = "200";
         char inst[] = "instance.txt", other[] = "other.txt", unknown[] = "--typo";
 
@@ -742,7 +741,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case options("Driver::InstanceOptions", [](void) {
+    Case options("Driver::InstanceOptions", []() {
         // Unique names in the temporary directory
         const char* tmp = std::getenv("TMPDIR");
         if (tmp == nullptr)
@@ -765,7 +764,7 @@ namespace Test { namespace Instance {
             Gecode::InstanceOptions o("Test", with_params);
             char a0[] = "test", a1[] = "-param", a2[] = "k=2", a3[] = "", a4[] = "m=2";
             std::string inst(file);
-            char* argv[] = {a0, a1, a2, a1, a4, &inst[0], a3};
+            char* argv[] = {a0, a1, a2, a1, a4, inst.data(), a3};
             int argc = 6;
             o.parse(argc, argv);
             ok = ok && o.is_file();
@@ -773,7 +772,7 @@ namespace Test { namespace Instance {
             // The same parameters separated by commas
             Gecode::InstanceOptions c("Test", with_params);
             char c2[] = "k=2,m=2";
-            char* argu[] = {a0, a1, c2, &inst[0], a3};
+            char* argu[] = {a0, a1, c2, inst.data(), a3};
             int argcu = 4;
             c.parse(argcu, argu);
             ok = ok && equal(c.data().ints("x"), {3, 4});
@@ -781,7 +780,7 @@ namespace Test { namespace Instance {
             Gecode::InstanceOptions s("Test", "n: int");
             char b1[] = "-spec";
             std::string spec(other);
-            char* argw[] = {a0, b1, &spec[0], &inst[0], a3};
+            char* argw[] = {a0, b1, spec.data(), inst.data(), a3};
             int argcw = 4;
             s.parse(argcw, argw);
             ok = ok && (s.data().integer("c") == 4);
@@ -792,65 +791,65 @@ namespace Test { namespace Instance {
             olog << e.what() << "\n";
             ok = false;
         }
-        std::remove(file);
-        std::remove(other);
+        (void)std::remove(file);
+        (void)std::remove(other);
         return ok;
     });
 
-    Case errors("Read::Errors", [](void) {
+    Case errors("Read::Errors", []() {
         CHECK(fails("n: int repeat n { x: int }", "3\n1\n2 z\n", "test.txt:3:3: expected int, found 'z'"));
         CHECK(fails("n: int repeat n { x: int }", "3\n1\n2\n", "while reading: repeat [3 of 3] > x"));
         CHECK(fails("n: int repeat n { x: int }", "3\n1\n2\n", "spec: test.reader:1"));
-        CHECK(fails([](void) { (void)Spec::parse("x: int untl", "s"); }, "s:1: unknown statement 'untl'"));
-        CHECK(fails([](void) { (void)Spec::parse("repeat 2 { x: int", "s"); }, "missing '}'"));
-        CHECK(fails([](void) { (void)Spec::parse("line \"{x:bad}\"", "s"); }, "unknown type 'bad'"));
-        CHECK(fails([](void) { (void)Spec::load("/nonexistent/x.reader"); }, "cannot open file"));
-        CHECK(fails([](void) { (void)Spec::load("."); }, "is a directory"));
+        CHECK(fails([]() { (void)Spec::parse("x: int untl", "s"); }, "s:1: unknown statement 'untl'"));
+        CHECK(fails([]() { (void)Spec::parse("repeat 2 { x: int", "s"); }, "missing '}'"));
+        CHECK(fails([]() { (void)Spec::parse("line \"{x:bad}\"", "s"); }, "unknown type 'bad'"));
+        CHECK(fails([]() { (void)Spec::load("/nonexistent/x.reader"); }, "cannot open file"));
+        CHECK(fails([]() { (void)Spec::load("."); }, "is a directory"));
         return true;
     });
 
-    Case access("Data::Access", [](void) {
+    Case access("Data::Access", []() {
         Data d = read("big: int  w: word  n: int  repeat n { k: int  x[k]: int }", "9999999999 hi 2 1 5 2 6 7");
         CHECK(d.integer("big") == 9999999999LL);
-        CHECK(fails([&](void) { (void)d.ints("big"); }, "is not an array"));
-        CHECK(fails([&](void) { (void)d.integer("w"); }, "is not an integer"));
-        CHECK(fails([&](void) { (void)d.integer("nope"); }, "no value named"));
-        CHECK(fails([&](void) { (void)d.size("x", {2}); }, "index out of range"));
-        CHECK(fails([&](void) { (void)d.integer("x", {0}); }, "is not a single value"));
+        CHECK(fails([&]() { (void)d.ints("big"); }, "is not an array"));
+        CHECK(fails([&]() { (void)d.integer("w"); }, "is not an integer"));
+        CHECK(fails([&]() { (void)d.integer("nope"); }, "no value named"));
+        CHECK(fails([&]() { (void)d.size("x", {2}); }, "index out of range"));
+        CHECK(fails([&]() { (void)d.integer("x", {0}); }, "is not a single value"));
         Data e = read("n: int  repeat n { v: int }", "1 9999999999");
-        CHECK(fails([&](void) { (void)e.ints("v"); }, "does not fit into an int"));
+        CHECK(fails([&]() { (void)e.ints("v"); }, "does not fit into an int"));
         return true;
     });
 
-    Case output("Data::Output", [](void) {
+    Case output("Data::Output", []() {
         Data d =
             read("n: int  f: float  w: word  m[2][2]: int  repeat n { k: int  x[k]: int }", "2 20 a 1 2 3 4 1 5 2 6 7");
         std::ostringstream z;
         d.dzn(z);
-        CHECK(z.str().find("f = 20.0;") != std::string::npos);
-        CHECK(z.str().find("m = [| 1, 2\n  | 3, 4 |];") != std::string::npos);
-        CHECK(z.str().find("% x: array[int] of tuple(array[int] of int)\n"
-                           "x = [([5],), ([6, 7],)];") != std::string::npos);
-        CHECK(z.str().find("w = \"a\";") != std::string::npos);
+        CHECK(z.str().contains("f = 20.0;"));
+        CHECK(z.str().contains("m = [| 1, 2\n  | 3, 4 |];"));
+        CHECK(z.str().contains("% x: array[int] of tuple(array[int] of int)\n"
+                               "x = [([5],), ([6, 7],)];"));
+        CHECK(z.str().contains("w = \"a\";"));
         // MiniZinc keywords are quoted, control characters escaped
         std::ostringstream zq;
         read("var: int  w: word", "3 a\033b").dzn(zq);
-        CHECK(zq.str().find("'var' = 3;") != std::string::npos);
-        CHECK(zq.str().find("w = \"a\\x1bb\";") != std::string::npos);
+        CHECK(zq.str().contains("'var' = 3;"));
+        CHECK(zq.str().contains("w = \"a\\x1bb\";"));
         // Empty dimensions and deeply ragged arrays
         Data e = read("e[2][0]: int  repeat 2 { k: int  repeat k { list y: int until 0 } }", "1 7 0 2 8 9 0 0");
         std::ostringstream ze;
         e.dzn(ze);
-        CHECK(ze.str().find("e = array2d(1..2, 1..0, []);") != std::string::npos);
-        CHECK(ze.str().find("y = [([([7],)],), ([([8, 9],), ([],)],)];") != std::string::npos);
+        CHECK(ze.str().contains("e = array2d(1..2, 1..0, []);"));
+        CHECK(ze.str().contains("y = [([([7],)],), ([([8, 9],), ([],)],)];"));
         // MiniZinc has no constructor beyond array6d
         std::ostringstream z7;
         read("a[1][1][1][1][1][1][1]: int", "5").dzn(z7);
-        CHECK(z7.str().find("a = [([([([([([([5],)],)],)],)],)],)];") != std::string::npos);
+        CHECK(z7.str().contains("a = [([([([([([([5],)],)],)],)],)],)];"));
         return true;
     });
 
-    Case labels("Read::Labels", [](void) {
+    Case labels("Read::Labels", []() {
         // The layout of PSPLIB single-mode RCPSP files
         const char* spec = "comment \"***\" \"---\"\n"
                            "find \"jobs (incl. supersource/sink ): {jobs:int}\"\n"
@@ -895,7 +894,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case expressions("Read::Expressions", [](void) {
+    Case expressions("Read::Expressions", []() {
         // Indices start at 0, for numbers and for rows of ragged arrays
         const char* rows = "n: int  repeat n { list r: int until eol }  f[2]: float  w[2]: word\n";
         const char* text = "3\n1 2\n3 3 4\n5\n0.5 2.5 a b";
@@ -940,21 +939,20 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case comprehensions("Spec::Comprehensions", [](void) {
+    Case comprehensions("Spec::Comprehensions", []() {
         // The bound name is defined only in the body, and must be new
-        CHECK(fails([](void) { (void)Spec::parse("n: int  a[n]: int  check all(n in a: n > 0)", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("n: int  a[n]: int  check all(n in a: n > 0)", "s"); },
                     "s:1: 'n' is bound by a comprehension but is also a name in the spec"));
-        CHECK(fails([](void) { (void)Spec::parse("a[2]: int\ncheck all(x in a: 1)\nrepeat 2 { x: int }", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("a[2]: int\ncheck all(x in a: 1)\nrepeat 2 { x: int }", "s"); },
                     "s:2: 'x' is bound by a comprehension but is also a name in the spec"));
-        CHECK(fails([](void) { (void)Spec::parse("a[2][2]: int  check all(x in a: all(x in x: 1))", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("a[2][2]: int  check all(x in a: all(x in x: 1))", "s"); },
                     "'x' is already bound by an enclosing comprehension"));
-        CHECK(fails([](void) { (void)Spec::parse("a[2]: int  check all(_ in a: 1)", "s"); }, "'_' cannot be bound"));
-        CHECK(fails([](void) { (void)Spec::parse("a[2]: int  check all(a)", "s"); },
-                    "'all' needs the form all(x in a: e)"));
-        CHECK(fails([](void) { (void)Spec::parse("a[2]: int  check any(x in a)", "s"); }, "expected ':'"));
-        CHECK(fails([](void) { (void)Spec::parse("a[2]: int  check a[0", "s"); }, "expected ']'"));
-        CHECK(fails([](void) { (void)Spec::parse("let y = distinct()", "s"); },
-                    "wrong arguments for function 'distinct'"));
+        CHECK(fails([]() { (void)Spec::parse("a[2]: int  check all(_ in a: 1)", "s"); }, "'_' cannot be bound"));
+        CHECK(
+            fails([]() { (void)Spec::parse("a[2]: int  check all(a)", "s"); }, "'all' needs the form all(x in a: e)"));
+        CHECK(fails([]() { (void)Spec::parse("a[2]: int  check any(x in a)", "s"); }, "expected ':'"));
+        CHECK(fails([]() { (void)Spec::parse("a[2]: int  check a[0", "s"); }, "expected ']'"));
+        CHECK(fails([]() { (void)Spec::parse("let y = distinct()", "s"); }, "wrong arguments for function 'distinct'"));
         // Comprehensions over the bound name of an enclosing one, and the same
         // name in comprehensions that do not nest
         Data d = read("a[2][2]: int  let s = sum(x in a: sum(y in x: y)) + sum(y in a: count(y))", "1 2 3 4");
@@ -963,11 +961,11 @@ namespace Test { namespace Instance {
         std::string chain = "a[1]: int  let y = a";
         for (int i = 0; i < 300; i++)
             chain += "[0]";
-        CHECK(fails([&](void) { (void)Spec::parse(chain, "s"); }, "nested too deeply"));
+        CHECK(fails([&]() { (void)Spec::parse(chain, "s"); }, "nested too deeply"));
         return true;
     });
 
-    Case effort("Read::Effort", [](void) {
+    Case effort("Read::Effort", []() {
         // Expressions visit values in proportion to the input
         std::string text = "2000\n";
         for (int i = 0; i < 2000; i++)
@@ -990,7 +988,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case skipped("Read::SkippedInstances", [](void) {
+    Case skipped("Read::SkippedInstances", []() {
         const char* spec = "instances {\n"
                            "  sections skip other {\n"
                            "    \"instance {name:word}\" optional\n"
@@ -1007,8 +1005,8 @@ namespace Test { namespace Instance {
         CHECK(equal(read(spec, text, second).ints("x"), {7}));
         CHECK(equal(read(spec, text, b).ints("x"), {7}));
         // An invalid selected instance is an error
-        CHECK(fails([&](void) { (void)read(spec, text, first); }, "check failed: n is at most 3"));
-        CHECK(fails([&](void) { (void)read(spec, text, a); }, "check failed: n is at most 3"));
+        CHECK(fails([&]() { (void)read(spec, text, first); }, "check failed: n is at most 3"));
+        CHECK(fails([&]() { (void)read(spec, text, a); }, "check failed: n is at most 3"));
         CHECK(fails(spec, "4\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n", "check failed: n is at most 3"));
         // Without a selection, a later invalid instance gives the usual error
         CHECK(fails(spec, "1\n7\n4\n1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16\n", "the file has 2 instances; select one"));
@@ -1016,7 +1014,7 @@ namespace Test { namespace Instance {
         Spec s = Spec::parse(spec, "s");
         Data c = s.catalog_text(text);
         CHECK(c.integer("instances") == 2);
-        CHECK((c.text("failed", {0}) == "n is at most 3") && (c.text("failed", {1}) == ""));
+        CHECK((c.text("failed", {0}) == "n is at most 3") && (c.text("failed", {1}).empty()));
         CHECK(!s.catalog_text("instance a\n1\n7\n").has("failed"));
         CHECK(Spec::parse("instances { n: int  check n > 5 }", "s").catalog_text("7 1").text("failed", {1}) ==
               "check on line 1 of the spec");
@@ -1025,24 +1023,24 @@ namespace Test { namespace Instance {
         Params y;
         y.set("instance", "y");
         CHECK(read(late, "0 x 5 y", y).integer("n") == 5);
-        CHECK(fails([&](void) { (void)read(late, "5 x 0 y", y); }, "check failed: positive"));
+        CHECK(fails([&]() { (void)read(late, "5 x 0 y", y); }, "check failed: positive"));
         // Other errors in a skipped instance stop reading, also when large sizes
         // follow a failed check
-        CHECK(fails([&](void) { (void)read(spec, "instance a\n2\n1 2 3 x\ninstance b\n1\n7\n", b); }, "expected int"));
+        CHECK(fails([&]() { (void)read(spec, "instance a\n2\n1 2 3 x\ninstance b\n1\n7\n", b); }, "expected int"));
         auto start = std::chrono::steady_clock::now();
-        CHECK(fails([&](void) { (void)read(spec, "instance a\n1000000000\n1 2\ninstance b\n1\n7\n", b); },
+        CHECK(fails([&]() { (void)read(spec, "instance a\n1000000000\n1 2\ninstance b\n1\n7\n", b); },
                     "array is too large"));
-        CHECK(fails([&](void) { (void)read(spec, "instance a\n40000\n1 2\ninstance b\n1\n7\n", b); },
+        CHECK(fails([&]() { (void)read(spec, "instance a\n40000\n1 2\ninstance b\n1\n7\n", b); },
                     "after an earlier error in the instance: n is at most 3"));
         CHECK(std::chrono::steady_clock::now() - start < std::chrono::seconds(10));
         // A missing or repeated sections line in a skipped instance is deferred
         // as a failed check is
         const char* repeated = "instance a\ninstance x\n1\n7\ninstance b\n1\n8\n";
         CHECK(equal(read(spec, repeated, b).ints("x"), {8}));
-        CHECK(fails([&](void) { (void)read(spec, repeated, a); },
+        CHECK(fails([&]() { (void)read(spec, repeated, a); },
                     "test.txt:2:1: a second line matching \"instance {name:word}\""));
         CHECK(s.catalog_text(repeated).text("failed", {0}) == "a second line matching \"instance {name:word}\"");
-        const char* stop = "instances { sections { \"n {n:int}\"  \"m {m:int}\"  \"end\" last } }";
+        const char* stop = R"(instances { sections { "n {n:int}"  "m {m:int}"  "end" last } })";
         Params two;
         two.set("instance", "2");
         CHECK(read(stop, "n 1\nend\nn 2\nm 3\nend\n", two).integer("m") == 3);
@@ -1055,7 +1053,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case power("Read::Power", [](void) {
+    Case power("Read::Power", []() {
         // ^ binds tighter than * and unary -, and groups to the right
         Data d =
             read("let a = 2 * 3 ^ 2  let b = 2 ^ 3 ^ 2  let c = (2 ^ 3) ^ 2  let e = -2 ^ 2  let f = 1 + 2 ^ 2 * 3\n"
@@ -1082,14 +1080,14 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case constants("Spec::GecodeConstants", [](void) {
+    Case constants("Spec::GecodeConstants", []() {
         Data d = read("let a = gecode.int_max  let b = gecode.int_min  let c = gecode.int_max / 2\n"
                       "gecode: int  check gecode == 3",
                       "3");
         CHECK(d.integer("a") == Gecode::Int::Limits::max);
         CHECK(d.integer("b") == Gecode::Int::Limits::min);
         CHECK(d.integer("c") == 1073741823);
-        CHECK(fails([](void) { (void)Spec::parse("let x = 1\nlet y = gecode.foo", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("let x = 1\nlet y = gecode.foo", "s"); },
                     "s:2: unknown Gecode constant 'gecode.foo' (known: gecode.int_max, gecode.int_min)"));
         // Specs cannot define such names
         const char* defining[] = {"gecode.x: int",
@@ -1100,13 +1098,12 @@ namespace Test { namespace Instance {
                                   "repeat until \"x\" store gecode.t { a: int }",
                                   "a[2]: int  check all(gecode.v in a: 1)"};
         for (const char* spec : defining)
-            if (!fails([&](void) { (void)Spec::parse(spec, "s"); },
-                       "names starting with 'gecode.' are Gecode constants"))
+            if (!fails([&]() { (void)Spec::parse(spec, "s"); }, "names starting with 'gecode.' are Gecode constants"))
                 return false;
         return true;
     });
 
-    Case records("Read::Records", [](void) {
+    Case records("Read::Records", []() {
         // A check after a repeat holds for every record, and a failure names
         // the record and points at its input
         const char* rows = "n: int  repeat n { list row: int until eol }  width: int\n"
@@ -1160,17 +1157,17 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case record_names("Spec::Records", [](void) {
+    Case record_names("Spec::Records", []() {
         CHECK(fails(
-            [](void) { (void)Spec::parse("n: int  repeat n { a: int }\nrepeat n { b: int }\ncheck a < b", "s"); },
+            []() { (void)Spec::parse("n: int  repeat n { a: int }\nrepeat n { b: int }\ncheck a < b", "s"); },
             "s:3: a check can only range over the records of one repeat, but 'a' and 'b' are defined in different "
             "repeats"));
         CHECK(fails(
-            [](void) { (void)Spec::parse("repeat 2 { repeat 2 { a: int }  repeat 2 { b: int } }  check a < b", "s"); },
+            []() { (void)Spec::parse("repeat 2 { repeat 2 { a: int }  repeat 2 { b: int } }  check a < b", "s"); },
             "can only range over the records of one repeat"));
-        CHECK(fails([](void) { (void)Spec::parse("n: int  repeat n { a: int }  let a = 3\ncheck a < 1", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("n: int  repeat n { a: int }  let a = 3\ncheck a < 1", "s"); },
                     "s:2: 'a' is defined in several repeats, or inside and outside a repeat"));
-        CHECK(fails([](void) { (void)Spec::parse("repeat 2 { a: int }  repeat 2 { a: int }  check a < 1", "s"); },
+        CHECK(fails([]() { (void)Spec::parse("repeat 2 { a: int }  repeat 2 { a: int }  check a < 1", "s"); },
                     "'a' is defined in several repeats"));
         // Definitions that all enclose the check, or in one repeat
         (void)Spec::parse("n: int  repeat n { a: int  check a > 0 }  let a = 3", "s");
@@ -1178,7 +1175,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case record_effort("Read::RecordEffort", [](void) {
+    Case record_effort("Read::RecordEffort", []() {
         // Each record that a check visits counts
         std::string text = "2000\n";
         for (int i = 0; i < 4000; i++)
@@ -1190,7 +1187,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case skipped_records("Read::SkippedInstanceRecords", [](void) {
+    Case skipped_records("Read::SkippedInstanceRecords", []() {
         // A check over records in an instance before the selected one does not
         // stop reading
         const char* spec = "instances { n: int  repeat n { x: int }  check x > 0 \"positive\"  name: word }";
@@ -1199,14 +1196,13 @@ namespace Test { namespace Instance {
         a.set("instance", "a");
         b.set("instance", "b");
         CHECK(equal(read(spec, text, b).ints("x"), {5}));
-        CHECK(fails([&](void) { (void)read(spec, text, a); },
-                    "test.txt:1:5: check failed for record 2 of 'x': positive"));
+        CHECK(fails([&]() { (void)read(spec, text, a); }, "test.txt:1:5: check failed for record 2 of 'x': positive"));
         Data c = Spec::parse(spec, "s").catalog_text(text);
-        CHECK((c.text("failed", {0}) == "positive") && (c.text("failed", {1}) == ""));
+        CHECK((c.text("failed", {0}) == "positive") && (c.text("failed", {1}).empty()));
         return true;
     });
 
-    Case record_lists("Read::RecordLists", [](void) {
+    Case record_lists("Read::RecordLists", []() {
         // The list of records of a repeat, and each of its records
         const char* nodes = "n: int  repeat n as nodes { each node  ready: int  due: int }\n"
                             "check node.ready <= node.due \"window\"\n"
@@ -1242,12 +1238,12 @@ namespace Test { namespace Instance {
                     "'jobs': exists"));
         CHECK(fails(jobs, "2 2\n0 5 1 6\n1 2 1 3\n", "test.txt:3:1: check failed for record 2 of 'jobs': twice"));
         // The terminating token of a repeat is kept with store
-        Data t = read("repeat until \"end\" \"stop\" store t as xs { a: int }  let k = size(xs)", "1 2 stop");
+        Data t = read(R"(repeat until "end" "stop" store t as xs { a: int }  let k = size(xs))", "1 2 stop");
         CHECK((t.text("t") == "stop") && (t.integer("k") == 2));
         return true;
     });
 
-    Case record_list_errors("Spec::RecordLists", [](void) {
+    Case record_list_errors("Spec::RecordLists", []() {
         CHECK(rejects("repeat 2 { a: int  each x }", "s:1: 'each' must be the first statement of a repeat"));
         CHECK(rejects("repeat 2 { each x  each y }",
                       "'each' must be the first statement of a repeat, and comes at most once"));
@@ -1291,7 +1287,7 @@ namespace Test { namespace Instance {
         return true;
     });
 
-    Case failure_locations("Read::FailureLocations", [](void) {
+    Case failure_locations("Read::FailureLocations", []() {
         // A failed all names the element that fails it
         CHECK(fails("a[4]: int  check all(x in a: x > 0) \"positive\"", "1 2 0 3",
                     "check failed for element 3 of 'a': positive"));
@@ -1330,6 +1326,6 @@ namespace Test { namespace Instance {
 
 #undef CHECK
 
-}} // namespace Test::Instance
+} // namespace Test::Instance
 
 // STATISTICS: test-any

@@ -45,17 +45,17 @@ namespace Gecode {
     class MeritBase {
     public:
         /// View type
-        typedef View_ View;
+        using View = View_;
         /// Corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         /// Type of merit
-        typedef Val_ Val;
+        using Val = Val_;
         /// Constructor for initialization
         MeritBase(Space& home, const VarBranch<Var>& vb);
         /// Constructor for cloning
         MeritBase(Space& home, MeritBase& mb);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete view merit class
         void dispose(Space& home);
     };
@@ -69,7 +69,7 @@ namespace Gecode {
 
     public:
         /// Corresponding merit function type
-        typedef typename BranchTraits<Var>::Merit Function;
+        using Function = BranchTraits<Var>::Merit;
 
     protected:
         /// The user-defined merit function
@@ -83,7 +83,7 @@ namespace Gecode {
         /// Return degree as merit for view \a x at position \a i
         double operator()(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete view merit class
         void dispose(Space& home);
     };
@@ -123,7 +123,7 @@ namespace Gecode {
         /// Return AFC as merit for view \a x at position \a i
         double operator()(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -147,7 +147,7 @@ namespace Gecode {
         /// Return action as merit for view \a x at position \a i
         double operator()(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -172,7 +172,7 @@ namespace Gecode {
         /// Return action as merit for view \a x at position \a i
         double operator()(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -187,7 +187,7 @@ namespace Gecode {
     MeritBase<View, Val>::MeritBase(Space&, MeritBase&) {}
     template <class View, class Val>
     forceinline bool
-    MeritBase<View, Val>::notice(void) const {
+    MeritBase<View, Val>::notice() const {
         return false;
     }
     template <class View, class Val>
@@ -215,7 +215,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    MeritFunction<View>::notice(void) const {
+    MeritFunction<View>::notice() const {
         return true;
     }
     template <class View>
@@ -255,7 +255,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    MeritAFC<View>::notice(void) const {
+    MeritAFC<View>::notice() const {
         // Given that AFC is just a fake, this not really necessary
         return false;
     }
@@ -282,7 +282,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    MeritAction<View>::notice(void) const {
+    MeritAction<View>::notice() const {
         return true;
     }
     template <class View>
@@ -307,7 +307,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    MeritCHB<View>::notice(void) const {
+    MeritCHB<View>::notice() const {
         return true;
     }
     template <class View>

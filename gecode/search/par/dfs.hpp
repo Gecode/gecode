@@ -30,18 +30,18 @@
  *
  */
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /*
      * Basic access routines
      */
     template <class Tracer>
     forceinline DFS<Tracer>&
-    DFS<Tracer>::Worker::engine(void) const {
+    DFS<Tracer>::Worker::engine() const {
         return static_cast<DFS<Tracer>&>(_engine);
     }
     template <class Tracer>
-    forceinline typename DFS<Tracer>::Worker*
+    forceinline DFS<Tracer>::Worker*
     DFS<Tracer>::worker(unsigned int i) const {
         return _worker[i];
     }
@@ -99,7 +99,7 @@ namespace Gecode { namespace Search { namespace Par {
 
     template <class Tracer>
     forceinline bool
-    DFS<Tracer>::Worker::owns_work(void) const {
+    DFS<Tracer>::Worker::owns_work() const {
         return (cur != nullptr) || !path.empty();
     }
 
@@ -122,10 +122,10 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     forceinline bool
-    DFS<Tracer>::Worker::find(void) {
+    DFS<Tracer>::Worker::find() {
         // Try to find new work (even if there is none)
         for (unsigned int i = 0U; i < engine().workers(); i++) {
-            unsigned long int r_d = 0ul;
+            unsigned long int r_d = 0UL;
             typename Engine<Tracer>::Worker* wi = engine().worker(i);
             if (Space* s = wi->steal(r_d, wi->tracer, tracer)) {
                 // Reset this guy
@@ -151,7 +151,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     Statistics
-    DFS<Tracer>::statistics(void) const {
+    DFS<Tracer>::statistics() const {
         Statistics s;
         for (unsigned int i = 0U; i < workers(); i++)
             s += worker(i)->statistics();
@@ -163,7 +163,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     void
-    DFS<Tracer>::Worker::run(void) {
+    DFS<Tracer>::Worker::run() {
         /*
          * The engine maintains the following invariant:
          *  - If the current space (cur) is not nullptr, the path always points
@@ -342,7 +342,7 @@ namespace Gecode { namespace Search { namespace Par {
      */
     template <class Tracer>
     NoGoods&
-    DFS<Tracer>::nogoods(void) {
+    DFS<Tracer>::nogoods() {
         NoGoods* ng;
         // Grab wait lock for reset
         m_wait_reset.acquire();
@@ -364,11 +364,11 @@ namespace Gecode { namespace Search { namespace Par {
      * Termination and deletion
      */
     template <class Tracer>
-    DFS<Tracer>::~DFS(void) {
+    DFS<Tracer>::~DFS() {
         terminate();
         heap.rfree(_worker);
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

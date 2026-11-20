@@ -39,9 +39,10 @@
 #include <climits>
 #include <memory>
 #include <optional>
+#include <utility>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Whether bound \a a is better than bound \a b for objective direction \a s
     forceinline bool
@@ -121,7 +122,7 @@ namespace Gecode { namespace Search {
         }
         /// Remove incumbent
         void
-        reset(void) {
+        reset() {
             space.reset();
             revision = 0;
         }
@@ -131,15 +132,15 @@ namespace Gecode { namespace Search {
     class Entries : public Support::DynamicStack<Entry, Heap> {
     public:
         /// Initialize
-        Entries(void) : Support::DynamicStack<Entry, Heap>(heap) {}
+        Entries() : Support::DynamicStack<Entry, Heap>(heap) {}
         /// Delete all entries
         void
-        clear(void) {
+        clear() {
             while (!empty())
                 delete pop().space;
         }
         /// Release memory
-        ~Entries(void) {
+        ~Entries() {
             clear();
         }
         /// Sort such that the preferred entry is on top
@@ -164,7 +165,7 @@ namespace Gecode { namespace Search {
         Queue(const Priority& p0) : p(p0) {}
         /// Whether the queue is empty
         bool
-        empty(void) const {
+        empty() const {
             return entries.empty();
         }
         /// Add entry \a e
@@ -176,14 +177,14 @@ namespace Gecode { namespace Search {
         }
         /// Remove and return the preferred entry
         Entry
-        pop(void) {
+        pop() {
             Entry* f = &entries[0];
             std::pop_heap(f, f + entries.entries(), [this](const Entry& a, const Entry& b) { return p(b, a); });
             return entries.pop();
         }
         /// Delete all entries
         void
-        clear(void) {
+        clear() {
             entries.clear();
         }
     };
@@ -357,17 +358,18 @@ namespace Gecode { namespace Search {
                 bucket[b] = -1;
         }
         /// Delete all entries
-        ~Beam(void) {
+        // NOLINTNEXTLINE(bugprone-exception-escape): clear only reads cells that exist
+        ~Beam() {
             clear();
         }
         /// Return the number of entries
         int
-        size(void) const {
+        size() const {
             return n;
         }
         /// Whether there are no entries
         bool
-        empty(void) const {
+        empty() const {
             return n == 0;
         }
         /// Whether discarded entries could improve an incumbent \a i
@@ -414,7 +416,7 @@ namespace Gecode { namespace Search {
                     return TAKEN;
                 }
             }
-            if (static_cast<unsigned long int>(n) == _width) {
+            if (std::cmp_equal(n, _width)) {
                 const Entry& worst = slot[pq[0]].e;
                 bool replace = p(e, worst);
                 std::int64_t b = replace ? worst.bound : e.bound;
@@ -446,7 +448,7 @@ namespace Gecode { namespace Search {
         }
         /// Delete all entries and reset width
         void
-        clear(void) {
+        clear() {
             for (int i = 0; i < n; i++)
                 delete slot[pq[i]].e.space;
             n = 0;
@@ -459,7 +461,7 @@ namespace Gecode { namespace Search {
         }
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 #endif
 
 #endif

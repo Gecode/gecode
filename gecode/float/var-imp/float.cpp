@@ -39,7 +39,7 @@
 
 #include <gecode/float.hh>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /*
      * Dependencies
@@ -60,6 +60,6 @@ namespace Gecode { namespace Float {
         FloatVarImpBase::subscribe(home, a, assigned(), fail);
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

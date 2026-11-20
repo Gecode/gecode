@@ -36,7 +36,7 @@ namespace Gecode {
 
     Support::Mutex CHB::Storage::m;
 
-    CHB::Storage::~Storage(void) {
+    CHB::Storage::~Storage() {
         if (n > 0)
             heap.free<Info>(chb, n);
     }

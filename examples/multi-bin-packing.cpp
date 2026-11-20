@@ -67,27 +67,27 @@ namespace {
         Spec(const char* s) : data(find(s)), n(s) {}
         /// Whether a valid specification has been found
         bool
-        valid(void) const {
+        valid() const {
             return data != nullptr;
         }
         /// Return dimension
         int
-        dimension(void) const {
+        dimension() const {
             return data[0];
         }
         /// Return instance name
         const char*
-        iname(void) const {
+        iname() const {
             return n;
         }
         /// Return number of items
         int
-        items(void) const {
+        items() const {
             return data[1];
         }
         /// Return number of bins
         int
-        bins(void) const {
+        bins() const {
             return data[2];
         }
         /// Return item size for item \a i in dimension \a k
@@ -203,7 +203,7 @@ public:
     }
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new MultiBinPacking(*this);
     }
     /// Print solution

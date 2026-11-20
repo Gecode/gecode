@@ -32,7 +32,7 @@
 
 #include <gecode/instance/impl.hpp>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     namespace {
 
@@ -222,7 +222,7 @@ namespace Gecode { namespace Instance {
             /// Check that the names of the records of repeats are not used
             /// otherwise
             void
-            check_lists(void) const {
+            check_lists() const {
                 for (int i = 0; i < lists.size(); i++) {
                     const Stmt* r = lists[i].repeat;
                     check_name(r->list, i);
@@ -408,7 +408,7 @@ namespace Gecode { namespace Instance {
             /// Test whether the statement visited is a check, so that record
             /// names in it range over their records
             bool
-            lifting(void) const {
+            lifting() const {
                 return stmt->kind == Stmt::Kind::CHECK;
             }
             /// Check that the record names of check \a s range over one repeat
@@ -667,6 +667,6 @@ namespace Gecode { namespace Instance {
         Resolver(origin).run(b);
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

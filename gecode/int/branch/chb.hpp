@@ -32,15 +32,9 @@
 
 namespace Gecode {
 
-    forceinline IntCHB&
-    IntCHB::operator=(const IntCHB& chb) {
-        return static_cast<IntCHB&>(CHB::operator=(chb));
-    }
+    forceinline IntCHB& IntCHB::operator=(const IntCHB& chb) = default;
 
-    forceinline BoolCHB&
-    BoolCHB::operator=(const BoolCHB& chb) {
-        return static_cast<BoolCHB&>(CHB::operator=(chb));
-    }
+    forceinline BoolCHB& BoolCHB::operator=(const BoolCHB& chb) = default;
 
 } // namespace Gecode
 

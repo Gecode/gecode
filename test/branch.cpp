@@ -54,10 +54,10 @@
 
 #include <gecode/search.hh>
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// Test function for tie-break limit function
-    double
+    static double
     tbl(const Gecode::Space&, double w, double b) {
         return (w + (b - w) / 2.0);
     }
@@ -80,7 +80,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new IntTestSpace(*this);
         }
     };
@@ -98,7 +98,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new BoolTestSpace(*this);
         }
     };
@@ -117,7 +117,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new SetTestSpace(*this);
         }
     };
@@ -137,7 +137,7 @@ namespace Test { namespace Branch {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new FloatTestSpace(*this);
         }
     };
@@ -168,12 +168,12 @@ namespace Test { namespace Branch {
     /// Number of integer variable selections
     const int n_bool_var_branch = sizeof(bool_var_branch_name) / sizeof(const char*);
     /// Test function for branch merit function
-    double
+    static double
     int_merit(const Gecode::Space&, Gecode::IntVar x, int) {
         return x.min();
     }
     /// Test function for branch merit function
-    double
+    static double
     bool_merit(const Gecode::Space&, Gecode::BoolVar x, int) {
         return x.min();
     }
@@ -189,12 +189,12 @@ namespace Test { namespace Branch {
     /// Number of Boolean value selections
     const int n_bool_val_branch = sizeof(bool_val_branch_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     int_val(const Gecode::Space&, Gecode::IntVar x, int) {
         return x.min();
     }
     /// Test function for branch value function
-    int
+    static int
     bool_val(const Gecode::Space&, Gecode::BoolVar x, int) {
         return x.min();
     }
@@ -218,7 +218,7 @@ namespace Test { namespace Branch {
     /// Number of set variable selections
     const int n_set_var_branch = sizeof(set_var_branch_name) / sizeof(const char*);
     /// Test function for branch merit function
-    double
+    static double
     set_merit(const Gecode::Space&, Gecode::SetVar, int) {
         return 2.0;
     }
@@ -229,7 +229,7 @@ namespace Test { namespace Branch {
     /// Number of set value selections
     const int n_set_val_branch = sizeof(set_val_branch_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     set_val(const Gecode::Space&, Gecode::SetVar x, int) {
         Gecode::SetVarUnknownRanges r(x);
         return r.min();
@@ -255,7 +255,7 @@ namespace Test { namespace Branch {
     /// Number of float variable selections
     const int n_float_var_branch = sizeof(float_var_branch_name) / sizeof(const char*);
     /// Test function for branch merit function
-    double
+    static double
     float_merit(const Gecode::Space&, Gecode::FloatVar x, int) {
         return static_cast<double>(x.degree());
     }
@@ -265,7 +265,7 @@ namespace Test { namespace Branch {
     /// Number of float value selections
     const int n_float_val_branch = sizeof(float_val_branch_name) / sizeof(const char*);
     /// Test function for branch value function
-    Gecode::FloatNumBranch
+    static Gecode::FloatNumBranch
     float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
         Gecode::FloatNumBranch nl;
         nl.n = x.med();
@@ -289,19 +289,19 @@ namespace Test { namespace Branch {
         }
     };
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
-std::ostream&
+static std::ostream&
 operator<<(std::ostream& os, const Test::Branch::RunInfo& ri) {
     ri.print(os);
     return os;
 }
 
-namespace Test { namespace Branch {
+namespace Test::Branch {
 
     /// Find number of solutions
     template <class TestSpace>
-    int
+    static int
     solutions(TestSpace* c, Gecode::Search::Options& o, Gecode::Support::RandomGenerator& rand, int max_nb_sol = -1) {
         o.a_d = rand(10);
         o.c_d = rand(10);
@@ -326,7 +326,7 @@ namespace Test { namespace Branch {
         : Base("Int::Branch::" + s), arity(a), dom(d) {}
 
     bool
-    IntTest::run(void) {
+    IntTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -623,8 +623,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand)].push_back(
-                        RunInfo(int_var_branch_name[vara], int_var_branch_name[varb], int_val_branch_name[val], o));
+                    results[solutions(c, o, _rand)].emplace_back(int_var_branch_name[vara], int_var_branch_name[varb],
+                                                                 int_val_branch_name[val], o);
                 }
             }
         }
@@ -634,10 +634,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();
@@ -649,7 +649,7 @@ namespace Test { namespace Branch {
     BoolTest::BoolTest(const std::string& s, int a) : Base("Bool::Branch::" + s), arity(a) {}
 
     bool
-    BoolTest::run(void) {
+    BoolTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -815,8 +815,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand)].push_back(
-                        RunInfo(int_var_branch_name[vara], int_var_branch_name[varb], int_val_branch_name[val], o));
+                    results[solutions(c, o, _rand)].emplace_back(int_var_branch_name[vara], int_var_branch_name[varb],
+                                                                 int_val_branch_name[val], o);
                 }
             }
         }
@@ -826,10 +826,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();
@@ -845,7 +845,7 @@ namespace Test { namespace Branch {
     SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d) : SetTest(TestTags::standard(), s, a, d) {}
 
     bool
-    SetTest::run(void) {
+    SetTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -1107,8 +1107,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand)].push_back(
-                        RunInfo(set_var_branch_name[vara], set_var_branch_name[varb], set_val_branch_name[val], o));
+                    results[solutions(c, o, _rand)].emplace_back(set_var_branch_name[vara], set_var_branch_name[varb],
+                                                                 set_val_branch_name[val], o);
                 }
             }
         }
@@ -1118,10 +1118,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();
@@ -1136,7 +1136,7 @@ namespace Test { namespace Branch {
         : Base("Float::Branch::" + s), arity(a), dom(d), nb_sols(nbs) {}
 
     bool
-    FloatTest::run(void) {
+    FloatTest::run() {
         using std::map;
         using std::ostream;
         using std::string;
@@ -1382,8 +1382,8 @@ namespace Test { namespace Branch {
                         }
                     }
                     Gecode::Search::Options o;
-                    results[solutions(c, o, _rand, nb_sols)].push_back(RunInfo(
-                        float_var_branch_name[vara], float_var_branch_name[varb], float_val_branch_name[val], o));
+                    results[solutions(c, o, _rand, nb_sols)].emplace_back(
+                        float_var_branch_name[vara], float_var_branch_name[varb], float_val_branch_name[val], o);
                 }
             }
         }
@@ -1393,10 +1393,10 @@ namespace Test { namespace Branch {
         return true;
     failed:
         std::cout << "FAILURE" << '\n';
-        for (map<int, vector<RunInfo>>::iterator it = results.begin(); it != results.end(); ++it) {
-            std::cout << "Number of solutions: " << it->first << '\n';
-            for (unsigned int i = 0; i < it->second.size(); ++i)
-                std::cout << it->second[i] << " ";
+        for (auto& result : results) {
+            std::cout << "Number of solutions: " << result.first << '\n';
+            for (const auto& entry : result.second)
+                std::cout << entry << " ";
             std::cout << '\n';
         }
         std::cout.flush();
@@ -1410,18 +1410,18 @@ namespace Test { namespace Branch {
     class EmptySpace : public Gecode::Space {
     public:
         /// Initialize space
-        EmptySpace(void) = default;
+        EmptySpace() = default;
         /// Constructor for cloning \a s
         // NOLINTNEXTLINE(modernize-use-equals-default)
         EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
         /// Return the number of propagators
         unsigned int
-        propagators(void) {
+        propagators() {
             return Gecode::PropagatorGroup::all.size(*this);
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new EmptySpace(*this);
         }
     };
@@ -1523,9 +1523,9 @@ namespace Test { namespace Branch {
     template <class Traits>
     class EmptyStatistics : public Base {
     private:
-        using VarArgs = typename Traits::VarArgs;
-        using Action = typename Traits::Action;
-        using CHB = typename Traits::CHB;
+        using VarArgs = Traits::VarArgs;
+        using Action = Traits::Action;
+        using CHB = Traits::CHB;
         /// Test whether \a s is initialized and empty, also when copied
         template <class Statistics>
         static bool
@@ -1538,7 +1538,7 @@ namespace Test { namespace Branch {
         }
         /// Test an empty action, including a decay change
         static bool
-        empty_action(void) {
+        empty_action() {
             EmptySpace home;
             Action constructed(home, VarArgs(), 0.9);
             Action initialized;
@@ -1550,7 +1550,7 @@ namespace Test { namespace Branch {
         }
         /// Test an empty CHB
         static bool
-        empty_chb(void) {
+        empty_chb() {
             EmptySpace home;
             CHB constructed(home, VarArgs());
             CHB initialized;
@@ -1603,7 +1603,7 @@ namespace Test { namespace Branch {
         EmptyStatistics(const std::string& prefix) : Base(prefix + "::Branch::EmptyStatistics") {}
         /// Run test
         bool
-        run(void) override {
+        run() override {
             return empty_action() && empty_chb() && empty_branching(&branch_fresh_action) &&
                    empty_branching(&branch_given_action) && empty_branching(&branch_fresh_chb) &&
                    empty_branching(&branch_given_chb);
@@ -1619,6 +1619,6 @@ namespace Test { namespace Branch {
     EmptyStatistics<FloatEmptyTraits> float_empty_statistics("Float");
 #endif
 
-}} // namespace Test::Branch
+} // namespace Test::Branch
 
 // STATISTICS: test-branch

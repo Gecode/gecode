@@ -32,7 +32,7 @@
 
 #include <gecode/int/bin-packing.hh>
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
     ExecStatus
     ConflictGraph::bk(NodeSet& p, NodeSet& x) {
@@ -83,6 +83,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::BinPacking
+} // namespace Gecode::Int::BinPacking
 
 // STATISTICS: int-prop

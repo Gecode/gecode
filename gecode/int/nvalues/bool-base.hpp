@@ -30,16 +30,16 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     template <class VY>
     forceinline
     BoolBase<VY>::BoolBase(Home home, int status0, ViewArray<BoolView>& x, VY y0)
         : Propagator(home), status(status0), c(home), y(y0) {
         y.subscribe(home, *this, PC_INT_BND);
-        for (int i = 0; i < x.size(); i++) {
-            assert(!x[i].assigned());
-            (void)new (home) ViewAdvisor<BoolView>(home, *this, c, x[i]);
+        for (auto& xi : x) {
+            assert(!xi.assigned());
+            (void)new (home) ViewAdvisor<BoolView>(home, *this, c, xi);
         }
     }
 
@@ -93,6 +93,6 @@ namespace Gecode { namespace Int { namespace NValues {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

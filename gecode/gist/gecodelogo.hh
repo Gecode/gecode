@@ -33,7 +33,7 @@
 #ifndef GECODE_GIST_GECODELOGO_HH
 #define GECODE_GIST_GECODELOGO_HH
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// Class holding %Gecode and %Gist logo icons
     class Logos {
@@ -49,10 +49,10 @@ namespace Gecode { namespace Gist {
         const unsigned int gist_logo_size;
 
         /// Constructor
-        Logos(void);
+        Logos();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

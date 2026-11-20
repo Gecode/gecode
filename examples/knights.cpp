@@ -128,8 +128,7 @@ public:
         const Choice& c = static_cast<const Choice&>(_c);
         if (a == 0)
             return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
-        else
-            return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
+        return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
     }
     /// Print explanation
     void
@@ -193,8 +192,8 @@ public:
         static const int moves[8][2] = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
         int nbs[8];
         int n_nbs = 0;
-        for (int m = 0; m < 8; m++) {
-            int nx = x(i) + moves[m][0], ny = y(i) + moves[m][1];
+        for (const auto* move : moves) {
+            int nx = x(i) + move[0], ny = y(i) + move[1];
             if ((nx >= 0) && (nx < n) && (ny >= 0) && (ny < n))
                 nbs[n_nbs++] = f(nx, ny);
         }
@@ -287,7 +286,7 @@ public:
     KnightsReified(KnightsReified& s) : Knights(s) {}
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new KnightsReified(*this);
     }
 };
@@ -318,7 +317,7 @@ public:
     KnightsCircuit(KnightsCircuit& s) : Knights(s) {}
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new KnightsCircuit(*this);
     }
 };
@@ -342,7 +341,7 @@ protected:
 
 public:
     /// Constructor
-    KnightsInspector(void) : scene(nullptr), mw(nullptr) {}
+    KnightsInspector() : scene(nullptr), mw(nullptr) {}
     /// Inspect space \a s
     void
     inspect(const Space& s) override {
@@ -380,7 +379,7 @@ public:
 
     /// Set up main window
     void
-    initialize(void) {
+    initialize() {
         mw = new QMainWindow();
         scene = new QGraphicsScene();
         QGraphicsView* view = new QGraphicsView(scene);
@@ -390,18 +389,18 @@ public:
         mw->setAttribute(Qt::WA_DeleteOnClose, false);
         QAction* close_window = new QAction("Close window", mw);
         close_window->setShortcut(QKeySequence("Ctrl+W"));
-        mw->connect(close_window, SIGNAL(triggered()), mw, SLOT(close()));
+        QMainWindow::connect(close_window, SIGNAL(triggered()), mw, SLOT(close()));
         mw->addAction(close_window);
     }
 
     /// Name of the inspector
     std::string
-    name(void) override {
+    name() override {
         return "Board";
     }
     /// Finalize inspector
     void
-    finalize(void) override {
+    finalize() override {
         delete mw;
         mw = nullptr;
     }

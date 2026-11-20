@@ -36,7 +36,7 @@
 
 #include <gecode/int/bin-packing.hh>
 
-namespace Gecode { namespace Int { namespace BinPacking {
+namespace Gecode::Int::BinPacking {
 
     /*
      * Packing propagator
@@ -99,7 +99,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     TellCache::tell(Space& home, IntView x) {
         if (_eq == -2) {
             return ES_FAILED;
-        } else if (_eq >= 0) {
+        }
+        if (_eq >= 0) {
             GECODE_ME_CHECK(x.eq(home, _eq));
         }
         Iter::Values::Array nqi(_nq, _n_nq);
@@ -369,10 +370,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
         // Total size of items
         int s = 0;
         // Constrain bins
-        for (int i = 0; i < bs.size(); i++) {
-            s += bs[i].size();
-            GECODE_ME_CHECK(bs[i].bin().gq(home, 0));
-            GECODE_ME_CHECK(bs[i].bin().le(home, l.size()));
+        for (auto b : bs) {
+            s += b.size();
+            GECODE_ME_CHECK(b.bin().gq(home, 0));
+            GECODE_ME_CHECK(b.bin().le(home, l.size()));
         }
         // Eliminate zero sized items (which are at the end as the size are sorted)
         {
@@ -383,21 +384,20 @@ namespace Gecode { namespace Int { namespace BinPacking {
         }
         if (bs.size() == 0) {
             // No items to be packed
-            for (int i = 0; i < l.size(); i++)
-                GECODE_ME_CHECK(l[i].eq(home, 0));
-            return ES_OK;
-        } else if (l.size() == 0) {
-            // No bins available
-            return ES_FAILED;
-        } else {
-            // Constrain load
-            for (int j = 0; j < l.size(); j++) {
-                GECODE_ME_CHECK(l[j].gq(home, 0));
-                GECODE_ME_CHECK(l[j].lq(home, s));
-            }
-            (void)new (home) Pack(home, l, bs, ipl);
+            for (auto& li : l)
+                GECODE_ME_CHECK(li.eq(home, 0));
             return ES_OK;
         }
+        if (l.size() == 0) {
+            // No bins available
+            return ES_FAILED;
+        } // Constrain load
+        for (auto& j : l) {
+            GECODE_ME_CHECK(j.gq(home, 0));
+            GECODE_ME_CHECK(j.lq(home, s));
+        }
+        (void)new (home) Pack(home, l, bs, ipl);
+        return ES_OK;
     }
 
     void
@@ -436,6 +436,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
         delta_reductions[2] = capacity_base_reduction - smallest_virtual_weight - smallest_virtual_weight + 1;
     }
 
-}}} // namespace Gecode::Int::BinPacking
+} // namespace Gecode::Int::BinPacking
 
 // STATISTICS: int-prop

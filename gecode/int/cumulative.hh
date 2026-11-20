@@ -53,7 +53,7 @@
  * \brief %Scheduling for cumulative resources
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Throw exception if multiplication of \a x and \a y overflows
     void mul_check(long long int x, long long int y);
@@ -61,11 +61,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Throw exception if multiplication of \a x, \a y, and \a z overflows
     void mul_check(long long int x, long long int y, long long int z);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/limits.hpp>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Cumulative (mandatory) task with fixed processing time
     class ManFixPTask : public Unary::ManFixPTask {
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPTask(void);
+        ManFixPTask();
         /// Initialize task with start time \a s, processing time \a p, and required resource \a c
         ManFixPTask(IntVar s, int p, int c);
         /// Initialize task with start time \a s, processing time \a p, and required resource \a c
@@ -89,9 +89,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Value access
         //@{
         /// Return required capacity
-        int c(void) const;
+        int c() const;
         /// Return required energy
-        long long int e(void) const;
+        long long int e() const;
         //@}
 
         /// \name Cloning
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFixPSETask(void);
+        ManFixPSETask();
         /**
          * \brief Initialize task
          *
@@ -142,9 +142,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Value access
         //@{
         /// Return required capacity
-        int c(void) const;
+        int c() const;
         /// Return required energy
-        long long int e(void) const;
+        long long int e() const;
         //@}
 
         /// \name Cloning
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ManFlexTask(void);
+        ManFlexTask();
         /// Initialize with start time \a s, processing time \a p, end time \a e
         ManFlexTask(IntVar s, IntVar p, IntVar e, int c);
         /// Initialize with start time \a s, processing time \a p, end time \a e
@@ -183,9 +183,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Value access
         //@{
         /// Return required capacity
-        int c(void) const;
+        int c() const;
         /// Return required energy
-        long long int e(void) const;
+        long long int e() const;
         //@}
 
         /// \name Cloning
@@ -211,14 +211,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPTask(void);
+        OptFixPTask();
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         OptFixPTask(IntVar s, int p, int c, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         void init(IntVar s, int p, int c, BoolVar m);
         //@}
         /// Cast to corresponding unary task
-        operator Unary::OptFixPTask(void);
+        operator Unary::OptFixPTask();
     };
 
     /**
@@ -237,14 +237,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFixPSETask(void);
+        OptFixPSETask();
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         OptFixPSETask(TaskType t, IntVar s, int p, int c, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
         void init(TaskType t, IntVar s, int p, int c, BoolVar m);
         //@}
         /// Cast to corresponding unary task
-        operator Unary::OptFixPSETask(void);
+        operator Unary::OptFixPSETask();
     };
 
     /**
@@ -263,14 +263,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OptFlexTask(void);
+        OptFlexTask();
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
         OptFlexTask(IntVar s, IntVar p, IntVar e, int c, BoolVar m);
         /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
         void init(IntVar s, IntVar p, IntVar e, int c, BoolVar m);
         //@}
         /// Cast to corresponding unary task
-        operator Unary::OptFlexTask(void);
+        operator Unary::OptFlexTask();
     };
 
     /**
@@ -280,47 +280,47 @@ namespace Gecode { namespace Int { namespace Cumulative {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFlexTask& t);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/task.hpp>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Forward mandatory fixed task view
-    typedef ManFixPTask ManFixPTaskFwd;
+    using ManFixPTaskFwd = ManFixPTask;
 
     /// Backward (dual) mandatory fixed task view
-    typedef FwdToBwd<ManFixPTaskFwd> ManFixPTaskBwd;
+    using ManFixPTaskBwd = FwdToBwd<ManFixPTaskFwd>;
 
     /// Forward mandatory fixed task view
-    typedef ManFixPSETask ManFixPSETaskFwd;
+    using ManFixPSETaskFwd = ManFixPSETask;
 
     /// Backward (dual) mandatory fixed task view
-    typedef FwdToBwd<ManFixPSETaskFwd> ManFixPSETaskBwd;
+    using ManFixPSETaskBwd = FwdToBwd<ManFixPSETaskFwd>;
 
     /// Forward optional fixed task view
-    typedef OptFixPTask OptFixPTaskFwd;
+    using OptFixPTaskFwd = OptFixPTask;
 
     /// Backward (dual) optional fixed task view
-    typedef FwdToBwd<OptFixPTaskFwd> OptFixPTaskBwd;
+    using OptFixPTaskBwd = FwdToBwd<OptFixPTaskFwd>;
 
     /// Forward optional fixed task view
-    typedef OptFixPSETask OptFixPSETaskFwd;
+    using OptFixPSETaskFwd = OptFixPSETask;
 
     /// Backward (dual) optional fixed task view
-    typedef FwdToBwd<OptFixPSETaskFwd> OptFixPSETaskBwd;
+    using OptFixPSETaskBwd = FwdToBwd<OptFixPSETaskFwd>;
 
     /// Forward mandatory flexible task view
-    typedef ManFlexTask ManFlexTaskFwd;
+    using ManFlexTaskFwd = ManFlexTask;
 
     /// Backward (dual) mandatory flexible task view
-    typedef FwdToBwd<ManFlexTaskFwd> ManFlexTaskBwd;
+    using ManFlexTaskBwd = FwdToBwd<ManFlexTaskFwd>;
 
     /// Forward optional flexible task view
-    typedef OptFlexTask OptFlexTaskFwd;
+    using OptFlexTaskFwd = OptFlexTask;
 
     /// Backward (dual) optional flexible task view
-    typedef FwdToBwd<OptFlexTaskFwd> OptFlexTaskBwd;
+    using OptFlexTaskBwd = FwdToBwd<OptFlexTaskFwd>;
 
     /**
      * \brief Print backward task view in format est:p:lct
@@ -350,18 +350,18 @@ namespace Gecode { namespace Int { namespace Cumulative {
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const OptFixPSETaskBwd& t);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/task-view.hpp>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Task view traits for forward task views
     template <>
     class TaskViewTraits<Cumulative::ManFixPTaskFwd> {
     public:
         /// The task type
-        typedef Cumulative::ManFixPTask Task;
+        using Task = Cumulative::ManFixPTask;
     };
 
     /// Task view traits for backward task views
@@ -369,7 +369,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::ManFixPTaskBwd> {
     public:
         /// The task type
-        typedef Cumulative::ManFixPTask Task;
+        using Task = Cumulative::ManFixPTask;
     };
 
     /// Task view traits for forward task views
@@ -377,7 +377,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::ManFixPSETaskFwd> {
     public:
         /// The task type
-        typedef Cumulative::ManFixPSETask Task;
+        using Task = Cumulative::ManFixPSETask;
     };
 
     /// Task view traits for backward task views
@@ -385,7 +385,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::ManFixPSETaskBwd> {
     public:
         /// The task type
-        typedef Cumulative::ManFixPSETask Task;
+        using Task = Cumulative::ManFixPSETask;
     };
 
     /// Task view traits for forward optional task views
@@ -393,7 +393,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::OptFixPTaskFwd> {
     public:
         /// The task type
-        typedef Cumulative::OptFixPTask Task;
+        using Task = Cumulative::OptFixPTask;
     };
 
     /// Task view traits for backward task views
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::OptFixPTaskBwd> {
     public:
         /// The task type
-        typedef Cumulative::OptFixPTask Task;
+        using Task = Cumulative::OptFixPTask;
     };
 
     /// Task view traits for forward optional task views
@@ -409,7 +409,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::OptFixPSETaskFwd> {
     public:
         /// The task type
-        typedef Cumulative::OptFixPSETask Task;
+        using Task = Cumulative::OptFixPSETask;
     };
 
     /// Task view traits for backward task views
@@ -417,7 +417,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::OptFixPSETaskBwd> {
     public:
         /// The task type
-        typedef Cumulative::OptFixPSETask Task;
+        using Task = Cumulative::OptFixPSETask;
     };
 
     /// Task view traits for forward task views
@@ -425,7 +425,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::ManFlexTaskFwd> {
     public:
         /// The task type
-        typedef Cumulative::ManFlexTask Task;
+        using Task = Cumulative::ManFlexTask;
     };
 
     /// Task view traits for backward task views
@@ -433,7 +433,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::ManFlexTaskBwd> {
     public:
         /// The task type
-        typedef Cumulative::ManFlexTask Task;
+        using Task = Cumulative::ManFlexTask;
     };
 
     /// Task view traits for forward optional task views
@@ -441,7 +441,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::OptFlexTaskFwd> {
     public:
         /// The task type
-        typedef Cumulative::OptFlexTask Task;
+        using Task = Cumulative::OptFlexTask;
     };
 
     /// Task view traits for backward task views
@@ -449,7 +449,7 @@ namespace Gecode { namespace Int {
     class TaskViewTraits<Cumulative::OptFlexTaskBwd> {
     public:
         /// The task type
-        typedef Cumulative::OptFlexTask Task;
+        using Task = Cumulative::OptFlexTask;
     };
 
     /// Task traits for mandatory fixed tasks
@@ -457,11 +457,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Cumulative::ManFixPTask> {
     public:
         /// The forward task view type
-        typedef Cumulative::ManFixPTaskFwd TaskViewFwd;
+        using TaskViewFwd = Cumulative::ManFixPTaskFwd;
         /// The backward task view type
-        typedef Cumulative::ManFixPTaskBwd TaskViewBwd;
+        using TaskViewBwd = Cumulative::ManFixPTaskBwd;
         /// The corresponding unary task type
-        typedef Unary::ManFixPTask UnaryTask;
+        using UnaryTask = Unary::ManFixPTask;
     };
 
     /// Task traits for mandatory fixed tasks
@@ -469,11 +469,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Cumulative::ManFixPSETask> {
     public:
         /// The forward task view type
-        typedef Cumulative::ManFixPSETaskFwd TaskViewFwd;
+        using TaskViewFwd = Cumulative::ManFixPSETaskFwd;
         /// The backward task view type
-        typedef Cumulative::ManFixPSETaskBwd TaskViewBwd;
+        using TaskViewBwd = Cumulative::ManFixPSETaskBwd;
         /// The corresponding unary task type
-        typedef Unary::ManFixPSETask UnaryTask;
+        using UnaryTask = Unary::ManFixPSETask;
     };
 
     /// Task traits for optional fixed tasks
@@ -481,13 +481,13 @@ namespace Gecode { namespace Int {
     class TaskTraits<Cumulative::OptFixPTask> {
     public:
         /// The forward task view type
-        typedef Cumulative::OptFixPTaskFwd TaskViewFwd;
+        using TaskViewFwd = Cumulative::OptFixPTaskFwd;
         /// The backward task view type
-        typedef Cumulative::OptFixPTaskBwd TaskViewBwd;
+        using TaskViewBwd = Cumulative::OptFixPTaskBwd;
         /// The corresponding mandatory task
-        typedef Cumulative::ManFixPTask ManTask;
+        using ManTask = Cumulative::ManFixPTask;
         /// The corresponding unary task type
-        typedef Unary::OptFixPTask UnaryTask;
+        using UnaryTask = Unary::OptFixPTask;
     };
 
     /// Task traits for optional fixed tasks
@@ -495,13 +495,13 @@ namespace Gecode { namespace Int {
     class TaskTraits<Cumulative::OptFixPSETask> {
     public:
         /// The forward task view type
-        typedef Cumulative::OptFixPSETaskFwd TaskViewFwd;
+        using TaskViewFwd = Cumulative::OptFixPSETaskFwd;
         /// The backward task view type
-        typedef Cumulative::OptFixPSETaskBwd TaskViewBwd;
+        using TaskViewBwd = Cumulative::OptFixPSETaskBwd;
         /// The corresponding mandatory task
-        typedef Cumulative::ManFixPSETask ManTask;
+        using ManTask = Cumulative::ManFixPSETask;
         /// The corresponding unary task type
-        typedef Unary::OptFixPSETask UnaryTask;
+        using UnaryTask = Unary::OptFixPSETask;
     };
 
     /// Task traits for mandatory flexible tasks
@@ -509,11 +509,11 @@ namespace Gecode { namespace Int {
     class TaskTraits<Cumulative::ManFlexTask> {
     public:
         /// The forward task view type
-        typedef Cumulative::ManFlexTaskFwd TaskViewFwd;
+        using TaskViewFwd = Cumulative::ManFlexTaskFwd;
         /// The backward task view type
-        typedef Cumulative::ManFlexTaskBwd TaskViewBwd;
+        using TaskViewBwd = Cumulative::ManFlexTaskBwd;
         /// The corresponding unary task type
-        typedef Unary::ManFlexTask UnaryTask;
+        using UnaryTask = Unary::ManFlexTask;
     };
 
     /// Task traits for optional flexible tasks
@@ -521,18 +521,18 @@ namespace Gecode { namespace Int {
     class TaskTraits<Cumulative::OptFlexTask> {
     public:
         /// The forward task view type
-        typedef Cumulative::OptFlexTaskFwd TaskViewFwd;
+        using TaskViewFwd = Cumulative::OptFlexTaskFwd;
         /// The backward task view type
-        typedef Cumulative::OptFlexTaskBwd TaskViewBwd;
+        using TaskViewBwd = Cumulative::OptFlexTaskBwd;
         /// The corresponding mandatory task
-        typedef Cumulative::ManFlexTask ManTask;
+        using ManTask = Cumulative::ManFlexTask;
         /// The corresponding unary task type
-        typedef Unary::OptFlexTask UnaryTask;
+        using UnaryTask = Unary::OptFlexTask;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Node for an omega tree
     class OmegaNode {
@@ -567,7 +567,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// Remove task with index \a i
         void remove(int i);
         /// Return energy envelope of all tasks
-        long long int env(void) const;
+        long long int env() const;
     };
 
     /// Node for an extended omega tree
@@ -652,20 +652,20 @@ namespace Gecode { namespace Int { namespace Cumulative {
         /// Remove task with index \a i from lambda
         void remove_lambda(int i);
         /// Whether has responsible task
-        bool lempty(void) const;
+        bool lempty() const;
         /// Return responsible task
-        int responsible(void) const;
+        int responsible() const;
         /// Return energy envelope of all tasks
-        long long int env(void) const;
+        long long int env() const;
         /// Return energy envelope of all tasks excluding lambda tasks
-        long long int lenv(void) const;
+        long long int lenv() const;
     };
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/tree.hpp>
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     /// Check for subsumption (all tasks must be assigned)
     template <class Task>
@@ -782,7 +782,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     template <class OptTask, class Cap>
     ExecStatus post_optional(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl);
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 #include <gecode/int/cumulative/time-tabling.hpp>
 #include <gecode/int/cumulative/subsumption.hpp>

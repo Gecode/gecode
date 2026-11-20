@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /*
      * BndSet
@@ -42,16 +42,16 @@ namespace Gecode { namespace Set {
      */
 
     forceinline
-    BndSet::BndSet(void)
+    BndSet::BndSet()
         : first(nullptr), last(nullptr), _size(0), _card(0) {}
 
     forceinline RangeList*
-    BndSet::fst(void) const {
+    BndSet::fst() const {
         return first;
     }
 
     forceinline RangeList*
-    BndSet::lst(void) const {
+    BndSet::lst() const {
         return last;
     }
 
@@ -86,34 +86,32 @@ namespace Gecode { namespace Set {
     }
 
     forceinline RangeList*
-    BndSet::ranges(void) const {
+    BndSet::ranges() const {
         return fst();
     }
 
     forceinline unsigned int
-    BndSet::size(void) const {
+    BndSet::size() const {
         return _size;
     }
 
     forceinline bool
-    BndSet::empty(void) const {
+    BndSet::empty() const {
         return (_size == 0);
     }
 
     forceinline int
-    BndSet::min(void) const {
+    BndSet::min() const {
         if (fst() == nullptr)
             return MIN_OF_EMPTY;
-        else
-            return fst()->min();
+        return fst()->min();
     }
 
     forceinline int
-    BndSet::max(void) const {
+    BndSet::max() const {
         if (lst() == nullptr)
             return MAX_OF_EMPTY;
-        else
-            return lst()->max();
+        return lst()->max();
     }
 
     // nth smallest element
@@ -128,7 +126,7 @@ namespace Gecode { namespace Set {
     }
 
     forceinline unsigned int
-    BndSet::card(void) const {
+    BndSet::card() const {
         return _card;
     }
 
@@ -424,6 +422,6 @@ namespace Gecode { namespace Set {
         Iter::Ranges::Compl<Limits::min, Limits::max, I>::init(i);
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

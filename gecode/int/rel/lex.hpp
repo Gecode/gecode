@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /*
      * Lexical order propagator
@@ -167,8 +167,7 @@ namespace Gecode { namespace Int { namespace Rel {
             if (i == n) { // case: $
                 if (strict)
                     return ES_FIX;
-                else
-                    goto rewrite_lq;
+                goto rewrite_lq;
             }
 
             if (x[i].max() < y[i].min()) // case: <
@@ -249,8 +248,7 @@ namespace Gecode { namespace Int { namespace Rel {
         if (x.size() == 1) {
             if (strict)
                 return Le<VX, VY>::post(home, x[0], y[0]);
-            else
-                return Lq<VX, VY>::post(home, x[0], y[0]);
+            return Lq<VX, VY>::post(home, x[0], y[0]);
         }
         (void)new (home) LexLqLe<VX, VY>(home, x, y, strict);
         return ES_OK;
@@ -437,6 +435,6 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 // STATISTICS: int-prop

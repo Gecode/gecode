@@ -31,24 +31,25 @@
  */
 
 #include <gecode/search/par/frontier.hh>
+#include <memory>
 
 #if defined(GECODE_HAS_EXPERIMENTAL) && defined(GECODE_HAS_THREADS)
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     Frontier::Runner::Runner(Frontier& e, unsigned int i) : Support::Runnable(false), engine(e), id(i) {}
 
     void
-    Frontier::Runner::run(void) {
+    Frontier::Runner::run() {
         engine.work(id);
     }
 
     Support::Terminator*
-    Frontier::Runner::terminator(void) const {
+    Frontier::Runner::terminator() const {
         return const_cast<Runner*>(this);
     }
 
     void
-    Frontier::Runner::terminated(void) {
+    Frontier::Runner::terminated() {
         done.signal();
     }
 
@@ -79,13 +80,13 @@ namespace Gecode { namespace Search { namespace Par {
             return;
         }
         started(*s);
-        std::unique_ptr<Task> t(new Task);
+        std::unique_ptr<Task> t = std::make_unique<Task>();
         t->expansion.select(std::unique_ptr<Space>(clone ? s->clone() : s));
         push(t.release());
     }
 
     void
-    Frontier::launch(void) {
+    Frontier::launch() {
         if (runners != nullptr)
             return;
         unsigned int n = static_cast<unsigned int>(opt.threads);
@@ -115,7 +116,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     void
-    Frontier::wake(void) {
+    Frontier::wake() {
         if (worker_control.engaged()) {
             WorkerControlAccess::signal_all(worker_control);
         } else if (runners != nullptr) {
@@ -130,7 +131,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     void
-    Frontier::terminate(void) {
+    Frontier::terminate() {
         if (runners == nullptr)
             return;
         {
@@ -148,7 +149,7 @@ namespace Gecode { namespace Search { namespace Par {
         runners = nullptr;
     }
 
-    Frontier::~Frontier(void) {
+    Frontier::~Frontier() {
         terminate();
         while (n_pending > 0) {
             delete pending.pop();
@@ -331,7 +332,7 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     Space*
-    Frontier::next(void) {
+    Frontier::next() {
         launch();
         {
             Support::Lock lock(mutex);
@@ -365,13 +366,13 @@ namespace Gecode { namespace Search { namespace Par {
     }
 
     Search::Statistics
-    Frontier::statistics(void) const {
+    Frontier::statistics() const {
         Support::Lock lock(mutex);
         return stat;
     }
 
     EndReason
-    Frontier::end_reason(void) const {
+    Frontier::end_reason() const {
         Support::Lock lock(mutex);
         return end;
     }
@@ -407,7 +408,7 @@ namespace Gecode { namespace Search { namespace Par {
         (void)replacement.release();
     }
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 #endif
 
 // STATISTICS: search-par

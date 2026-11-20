@@ -32,7 +32,7 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 #ifdef GECODE_HAS_EXPERIMENTAL
     UninitializedGuidance::UninitializedGuidance(const char* l) : Exception(l, "Heuristic guidance is missing") {}
 
@@ -64,6 +64,6 @@ namespace Gecode { namespace Search {
     Incomparable::Incomparable(const char* l)
         : Exception(l, "Incomparable objectives are not supported by best solution search") {}
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

@@ -33,7 +33,7 @@
 #include <gecode/int/ldsb.hh>
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     /// Compute symmetric literals
     template <>
     ArgArray<Literal>
@@ -48,9 +48,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i)
                 lits[j++] = Literal(i.val(), l._value);
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
     /// Compute symmetric literals
     template <>
@@ -66,9 +65,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(indices); i(); ++i)
                 lits[j++] = Literal(i.val(), l._value);
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
 
     /// Compute symmetric literals
@@ -85,9 +83,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i)
                 lits[j++] = Literal(l._variable, i.val());
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
     /// Compute symmetric literals
     template <>
@@ -103,9 +100,8 @@ namespace Gecode { namespace Int { namespace LDSB {
             for (Iter::Values::BitSetOffset<Support::BitSetOffset<Space>> i(values); i(); ++i)
                 lits[j++] = Literal(l._variable, i.val());
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
 
     /// Compute symmetric literals
@@ -155,6 +151,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         return dynamic_stack_to_arg_array(s);
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

@@ -47,6 +47,7 @@
  *
  */
 
+#include <algorithm>
 #include <atomic>
 #include <iostream>
 
@@ -85,7 +86,7 @@ namespace Gecode {
      */
     //@{
     /// Type for modification events
-    typedef int ModEvent;
+    using ModEvent = int;
 
     /// Generic modification event: failed variable
     const ModEvent ME_GEN_FAILED = -1;
@@ -95,7 +96,7 @@ namespace Gecode {
     const ModEvent ME_GEN_ASSIGNED = 1;
 
     /// Type for propagation conditions
-    typedef int PropCond;
+    using PropCond = int;
     /// Propagation condition to be ignored (convenience)
     const PropCond PC_GEN_NONE = -1;
     /// Propagation condition for an assigned variable
@@ -112,7 +113,7 @@ namespace Gecode {
      * a variable or view.
      * \ingroup TaskActor
      */
-    typedef int ModEventDelta;
+    using ModEventDelta = int;
 
 } // namespace Gecode
 
@@ -211,7 +212,7 @@ namespace Gecode {
         /// Dispose list of variable implementations starting at \a x
         GECODE_KERNEL_EXPORT virtual void dispose(Space& home, VarImpBase* x);
         /// Destructor (not used)
-        GECODE_KERNEL_EXPORT virtual ~VarImpDisposerBase(void);
+        GECODE_KERNEL_EXPORT virtual ~VarImpDisposerBase();
     };
 
     /**
@@ -224,7 +225,7 @@ namespace Gecode {
     class VarImpDisposer : public VarImpDisposerBase {
     public:
         /// Constructor (registers disposer with kernel)
-        VarImpDisposer(void);
+        VarImpDisposer();
         /// Dispose list of variable implementations starting at \a x
         void dispose(Space& home, VarImpBase* x) override;
     };
@@ -373,11 +374,11 @@ namespace Gecode {
         /// Creation
         VarImp(Space& home);
         /// Creation of static instances
-        VarImp(void);
+        VarImp();
 
 #ifdef GECODE_HAS_CBS
         /// Return variable id
-        unsigned int id(void) const;
+        unsigned int id() const;
 #endif
 
         /// \name Dependencies
@@ -415,14 +416,14 @@ namespace Gecode {
          * Note that the degree of a variable implementation is not available
          * during cloning.
          */
-        unsigned int degree(void) const;
+        unsigned int degree() const;
         /**
          * \brief Return accumulated failure count (plus degree)
          *
          * Note that the accumulated failure count of a variable implementation
          * is not available during cloning.
          */
-        double afc(void) const;
+        double afc() const;
         //@}
 
         /// \name Cloning variables
@@ -430,11 +431,11 @@ namespace Gecode {
         /// Constructor for cloning
         VarImp(Space& home, VarImp& x);
         /// Is variable already copied
-        bool copied(void) const;
+        bool copied() const;
         /// Use forward pointer if variable already copied
-        VarImp* forward(void) const;
+        VarImp* forward() const;
         /// Return next copied variable
-        VarImp* next(void) const;
+        VarImp* next() const;
         //@}
 
         /// \name Variable implementation-dependent propagator support
@@ -472,9 +473,9 @@ namespace Gecode {
         /// \name Bit management
         //@{
         /// Provide access to free bits
-        unsigned int bits(void) const;
+        unsigned int bits() const;
         /// Provide access to free bits
-        unsigned int& bits(void);
+        unsigned int& bits();
         //@}
 
     protected:
@@ -543,7 +544,6 @@ namespace Gecode {
         /// Actual cost
         ActualCost ac;
 
-    public:
         /// Propagation cost modifier
         enum class Mod {
             LO, ///< Cheap
@@ -559,7 +559,7 @@ namespace Gecode {
 
     public:
         /// For recording information (no propagation allowed)
-        static PropCost record(void);
+        static PropCost record();
         /// Exponential complexity for modifier \a m and size measure \a n
         static PropCost crazy(PropCost::Mod m, unsigned int n);
         /// Exponential complexity for modifier \a m and size measure \a n
@@ -641,23 +641,23 @@ namespace Gecode {
     public:
         //@{
         /// Routines for double-linked list
-        ActorLink* prev(void) const;
+        ActorLink* prev() const;
         void prev(ActorLink*);
-        ActorLink* next(void) const;
+        ActorLink* next() const;
         void next(ActorLink*);
-        ActorLink** next_ref(void);
+        ActorLink** next_ref();
         //@}
 
         /// Initialize links (self-linked)
-        void init(void);
+        void init();
         /// Remove from predecessor and successor
-        void unlink(void);
+        void unlink();
         /// Insert \a al directly after this
         void head(ActorLink* al);
         /// Insert \a al directly before this
         void tail(ActorLink* al);
         /// Test whether actor link is empty (points to itself)
-        bool empty(void) const;
+        bool empty() const;
         /// Static cast for a non-null pointer (to give a hint to optimizer)
         template <class T>
         static ActorLink* cast(T* a);
@@ -704,9 +704,9 @@ namespace Gecode {
         /// No-op for exceptions
         static void operator delete(void* p, Space& home);
         //@}
-    public:
+
         /// To avoid warnings
-        GECODE_KERNEL_EXPORT virtual ~Actor(void);
+        GECODE_KERNEL_EXPORT virtual ~Actor();
         /// Not used
         static void* operator new(size_t s);
         /// Not used
@@ -751,13 +751,13 @@ namespace Gecode {
         //@{
         /// Constructor
         GECODE_KERNEL_EXPORT
-        Group(void);
+        Group();
         /// Return a unique id for the group
-        unsigned int id(void) const;
+        unsigned int id() const;
         /// Check whether actor group \a a is included in this group
         bool in(Group a) const;
         /// Check whether this is a real group (and not just default)
-        bool in(void) const;
+        bool in() const;
         //@}
         /// Group of all actors
         GECODE_KERNEL_EXPORT
@@ -785,7 +785,7 @@ namespace Gecode {
         /// \name Construction
         //@{
         /// Constructor
-        PropagatorGroup(void) = default;
+        PropagatorGroup() = default;
         /// To augment a space argument
         Home operator()(Space& home);
         //@}
@@ -850,7 +850,7 @@ namespace Gecode {
         /// \name Construction
         //@{
         /// Constructor
-        BrancherGroup(void) = default;
+        BrancherGroup() = default;
         /// To augment a space argument
         Home operator()(Space& home);
         //@}
@@ -859,8 +859,8 @@ namespace Gecode {
         /// Move branchers from group \a g to this group
         GECODE_KERNEL_EXPORT
         BrancherGroup& move(Space& home, BrancherGroup g);
-        /// Move brancher \a b to this group
-        BrancherGroup& move(Space& home, Brancher& b);
+        /// Move brancher \a p to this group
+        BrancherGroup& move(Space& home, Brancher& p);
         /**
          * \brief Move brancher with id \a id to this group
          *
@@ -916,7 +916,7 @@ namespace Gecode {
         /// Homes are not assignable: a home never changes its space
         Home& operator=(const Home& h) = delete;
         /// Retrieve the space of the home
-        operator Space&(void);
+        operator Space&();
         //@}
         /// \name Extended information
         //@{
@@ -927,18 +927,18 @@ namespace Gecode {
         /// Return a home extended by a brancher group
         Home operator()(BrancherGroup bg);
         /// Return propagator (or nullptr) for currently rewritten propagator
-        Propagator* propagator(void) const;
+        Propagator* propagator() const;
         /// Return propagator group
-        PropagatorGroup propagator_group(void) const;
+        PropagatorGroup propagator_group() const;
         /// Return brancher group
-        BrancherGroup brancher_group(void) const;
+        BrancherGroup brancher_group() const;
         //@}
         /// \name Forwarding of common space operations
         //@{
         /// Check whether corresponding space is failed
-        bool failed(void) const;
+        bool failed() const;
         /// Mark space as failed
-        void fail(void);
+        void fail();
         ///  Notice actor property
         void notice(Actor& a, ActorProperty p, bool duplicate = false);
         //@}
@@ -975,17 +975,17 @@ namespace Gecode {
         /// Record that a post function with propagator group \a g is executing
         void post(PropagatorGroup g);
         /// Record that nothing is known at this point
-        void other(void);
+        void other();
 
     public:
         /// Return what is currently executing
-        What what(void) const;
+        What what() const;
         /// Return currently executing propagator
-        const Propagator& propagator(void) const;
+        const Propagator& propagator() const;
         /// Return currently executing brancher
-        const Brancher& brancher(void) const;
+        const Brancher& brancher() const;
         /// Return propagator group of currently executing post function
-        PropagatorGroup post(void) const;
+        PropagatorGroup post() const;
     };
 
     /**
@@ -1008,7 +1008,7 @@ namespace Gecode {
         /// Set information
         PostInfo(Home home);
         /// Reset information
-        ~PostInfo(void);
+        ~PostInfo();
     };
 
     /**
@@ -1041,13 +1041,13 @@ namespace Gecode {
 
     public:
         /// Return propagator identifier
-        unsigned int id(void) const;
+        unsigned int id() const;
         /// Return propagator group
-        PropagatorGroup group(void) const;
+        PropagatorGroup group() const;
         /// Return pointer to non-subsumed propagator
-        const Propagator* propagator(void) const;
+        const Propagator* propagator() const;
         /// Return propagator status
-        Status status(void) const;
+        Status status() const;
     };
 
     /**
@@ -1068,15 +1068,15 @@ namespace Gecode {
 
     public:
         /// Return brancher identifier
-        unsigned int id(void) const;
+        unsigned int id() const;
         /// Return brancher group
-        BrancherGroup group(void) const;
+        BrancherGroup group() const;
         /// Return brancher
-        const Brancher& brancher(void) const;
+        const Brancher& brancher() const;
         /// Return choice
-        const Choice& choice(void) const;
+        const Choice& choice() const;
         /// Return alternative
-        unsigned int alternative(void) const;
+        unsigned int alternative() const;
     };
 
     /**
@@ -1107,11 +1107,11 @@ namespace Gecode {
 
     public:
         /// Return post status
-        Status status(void) const;
+        Status status() const;
         /// Return propagator group
-        PropagatorGroup group(void) const;
+        PropagatorGroup group() const;
         /// Return number of posted propagators
-        unsigned int propagators(void) const;
+        unsigned int propagators() const;
     };
 
     /**
@@ -1150,7 +1150,7 @@ namespace Gecode {
         /// Static cast for a non-null pointer (to give a hint to optimizer)
         static const Propagator* cast(const ActorLink* al);
         /// Whether propagator information is local to the space
-        bool local_info(void) const;
+        bool local_info() const;
         /// Disable propagator
         void disable(Space& home);
         /// Enable propagator
@@ -1162,9 +1162,9 @@ namespace Gecode {
         /// Constructor for cloning \a p
         Propagator(Space& home, Propagator& p);
         /// Return forwarding pointer during copying
-        Propagator* fwd(void) const;
+        Propagator* fwd() const;
         /// Provide access to propagator information
-        Kernel::GPI::Info& gpi(void);
+        Kernel::GPI::Info& gpi();
 
     public:
         /// \name Propagation
@@ -1211,7 +1211,7 @@ namespace Gecode {
          * executing propagator and hence can only be called within the
          * propagate function of a propagator.
          */
-        ModEventDelta modification_event_delta(void) const;
+        ModEventDelta modification_event_delta() const;
         /**
          * \brief Advise function
          *
@@ -1256,7 +1256,7 @@ namespace Gecode {
         /// \name Information
         //@{
         /// Return the accumulated failure count
-        double afc(void) const;
+        double afc() const;
         //@}
 #ifdef GECODE_HAS_CBS
         /// \name Marginal distribution
@@ -1268,7 +1268,7 @@ namespace Gecode {
          * propagator. A callback is used to transmit each result.
          */
         /// Signature for function transmitting marginal distributions
-        typedef std::function<void(unsigned int prop_id, unsigned int var_id, int val, double dens)> SendMarginal;
+        using SendMarginal = std::function<void(unsigned int prop_id, unsigned int var_id, int val, double dens)>;
         virtual void solution_distribution(Space& home, const SendMarginal& send) const;
         /**
          * \brief Sum of variable cardinalities
@@ -1278,20 +1278,20 @@ namespace Gecode {
          *               in branching decisions
          */
         /// Signature for function testing if variables are candidates to branching decisions
-        typedef std::function<bool(unsigned int var_id)> InDecision;
+        using InDecision = std::function<bool(unsigned int var_id)>;
         virtual void domain_size_sum(const InDecision& in, unsigned int& size, unsigned int& size_b) const;
         //@}
 #endif
         /// \name Id and group support
         //@{
         /// Return propagator id
-        unsigned int id(void) const;
+        unsigned int id() const;
         /// Return group propagator belongs to
-        PropagatorGroup group(void) const;
+        PropagatorGroup group() const;
         /// Add propagator to group \a g
         void group(PropagatorGroup g);
         /// Whether propagator is currently disabled
-        bool disabled(void) const;
+        bool disabled() const;
         //@}
     };
 
@@ -1313,11 +1313,11 @@ namespace Gecode {
 
     public:
         /// Default constructor
-        Council(void) = default;
+        Council() = default;
         /// Construct advisor council
         Council(Space& home);
         /// Test whether council has advisor left
-        bool empty(void) const;
+        bool empty() const;
         /// Update during cloning (copies all advisors)
         void update(Space& home, Council<A>& c);
         /// Dispose council
@@ -1338,11 +1338,11 @@ namespace Gecode {
         /// Initialize
         Advisors(const Council<A>& c);
         /// Test whether there advisors left
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next advisor
-        void operator++(void);
+        void operator++();
         /// Return advisor
-        A& advisor(void) const;
+        A& advisor() const;
     };
 
     /**
@@ -1366,7 +1366,7 @@ namespace Gecode {
 
     private:
         /// Is the advisor disposed?
-        bool disposed(void) const;
+        bool disposed() const;
         /// Static cast
         static Advisor* cast(ActorLink* al);
         /// Static cast
@@ -1376,7 +1376,7 @@ namespace Gecode {
 
     protected:
         /// Return the advisor's propagator
-        Propagator& propagator(void) const;
+        Propagator& propagator() const;
 
     public:
         /// Constructor for creation
@@ -1425,7 +1425,7 @@ namespace Gecode {
         };
         using enum Status;
         /// Constructor for creation
-        NGL(void);
+        NGL();
         /// Constructor for creation
         NGL(Space& home);
         /// Constructor for cloning \a ngl
@@ -1444,15 +1444,15 @@ namespace Gecode {
         virtual NGL* copy(Space& home) = 0;
         /// Whether dispose must always be called (returns false)
         GECODE_KERNEL_EXPORT
-        virtual bool notice(void) const;
+        virtual bool notice() const;
         /// Dispose
         virtual size_t dispose(Space& home);
         /// \name Internal management routines
         //@{
         /// Test whether literal is a leaf
-        bool leaf(void) const;
+        bool leaf() const;
         /// Return pointer to next literal
-        NGL* next(void) const;
+        NGL* next() const;
         /// Mark literal as leaf or not
         void leaf(bool l);
         /// %Set pointer to next literal
@@ -1469,9 +1469,9 @@ namespace Gecode {
         /// Needed for exceptions
         static void operator delete(void* p);
         //@}
-    public:
+
         /// To avoid warnings
-        GECODE_KERNEL_EXPORT virtual ~NGL(void);
+        GECODE_KERNEL_EXPORT virtual ~NGL();
         /// Not used
         static void* operator new(size_t s);
     };
@@ -1493,17 +1493,17 @@ namespace Gecode {
         unsigned int alt; ///< Number of alternatives
 
         /// Return id of the creating brancher
-        unsigned int id(void) const;
+        unsigned int id() const;
 
     protected:
         /// Initialize for particular brancher \a b and alternatives \a a
-        Choice(const Brancher& b, const unsigned int a);
+        Choice(const Brancher& b, unsigned int a);
 
     public:
         /// Return number of alternatives
-        unsigned int alternatives(void) const;
+        unsigned int alternatives() const;
         /// Destructor
-        GECODE_KERNEL_EXPORT virtual ~Choice(void);
+        GECODE_KERNEL_EXPORT virtual ~Choice();
         /// Archive into \a e
         GECODE_KERNEL_EXPORT
         virtual void archive(Archive& e) const;
@@ -1608,9 +1608,9 @@ namespace Gecode {
         /// \name Id and group support
         //@{
         /// Return brancher id
-        unsigned int id(void) const;
+        unsigned int id() const;
         /// Return group brancher belongs to
-        BrancherGroup group(void) const;
+        BrancherGroup group() const;
         /// Add brancher to group \a g
         void group(BrancherGroup g);
         //@}
@@ -1657,7 +1657,7 @@ namespace Gecode {
 
     protected:
         /// Create local handle pointing to nullptr object
-        LocalHandle(void);
+        LocalHandle();
         /// Create local handle that points to local object \a lo
         LocalHandle(LocalObject* lo);
         /// Copy constructor
@@ -1669,7 +1669,7 @@ namespace Gecode {
 
     protected:
         /// Access to the local object
-        LocalObject* object(void) const;
+        LocalObject* object() const;
         /// Modify local object
         void object(LocalObject* n);
     };
@@ -1685,7 +1685,7 @@ namespace Gecode {
 
     public:
         /// Initialize
-        NoGoods(void);
+        NoGoods();
         /// Copy constructor
         NoGoods(const NoGoods& ng);
         /// Assignment operator
@@ -1694,11 +1694,11 @@ namespace Gecode {
         GECODE_KERNEL_EXPORT
         virtual void post(Space& home) const;
         /// Return number of no-goods posted
-        unsigned long int ng(void) const;
+        unsigned long int ng() const;
         /// %Set number of no-goods posted to \a n
         void ng(unsigned long int n);
         /// Destructor
-        virtual ~NoGoods(void);
+        virtual ~NoGoods();
         /// Empty no-goods
         GECODE_KERNEL_EXPORT
         static NoGoods eng;
@@ -1858,9 +1858,9 @@ namespace Gecode {
         /// Contexts are not assigned
         MetaContext& operator=(const MetaContext&) = delete;
         /// Return the engine calling the hook
-        MetaEngine engine(void) const;
+        MetaEngine engine() const;
         /// Return why the hook is called
-        MetaEvent event(void) const;
+        MetaEvent event() const;
         /**
          * \brief Return the episode, counting from zero
          *
@@ -1869,31 +1869,31 @@ namespace Gecode {
          * \c Start); in spoke(), the episode that starts. PBS always passes
          * zero.
          */
-        unsigned long int episode(void) const;
+        unsigned long int episode() const;
         /// Return the asset of a portfolio, counting from zero (zero for RBS)
-        unsigned int asset(void) const;
+        unsigned int asset() const;
         /// Return the number of assets of a portfolio (one for RBS)
-        unsigned int assets(void) const;
+        unsigned int assets() const;
         /**
          * \brief Return the most recent solution, or nullptr if none
          *
          * The engine owns the solution, and the pointer is valid only while
          * the hook runs: clone the solution to keep it.
          */
-        const Space* last(void) const;
+        const Space* last() const;
         /**
          * \brief Return the statistics of the finished episode
          *
          * Empty for \c Start. Use the statistics of the engine for totals.
          */
-        const Search::Statistics& statistics(void) const;
+        const Search::Statistics& statistics() const;
         /**
          * \brief Return the no-goods of the finished episode
          *
          * Empty unless the spoke of that episode has SpokeCoverage::Full, so
          * they can always be posted in the hub.
          */
-        const NoGoods& nogoods(void) const;
+        const NoGoods& nogoods() const;
     };
 
     /// Context passed to Space::hub()
@@ -1914,7 +1914,7 @@ namespace Gecode {
 
     public:
         /// Return the decision
-        MetaDecision decision(void) const;
+        MetaDecision decision() const;
         /**
          * \brief Set the decision to \a d, the last one set counts
          *
@@ -1940,7 +1940,7 @@ namespace Gecode {
 
     public:
         /// Return the coverage
-        SpokeCoverage coverage(void) const;
+        SpokeCoverage coverage() const;
         /// Set the coverage to \a c, the last one set counts
         void coverage(SpokeCoverage c);
     };
@@ -1988,9 +1988,9 @@ namespace Gecode {
         /// Number of propagator executions
         unsigned long long int propagate;
         /// Initialize
-        StatusStatistics(void);
+        StatusStatistics();
         /// Reset information
-        void reset(void);
+        void reset();
         /// Return sum with \a s
         StatusStatistics operator+(const StatusStatistics& s);
         /// Increment by statistics \a s
@@ -2004,9 +2004,9 @@ namespace Gecode {
     class CloneStatistics {
     public:
         /// Initialize
-        CloneStatistics(void);
+        CloneStatistics();
         /// Reset information
-        void reset(void);
+        void reset();
         /// Return sum with \a s
         CloneStatistics operator+(const CloneStatistics& s);
         /// Increment by statistics \a s
@@ -2020,9 +2020,9 @@ namespace Gecode {
     class CommitStatistics {
     public:
         /// Initialize
-        CommitStatistics(void);
+        CommitStatistics();
         /// Reset information
-        void reset(void);
+        void reset();
         /// Return sum with \a s
         CommitStatistics operator+(const CommitStatistics& s);
         /// Increment by statistics \a s
@@ -2167,7 +2167,7 @@ namespace Gecode {
         VarImpBase* _vars_d[AllVarConf::idx_d];
         /// Return reference to variables (dispose)
         template <class VIC>
-        VarImpBase* vars_d(void) const;
+        VarImpBase* vars_d() const;
         /// %Set reference to variables (dispose)
         template <class VIC>
         void vars_d(VarImpBase* x);
@@ -2177,13 +2177,13 @@ namespace Gecode {
         //@}
 
         /// Recover variables without indexing structure
-        void recover_noidx(void);
+        void recover_noidx();
 
         /// Recover after failed clone construction
         void recover(Space& source);
 
         /// Test whether clone construction has not reached a disposable state
-        bool is_partial_clone(void) const;
+        bool is_partial_clone() const;
 
         /// First actor for forced disposal
         Actor** d_fst;
@@ -2212,7 +2212,7 @@ namespace Gecode {
          * of the Space class is not invoked during cloning.
          *
          */
-        GECODE_KERNEL_EXPORT Space* _clone(void);
+        GECODE_KERNEL_EXPORT Space* _clone();
 
         /**
          * \brief Commit choice \a c for alternative \a a
@@ -2284,7 +2284,7 @@ namespace Gecode {
 
         /// Find trace recorder if exists
         GECODE_KERNEL_EXPORT
-        TraceRecorder* find_trace_recorder(void);
+        TraceRecorder* find_trace_recorder();
         /// Trace posting event
         GECODE_KERNEL_EXPORT
         void post(const PostInfo& pi);
@@ -2334,7 +2334,7 @@ namespace Gecode {
             /// Suppress global information for new propagators in \a home
             explicit NoGPI(Space& home);
             /// Restore the previous setting
-            ~NoGPI(void);
+            ~NoGPI();
         };
 
         /**
@@ -2357,7 +2357,7 @@ namespace Gecode {
             /// Enable global information for new propagators in \a home
             explicit UseGPI(Space& home);
             /// Restore the previous setting
-            ~UseGPI(void);
+            ~UseGPI();
         };
 
         /**
@@ -2365,7 +2365,7 @@ namespace Gecode {
          * \ingroup TaskModelScript
          */
         GECODE_KERNEL_EXPORT
-        Space(void);
+        Space();
         /**
          * \brief Constructor for cloning
          *
@@ -2386,7 +2386,7 @@ namespace Gecode {
          * \ingroup TaskModelScript
          */
         GECODE_KERNEL_EXPORT
-        virtual ~Space(void);
+        virtual ~Space();
         /**
          * \brief Copying member function
          *
@@ -2397,7 +2397,7 @@ namespace Gecode {
          *
          * \ingroup TaskModelScript
          */
-        virtual Space* copy(void) = 0;
+        virtual Space* copy() = 0;
         /**
          * \brief Constrain function for best solution search
          *
@@ -2506,7 +2506,7 @@ namespace Gecode {
         GECODE_KERNEL_EXPORT
         SpaceStatus status(StatusStatistics& stat);
         /// Query space status without collecting statistics
-        SpaceStatus status(void);
+        SpaceStatus status();
         /**
          * \brief Reserve in this space the brancher ids that clone \a s uses
          *
@@ -2551,7 +2551,7 @@ namespace Gecode {
          * \ingroup TaskSearch
          */
         GECODE_KERNEL_EXPORT
-        const Choice* choice(void);
+        const Choice* choice();
 
         /**
          * \brief Create new choice from \a e
@@ -2581,7 +2581,7 @@ namespace Gecode {
          * \ingroup TaskSearch
          */
         /// Clone space without collecting statistics
-        Space* clone(void) const;
+        Space* clone() const;
         /// Clone space
         Space* clone(CloneStatistics& stat) const;
 
@@ -2828,7 +2828,7 @@ namespace Gecode {
          * a propagate or commit member function. The system will crash!
          * \ingroup TaskActor
          */
-        void fail(void);
+        void fail();
         /**
          * \brief Check whether space is failed
          *
@@ -2837,12 +2837,12 @@ namespace Gecode {
          * actors are allowed to be created.
          * \ingroup TaskActor
          */
-        bool failed(void) const;
+        bool failed() const;
         /**
          * \brief Return if space is stable (at fixpoint or failed)
          * \ingroup TaskActor
          */
-        bool stable(void) const;
+        bool stable() const;
 
         /// \name Conversion from Space to Home
         //@{
@@ -3043,7 +3043,7 @@ namespace Gecode {
         void* rrealloc(void* b, size_t n, size_t m);
         /// Allocate from freelist-managed memory
         template <size_t>
-        void* fl_alloc(void);
+        void* fl_alloc();
         /**
          * \brief Return freelist-managed memory to freelist
          *
@@ -3058,7 +3058,7 @@ namespace Gecode {
          * \brief Constructs a single object of type \a T from space heap using the default constructor.
          */
         template <class T>
-        T& construct(void);
+        T& construct();
         /**
          * \brief Constructs a single object of type \a T from space heap using a unary constructor.
          *
@@ -3101,9 +3101,9 @@ namespace Gecode {
         /// %Set AFC decay factor to \a d
         void afc_decay(double d);
         /// Return AFC decay factor
-        double afc_decay(void) const;
+        double afc_decay() const;
         /// Unshare AFC information for all propagators
-        GECODE_KERNEL_EXPORT void afc_unshare(void);
+        GECODE_KERNEL_EXPORT void afc_unshare();
         //@}
 
     protected:
@@ -3127,11 +3127,11 @@ namespace Gecode {
             /// Initialize
             Propagators(Space& home);
             /// Test whether there are propagators left
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next propagator
-            void operator++(void);
+            void operator++();
             /// Return propagator
-            Propagator& propagator(void) const;
+            Propagator& propagator() const;
         };
         /**
          * \brief Class to iterate over scheduled propagators of a space
@@ -3153,11 +3153,11 @@ namespace Gecode {
             /// Initialize
             ScheduledPropagators(Space& home);
             /// Test whether there are propagators left
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next propagator
-            void operator++(void);
+            void operator++();
             /// Return propagator
-            Propagator& propagator(void) const;
+            Propagator& propagator() const;
         };
         /**
          * \brief Class to iterate over idle propagators of a space
@@ -3175,11 +3175,11 @@ namespace Gecode {
             /// Initialize
             IdlePropagators(Space& home);
             /// Test whether there are propagators left
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next propagator
-            void operator++(void);
+            void operator++();
             /// Return propagator
-            Propagator& propagator(void) const;
+            Propagator& propagator() const;
         };
         /**
          * \brief Class to iterate over branchers of a space
@@ -3197,11 +3197,11 @@ namespace Gecode {
             /// Initialize
             Branchers(Space& home);
             /// Test whether there are branchers left
-            bool operator()(void) const;
+            bool operator()() const;
             /// Move iterator to next brancher
-            void operator++(void);
+            void operator++();
             /// Return propagator
-            Brancher& brancher(void) const;
+            Brancher& brancher() const;
         };
     };
 
@@ -3217,11 +3217,11 @@ namespace Gecode {
         /// Initialize
         Propagators(const Space& home, PropagatorGroup g);
         /// Test whether there are propagators left
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next propagator
-        void operator++(void);
+        void operator++();
         /// Return propagator
-        const Propagator& propagator(void) const;
+        const Propagator& propagator() const;
     };
 
     /// Class to iterate over branchers in a group
@@ -3236,11 +3236,11 @@ namespace Gecode {
         /// Initialize
         Branchers(const Space& home, BrancherGroup g);
         /// Test whether there are branchers left
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next brancher
-        void operator++(void);
+        void operator++();
         /// Return propagator
-        const Brancher& brancher(void) const;
+        const Brancher& brancher() const;
     };
 
     /*
@@ -3255,7 +3255,7 @@ namespace Gecode {
     }
     forceinline void
     Space::rfree(void* p, size_t s) {
-        return mm.reuse(p, s);
+        mm.reuse(p, s);
     }
     forceinline void*
     Space::rrealloc(void* _b, size_t n, size_t m) {
@@ -3267,15 +3267,14 @@ namespace Gecode {
                 rfree(b, n);
             }
             return p;
-        } else {
-            rfree(b + m, n - m);
-            return b;
         }
+        rfree(b + m, n - m);
+        return b;
     }
 
     template <size_t s>
     forceinline void*
-    Space::fl_alloc(void) {
+    Space::fl_alloc() {
         return mm.template fl_alloc<s>(ssd.data().sm);
     }
     template <size_t s>
@@ -3350,10 +3349,9 @@ namespace Gecode {
                 (void)new (p + i) T();
             free<T>(b, n);
             return p;
-        } else {
-            free<T>(b + m, n - m);
-            return b;
         }
+        free<T>(b + m, n - m);
+        return b;
     }
     template <class T>
     forceinline T*
@@ -3433,7 +3431,7 @@ namespace Gecode {
 #ifdef GECODE_HAS_VAR_DISPOSE
     template <class VIC>
     forceinline VarImpBase*
-    Space::vars_d(void) const {
+    Space::vars_d() const {
         return _vars_d[VIC::idx_d];
     }
     template <class VIC>
@@ -3444,7 +3442,7 @@ namespace Gecode {
 #endif
 
     forceinline bool
-    Space::is_partial_clone(void) const {
+    Space::is_partial_clone() const {
         return d_fst == &Actor::sentinel;
     }
 
@@ -3495,7 +3493,7 @@ namespace Gecode {
      *
      */
     forceinline
-    NoGoods::NoGoods(void)
+    NoGoods::NoGoods()
         : n(0) {}
     forceinline
     NoGoods::NoGoods(const NoGoods& ng0)
@@ -3506,14 +3504,14 @@ namespace Gecode {
         return *this;
     }
     forceinline unsigned long int
-    NoGoods::ng(void) const {
+    NoGoods::ng() const {
         return n.load(std::memory_order_acquire);
     }
     forceinline void
     NoGoods::ng(unsigned long int n0) {
         n.store(n0, std::memory_order_release);
     }
-    forceinline NoGoods::~NoGoods(void) = default;
+    forceinline NoGoods::~NoGoods() = default;
 
     /*
      * Contexts of meta search hooks
@@ -3525,35 +3523,35 @@ namespace Gecode {
         : _engine(engine), _event(event), _episode(episode), _asset(asset), _assets(assets), _last(last),
           _statistics(statistics), _nogoods(nogoods) {}
     forceinline MetaEngine
-    MetaContext::engine(void) const {
+    MetaContext::engine() const {
         return _engine;
     }
     forceinline MetaEvent
-    MetaContext::event(void) const {
+    MetaContext::event() const {
         return _event;
     }
     forceinline unsigned long int
-    MetaContext::episode(void) const {
+    MetaContext::episode() const {
         return _episode;
     }
     forceinline unsigned int
-    MetaContext::asset(void) const {
+    MetaContext::asset() const {
         return _asset;
     }
     forceinline unsigned int
-    MetaContext::assets(void) const {
+    MetaContext::assets() const {
         return _assets;
     }
     forceinline const Space*
-    MetaContext::last(void) const {
+    MetaContext::last() const {
         return _last;
     }
     forceinline const Search::Statistics&
-    MetaContext::statistics(void) const {
+    MetaContext::statistics() const {
         return _statistics;
     }
     forceinline const NoGoods&
-    MetaContext::nogoods(void) const {
+    MetaContext::nogoods() const {
         return _nogoods;
     }
 
@@ -3570,7 +3568,7 @@ namespace Gecode {
         assert(legal(event, d));
     }
     forceinline MetaDecision
-    HubContext::decision(void) const {
+    HubContext::decision() const {
         return _decision;
     }
     forceinline void
@@ -3587,7 +3585,7 @@ namespace Gecode {
         : MetaContext(engine, event, episode, asset, assets, last, statistics, nogoods),
           _coverage(SpokeCoverage::Full) {}
     forceinline SpokeCoverage
-    SpokeContext::coverage(void) const {
+    SpokeContext::coverage() const {
         return _coverage;
     }
     forceinline void
@@ -3613,17 +3611,17 @@ namespace Gecode {
      *
      */
     forceinline ActorLink*
-    ActorLink::prev(void) const {
+    ActorLink::prev() const {
         return _prev;
     }
 
     forceinline ActorLink*
-    ActorLink::next(void) const {
+    ActorLink::next() const {
         return _next;
     }
 
     forceinline ActorLink**
-    ActorLink::next_ref(void) {
+    ActorLink::next_ref() {
         return &_next;
     }
 
@@ -3638,7 +3636,7 @@ namespace Gecode {
     }
 
     forceinline void
-    ActorLink::unlink(void) {
+    ActorLink::unlink() {
         ActorLink* p = _prev;
         ActorLink* n = _next;
         p->_next = n;
@@ -3646,7 +3644,7 @@ namespace Gecode {
     }
 
     forceinline void
-    ActorLink::init(void) {
+    ActorLink::init() {
         _next = this;
         _prev = this;
     }
@@ -3672,7 +3670,7 @@ namespace Gecode {
     }
 
     forceinline bool
-    ActorLink::empty(void) const {
+    ActorLink::empty() const {
         return _next == this;
     }
 
@@ -3682,7 +3680,7 @@ namespace Gecode {
         // Turning al into a reference is for gcc, assume is for MSVC
         GECODE_NOT_NULL(a);
         ActorLink& t = *a;
-        return static_cast<ActorLink*>(&t);
+        return (&t);
     }
 
     template <class T>
@@ -3691,7 +3689,7 @@ namespace Gecode {
         // Turning al into a reference is for gcc, assume is for MSVC
         GECODE_NOT_NULL(a);
         const ActorLink& t = *a;
-        return static_cast<const ActorLink*>(&t);
+        return (&t);
     }
 
     /*
@@ -3720,7 +3718,7 @@ namespace Gecode {
     }
 
     forceinline SpaceStatus
-    Space::status(void) {
+    Space::status() {
         StatusStatistics stat;
         return status(stat);
     }
@@ -3733,7 +3731,7 @@ namespace Gecode {
     }
 
     forceinline Space*
-    Space::clone(void) const {
+    Space::clone() const {
         CloneStatistics stat;
         return clone(stat);
     }
@@ -3769,7 +3767,7 @@ namespace Gecode {
     }
 
     forceinline double
-    Space::afc_decay(void) const {
+    Space::afc_decay() const {
         return ssd.data().gpi.decay();
     }
 
@@ -3791,7 +3789,7 @@ namespace Gecode {
     Home::Home(Space& s0, Propagator* p0, PropagatorGroup pg0, BrancherGroup bg0)
         : s(s0), p(p0), pg(pg0), bg(bg0) {}
     forceinline Home::
-    operator Space&(void) {
+    operator Space&() {
         return s;
     }
     forceinline Home
@@ -3819,15 +3817,15 @@ namespace Gecode {
         return Home(*this, nullptr, PropagatorGroup::def, bg);
     }
     forceinline Propagator*
-    Home::propagator(void) const {
+    Home::propagator() const {
         return p;
     }
     forceinline PropagatorGroup
-    Home::propagator_group(void) const {
+    Home::propagator_group() const {
         return pg;
     }
     forceinline BrancherGroup
-    Home::brancher_group(void) const {
+    Home::brancher_group() const {
         return bg;
     }
 
@@ -3848,26 +3846,26 @@ namespace Gecode {
         who = (static_cast<Support::uptrint_t>(g.id()) << 2) | std::to_underlying(POST);
     }
     forceinline void
-    ViewTraceInfo::other(void) {
+    ViewTraceInfo::other() {
         who = std::to_underlying(OTHER);
     }
     forceinline ViewTraceInfo::What
-    ViewTraceInfo::what(void) const {
+    ViewTraceInfo::what() const {
         return static_cast<What>(who & 0b11);
     }
     forceinline const Propagator&
-    ViewTraceInfo::propagator(void) const {
+    ViewTraceInfo::propagator() const {
         assert(what() == PROPAGATOR);
         // Because PROPAGATOR == 0
         return *reinterpret_cast<Propagator*>(who);
     }
     forceinline const Brancher&
-    ViewTraceInfo::brancher(void) const {
+    ViewTraceInfo::brancher() const {
         assert(what() == BRANCHER);
         return *reinterpret_cast<Brancher*>(who & ~static_cast<Support::uptrint_t>(0b11));
     }
     forceinline PropagatorGroup
-    ViewTraceInfo::post(void) const {
+    ViewTraceInfo::post() const {
         assert(what() == POST);
         return PropagatorGroup(static_cast<unsigned int>(who >> 2));
     }
@@ -3882,7 +3880,7 @@ namespace Gecode {
         h.pc.p.vti.post(pg);
     }
 
-    forceinline PostInfo::~PostInfo(void) {
+    forceinline PostInfo::~PostInfo() {
         if (!nested) {
             if (h.pc.p.bid_sc & Space::sc_trace)
                 h.post(*this);
@@ -3898,19 +3896,19 @@ namespace Gecode {
     PropagateTraceInfo::PropagateTraceInfo(unsigned int i0, PropagatorGroup g0, const Propagator* p0, Status s0)
         : i(i0), g(g0), p(p0), s(s0) {}
     forceinline unsigned int
-    PropagateTraceInfo::id(void) const {
+    PropagateTraceInfo::id() const {
         return i;
     }
     forceinline PropagatorGroup
-    PropagateTraceInfo::group(void) const {
+    PropagateTraceInfo::group() const {
         return g;
     }
     forceinline const Propagator*
-    PropagateTraceInfo::propagator(void) const {
+    PropagateTraceInfo::propagator() const {
         return p;
     }
     forceinline PropagateTraceInfo::Status
-    PropagateTraceInfo::status(void) const {
+    PropagateTraceInfo::status() const {
         return s;
     }
 
@@ -3922,23 +3920,23 @@ namespace Gecode {
     CommitTraceInfo::CommitTraceInfo(const Brancher& b0, const Choice& c0, unsigned int a0)
         : b(b0), c(c0), a(a0) {}
     forceinline unsigned int
-    CommitTraceInfo::id(void) const {
+    CommitTraceInfo::id() const {
         return b.id();
     }
     forceinline BrancherGroup
-    CommitTraceInfo::group(void) const {
+    CommitTraceInfo::group() const {
         return b.group();
     }
     forceinline const Brancher&
-    CommitTraceInfo::brancher(void) const {
+    CommitTraceInfo::brancher() const {
         return b;
     }
     forceinline const Choice&
-    CommitTraceInfo::choice(void) const {
+    CommitTraceInfo::choice() const {
         return c;
     }
     forceinline unsigned int
-    CommitTraceInfo::alternative(void) const {
+    CommitTraceInfo::alternative() const {
         return a;
     }
 
@@ -3950,15 +3948,15 @@ namespace Gecode {
     PostTraceInfo::PostTraceInfo(PropagatorGroup g0, Status s0, unsigned int n0)
         : g(g0), s(s0), n(n0) {}
     forceinline PropagatorGroup
-    PostTraceInfo::group(void) const {
+    PostTraceInfo::group() const {
         return g;
     }
     forceinline PostTraceInfo::Status
-    PostTraceInfo::status(void) const {
+    PostTraceInfo::status() const {
         return s;
     }
     forceinline unsigned int
-    PostTraceInfo::propagators(void) const {
+    PostTraceInfo::propagators() const {
         return n;
     }
 
@@ -3968,7 +3966,7 @@ namespace Gecode {
         home.no_gpi = true;
     }
 
-    forceinline Space::NoGPI::~NoGPI(void) {
+    forceinline Space::NoGPI::~NoGPI() {
         home.no_gpi = previous;
     }
 
@@ -3978,7 +3976,7 @@ namespace Gecode {
         home.no_gpi = false;
     }
 
-    forceinline Space::UseGPI::~UseGPI(void) {
+    forceinline Space::UseGPI::~UseGPI() {
         home.no_gpi = previous;
     }
 
@@ -4003,17 +4001,17 @@ namespace Gecode {
     }
 
     forceinline Propagator*
-    Propagator::fwd(void) const {
+    Propagator::fwd() const {
         return static_cast<Propagator*>(prev());
     }
 
     forceinline bool
-    Propagator::local_info(void) const {
+    Propagator::local_info() const {
         return (reinterpret_cast<Support::uptrint_t>(gpi_disabled) & 0b10) != 0;
     }
 
     forceinline bool
-    Propagator::disabled(void) const {
+    Propagator::disabled() const {
         return Support::marked(gpi_disabled);
     }
 
@@ -4030,7 +4028,7 @@ namespace Gecode {
     }
 
     forceinline Kernel::GPI::Info&
-    Propagator::gpi(void) {
+    Propagator::gpi() {
         return *static_cast<Kernel::GPI::Info*>(Support::clear_pointer_tag_bits<2>(gpi_disabled));
     }
 
@@ -4065,12 +4063,12 @@ namespace Gecode {
     }
 
     forceinline ModEventDelta
-    Propagator::modification_event_delta(void) const {
+    Propagator::modification_event_delta() const {
         return u.med;
     }
 
     forceinline double
-    Propagator::afc(void) const {
+    Propagator::afc() const {
         return const_cast<Propagator&>(*this).gpi().afc;
     }
 
@@ -4086,12 +4084,12 @@ namespace Gecode {
 #endif
 
     forceinline unsigned int
-    Propagator::id(void) const {
+    Propagator::id() const {
         return const_cast<Propagator&>(*this).gpi().pid;
     }
 
     forceinline PropagatorGroup
-    Propagator::group(void) const {
+    Propagator::group() const {
         return PropagatorGroup(const_cast<Propagator&>(*this).gpi().gid);
     }
 
@@ -4155,9 +4153,9 @@ namespace Gecode {
         if ((home.pc.p.bid_sc >> Space::sc_bits) == 0U)
             throw TooManyBranchers("Brancher::Brancher");
         // If no brancher available, make it the first one
-        if (home.b_status == &static_cast<Space&>(home).bl) {
+        if (home.b_status == &home.bl) {
             home.b_status = this;
-            if (home.b_commit == &static_cast<Space&>(home).bl)
+            if (home.b_commit == &home.bl)
                 home.b_commit = this;
         }
         home.bl.tail(this);
@@ -4171,12 +4169,12 @@ namespace Gecode {
     }
 
     forceinline unsigned int
-    Brancher::id(void) const {
+    Brancher::id() const {
         return bid;
     }
 
     forceinline BrancherGroup
-    Brancher::group(void) const {
+    Brancher::group() const {
         return BrancherGroup(gid);
     }
 
@@ -4291,13 +4289,13 @@ namespace Gecode {
     }
 
     forceinline
-    LocalHandle::LocalHandle(void)
+    LocalHandle::LocalHandle()
         : o(nullptr) {}
     forceinline
     LocalHandle::LocalHandle(LocalObject* lo)
         : o(lo) {}
     forceinline LocalObject*
-    LocalHandle::object(void) const {
+    LocalHandle::object() const {
         return o;
     }
     forceinline void
@@ -4318,27 +4316,27 @@ namespace Gecode {
         : bid(b.id()), alt(a) {}
 
     forceinline unsigned int
-    Choice::alternatives(void) const {
+    Choice::alternatives() const {
         return alt;
     }
 
     forceinline unsigned int
-    Choice::id(void) const {
+    Choice::id() const {
         return bid;
     }
 
-    forceinline Choice::~Choice(void) = default;
+    forceinline Choice::~Choice() = default;
 
     /*
      * No-good literal
      *
      */
     forceinline bool
-    NGL::leaf(void) const {
+    NGL::leaf() const {
         return Support::marked(nl);
     }
     forceinline NGL*
-    NGL::next(void) const {
+    NGL::next() const {
         return static_cast<NGL*>(Support::clear_pointer_tag_bits(nl));
     }
     forceinline void
@@ -4357,7 +4355,7 @@ namespace Gecode {
     }
 
     forceinline
-    NGL::NGL(void)
+    NGL::NGL()
         : nl(nullptr) {}
     forceinline
     NGL::NGL(Space&)
@@ -4388,7 +4386,7 @@ namespace Gecode {
     Advisor::Advisor(Space&, Advisor&) {}
 
     forceinline bool
-    Advisor::disposed(void) const {
+    Advisor::disposed() const {
         return prev() == nullptr;
     }
 
@@ -4408,7 +4406,7 @@ namespace Gecode {
     }
 
     forceinline Propagator&
-    Advisor::propagator(void) const {
+    Advisor::propagator() const {
         assert(!disposed());
         return *Propagator::cast(ActorLink::prev());
     }
@@ -4462,7 +4460,7 @@ namespace Gecode {
 
     template <class A>
     forceinline bool
-    Council<A>::empty(void) const {
+    Council<A>::empty() const {
         ActorLink* a = advisors;
         while ((a != nullptr) && static_cast<A*>(a)->disposed())
             a = a->next();
@@ -4551,13 +4549,13 @@ namespace Gecode {
 
     template <class A>
     forceinline bool
-    Advisors<A>::operator()(void) const {
+    Advisors<A>::operator()() const {
         return a != nullptr;
     }
 
     template <class A>
     forceinline void
-    Advisors<A>::operator++(void) {
+    Advisors<A>::operator++() {
         do {
             a = a->next();
         } while ((a != nullptr) && static_cast<A*>(a)->disposed());
@@ -4565,7 +4563,7 @@ namespace Gecode {
 
     template <class A>
     forceinline A&
-    Advisors<A>::advisor(void) const {
+    Advisors<A>::advisor() const {
         return *static_cast<A*>(a);
     }
 
@@ -4578,12 +4576,11 @@ namespace Gecode {
         ActorLink::cast(p)->unlink();
         ActorLink* c = &pc.p.queue[std::to_underlying(p->cost(*this, p->u.med).ac)];
         c->tail(ActorLink::cast(p));
-        if (c > pc.p.active)
-            pc.p.active = c;
+        pc.p.active = std::max(c, pc.p.active);
     }
 
     forceinline void
-    Space::fail(void) {
+    Space::fail() {
         pc.p.active = &pc.p.queue[std::to_underlying(PropCost::AC_MAX) + 1] + 1;
         /*
          * Now active points beyond the last queue. This is essential as
@@ -4592,21 +4589,21 @@ namespace Gecode {
          */
     }
     forceinline void
-    Home::fail(void) {
+    Home::fail() {
         s.fail();
     }
 
     forceinline bool
-    Space::failed(void) const {
+    Space::failed() const {
         return pc.p.active > &pc.p.queue[std::to_underlying(PropCost::AC_MAX) + 1];
     }
     forceinline bool
-    Home::failed(void) const {
+    Home::failed() const {
         return s.failed();
     }
 
     forceinline bool
-    Space::stable(void) const {
+    Space::stable() const {
         return ((pc.p.active < &pc.p.queue[0]) ||
                 (pc.p.active > &pc.p.queue[std::to_underlying(PropCost::AC_MAX) + 1]));
     }
@@ -4697,7 +4694,7 @@ namespace Gecode {
 
     template <class VIC>
     forceinline
-    VarImp<VIC>::VarImp(void)
+    VarImp<VIC>::VarImp()
 #ifdef GECODE_HAS_CBS
         : var_id(0)
 #endif
@@ -4712,21 +4709,21 @@ namespace Gecode {
 #ifdef GECODE_HAS_CBS
     template <class VIC>
     forceinline unsigned int
-    VarImp<VIC>::id(void) const {
+    VarImp<VIC>::id() const {
         return var_id;
     }
 #endif
 
     template <class VIC>
     forceinline unsigned int
-    VarImp<VIC>::degree(void) const {
+    VarImp<VIC>::degree() const {
         assert(!copied());
         return entries;
     }
 
     template <class VIC>
     forceinline double
-    VarImp<VIC>::afc(void) const {
+    VarImp<VIC>::afc() const {
         double d = 0.0;
         // Count the afc of each propagator
         {
@@ -4757,13 +4754,13 @@ namespace Gecode {
 
     template <class VIC>
     forceinline unsigned int
-    VarImp<VIC>::bits(void) const {
+    VarImp<VIC>::bits() const {
         return free_and_bits;
     }
 
     template <class VIC>
     forceinline unsigned int&
-    VarImp<VIC>::bits(void) {
+    VarImp<VIC>::bits() {
         return free_and_bits;
     }
 
@@ -4783,20 +4780,20 @@ namespace Gecode {
 
     template <class VIC>
     forceinline bool
-    VarImp<VIC>::copied(void) const {
+    VarImp<VIC>::copied() const {
         return Support::marked(b.fwd);
     }
 
     template <class VIC>
     forceinline VarImp<VIC>*
-    VarImp<VIC>::forward(void) const {
+    VarImp<VIC>::forward() const {
         assert(copied());
         return static_cast<VarImp<VIC>*>(Support::unmark(b.fwd));
     }
 
     template <class VIC>
     forceinline VarImp<VIC>*
-    VarImp<VIC>::next(void) const {
+    VarImp<VIC>::next() const {
         assert(copied());
         return u.next;
     }
@@ -5263,7 +5260,7 @@ namespace Gecode {
      *
      */
     template <class VarImp>
-    VarImpDisposer<VarImp>::VarImpDisposer(void) {
+    VarImpDisposer<VarImp>::VarImpDisposer() {
 #ifdef GECODE_HAS_VAR_DISPOSE
         Space::vd[VarImp::idx_d] = this;
 #endif
@@ -5284,11 +5281,11 @@ namespace Gecode {
      */
 
     forceinline void
-    StatusStatistics::reset(void) {
+    StatusStatistics::reset() {
         propagate = 0;
     }
     forceinline
-    StatusStatistics::StatusStatistics(void) {
+    StatusStatistics::StatusStatistics() {
         reset();
     }
     forceinline StatusStatistics&
@@ -5303,10 +5300,10 @@ namespace Gecode {
     }
 
     forceinline void
-    CloneStatistics::reset(void) {}
+    CloneStatistics::reset() {}
 
     forceinline
-    CloneStatistics::CloneStatistics(void) {
+    CloneStatistics::CloneStatistics() {
         reset();
     }
     forceinline CloneStatistics
@@ -5320,10 +5317,10 @@ namespace Gecode {
     }
 
     forceinline void
-    CommitStatistics::reset(void) {}
+    CommitStatistics::reset() {}
 
     forceinline
-    CommitStatistics::CommitStatistics(void) {
+    CommitStatistics::CommitStatistics() {
         reset();
     }
     forceinline CommitStatistics
@@ -5349,16 +5346,15 @@ namespace Gecode {
     PropCost::cost(PropCost::Mod m, PropCost::ActualCost lo, PropCost::ActualCost hi, unsigned int n) {
         if (n < 2)
             return (m == LO) ? AC_UNARY_LO : AC_UNARY_HI;
-        else if (n == 2)
+        if (n == 2)
             return (m == LO) ? AC_BINARY_LO : AC_BINARY_HI;
-        else if (n == 3)
+        if (n == 3)
             return (m == LO) ? AC_TERNARY_LO : AC_TERNARY_HI;
-        else
-            return (m == LO) ? lo : hi;
+        return (m == LO) ? lo : hi;
     }
 
     forceinline PropCost
-    PropCost::record(void) {
+    PropCost::record() {
         return AC_RECORD;
     }
     forceinline PropCost
@@ -5435,11 +5431,11 @@ namespace Gecode {
         }
     }
     forceinline bool
-    Space::Propagators::operator()(void) const {
+    Space::Propagators::operator()() const {
         return c != nullptr;
     }
     forceinline void
-    Space::Propagators::operator++(void) {
+    Space::Propagators::operator++() {
         c = c->next();
         if (c == e) {
             if (q == nullptr) {
@@ -5465,7 +5461,7 @@ namespace Gecode {
         }
     }
     forceinline Propagator&
-    Space::Propagators::propagator(void) const {
+    Space::Propagators::propagator() const {
         return *Propagator::cast(c);
     }
 
@@ -5484,11 +5480,11 @@ namespace Gecode {
         q = c = e = nullptr;
     }
     forceinline bool
-    Space::ScheduledPropagators::operator()(void) const {
+    Space::ScheduledPropagators::operator()() const {
         return c != nullptr;
     }
     forceinline void
-    Space::ScheduledPropagators::operator++(void) {
+    Space::ScheduledPropagators::operator++() {
         c = c->next();
         if (c == e) {
             if (q == nullptr) {
@@ -5508,7 +5504,7 @@ namespace Gecode {
         }
     }
     forceinline Propagator&
-    Space::ScheduledPropagators::propagator(void) const {
+    Space::ScheduledPropagators::propagator() const {
         return *Propagator::cast(c);
     }
 
@@ -5518,15 +5514,15 @@ namespace Gecode {
         e = &home.pl;
     }
     forceinline bool
-    Space::IdlePropagators::operator()(void) const {
+    Space::IdlePropagators::operator()() const {
         return c != e;
     }
     forceinline void
-    Space::IdlePropagators::operator++(void) {
+    Space::IdlePropagators::operator++() {
         c = c->next();
     }
     forceinline Propagator&
-    Space::IdlePropagators::propagator(void) const {
+    Space::IdlePropagators::propagator() const {
         return *Propagator::cast(c);
     }
 
@@ -5534,15 +5530,15 @@ namespace Gecode {
     Space::Branchers::Branchers(Space& home)
         : c(home.bl.next()), e(&home.bl) {}
     forceinline bool
-    Space::Branchers::operator()(void) const {
+    Space::Branchers::operator()() const {
         return c != e;
     }
     forceinline void
-    Space::Branchers::operator++(void) {
+    Space::Branchers::operator++() {
         c = c->next();
     }
     forceinline Brancher&
-    Space::Branchers::brancher(void) const {
+    Space::Branchers::brancher() const {
         return *Brancher::cast(c);
     }
 
@@ -5559,12 +5555,12 @@ namespace Gecode {
     }
 
     forceinline bool
-    Group::in(void) const {
+    Group::in() const {
         return (gid != GROUPID_ALL) && (gid != GROUPID_DEF);
     }
 
     forceinline unsigned int
-    Group::id(void) const {
+    Group::id() const {
         return gid;
     }
 
@@ -5621,17 +5617,17 @@ namespace Gecode {
             ++ps;
     }
     forceinline bool
-    Propagators::operator()(void) const {
+    Propagators::operator()() const {
         return ps();
     }
     forceinline void
-    Propagators::operator++(void) {
+    Propagators::operator++() {
         do
             ++ps;
         while (ps() && !g.in(ps.propagator().group()));
     }
     forceinline const Propagator&
-    Propagators::propagator(void) const {
+    Propagators::propagator() const {
         return ps.propagator();
     }
 
@@ -5642,17 +5638,17 @@ namespace Gecode {
             ++bs;
     }
     forceinline bool
-    Branchers::operator()(void) const {
+    Branchers::operator()() const {
         return bs();
     }
     forceinline void
-    Branchers::operator++(void) {
+    Branchers::operator++() {
         do
             ++bs;
         while (bs() && !g.in(bs.brancher().group()));
     }
     forceinline const Brancher&
-    Branchers::brancher(void) const {
+    Branchers::brancher() const {
         return bs.brancher();
     }
 
@@ -5662,7 +5658,7 @@ namespace Gecode {
      */
     template <class T>
     forceinline T&
-    Space::construct(void) {
+    Space::construct() {
         return alloc<T>(1);
     }
     template <class T, typename A1>

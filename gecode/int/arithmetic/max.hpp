@@ -32,7 +32,7 @@
 
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /*
      * Ternary bounds consistent maximum
@@ -204,8 +204,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             if (x[i].max() < maxmin) {
                 x.move_lst(i, home, p, pc);
                 status |= MPS_REMOVED;
-            } else if (!x[i].assigned())
+            } else if (!x[i].assigned()) {
                 status &= ~MPS_ASSIGNED;
+            }
         }
         if (x.size() == 0)
             return ES_FAILED;
@@ -357,8 +358,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     NaryMaxDom<View>::cost(const Space&, const ModEventDelta& med) const {
         if (View::me(med) == ME_INT_DOM)
             return PropCost::linear(PropCost::HI, y.size());
-        else
-            return PropCost::linear(PropCost::LO, x.size());
+        return PropCost::linear(PropCost::LO, x.size());
     }
 
     template <class View>
@@ -389,6 +389,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

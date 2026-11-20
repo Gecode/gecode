@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     forceinline
     IncNGL::IncNGL(Space& home, SetView x, int n)
@@ -46,6 +46,6 @@ namespace Gecode { namespace Set { namespace Branch {
     ExcNGL::ExcNGL(Space& home, ExcNGL& ngl)
         : ViewValNGL<SetView, int, PC_SET_ANY>(home, ngl) {}
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

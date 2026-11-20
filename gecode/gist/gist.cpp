@@ -38,47 +38,47 @@
 #include <gecode/gist/mainwindow.hh>
 #include <gecode/gist/stopbrancher.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     std::string
-    Inspector::name(void) {
+    Inspector::name() {
         return "Inspector";
     }
 
     void
-    Inspector::finalize(void) {}
+    Inspector::finalize() {}
 
-    Inspector::~Inspector(void) = default;
+    Inspector::~Inspector() = default;
 
     std::string
-    Comparator::name(void) {
+    Comparator::name() {
         return "Comparator";
     }
 
     void
-    Comparator::finalize(void) {}
+    Comparator::finalize() {}
 
-    Comparator::~Comparator(void) = default;
+    Comparator::~Comparator() = default;
 
     TextOutput::TextOutput(const std::string& name) : t(nullptr), n(name) {}
 
     void
-    TextOutput::finalize(void) {
+    TextOutput::finalize() {
         delete t;
         t = nullptr;
     }
 
-    TextOutput::~TextOutput(void) {
+    TextOutput::~TextOutput() {
         delete t;
     }
 
     std::string
-    TextOutput::name(void) {
+    TextOutput::name() {
         return n;
     }
 
     void
-    TextOutput::init(void) {
+    TextOutput::init() {
         if (t == nullptr) {
             t = new TextOutputI(n);
         }
@@ -86,12 +86,12 @@ namespace Gecode { namespace Gist {
     }
 
     std::ostream&
-    TextOutput::get_stream(void) {
+    TextOutput::get_stream() {
         return t->get_stream();
     }
 
     void
-    TextOutput::flush(void) {
+    TextOutput::flush() {
         t->flush();
     }
 
@@ -124,7 +124,7 @@ namespace Gecode { namespace Gist {
         QApplication app(argc, &argv1);
 
         GistMainWindow mw(root, bab, opt);
-        return app.exec();
+        return QApplication::exec();
     }
 
     void
@@ -132,6 +132,6 @@ namespace Gecode { namespace Gist {
         StopBrancher::post(home);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

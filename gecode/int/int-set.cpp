@@ -57,12 +57,12 @@ namespace Gecode {
     }
 
     void
-    IntSet::fault_reset_allocations(void) {
+    IntSet::fault_reset_allocations() {
         IntSetObject::fault_live_objects.store(0, std::memory_order_relaxed);
     }
 
     int
-    IntSet::fault_live_allocations(void) {
+    IntSet::fault_live_allocations() {
         return IntSetObject::fault_live_objects.load(std::memory_order_relaxed);
     }
 #endif
@@ -92,9 +92,11 @@ namespace Gecode {
             int m = l + (r - l) / 2;
             if ((this->r[m].min <= n) && (n <= this->r[m].max)) {
                 return true;
-            } else if (l == r) {
+            }
+            if (l == r) {
                 return false;
-            } else if (n < this->r[m].min) {
+            }
+            if (n < this->r[m].min) {
                 r = m - 1;
             } else {
                 l = m + 1;
@@ -112,7 +114,7 @@ namespace Gecode {
         return true;
     }
 
-    IntSet::IntSetObject::~IntSetObject(void) {
+    IntSet::IntSetObject::~IntSetObject() {
         if (r != nullptr)
             heap.free<Range>(r, n);
     }

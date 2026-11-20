@@ -59,13 +59,13 @@ namespace Gecode {
         template <>
         class ViewType<IntArgs> {
         public:
-            typedef Int::ConstIntView Result;
+            using Result = Int::ConstIntView;
         };
 
         template <>
         class ViewType<IntVarArgs> {
         public:
-            typedef Int::IntView Result;
+            using Result = Int::IntView;
         };
 
         template <class Machine, class Processing, class Usage>

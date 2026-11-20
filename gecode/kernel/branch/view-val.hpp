@@ -50,7 +50,7 @@ namespace Gecode {
     public:
         /// Initialize choice for brancher \a b, number of alternatives \a a, position \a p, and value \a n
         PosValChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n);
-        const Val& val(void) const;
+        const Val& val() const;
         /// Archive into \a e
         void archive(Archive& e) const override;
     };
@@ -93,7 +93,7 @@ namespace Gecode {
         using ViewBrancher<View, Filter, n>::x;
         using ViewBrancher<View, Filter, n>::f;
         /// The corresponding variable
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         /// Value selection and commit object
         ValSelCommitBase<View, Val>* vsc;
         /// Print function
@@ -150,7 +150,7 @@ namespace Gecode {
 
     template <class Val>
     forceinline const Val&
-    PosValChoice<Val>::val(void) const {
+    PosValChoice<Val>::val() const {
         return _val;
     }
 
@@ -215,6 +215,7 @@ namespace Gecode {
         : ViewBrancher<View, Filter, n>(home, x, vs, std::move(bf)), vsc(vsc0), p(std::move(vvp)) {
         vsc->random_split(this->id());
         vsc->random_split(0U);
+        // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.rand): a member random(), not the C library function
         this->random_state = this->random_state || vsc->random();
         if (vsc->notice() || f.notice() || p.notice())
             home.notice(*this, AP_DISPOSE, true);

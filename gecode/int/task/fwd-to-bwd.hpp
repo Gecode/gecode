@@ -30,39 +30,39 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Task mapper: map forward task to view to backward task View
      */
     template <class TaskView>
     forceinline int
-    FwdToBwd<TaskView>::est(void) const {
+    FwdToBwd<TaskView>::est() const {
         return -TaskView::lct();
     }
     template <class TaskView>
     forceinline int
-    FwdToBwd<TaskView>::ect(void) const {
+    FwdToBwd<TaskView>::ect() const {
         return -TaskView::lst();
     }
     template <class TaskView>
     forceinline int
-    FwdToBwd<TaskView>::lst(void) const {
+    FwdToBwd<TaskView>::lst() const {
         return -TaskView::ect();
     }
     template <class TaskView>
     forceinline int
-    FwdToBwd<TaskView>::lct(void) const {
+    FwdToBwd<TaskView>::lct() const {
         return -TaskView::est();
     }
     template <class TaskView>
     forceinline int
-    FwdToBwd<TaskView>::pmin(void) const {
+    FwdToBwd<TaskView>::pmin() const {
         return TaskView::pmin();
     }
     template <class TaskView>
     forceinline int
-    FwdToBwd<TaskView>::pmax(void) const {
+    FwdToBwd<TaskView>::pmax() const {
         return TaskView::pmax();
     }
 
@@ -92,6 +92,6 @@ namespace Gecode { namespace Int {
         return TaskView::norun(home, -l, -e);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

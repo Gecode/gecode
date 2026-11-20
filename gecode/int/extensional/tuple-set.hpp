@@ -41,7 +41,7 @@ namespace Gecode {
      *
      */
     forceinline unsigned int
-    TupleSet::Range::width(void) const {
+    TupleSet::Range::width() const {
         return static_cast<unsigned int>(max - min + 1);
     }
 
@@ -68,22 +68,22 @@ namespace Gecode {
           compressed_words(nullptr), compressed_n_entries(0U) {}
 
     forceinline bool
-    TupleSet::Data::finalized(void) const {
+    TupleSet::Data::finalized() const {
         return (state == TS_DENSE) || (state == TS_SPARSE) || (state == TS_DENSE_COMPRESSED);
     }
 
     forceinline bool
-    TupleSet::Data::failed(void) const {
+    TupleSet::Data::failed() const {
         return state == TS_FAILED;
     }
 
     forceinline bool
-    TupleSet::Data::terminal(void) const {
+    TupleSet::Data::terminal() const {
         return state != TS_BUILDING;
     }
 
     forceinline TupleSet::Tuple
-    TupleSet::Data::add(void) {
+    TupleSet::Data::add() {
         if (n_free == 0)
             resize();
         assert(n_free > 0);
@@ -130,6 +130,7 @@ namespace Gecode {
     }
 
     forceinline unsigned int
+    // NOLINTNEXTLINE(readability-non-const-parameter): Tuple is already a pointer to const
     TupleSet::Data::tuple_to_index(Tuple t) const {
         return static_cast<unsigned int>((t - td) / static_cast<unsigned int>(arity));
     }
@@ -154,12 +155,12 @@ namespace Gecode {
     }
 
     forceinline TupleSet::
-    operator bool(void) const {
+    operator bool() const {
         return object() != nullptr;
     }
 
     forceinline void
-    TupleSet::finalize(void) {
+    TupleSet::finalize() {
         Data* d = static_cast<Data*>(object());
         if (d == nullptr)
             throw Int::UninitializedTupleSet("TupleSet::finalize()");
@@ -181,19 +182,19 @@ namespace Gecode {
     }
 
     forceinline bool
-    TupleSet::finalized(void) const {
+    TupleSet::finalized() const {
         const Data* d = static_cast<Data*>(object());
         return (d != nullptr) && d->finalized();
     }
 
     forceinline bool
-    TupleSet::failed(void) const {
+    TupleSet::failed() const {
         const Data* d = static_cast<Data*>(object());
         return (d != nullptr) && d->failed();
     }
 
     forceinline TupleSet::Data&
-    TupleSet::data(void) const {
+    TupleSet::data() const {
         Data* d = static_cast<Data*>(object());
         if (d == nullptr)
             throw Int::UninitializedTupleSet("TupleSet");
@@ -202,7 +203,7 @@ namespace Gecode {
         return *d;
     }
     forceinline TupleSet::Data&
-    TupleSet::raw(void) const {
+    TupleSet::raw() const {
         Data* d = static_cast<Data*>(object());
         if (d == nullptr)
             throw Int::UninitializedTupleSet("TupleSet");
@@ -214,23 +215,23 @@ namespace Gecode {
         return !(*this == t);
     }
     forceinline int
-    TupleSet::arity(void) const {
+    TupleSet::arity() const {
         return raw().arity;
     }
     forceinline int
-    TupleSet::tuples(void) const {
+    TupleSet::tuples() const {
         return raw().n_tuples;
     }
     forceinline unsigned int
-    TupleSet::words(void) const {
+    TupleSet::words() const {
         return data().n_words;
     }
     forceinline int
-    TupleSet::min(void) const {
+    TupleSet::min() const {
         return data().min;
     }
     forceinline int
-    TupleSet::max(void) const {
+    TupleSet::max() const {
         return data().max;
     }
     forceinline TupleSet::Tuple
@@ -260,12 +261,12 @@ namespace Gecode {
     }
 
     forceinline std::size_t
-    TupleSet::hash(void) const {
+    TupleSet::hash() const {
         return data().key;
     }
 
     forceinline ExtensionalPropKind
-    TupleSet::representation(void) const {
+    TupleSet::representation() const {
         switch (data().state) {
         case Data::TS_DENSE:
             return EPK_DENSE;
@@ -282,17 +283,17 @@ namespace Gecode {
     }
 
     forceinline unsigned int
-    TupleSet::sparse_values(void) const {
+    TupleSet::sparse_values() const {
         return data().sparse_n_vals;
     }
 
     forceinline const unsigned int*
-    TupleSet::sparse_tuple_value_ids(void) const {
+    TupleSet::sparse_tuple_value_ids() const {
         return data().sparse_tv;
     }
 
     forceinline const unsigned int*
-    TupleSet::sparse_support_offsets(void) const {
+    TupleSet::sparse_support_offsets() const {
         return data().sparse_offsets;
     }
 
@@ -307,11 +308,11 @@ namespace Gecode {
         unsigned int l = 0U, h = v.n;
         while (l < h) {
             const unsigned int m = l + ((h - l) >> 1);
-            if (n < v.r[m].min)
+            if (n < v.r[m].min) {
                 h = m;
-            else if (n > v.r[m].max)
+            } else if (n > v.r[m].max) {
                 l = m + 1U;
-            else {
+            } else {
                 gid = v.base[m] + static_cast<unsigned int>(n - v.r[m].min);
                 return true;
             }
@@ -344,7 +345,7 @@ namespace Gecode {
         return true;
     }
 
-    namespace Int { namespace Extensional {
+    namespace Int::Extensional {
 
         forceinline bool
         support_offsets_size(unsigned long long n_vals, unsigned int& n_offsets) {
@@ -386,7 +387,7 @@ namespace Gecode {
             return ts.dense_compressed_support(p, n, b, e);
         }
 
-    }} // namespace Int::Extensional
+    } // namespace Int::Extensional
 
     template <class Char, class Traits>
     std::basic_ostream<Char, Traits>&
@@ -418,24 +419,24 @@ namespace Gecode {
     }
 
     forceinline bool
-    TupleSet::Ranges::operator()(void) const {
+    TupleSet::Ranges::operator()() const {
         return c < l;
     }
     forceinline void
-    TupleSet::Ranges::operator++(void) {
+    TupleSet::Ranges::operator++() {
         c++;
     }
 
     forceinline int
-    TupleSet::Ranges::min(void) const {
+    TupleSet::Ranges::min() const {
         return c->min;
     }
     forceinline int
-    TupleSet::Ranges::max(void) const {
+    TupleSet::Ranges::max() const {
         return c->max;
     }
     forceinline unsigned int
-    TupleSet::Ranges::width(void) const {
+    TupleSet::Ranges::width() const {
         return c->width();
     }
 

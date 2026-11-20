@@ -44,7 +44,7 @@ namespace Gecode {
     class BrancherPrint {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
 
     protected:
         SharedData<VarValPrint<Var, Val>> p;
@@ -55,12 +55,12 @@ namespace Gecode {
         /// Initialize during cloning
         BrancherPrint(BrancherPrint& bp);
         /// Whether printing is enabled
-        operator bool(void) const;
+        operator bool() const;
         /// Invoke print function
         void operator()(const Space& home, const Brancher& b, unsigned int a, View x, int i, const Val& m,
                         std::ostream& o) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete
         void dispose(Space& home);
     };
@@ -70,22 +70,22 @@ namespace Gecode {
     class BrancherNoPrint {
     public:
         /// The corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
 
-    public:
         /// Initialize from the empty print function \a vvp
         BrancherNoPrint(const VarValPrint<Var, Val>& vvp);
         /// Initialize from the empty print function \a vvp, moved in as for BrancherPrint
+        // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty print function holds nothing to move
         BrancherNoPrint(VarValPrint<Var, Val>&& vvp);
         /// Initialize during cloning
         BrancherNoPrint(BrancherNoPrint& bp);
         /// Whether printing is enabled
-        operator bool(void) const;
+        operator bool() const;
         /// Invoke print function
         void operator()(const Space& home, const Brancher& b, unsigned int a, View x, int i, const Val& m,
                         std::ostream& o) const;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete
         void dispose(Space& home);
     };
@@ -105,7 +105,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline BrancherPrint<View, Val>::
-    operator bool(void) const {
+    operator bool() const {
         return true;
     }
 
@@ -120,7 +120,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline bool
-    BrancherPrint<View, Val>::notice(void) const {
+    BrancherPrint<View, Val>::notice() const {
         return true;
     }
 
@@ -139,6 +139,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline
+    // NOLINTNEXTLINE(cppcoreguidelines-rvalue-reference-param-not-moved): an empty print function holds nothing to move
     BrancherNoPrint<View, Val>::BrancherNoPrint(VarValPrint<Var, Val>&& vvp) {
         assert(!vvp);
         (void)vvp;
@@ -151,7 +152,7 @@ namespace Gecode {
 
     template <class View, class Val>
     forceinline BrancherNoPrint<View, Val>::
-    operator bool(void) const {
+    operator bool() const {
         return false;
     }
 
@@ -161,7 +162,7 @@ namespace Gecode {
                                            std::ostream&) const {}
     template <class View, class Val>
     forceinline bool
-    BrancherNoPrint<View, Val>::notice(void) const {
+    BrancherNoPrint<View, Val>::notice() const {
         return false;
     }
 

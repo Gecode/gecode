@@ -35,7 +35,7 @@
 
 #include <gecode/search/par/engine.hh>
 
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// %Parallel depth-first search engine
     template <class Tracer>
@@ -80,15 +80,15 @@ namespace Gecode { namespace Search { namespace Par {
             /// Initialize for space \a s with engine \a e
             Worker(Space* s, DFS& e, unsigned int index);
             /// Provide access to engine
-            DFS& engine(void) const;
+            DFS& engine() const;
             /// Start execution of worker
-            void run(void) override;
+            void run() override;
             /// Try to find some work
-            bool find(void);
+            bool find();
             /// Reset worker to restart at space \a s
             void reset(Space* s, unsigned int ngdl);
             /// Whether this worker currently owns local search
-            bool owns_work(void) const;
+            bool owns_work() const;
         };
         /// Array of worker references
         Worker** _worker;
@@ -108,17 +108,17 @@ namespace Gecode { namespace Search { namespace Par {
         /// Initialize for space \a s with options \a o
         DFS(Space* s, const Options& o);
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Reset engine to restart at space \a s
         void reset(Space* s) override;
         /// Return no-goods
-        NoGoods& nogoods(void) override;
+        NoGoods& nogoods() override;
         /// Destructor
-        ~DFS(void) override;
+        ~DFS() override;
         //@}
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 
 #include <gecode/search/par/dfs.hpp>
 

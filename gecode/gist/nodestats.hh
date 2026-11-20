@@ -40,7 +40,7 @@
 #include <QtWidgets>
 #endif
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /**
      * \brief Display information about nodes
@@ -67,12 +67,12 @@ namespace Gecode { namespace Gist {
         NodeStatInspector(QWidget* parent);
         /// Update display to reflect information about \a n
         void node(const VisualNode::NodeAllocator&, VisualNode* n, const Statistics& stat, bool finished);
-    public Q_SLOTS:
+
         /// Show this window and bring it to the front
-        void show_stats(void);
+        void show_stats();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

@@ -49,23 +49,22 @@ namespace Gecode {
         }
         /// \copydoc Gecode::ViewSel::random
         bool
-        random(void) const {
+        random() const {
             return false;
         }
         /// View type
-        typedef View_ View;
+        using View = View_;
         /// Corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         /// Value type
-        typedef Val_ Val;
+        using Val = Val_;
 
-    public:
         /// Constructor for initialization
         ValSel(Space& home, const ValBranch<Var>& vb);
         /// Constructor for cloning
         ValSel(Space& home, ValSel<View, Val>& vs);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value selection
         void dispose(Space& home);
     };
@@ -75,11 +74,11 @@ namespace Gecode {
     class ValSelFunction : public ValSel<View, typename BranchTraits<typename View::VarType>::ValType> {
     public:
         /// The corresponding variable type
-        typedef typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Var Var;
+        using Var = ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Var;
         /// The corresponding value type
-        typedef typename ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Val Val;
+        using Val = ValSel<View, typename BranchTraits<typename View::VarType>::ValType>::Val;
         /// The corresponding value function
-        typedef typename BranchTraits<Var>::Val ValFunction;
+        using ValFunction = BranchTraits<Var>::Val;
 
     protected:
         /// The user-defined value function
@@ -93,7 +92,7 @@ namespace Gecode {
         /// Return user-defined value of view \a x at position \a i
         Val val(const Space& home, View x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value selection
         void dispose(Space& home);
     };
@@ -108,7 +107,7 @@ namespace Gecode {
     ValSel<View, Val>::ValSel(Space&, ValSel<View, Val>&) {}
     template <class View, class Val>
     forceinline bool
-    ValSel<View, Val>::notice(void) const {
+    ValSel<View, Val>::notice() const {
         return false;
     }
     template <class View, class Val>
@@ -128,7 +127,7 @@ namespace Gecode {
     ValSelFunction<View>::ValSelFunction(Space& home, ValSelFunction<View>& vs)
         : ValSel<View, Val>(home, vs), v(vs.v) {}
     template <class View>
-    forceinline typename ValSelFunction<View>::Val
+    forceinline ValSelFunction<View>::Val
     ValSelFunction<View>::val(const Space& home, View x, int i) {
         typename View::VarType y(x.varimp());
         GECODE_VALID_FUNCTION(v());
@@ -136,7 +135,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline bool
-    ValSelFunction<View>::notice(void) const {
+    ValSelFunction<View>::notice() const {
         return true;
     }
     template <class View>

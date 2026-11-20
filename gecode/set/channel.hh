@@ -39,7 +39,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Channel {
+namespace Gecode::Set::Channel {
 
     /**
      * \namespace Gecode::Set::Channel
@@ -76,8 +76,8 @@ namespace Gecode { namespace Set { namespace Channel {
         size_t dispose(Space& home) override;
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
-        /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order
-        static ExecStatus post(Home home, View s, ViewArray<Gecode::Int::IntView>& x);
+        /// Post propagator that propagates that \a x0 contains the \f$x_i\f$, which are sorted in non-descending order
+        static ExecStatus post(Home home, View x0, ViewArray<Gecode::Int::IntView>& x);
     };
 
     /**
@@ -141,7 +141,7 @@ namespace Gecode { namespace Set { namespace Channel {
     class ChannelBool
         : public MixNaryOnePropagator<Gecode::Int::BoolView, Gecode::Int::PC_BOOL_VAL, View, PC_GEN_NONE> {
     protected:
-        typedef MixNaryOnePropagator<Gecode::Int::BoolView, Gecode::Int::PC_BOOL_VAL, View, PC_GEN_NONE> Super;
+        using Super = MixNaryOnePropagator<Gecode::Int::BoolView, Gecode::Int::PC_BOOL_VAL, View, PC_GEN_NONE>;
         using Super::x;
         using Super::y;
 
@@ -163,7 +163,7 @@ namespace Gecode { namespace Set { namespace Channel {
             /// Constructor for cloning \a a
             IndexAdvisor(Space& home, IndexAdvisor& a);
             /// Access index
-            int index(void) const;
+            int index() const;
             /// Delete advisor
             template <class A>
             void dispose(Space& home, Council<A>& c);
@@ -238,7 +238,7 @@ namespace Gecode { namespace Set { namespace Channel {
         static ExecStatus post(Home home, ViewArray<CachedView<View>>& x, ViewArray<CachedView<View>>& y);
     };
 
-}}} // namespace Gecode::Set::Channel
+} // namespace Gecode::Set::Channel
 
 #include <gecode/set/channel/sorted.hpp>
 #include <gecode/set/channel/int.hpp>

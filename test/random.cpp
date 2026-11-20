@@ -35,7 +35,7 @@
 #include <gecode/search.hh>
 #include <set>
 
-namespace Test { namespace Random {
+namespace Test::Random {
     using namespace Gecode::Support;
 
     // A user engine with extra state exercises the public engine contract.
@@ -125,7 +125,7 @@ namespace Test { namespace Random {
     };
 
     template <class Engine>
-    bool
+    static bool
     replay() {
         Gecode::Support::Random<Engine> original(UINT64_MAX);
         Gecode::Support::Random<Engine> restored;
@@ -141,9 +141,7 @@ namespace Test { namespace Random {
                 return false;
         }
         auto before = restored.state();
-        if (restored(0) || restored(1) || restored(-1) || restored.state() != before)
-            return false;
-        return true;
+        return !(restored(0) || restored(1) || restored(-1) || (restored.state() != before));
     }
 
     class Contract : public Base {
@@ -178,9 +176,9 @@ namespace Test { namespace Random {
             // which no other parent reaches.
             const uint64_t g = UINT64_C(0x9e3779b97f4a7c15);
             Xorshift64Star zero_input;
-            zero_input.state({{uint64_t(0) - g}});
+            zero_input.state({{UINT64_C(0) - g}});
             Xorshift64Star other;
-            other.state({{(uint64_t(1) << 34) * g - 2 * g}});
+            other.state({{(UINT64_C(1) << 34) * g - 2 * g}});
             if ((zero_input.split(0).state()[0] == 0) || (zero_input.split(0).state() == zero_input.split(1).state()) ||
                 (zero_input.split(0).state() == other.split(0).state()))
                 return false;
@@ -207,6 +205,7 @@ namespace Test { namespace Random {
                     (void)random_seed(invalid);
                     return false;
                 } catch (const std::invalid_argument&) {
+                    // Expected
                 }
             }
             const auto saved = r.state();
@@ -214,12 +213,13 @@ namespace Test { namespace Random {
                  {"splitmix-v1:0000000000000000:0000000000000000", "splitmix-v1:0000000000000000:0000000000000002",
                   "splitmix-v1:000000000000000g:9e3779b97f4a7c15", "splitmix-v1:0:9e3779b97f4a7c15",
                   "other-v1:0000000000000000:9e3779b97f4a7c15"}) {
+                bool rejected = false;
                 try {
                     r.state(std::string(invalid));
-                    return false;
                 } catch (const std::invalid_argument&) {
+                    rejected = true;
                 }
-                if (r.state() != saved)
+                if (!rejected || (r.state() != saved))
                     return false;
             }
             Gecode::Support::Random<Xorshift64Star> x(0);
@@ -227,6 +227,7 @@ namespace Test { namespace Random {
                 x.state(Xorshift64Star::State{{0}});
                 return false;
             } catch (const std::invalid_argument&) {
+                // Expected
             }
             for (uint64_t bound : {UINT64_C(2), UINT64_C(3), UINT64_C(0x8000000000000001), UINT64_MAX})
                 for (unsigned int i = 0; i < 100; ++i)
@@ -284,7 +285,7 @@ namespace Test { namespace Random {
         }
     };
 
-    bool
+    static bool
     same_archive(const Gecode::Choice& a, const Gecode::Choice& b) {
         Gecode::Archive x;
         Gecode::Archive y;
@@ -300,19 +301,19 @@ namespace Test { namespace Random {
 
     /// Spaces without a model-owned generator have no owner state to compare.
     template <class Model>
-    bool
+    static bool
     owners_agree(const Model&, const Model&) {
         return true;
     }
     template <class Random>
-    bool
+    static bool
     owners_agree(const ReplaySpace<Random>& a, const ReplaySpace<Random>& b) {
         return a.own.state() == b.own.state();
     }
 
     /// Committing an archived choice must match committing it directly.
     template <class Model>
-    bool
+    static bool
     archive_replay(Model& root) {
         using namespace Gecode;
         while (root.status() == SS_BRANCH) {
@@ -346,7 +347,7 @@ namespace Test { namespace Random {
     }
 
     template <class Random>
-    std::vector<std::string>
+    static std::vector<std::string>
     solutions(const Random& source, unsigned int distance, bool different, bool multi, bool callback,
               unsigned int threads = 1) {
         using namespace Gecode;
@@ -367,7 +368,7 @@ namespace Test { namespace Random {
     }
 
     template <class Random>
-    bool
+    static bool
     branch_replay(const Random& source) {
         for (bool different : {false, true})
             for (bool multi : {false, true})
@@ -420,7 +421,7 @@ namespace Test { namespace Random {
     } branch_replay_test;
 
     template <class Random>
-    bool
+    static bool
     consumer_states(const Random& source, bool multi) {
         using namespace Gecode;
         ReplaySpace<Random> root(source, false, multi);
@@ -541,7 +542,7 @@ namespace Test { namespace Random {
     };
 
     template <class Model>
-    std::vector<std::string>
+    static std::vector<std::string>
     first_solutions(Model& root, unsigned int distance) {
         using namespace Gecode;
         Search::Options options;
@@ -558,7 +559,7 @@ namespace Test { namespace Random {
         return result;
     }
 
-    bool
+    static bool
     restarts_differ() {
         using namespace Gecode;
         Permutation root(Rnd(3));
@@ -578,7 +579,7 @@ namespace Test { namespace Random {
     }
 
     /// Return the context that a meta engine passes to the spoke of \a episode or \a asset
-    Gecode::SpokeContext
+    static Gecode::SpokeContext
     spoke_context(Gecode::MetaEngine engine, unsigned long int episode, unsigned int asset) {
         using namespace Gecode;
         static const Search::Statistics none;
@@ -587,7 +588,7 @@ namespace Test { namespace Random {
     }
 
     /// Asset 1 must not repeat episode 1 of a restart engine
-    bool
+    static bool
     meta_streams_differ() {
         using namespace Gecode;
         Permutation root(Rnd(3));
@@ -601,7 +602,7 @@ namespace Test { namespace Random {
     }
 
     /// Nested portfolio spokes (0,1) and (1,0) must not share a stream
-    bool
+    static bool
     nested_streams_differ() {
         using namespace Gecode;
         Permutation root(Rnd(3));
@@ -617,7 +618,7 @@ namespace Test { namespace Random {
     }
 
     /// A model-owned generator split for a spoke differs per episode and engine
-    bool
+    static bool
     owned_streams_differ() {
         using namespace Gecode;
         const Rnd r(3);
@@ -650,6 +651,6 @@ namespace Test { namespace Random {
                    meta_streams_differ() && nested_streams_differ() && owned_streams_differ();
         }
     } streams;
-}} // namespace Test::Random
+} // namespace Test::Random
 
 // STATISTICS: test-core

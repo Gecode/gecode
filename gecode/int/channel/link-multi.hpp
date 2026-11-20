@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     forceinline
     LinkMulti::LinkMulti(Home home, ViewArray<BoolView>& x, IntView y, int o0)
@@ -80,6 +80,6 @@ namespace Gecode { namespace Int { namespace Channel {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 // STATISTICS: int-prop

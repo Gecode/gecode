@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Count {
+namespace Gecode::Int::Count {
 
     template <class VX, class VY, class VZ>
     forceinline
@@ -103,13 +103,13 @@ namespace Gecode { namespace Int { namespace Count {
 
     template <class VX, class VY, class VZ>
     forceinline int
-    ViewBase<VX, VY, VZ>::at_least(void) const {
+    ViewBase<VX, VY, VZ>::at_least() const {
         return -c;
     }
 
     template <class VX, class VY, class VZ>
     forceinline int
-    ViewBase<VX, VY, VZ>::at_most(void) const {
+    ViewBase<VX, VY, VZ>::at_most() const {
         return x.size() - c;
     }
 
@@ -129,6 +129,6 @@ namespace Gecode { namespace Int { namespace Count {
         return false;
     }
 
-}}} // namespace Gecode::Int::Count
+} // namespace Gecode::Int::Count
 
 // STATISTICS: int-prop

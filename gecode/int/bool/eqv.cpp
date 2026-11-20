@@ -32,7 +32,7 @@
 
 #include <gecode/int/bool.hh>
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     /*
      * N-ary Boolean equivalence propagator
@@ -66,10 +66,9 @@ namespace Gecode { namespace Int { namespace Bool {
         if (n == 2) {
             if (pm2 == 1) {
                 return Bool::Eq<BoolView, BoolView>::post(home, x[0], x[1]);
-            } else {
-                NegBoolView nx(x[1]);
-                return Bool::Eq<BoolView, NegBoolView>::post(home, x[0], nx);
             }
+            NegBoolView nx(x[1]);
+            return Bool::Eq<BoolView, NegBoolView>::post(home, x[0], nx);
         }
         x.size(n);
         (void)new (home) NaryEqv(home, x, pm2);
@@ -83,10 +82,12 @@ namespace Gecode { namespace Int { namespace Bool {
         if (x.size() == 0) {
             if (x0.assigned() && x1.assigned()) {
                 return (pm2 == 1) ? home.ES_SUBSUMED(*this) : ES_FAILED;
-            } else if (x0.assigned()) {
+            }
+            if (x0.assigned()) {
                 GECODE_ME_CHECK(x1.eq(home, 1 ^ pm2));
                 return home.ES_SUBSUMED(*this);
-            } else if (x1.assigned()) {
+            }
+            if (x1.assigned()) {
                 GECODE_ME_CHECK(x0.eq(home, 1 ^ pm2));
                 return home.ES_SUBSUMED(*this);
             }
@@ -94,6 +95,6 @@ namespace Gecode { namespace Int { namespace Bool {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

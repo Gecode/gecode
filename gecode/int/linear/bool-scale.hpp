@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Array of scale Boolean views
@@ -75,11 +75,11 @@ namespace Gecode { namespace Int { namespace Linear {
         }
     }
     forceinline ScaleBool*
-    ScaleBoolArray::fst(void) const {
+    ScaleBoolArray::fst() const {
         return _fst;
     }
     forceinline ScaleBool*
-    ScaleBoolArray::lst(void) const {
+    ScaleBoolArray::lst() const {
         return _lst;
     }
     forceinline void
@@ -91,11 +91,11 @@ namespace Gecode { namespace Int { namespace Linear {
         _lst = l;
     }
     forceinline bool
-    ScaleBoolArray::empty(void) const {
+    ScaleBoolArray::empty() const {
         return _fst == _lst;
     }
     forceinline int
-    ScaleBoolArray::size(void) const {
+    ScaleBoolArray::size() const {
         return static_cast<int>(_lst - _fst);
     }
     forceinline bool
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     inline void
-    ScaleBoolArray::sort(void) {
+    ScaleBoolArray::sort() {
         ScaleDec scale_dec;
         Support::quicksort<ScaleBool, ScaleDec>(fst(), size(), scale_dec);
     }
@@ -124,11 +124,11 @@ namespace Gecode { namespace Int { namespace Linear {
     forceinline void
     EmptyScaleBoolArray::update(Space&, EmptyScaleBoolArray&) {}
     forceinline ScaleBool*
-    EmptyScaleBoolArray::fst(void) const {
+    EmptyScaleBoolArray::fst() const {
         return nullptr;
     }
     forceinline ScaleBool*
-    EmptyScaleBoolArray::lst(void) const {
+    EmptyScaleBoolArray::lst() const {
         return nullptr;
     }
     forceinline void
@@ -136,15 +136,15 @@ namespace Gecode { namespace Int { namespace Linear {
     forceinline void
     EmptyScaleBoolArray::lst(ScaleBool*) {}
     forceinline bool
-    EmptyScaleBoolArray::empty(void) const {
+    EmptyScaleBoolArray::empty() const {
         return true;
     }
     forceinline int
-    EmptyScaleBoolArray::size(void) const {
+    EmptyScaleBoolArray::size() const {
         return 0;
     }
     forceinline void
-    EmptyScaleBoolArray::sort(void) {}
+    EmptyScaleBoolArray::sort() {}
 
     /*
      * Base-class for Boolean constraints with coefficients
@@ -217,21 +217,19 @@ namespace Gecode { namespace Int { namespace Linear {
                 ZeroIntView z;
                 return new (home)
                     EqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
-            } else {
-                return new (home) EqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
             }
-        } else if (n.empty()) {
+            return new (home) EqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
             EmptyScaleBoolArray en;
             if (x.assigned()) {
                 ZeroIntView z;
                 return new (home)
                     EqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
-            } else {
-                return new (home) EqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
             }
-        } else {
-            return new (home) EqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+            return new (home) EqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
         }
+        return new (home) EqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
     }
 
     template <class SBAP, class SBAN, class VX>
@@ -434,21 +432,19 @@ namespace Gecode { namespace Int { namespace Linear {
                 ZeroIntView z;
                 return new (home)
                     LqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
-            } else {
-                return new (home) LqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
             }
-        } else if (n.empty()) {
+            return new (home) LqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
             EmptyScaleBoolArray en;
             if (x.assigned()) {
                 ZeroIntView z;
                 return new (home)
                     LqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
-            } else {
-                return new (home) LqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
             }
-        } else {
-            return new (home) LqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+            return new (home) LqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
         }
+        return new (home) LqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
     }
 
     template <class SBAP, class SBAN, class VX>
@@ -580,21 +576,19 @@ namespace Gecode { namespace Int { namespace Linear {
                 ZeroIntView z;
                 return new (home)
                     NqBoolScale<EmptyScaleBoolArray, SBAN, ZeroIntView>(home, *this, ep, n, z, c + x.val());
-            } else {
-                return new (home) NqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
             }
-        } else if (n.empty()) {
+            return new (home) NqBoolScale<EmptyScaleBoolArray, SBAN, VX>(home, *this, ep, n, x, c);
+        }
+        if (n.empty()) {
             EmptyScaleBoolArray en;
             if (x.assigned()) {
                 ZeroIntView z;
                 return new (home)
                     NqBoolScale<SBAP, EmptyScaleBoolArray, ZeroIntView>(home, *this, p, en, z, c + x.val());
-            } else {
-                return new (home) NqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
             }
-        } else {
-            return new (home) NqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
+            return new (home) NqBoolScale<SBAP, EmptyScaleBoolArray, VX>(home, *this, p, en, x, c);
         }
+        return new (home) NqBoolScale<SBAP, SBAN, VX>(home, *this, p, n, x, c);
     }
 
     template <class SBAP, class SBAN, class VX>
@@ -677,6 +671,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop

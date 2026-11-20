@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     forceinline
     NoNGL::NoNGL(Space& home)
@@ -168,6 +168,6 @@ namespace Gecode { namespace Search {
         return ES_OK;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

@@ -36,15 +36,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that reversed uniform integer ranges fail during parsing
     class UniformIntInvalidRange : public Base {
     public:
         /// Create and register test
-        UniformIntInvalidRange(void) : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
+        UniformIntInvalidRange() : Base("FlatZinc::on_restart::uniform_int_invalid_range") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             std::stringstream source(R"FZN(
 predicate gecode_on_restart_uniform_int(int: low,int: high,var int: out);
 var 0..1: y;
@@ -55,8 +55,8 @@ solve satisfy;
             std::ostringstream err;
             Gecode::FlatZinc::FlatZincSpace* fg = Gecode::FlatZinc::parse(source, p, err);
             const std::string message = err.str();
-            return fg == nullptr && message.find("gecode_on_restart_uniform_int") != std::string::npos &&
-                   message.find("low (1) <= high (0)") != std::string::npos;
+            return fg == nullptr && message.contains("gecode_on_restart_uniform_int") &&
+                   message.contains("low (1) <= high (0)");
         }
     };
 
@@ -64,7 +64,7 @@ solve satisfy;
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("on_restart::last_val_int",
                                    R"FZN(
 predicate gecode_on_restart_status(var int: s);
@@ -122,6 +122,6 @@ solve satisfy;
 
     Create c;
     UniformIntInvalidRange invalid_range;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

@@ -38,7 +38,7 @@
 #include <gecode/search/par/dfs.hh>
 #endif
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_dfs_engine(Space* s, const Options& o) {
@@ -47,14 +47,12 @@ namespace Gecode { namespace Search {
         if (to.threads == 1.0) {
             if (to.tracer)
                 return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s, to);
-            else
-                return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s, to);
-        } else {
-            if (to.tracer)
-                return new Par::DFS<EdgeTraceRecorder>(s, to);
-            else
-                return new Par::DFS<NoTraceRecorder>(s, to);
+            return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s, to);
         }
+        if (to.tracer)
+            return new Par::DFS<EdgeTraceRecorder>(s, to);
+        return new Par::DFS<NoTraceRecorder>(s, to);
+
 #else
         if (to.tracer)
             return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s, to);
@@ -63,6 +61,6 @@ namespace Gecode { namespace Search {
 #endif
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

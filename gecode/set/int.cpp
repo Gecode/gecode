@@ -84,10 +84,10 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode::Set::Int {
 
     /// Reify \a m to be the minimum of \a s
-    void
+    static void
     remin(Home home, SetVar s, IntVar m, Reify r) {
         IntVar c(home, 0, static_cast<int>(Set::Limits::card));
         cardinality(home, s, c);
@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace Int {
     }
 
     /// Reify \a m to be the maximum of \a s
-    void
+    static void
     remax(Home home, SetVar s, IntVar m, Reify r) {
         IntVar c(home, 0, static_cast<int>(Set::Limits::card));
         cardinality(home, s, c);
@@ -112,7 +112,7 @@ namespace Gecode { namespace Set { namespace Int {
         max(home, s, m, ne);
     }
 
-}}} // namespace Gecode::Set::Int
+} // namespace Gecode::Set::Int
 
 namespace Gecode {
 

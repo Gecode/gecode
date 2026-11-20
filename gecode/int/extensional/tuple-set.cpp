@@ -37,11 +37,12 @@
 #include <gecode/int.hh>
 #include <algorithm>
 #include <limits>
+#include <utility>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /// Import tuple type
-    typedef ::Gecode::TupleSet::Tuple Tuple;
+    using Tuple = ::Gecode::TupleSet::Tuple;
 
     /// Tuple comparison
     class TupleCompare {
@@ -92,7 +93,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         return a[p] < b[p];
     }
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 namespace Gecode {
 
@@ -112,7 +113,7 @@ namespace Gecode {
      *
      */
     void
-    TupleSet::Data::clear_support(void) {
+    TupleSet::Data::clear_support() {
         free_buffer(range);
         free_buffer(range_base);
         free_buffer(support);
@@ -187,7 +188,7 @@ namespace Gecode {
     }
 
     void
-    TupleSet::Data::finalize(void) {
+    TupleSet::Data::finalize() {
         finalize(EPK_DENSE);
     }
 
@@ -205,7 +206,7 @@ namespace Gecode {
 
         public:
             FinalizeGuard(Data& d0) : d(d0), committed(false) {}
-            ~FinalizeGuard(void) {
+            ~FinalizeGuard() {
                 if (!committed) {
                     d.clear_support();
                     d.n_words = 0U;
@@ -455,8 +456,8 @@ namespace Gecode {
                 }
                 for (unsigned int i = 0U; i < n_offsets; i++)
                     support_offsets[i] = 0U;
-                for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
-                    const Tuple t = td + tid * arity;
+                for (unsigned int tid = 0U; std::cmp_less(tid, n_tuples); tid++) {
+                    const int* t = td + tid * arity;
                     for (int a = 0; a < arity; a++) {
                         const unsigned int range_index = vd[a].start(t[a]);
                         const unsigned int support_id =
@@ -475,7 +476,7 @@ namespace Gecode {
                     unsigned int* next_support = (n_vals > 0U) ? region.alloc<unsigned int>(n_vals) : nullptr;
                     for (unsigned int i = 0U; i < n_vals; i++)
                         next_support[i] = sparse_offsets[i];
-                    for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
+                    for (unsigned int tid = 0U; std::cmp_less(tid, n_tuples); tid++) {
                         for (int a = 0; a < arity; a++) {
                             const unsigned int support_id = sparse_tv[tid * arity + a];
                             sparse_tuples[next_support[support_id]++] = tid;
@@ -488,8 +489,8 @@ namespace Gecode {
                         next_support[i] = support_offsets[i];
                     // Tuple ids are visited in increasing order, so each support list
                     // is already sorted by tuple id (and hence by word index).
-                    for (unsigned int tid = 0U; tid < static_cast<unsigned int>(n_tuples); tid++) {
-                        const Tuple t = td + tid * arity;
+                    for (unsigned int tid = 0U; std::cmp_less(tid, n_tuples); tid++) {
+                        const int* t = td + tid * arity;
                         for (int a = 0; a < arity; a++) {
                             const unsigned int range_index = vd[a].start(t[a]);
                             const unsigned int support_id =
@@ -563,7 +564,7 @@ namespace Gecode {
     }
 
     void
-    TupleSet::Data::resize(void) {
+    TupleSet::Data::resize() {
         assert(n_free == 0);
         int n = static_cast<int>(1 + n_tuples * 1.5);
         if (arity > 0)
@@ -571,7 +572,7 @@ namespace Gecode {
         n_free = n - n_tuples;
     }
 
-    TupleSet::Data::~Data(void) {
+    TupleSet::Data::~Data() {
         clear_support();
         free_buffer(td);
         free_buffer(vd);

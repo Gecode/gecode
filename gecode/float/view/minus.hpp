@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /*
      * Constructors and initialization
@@ -47,28 +47,28 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline FloatVal
-    MinusView::domain(void) const {
+    MinusView::domain() const {
         return -x.domain();
     }
     forceinline FloatNum
-    MinusView::min(void) const {
+    MinusView::min() const {
         return -x.max();
     }
     forceinline FloatNum
-    MinusView::max(void) const {
+    MinusView::max() const {
         return -x.min();
     }
     forceinline FloatNum
-    MinusView::med(void) const {
+    MinusView::med() const {
         return -x.med();
     }
     forceinline FloatVal
-    MinusView::val(void) const {
+    MinusView::val() const {
         return -x.val();
     }
 
     forceinline FloatNum
-    MinusView::size(void) const {
+    MinusView::size() const {
         return x.size();
     }
 
@@ -77,7 +77,7 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline bool
-    MinusView::zero_in(void) const {
+    MinusView::zero_in() const {
         return x.zero_in();
     }
     forceinline bool
@@ -159,6 +159,6 @@ namespace Gecode { namespace Float {
         return x.base() == y.base();
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

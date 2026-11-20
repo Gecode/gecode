@@ -31,7 +31,7 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that propagation terminates after finding all solutions
     bool
     check(const std::string& output) {
@@ -39,14 +39,14 @@ namespace Test { namespace FlatZinc { namespace {
         int solutions = 0;
         for (std::string::size_type p = 0; (p = output.find(separator, p)) != std::string::npos; p += separator.size())
             solutions++;
-        return (solutions == 3) && (output.find("==========\n") != std::string::npos);
+        return (solutions == 3) && (output.contains("==========\n"));
     }
 
     /// Helper class to create and register test
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("Issue168",
                                    "predicate fzn_sort(array [int] of var int: x, array [int] of var int: y);\n\
 var 2..4: D :: output_var;\n\
@@ -63,6 +63,6 @@ solve :: int_search([1,D,F,K,F,E,G,H,J],input_order,indomain,complete) satisfy;\
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

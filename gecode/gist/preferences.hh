@@ -39,7 +39,7 @@
 #endif
 #include <gecode/gist.hh>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /**
      * \brief Preferences dialog for %Gist
@@ -57,11 +57,11 @@ namespace Gecode { namespace Gist {
         QCheckBox* move_during_search_box;
         QSpinBox* cd_box;
         QSpinBox* ad_box;
-    protected Q_SLOTS:
+
         /// Write settings
-        void write_back(void);
+        void write_back();
         /// Reset to defaults
-        void defaults(void);
+        void defaults();
         /// Toggle slow down setting
         void toggle_slow(int state);
 
@@ -90,7 +90,7 @@ namespace Gecode { namespace Gist {
         int a_d;
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

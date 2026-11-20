@@ -30,27 +30,27 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class ManTask>
     forceinline bool
-    ManToOptTask<ManTask>::mandatory(void) const {
+    ManToOptTask<ManTask>::mandatory() const {
         return _m.one();
     }
     template <class ManTask>
     forceinline bool
-    ManToOptTask<ManTask>::excluded(void) const {
+    ManToOptTask<ManTask>::excluded() const {
         return _m.zero();
     }
     template <class ManTask>
     forceinline bool
-    ManToOptTask<ManTask>::optional(void) const {
+    ManToOptTask<ManTask>::optional() const {
         return _m.none();
     }
 
     template <class ManTask>
     forceinline bool
-    ManToOptTask<ManTask>::assigned(void) const {
+    ManToOptTask<ManTask>::assigned() const {
         return ManTask::assigned() && _m.assigned();
     }
 
@@ -92,6 +92,6 @@ namespace Gecode { namespace Int {
         ManTask::reschedule(home, p, pc);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

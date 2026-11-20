@@ -38,17 +38,17 @@
 
 #include <gecode/support.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     unsigned int
-    hwrnd(void) {
+    hwrnd() {
         unsigned int r;
         if (rand_s(&r) != 0)
             throw std::runtime_error("Hardware random initialization failed");
         return r;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 #else
 
@@ -57,10 +57,10 @@ namespace Gecode { namespace Support {
 #include <fstream>
 #include <stdexcept>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     unsigned int
-    hwrnd(void) {
+    hwrnd() {
         std::fstream devrandom;
         devrandom.open("/dev/random", std::fstream::in | std::fstream::binary);
         unsigned int rnd;
@@ -71,7 +71,7 @@ namespace Gecode { namespace Support {
         return rnd;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 #endif
 

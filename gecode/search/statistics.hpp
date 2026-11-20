@@ -32,10 +32,10 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     forceinline void
-    Statistics::reset(void) {
+    Statistics::reset() {
         StatusStatistics::reset();
         fail = 0ULL;
         node = 0ULL;
@@ -45,7 +45,7 @@ namespace Gecode { namespace Search {
     }
 
     forceinline
-    Statistics::Statistics(void)
+    Statistics::Statistics()
         : fail(0ULL), node(0ULL), depth(0UL), restart(0UL), nogood(0UL) {}
 
     forceinline Statistics&
@@ -65,6 +65,6 @@ namespace Gecode { namespace Search {
         return t += *this;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

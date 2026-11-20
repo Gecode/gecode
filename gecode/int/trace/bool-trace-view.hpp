@@ -30,13 +30,13 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Duplicate of a Boolean view
     class BoolTraceView {
     public:
         /// Default constructor (initializes with no view)
-        BoolTraceView(void) = default;
+        BoolTraceView() = default;
         /// Duplicate view \a y
         BoolTraceView(Space& home, BoolView y);
         /// Update duplicated view from view \a y and modification delta \a d
@@ -58,6 +58,6 @@ namespace Gecode { namespace Int {
         return x.width() - 1;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-trace

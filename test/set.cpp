@@ -38,30 +38,28 @@
 
 #include <algorithm>
 
-namespace Test { namespace Set {
+namespace Test::Set {
 
-    CountableSet::CountableSet(const Gecode::IntSet& d0) : d(d0), cur(0) {
+    CountableSet::CountableSet(const Gecode::IntSet& s) : d(s), cur(0) {
         Gecode::IntSetRanges isr(d);
-        lubmax =
-            static_cast<unsigned int>(pow(static_cast<double>(2.0), static_cast<int>(Gecode::Iter::Ranges::size(isr))));
+        lubmax = static_cast<unsigned int>(pow(2.0, static_cast<int>(Gecode::Iter::Ranges::size(isr))));
     }
 
     void
-    CountableSet::operator++(void) {
+    CountableSet::operator++() {
         cur++;
     }
 
     void
-    CountableSet::init(const Gecode::IntSet& d0) {
-        d = d0;
+    CountableSet::init(const Gecode::IntSet& s) {
+        d = s;
         cur = 0;
         Gecode::IntSetRanges isr(d);
-        lubmax =
-            static_cast<unsigned int>(pow(static_cast<double>(2.0), static_cast<int>(Gecode::Iter::Ranges::size(isr))));
+        lubmax = static_cast<unsigned int>(pow(2.0, static_cast<int>(Gecode::Iter::Ranges::size(isr))));
     }
 
     int
-    CountableSet::val(void) const {
+    CountableSet::val() const {
         return cur;
     }
 
@@ -98,7 +96,7 @@ namespace Test { namespace Set {
         }
     }
 
-}} // namespace Test::Set
+} // namespace Test::Set
 
 std::ostream&
 operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
@@ -114,7 +112,7 @@ operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
     return os;
 }
 
-namespace Test { namespace Set {
+namespace Test::Set {
 
     SetTestSpace::SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, bool log)
         : d(d0), y(*this, i, d), with_int(i), r(Gecode::BoolVar(*this, 0, 1), Gecode::RM_EQV), reified(false), test(t) {
@@ -156,12 +154,12 @@ namespace Test { namespace Set {
     }
 
     Gecode::Space*
-    SetTestSpace::copy(void) {
+    SetTestSpace::copy() {
         return new SetTestSpace(*this);
     }
 
     void
-    SetTestSpace::post(void) {
+    SetTestSpace::post() {
         if (reified) {
             test->post(*this, x, y, r);
             if (opt.log)
@@ -174,15 +172,14 @@ namespace Test { namespace Set {
     }
 
     bool
-    SetTestSpace::failed(void) {
+    SetTestSpace::failed() {
         if (opt.log) {
             olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=" << y << '\n';
             bool f = (status() == Gecode::SS_FAILED);
             olog << ind(3) << "     -->  x[]=" << x << " y[]=" << y << '\n';
             return f;
-        } else {
-            return status() == Gecode::SS_FAILED;
         }
+        return status() == Gecode::SS_FAILED;
     }
 
     bool
@@ -294,7 +291,7 @@ namespace Test { namespace Set {
     }
 
     bool
-    SetTestSpace::assigned(void) const {
+    SetTestSpace::assigned() const {
         for (int i = x.size(); i--;)
             if (!x[i].assigned())
                 return false;
@@ -359,7 +356,7 @@ namespace Test { namespace Set {
     }
 
     bool
-    SetTestSpace::check_fixpoint(void) {
+    SetTestSpace::check_fixpoint() {
         if (failed())
             return true;
         SetTestSpace* c = static_cast<SetTestSpace*>(clone());
@@ -690,17 +687,17 @@ namespace Test { namespace Set {
     }
 
     unsigned int
-    SetTestSpace::propagators(void) {
+    SetTestSpace::propagators() {
         return Gecode::PropagatorGroup::all.size(*this);
     }
 
     void
-    SetTestSpace::enable(void) {
+    SetTestSpace::enable() {
         Gecode::PropagatorGroup::all.enable(*this);
     }
 
     void
-    SetTestSpace::disable(void) {
+    SetTestSpace::disable() {
         Gecode::PropagatorGroup::all.disable(*this);
         (void)status();
     }
@@ -728,10 +725,10 @@ namespace Test { namespace Set {
     } while (false)
 
     bool
-    SetTest::run(void) {
+    SetTest::run() {
         using namespace Gecode;
-        const char* test = "NONE";
-        const char* problem = "NONE";
+        const char* test = nullptr;
+        const char* problem = nullptr;
 
         SetAssignment* ap = new SetAssignment(arity, lub, with_int);
         SetAssignment& a = *ap;
@@ -1207,7 +1204,7 @@ namespace Test { namespace Set {
     const Gecode::SetOpType SetOpTypes::sots[] = {Gecode::SOT_UNION, Gecode::SOT_DISJOINT_UNION,
                                                   Gecode::SOT_INTERSECTION, Gecode::SOT_MINUS};
 
-}} // namespace Test::Set
+} // namespace Test::Set
 
 #undef START_TEST
 #undef CHECK_TEST

@@ -34,11 +34,12 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/seq/cabs.hh>
 #include <gecode/search/par/frontier.hh>
+#include <memory>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
 
 #ifdef GECODE_HAS_THREADS
-namespace Gecode { namespace Search { namespace Par {
+namespace Gecode::Search::Par {
 
     /// Parallel complete anytime beam search
     class CABS : public Frontier {
@@ -52,11 +53,11 @@ namespace Gecode { namespace Search { namespace Par {
         /// Candidates for the next layer
         Beam candidates;
         bool
-        open(void) const override {
+        open() const override {
             return !layer.empty();
         }
         Entry
-        select(void) override {
+        select() override {
             return layer.pop();
         }
         void
@@ -79,7 +80,7 @@ namespace Gecode { namespace Search { namespace Par {
             }
         }
         bool
-        advance(void) override {
+        advance() override {
             if (!candidates.empty()) {
                 candidates.release(layer);
                 layer.sort(priority);
@@ -92,13 +93,13 @@ namespace Gecode { namespace Search { namespace Par {
                 return false;
             }
             stat.restart++;
-            std::unique_ptr<Task> t(new Task);
+            std::unique_ptr<Task> t = std::make_unique<Task>();
             t->expansion.select(std::unique_ptr<Space>(root->clone()));
             push(t.release());
             return true;
         }
         void
-        clear(void) override {
+        clear() override {
             layer.clear();
             candidates.clear();
             root.reset();
@@ -118,19 +119,15 @@ namespace Gecode { namespace Search { namespace Par {
             initialize(s, o.clone);
         }
         /// Destructor
-        ~CABS(void) override {
+        ~CABS() override {
             terminate();
         }
     };
 
-}}} // namespace Gecode::Search::Par
+} // namespace Gecode::Search::Par
 #endif
 
-namespace Gecode { namespace Search { namespace Seq {
-
-}}} // namespace Gecode::Search::Seq
-
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_cabs_engine(Space* s, const Options& o) {
@@ -146,9 +143,9 @@ namespace Gecode { namespace Search {
         return new WorkerToEngine<Seq::CABS>(s, e);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     CABS::CABS(Space* s, const Options& o)
         : opt(o), guidance(*o.guidance), priority{guidance.sense, static_cast<bool>(guidance.rank)},
@@ -209,7 +206,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     bool
-    CABS::advance(void) {
+    CABS::advance() {
         if (!candidates.empty()) {
             candidates.release(layer);
             layer.sort(priority);
@@ -231,7 +228,7 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Space*
-    CABS::next(void) {
+    CABS::next() {
         if (_limited) {
             _stopped = true;
             return nullptr;
@@ -294,12 +291,12 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     Statistics
-    CABS::statistics(void) const {
+    CABS::statistics() const {
         return *this;
     }
 
     EndReason
-    CABS::end_reason(void) const {
+    CABS::end_reason() const {
         return _limited ? EndReason::Incomplete : Worker::end_reason();
     }
 
@@ -328,11 +325,11 @@ namespace Gecode { namespace Search { namespace Seq {
     }
 
     NoGoods&
-    CABS::nogoods(void) {
+    CABS::nogoods() {
         return NoGoods::eng;
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

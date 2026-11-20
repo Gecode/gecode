@@ -33,7 +33,7 @@
 #include <gecode/int.hh>
 #include <gecode/search/relax.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// Class for posting equalities for non-relaxed variables
     class Relax {
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int {
         return me_failed(xv.eq(home, sx.val())) ? ES_FAILED : ES_OK;
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 namespace Gecode {
 

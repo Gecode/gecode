@@ -40,6 +40,9 @@
 #include <string>
 
 #ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX 1 // Ensure the words min/max remain available
+#endif
 #include <windows.h>
 #else
 #include <fcntl.h>
@@ -50,7 +53,7 @@
 namespace {
 
     std::string
-    process_id(void) {
+    process_id() {
 #ifdef _WIN32
         return std::to_string(static_cast<int64_t>(GetCurrentProcessId()));
 #else
@@ -129,7 +132,7 @@ namespace {
         errno = 0;
         const long long parsed = std::strtoll(integer.c_str(), &last, 10);
         if ((last == integer.c_str()) || (*last != '\0') || (errno == ERANGE) ||
-            (parsed < (std::numeric_limits<int64_t>::min)()) || (parsed > (std::numeric_limits<int64_t>::max)())) {
+            (parsed < std::numeric_limits<int64_t>::min()) || (parsed > std::numeric_limits<int64_t>::max())) {
             return false;
         }
         value = static_cast<int64_t>(parsed);
@@ -166,15 +169,20 @@ namespace {
         static const std::string malformed("x;");
         if (mode == "value7") {
             return &value7;
-        } else if (mode == "bounds2") {
+        }
+        if (mode == "bounds2") {
             return &bounds2;
-        } else if (mode == "bounds4") {
+        }
+        if (mode == "bounds4") {
             return &bounds4;
-        } else if (mode == "mixed") {
+        }
+        if (mode == "mixed") {
             return &mixed;
-        } else if (mode == "nan") {
+        }
+        if (mode == "nan") {
             return &nan;
-        } else if (mode == "malformed") {
+        }
+        if (mode == "malformed") {
             return &malformed;
         }
         return nullptr;
@@ -189,7 +197,7 @@ namespace {
         } else if (kind == 3) {
             write_response(std::string(";\0x", 3));
         } else if (kind == 5) {
-            write_response(std::to_string((std::numeric_limits<int64_t>::max)()) + ";");
+            write_response(std::to_string(std::numeric_limits<int64_t>::max()) + ";");
         } else {
             write_response(std::string(1024U * 1024U + 1U, 'x'));
         }

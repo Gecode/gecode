@@ -38,7 +38,7 @@
 #include <gecode/search/seq/choice-expansion.hh>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Sequential A* search
     class AStar : public Worker {
@@ -74,18 +74,18 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize for space \a s with options \a o
         AStar(Space* s, const Options& o);
         /// Return next better solution (nullptr if none or stopped)
-        Space* next(void);
+        Space* next();
         /// Return statistics
-        Statistics statistics(void) const;
-        /// Constrain future solutions to be better than \a b
-        void constrain(const Space& b);
+        Statistics statistics() const;
+        /// Constrain future solutions to be better than \a s
+        void constrain(const Space& s);
         /// Reset engine to restart at space \a s
         void reset(Space* s);
         /// Return no-goods (none)
-        NoGoods& nogoods(void);
+        NoGoods& nogoods();
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 
