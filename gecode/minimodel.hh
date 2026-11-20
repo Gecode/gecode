@@ -732,7 +732,7 @@ namespace Gecode {
         LinFloatExpr(const FloatVar& x);
         /// Create expression
         GECODE_MINIMODEL_EXPORT
-        LinFloatExpr(const FloatVar& x, FloatVal a);
+        LinFloatExpr(const FloatVar& x, const FloatVal& a);
         /// Create sum expression
         GECODE_MINIMODEL_EXPORT
         explicit LinFloatExpr(const FloatVarArgs& x);
@@ -750,7 +750,7 @@ namespace Gecode {
         LinFloatExpr(const LinFloatExpr& e0, NodeType t, const FloatVal& c);
         /// Create expression for multiplication
         GECODE_MINIMODEL_EXPORT
-        LinFloatExpr(FloatVal a, const LinFloatExpr& e);
+        LinFloatExpr(const FloatVal& a, const LinFloatExpr& e);
         /// Create non-linear expression
         GECODE_MINIMODEL_EXPORT
         explicit LinFloatExpr(NonLinFloatExpr* e);
@@ -794,9 +794,9 @@ namespace Gecode {
         /// Create linear float relation for expressions \a l and \a r
         LinFloatRel(const LinFloatExpr& l, FloatRelType frt, const LinFloatExpr& r);
         /// Create linear float relation for expression \a l and FloatVal \a r
-        LinFloatRel(const LinFloatExpr& l, FloatRelType frt, FloatVal r);
+        LinFloatRel(const LinFloatExpr& l, FloatRelType frt, const FloatVal& r);
         /// Create linear float relation for FloatVal \a l and expression \a r
-        LinFloatRel(FloatVal l, FloatRelType frt, const LinFloatExpr& r);
+        LinFloatRel(const FloatVal& l, FloatRelType frt, const LinFloatExpr& r);
         /// Post propagator for relation (if \a t is false for negated relation)
         void post(Home home, bool t) const;
         /// Post reified propagator for relation (if \a t is false for negated relation)
@@ -1741,7 +1741,7 @@ namespace Gecode {
 
     /** \brief Post constraint \f$\{x_0,\dots,x_{n-1}\}=y\f$
      */
-    void values(Home home, const IntVarArgs& x, IntSet y, IntPropLevel ipl = IPL_DEF);
+    void values(Home home, const IntVarArgs& x, const IntSet& y, IntPropLevel ipl = IPL_DEF);
     //@}
 
 #ifdef GECODE_HAS_SET_VARS
@@ -1880,7 +1880,7 @@ namespace Gecode {
          *            parameters \a w and \a h doesn't match the size
          *            of the array \a a.
          */
-        Matrix(A a, int w, int h);
+        Matrix(const A& a, int w, int h);
 
         /** \brief Basic constructor
          *
@@ -1894,7 +1894,7 @@ namespace Gecode {
          *            parameter \a n doesn't match the size
          *            of the array \a a.
          */
-        Matrix(A a, int n);
+        Matrix(const A& a, int n);
 
         /// Return the width of the matrix
         int width(void) const;

@@ -143,7 +143,7 @@ namespace Test {
                 }
             };
             TreeSpace(std::shared_ptr<const Graph> g, bool max)
-                : graph(g), maximize(max), vertex(0), ceiling(std::numeric_limits<int>::max()) {
+                : graph(std::move(g)), maximize(max), vertex(0), ceiling(std::numeric_limits<int>::max()) {
                 (void)new (*this) Decisions(*this);
             }
             TreeSpace(TreeSpace& s)
@@ -2398,7 +2398,8 @@ namespace Test {
         class FloatMinObjective : public FloatMinimizeSpace {
         public:
             FloatVar x;
-            FloatMinObjective(FloatVal v, FloatNum s = 0.0) : FloatMinimizeSpace(s), x(*this, v.min(), v.max()) {}
+            FloatMinObjective(const FloatVal& v, FloatNum s = 0.0)
+                : FloatMinimizeSpace(s), x(*this, v.min(), v.max()) {}
             FloatMinObjective(FloatMinObjective& s) : FloatMinimizeSpace(s) {
                 x.update(*this, s.x);
             }
@@ -2416,7 +2417,8 @@ namespace Test {
         class FloatMaxObjective : public FloatMaximizeSpace {
         public:
             FloatVar x;
-            FloatMaxObjective(FloatVal v, FloatNum s = 0.0) : FloatMaximizeSpace(s), x(*this, v.min(), v.max()) {}
+            FloatMaxObjective(const FloatVal& v, FloatNum s = 0.0)
+                : FloatMaximizeSpace(s), x(*this, v.min(), v.max()) {}
             FloatMaxObjective(FloatMaxObjective& s) : FloatMaximizeSpace(s) {
                 x.update(*this, s.x);
             }
@@ -2458,7 +2460,7 @@ namespace Test {
         private:
             template <class Objective>
             static bool
-            admitted(FloatVal candidate, FloatNum step, const Objective& incumbent) {
+            admitted(const FloatVal& candidate, FloatNum step, const Objective& incumbent) {
                 Objective c(candidate, step);
                 c.constrain(incumbent);
                 return c.status() != SS_FAILED;

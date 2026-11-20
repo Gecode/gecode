@@ -269,12 +269,12 @@ namespace Gecode { namespace Float { namespace Rel {
 
     template <class View, class CtrlView, ReifyMode rm>
     forceinline
-    ReEqFloat<View, CtrlView, rm>::ReEqFloat(Home home, View x, FloatVal c0, CtrlView b)
+    ReEqFloat<View, CtrlView, rm>::ReEqFloat(Home home, View x, const FloatVal& c0, CtrlView b)
         : Int::ReUnaryPropagator<View, PC_FLOAT_BND, CtrlView>(home, x, b), c(c0) {}
 
     template <class View, class CtrlView, ReifyMode rm>
     ExecStatus
-    ReEqFloat<View, CtrlView, rm>::post(Home home, View x, FloatVal c, CtrlView b) {
+    ReEqFloat<View, CtrlView, rm>::post(Home home, View x, const FloatVal& c, CtrlView b) {
         if (b.one()) {
             if (rm != RM_PMI)
                 GECODE_ME_CHECK(x.eq(home, c));

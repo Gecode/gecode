@@ -37,12 +37,12 @@ namespace Gecode {
         : s(s0) {}
 
     forceinline
-    SetAssign::SetAssign(Select s0, Rnd r)
+    SetAssign::SetAssign(Select s0, const Rnd& r)
         : ValBranch<SetVar>(r), s(s0) {}
 
     forceinline
     SetAssign::SetAssign(SetBranchVal v, SetBranchCommit c)
-        : ValBranch<SetVar>(v, c), s(SEL_VAL_COMMIT) {}
+        : ValBranch<SetVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline SetAssign::Select
     SetAssign::select(void) const {
@@ -80,18 +80,18 @@ namespace Gecode {
     }
 
     inline SetAssign
-    SET_ASSIGN_RND_INC(Rnd r) {
+    SET_ASSIGN_RND_INC(const Rnd& r) {
         return SetAssign(SetAssign::SEL_RND_INC, r);
     }
 
     inline SetAssign
-    SET_ASSIGN_RND_EXC(Rnd r) {
+    SET_ASSIGN_RND_EXC(const Rnd& r) {
         return SetAssign(SetAssign::SEL_RND_EXC, r);
     }
 
     inline SetAssign
     SET_ASSIGN(SetBranchVal v, SetBranchCommit c) {
-        return SetAssign(v, c);
+        return SetAssign(std::move(v), std::move(c));
     }
 
 } // namespace Gecode

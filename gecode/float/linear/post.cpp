@@ -41,7 +41,7 @@
 namespace Gecode { namespace Float { namespace Linear {
 
     void
-    estimate(Term* t, int n, FloatVal c, FloatNum& l, FloatNum& u) {
+    estimate(Term* t, int n, const FloatVal& c, FloatNum& l, FloatNum& u) {
         FloatVal est = c;
         for (int i = n; i--;)
             est += t[i].a * t[i].x.domain();
@@ -60,7 +60,7 @@ namespace Gecode { namespace Float { namespace Linear {
     }
 
     forceinline bool
-    overflow(Term* t, int n, FloatVal c) {
+    overflow(Term* t, int n, const FloatVal& c) {
         FloatVal est = c;
         for (int i = n; i--;)
             est += t[i].a * t[i].x.domain();
@@ -100,7 +100,7 @@ namespace Gecode { namespace Float { namespace Linear {
      */
     template <class View>
     forceinline void
-    post_nary(Home home, ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, FloatVal c) {
+    post_nary(Home home, ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, const FloatVal& c) {
         switch (frt) {
         case FRT_EQ:
             GECODE_ES_FAIL((Eq<View, View>::post(home, x, y, c)));
@@ -272,7 +272,7 @@ namespace Gecode { namespace Float { namespace Linear {
     }
 
     void
-    post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r) {
+    post(Home home, Term* t, int n, FloatRelType frt, const FloatVal& c, Reify r) {
         Region re;
         rel(home, extend(home, re, t, n), frt, c, r);
         post_linear(home, t, n, FRT_EQ, 0.0);

@@ -1797,7 +1797,7 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int w, IntVar y, int h, IntVar z,
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, IntVar z,
                                    IntPropLevel ipl = IPL_DEF);
     /** \brief Post domain consistent propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
      *
@@ -1812,8 +1812,8 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int xoff, int w, IntVar y, int yoff, int h,
-                                   IntVar z, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff,
+                                   int h, IntVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
      *
      * If \a a is regarded as a two-dimensional array in row-major
@@ -1826,7 +1826,7 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int w, IntVar y, int h, BoolVar z,
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int w, IntVar y, int h, BoolVar z,
                                    IntPropLevel ipl = IPL_DEF);
     /** \brief Post domain consistent propagator for \f$ a_{x+xoff+w\cdot (y+yoff)}=z\f$
      *
@@ -1841,8 +1841,8 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      * \f$ w\cdot h\neq|a|\f$.
      */
-    GECODE_INT_EXPORT void element(Home home, IntSharedArray a, IntVar x, int xoff, int w, IntVar y, int yoff, int h,
-                                   BoolVar z, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void element(Home home, const IntSharedArray& a, IntVar x, int xoff, int w, IntVar y, int yoff,
+                                   int h, BoolVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
      *
      * If \a a is regarded as a two-dimensional array in row-major
@@ -2954,7 +2954,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, const IntVarArgs& x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, const IntVarArgs& x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \brief Post domain consistent propagator for extensional constraint described by a DFA
@@ -2968,7 +2968,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, const BoolVarArgs& x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, const BoolVarArgs& x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \brief Post an open regular-language constraint
@@ -2981,7 +2981,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, OpenIntVarList x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, OpenIntVarList x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /**
      * \brief Post an open regular-language constraint on Boolean variables
@@ -2992,7 +2992,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntExt
      */
-    GECODE_INT_EXPORT void extensional(Home home, OpenBoolVarList x, DFA d, IntPropLevel ipl = IPL_DEF);
+    GECODE_INT_EXPORT void extensional(Home home, OpenBoolVarList x, const DFA& d, IntPropLevel ipl = IPL_DEF);
 
     /** \brief Post propagator for \f$x\in t\f$.
      *
@@ -5026,7 +5026,7 @@ namespace Gecode {
          */
         GECODE_INT_EXPORT
         IntAction(Home home, const IntVarArgs& x, double d = 1.0, bool p = true, bool f = true,
-                  IntBranchMerit bm = nullptr);
+                  const IntBranchMerit& bm = nullptr);
         /**
          * \brief Initialize for integer variables \a x with decay factor \a d
          *
@@ -5041,7 +5041,7 @@ namespace Gecode {
          *
          */
         GECODE_INT_EXPORT void init(Home home, const IntVarArgs& x, double d = 1.0, bool p = true, bool f = true,
-                                    IntBranchMerit bm = nullptr);
+                                    const IntBranchMerit& bm = nullptr);
     };
 
     /**
@@ -5074,7 +5074,7 @@ namespace Gecode {
          */
         GECODE_INT_EXPORT
         BoolAction(Home home, const BoolVarArgs& x, double d = 1.0, bool p = true, bool f = true,
-                   BoolBranchMerit bm = nullptr);
+                   const BoolBranchMerit& bm = nullptr);
         /**
          * \brief Initialize for Boolean variables \a x with decay factor \a d
          *
@@ -5089,7 +5089,7 @@ namespace Gecode {
          *
          */
         GECODE_INT_EXPORT void init(Home home, const BoolVarArgs& x, double d = 1.0, bool p = true, bool f = true,
-                                    BoolBranchMerit bm = nullptr);
+                                    const BoolBranchMerit& bm = nullptr);
     };
 
 } // namespace Gecode
@@ -5126,7 +5126,7 @@ namespace Gecode {
          *
          */
         GECODE_INT_EXPORT
-        IntCHB(Home home, const IntVarArgs& x, IntBranchMerit bm = nullptr);
+        IntCHB(Home home, const IntVarArgs& x, const IntBranchMerit& bm = nullptr);
         /**
          * \brief Initialize for integer variables \a x
          *
@@ -5138,7 +5138,7 @@ namespace Gecode {
          * action storage has been constructed with the default constructor.
          *
          */
-        GECODE_INT_EXPORT void init(Home home, const IntVarArgs& x, IntBranchMerit bm = nullptr);
+        GECODE_INT_EXPORT void init(Home home, const IntVarArgs& x, const IntBranchMerit& bm = nullptr);
     };
 
     /**
@@ -5169,7 +5169,7 @@ namespace Gecode {
          *
          */
         GECODE_INT_EXPORT
-        BoolCHB(Home home, const BoolVarArgs& x, BoolBranchMerit bm = nullptr);
+        BoolCHB(Home home, const BoolVarArgs& x, const BoolBranchMerit& bm = nullptr);
         /**
          * \brief Initialize for Boolean variables \a x
          *
@@ -5181,7 +5181,7 @@ namespace Gecode {
          * action storage has been constructed with the default constructor.
          *
          */
-        GECODE_INT_EXPORT void init(Home home, const BoolVarArgs& x, BoolBranchMerit bm = nullptr);
+        GECODE_INT_EXPORT void init(Home home, const BoolVarArgs& x, const BoolBranchMerit& bm = nullptr);
     };
 
 } // namespace Gecode
@@ -5273,17 +5273,17 @@ namespace Gecode {
         /// Initialize with strategy SEL_NONE
         IntVarBranch(void);
         /// Initialize with random number generator \a r
-        IntVarBranch(Rnd r);
+        IntVarBranch(const Rnd& r);
         /// Initialize with selection strategy \a s and tie-break limit function \a t
         IntVarBranch(Select s, BranchTbl t);
         /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
         IntVarBranch(Select s, double d, BranchTbl t);
         /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
-        IntVarBranch(Select s, IntAFC a, BranchTbl t);
+        IntVarBranch(Select s, const IntAFC& a, BranchTbl t);
         /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
-        IntVarBranch(Select s, IntAction a, BranchTbl t);
+        IntVarBranch(Select s, const IntAction& a, BranchTbl t);
         /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
-        IntVarBranch(Select s, IntCHB c, BranchTbl t);
+        IntVarBranch(Select s, const IntCHB& c, BranchTbl t);
         /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
         IntVarBranch(Select s, IntBranchMerit mf, BranchTbl t);
         /// Return selection strategy
@@ -5323,17 +5323,17 @@ namespace Gecode {
         /// Initialize with strategy SEL_NONE
         BoolVarBranch(void);
         /// Initialize with random number generator \a r
-        BoolVarBranch(Rnd r);
+        BoolVarBranch(const Rnd& r);
         /// Initialize with selection strategy \a s and tie-break limit function \a t
         BoolVarBranch(Select s, BranchTbl t);
         /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
         BoolVarBranch(Select s, double d, BranchTbl t);
         /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
-        BoolVarBranch(Select s, BoolAFC a, BranchTbl t);
+        BoolVarBranch(Select s, const BoolAFC& a, BranchTbl t);
         /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
-        BoolVarBranch(Select s, BoolAction a, BranchTbl t);
+        BoolVarBranch(Select s, const BoolAction& a, BranchTbl t);
         /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
-        BoolVarBranch(Select s, BoolCHB c, BranchTbl t);
+        BoolVarBranch(Select s, const BoolCHB& c, BranchTbl t);
         /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
         BoolVarBranch(Select s, BoolBranchMerit mf, BranchTbl t);
         /// Return selection strategy
@@ -5350,7 +5350,7 @@ namespace Gecode {
     /// Select first unassigned variable
     IntVarBranch INT_VAR_NONE(void);
     /// Select random variable (uniform distribution, for tie breaking)
-    IntVarBranch INT_VAR_RND(Rnd r);
+    IntVarBranch INT_VAR_RND(const Rnd& r);
     /// Select variable with least merit according to branch merit function \a bm
     IntVarBranch INT_VAR_MERIT_MIN(IntBranchMerit bm, BranchTbl tbl = nullptr);
     /// Select variable with highest merit according to branch merit function \a bm
@@ -5362,25 +5362,25 @@ namespace Gecode {
     /// Select variable with smallest accumulated failure count with decay factor \a d
     IntVarBranch INT_VAR_AFC_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with smallest accumulated failure count
-    IntVarBranch INT_VAR_AFC_MIN(IntAFC a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_AFC_MIN(const IntAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count with decay factor \a d
     IntVarBranch INT_VAR_AFC_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count
-    IntVarBranch INT_VAR_AFC_MAX(IntAFC a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_AFC_MAX(const IntAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with lowest action with decay factor \a d
     IntVarBranch INT_VAR_ACTION_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with lowest action
-    IntVarBranch INT_VAR_ACTION_MIN(IntAction a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_ACTION_MIN(const IntAction& a, BranchTbl tbl = nullptr);
     /// Select variable with highest action with decay factor \a d
     IntVarBranch INT_VAR_ACTION_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with highest action
-    IntVarBranch INT_VAR_ACTION_MAX(IntAction a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_ACTION_MAX(const IntAction& a, BranchTbl tbl = nullptr);
     /// Select variable with lowest CHB Q-score
-    IntVarBranch INT_VAR_CHB_MIN(IntCHB c, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_CHB_MIN(const IntCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with lowest CHB Q-score
     IntVarBranch INT_VAR_CHB_MIN(BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score
-    IntVarBranch INT_VAR_CHB_MAX(IntCHB c, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_CHB_MAX(const IntCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score
     IntVarBranch INT_VAR_CHB_MAX(BranchTbl tbl = nullptr);
     /// Select variable with smallest min
@@ -5402,25 +5402,25 @@ namespace Gecode {
     /// Select variable with smallest accumulated failure count divided by domain size with decay factor \a d
     IntVarBranch INT_VAR_AFC_SIZE_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with smallest accumulated failure count divided by domain size
-    IntVarBranch INT_VAR_AFC_SIZE_MIN(IntAFC a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_AFC_SIZE_MIN(const IntAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count divided by domain size with decay factor \a d
     IntVarBranch INT_VAR_AFC_SIZE_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count divided by domain size
-    IntVarBranch INT_VAR_AFC_SIZE_MAX(IntAFC a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_AFC_SIZE_MAX(const IntAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with smallest action divided by domain size with decay factor \a d
     IntVarBranch INT_VAR_ACTION_SIZE_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with smallest action divided by domain size
-    IntVarBranch INT_VAR_ACTION_SIZE_MIN(IntAction a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_ACTION_SIZE_MIN(const IntAction& a, BranchTbl tbl = nullptr);
     /// Select variable with largest action divided by domain size with decay factor \a d
     IntVarBranch INT_VAR_ACTION_SIZE_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with largest action divided by domain size
-    IntVarBranch INT_VAR_ACTION_SIZE_MAX(IntAction a, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_ACTION_SIZE_MAX(const IntAction& a, BranchTbl tbl = nullptr);
     /// Select variable with smallest CHB Q-score divided by domain size
-    IntVarBranch INT_VAR_CHB_SIZE_MIN(IntCHB c, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_CHB_SIZE_MIN(const IntCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with smallest CHB Q-score divided by domain size
     IntVarBranch INT_VAR_CHB_SIZE_MIN(BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score divided by domain size
-    IntVarBranch INT_VAR_CHB_SIZE_MAX(IntCHB c, BranchTbl tbl = nullptr);
+    IntVarBranch INT_VAR_CHB_SIZE_MAX(const IntCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score divided by domain size
     IntVarBranch INT_VAR_CHB_SIZE_MAX(BranchTbl tbl = nullptr);
     /** \brief Select variable with smallest min-regret
@@ -5451,7 +5451,7 @@ namespace Gecode {
     /// Select first unassigned variable
     BoolVarBranch BOOL_VAR_NONE(void);
     /// Select random variable (uniform distribution, for tie breaking)
-    BoolVarBranch BOOL_VAR_RND(Rnd r);
+    BoolVarBranch BOOL_VAR_RND(const Rnd& r);
     /// Select variable with least merit according to branch merit function \a bm
     BoolVarBranch BOOL_VAR_MERIT_MIN(BoolBranchMerit bm, BranchTbl tbl = nullptr);
     /// Select variable with highest merit according to branch merit function \a bm
@@ -5463,25 +5463,25 @@ namespace Gecode {
     /// Select variable with smallest accumulated failure count with decay factor \a d
     BoolVarBranch BOOL_VAR_AFC_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with smallest accumulated failure count
-    BoolVarBranch BOOL_VAR_AFC_MIN(BoolAFC a, BranchTbl tbl = nullptr);
+    BoolVarBranch BOOL_VAR_AFC_MIN(const BoolAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count with decay factor \a d
     BoolVarBranch BOOL_VAR_AFC_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with largest accumulated failure count
-    BoolVarBranch BOOL_VAR_AFC_MAX(BoolAFC a, BranchTbl tbl = nullptr);
+    BoolVarBranch BOOL_VAR_AFC_MAX(const BoolAFC& a, BranchTbl tbl = nullptr);
     /// Select variable with lowest action with decay factor \a d
     BoolVarBranch BOOL_VAR_ACTION_MIN(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with lowest action
-    BoolVarBranch BOOL_VAR_ACTION_MIN(BoolAction a, BranchTbl tbl = nullptr);
+    BoolVarBranch BOOL_VAR_ACTION_MIN(const BoolAction& a, BranchTbl tbl = nullptr);
     /// Select variable with highest action with decay factor \a d
     BoolVarBranch BOOL_VAR_ACTION_MAX(double d = 1.0, BranchTbl tbl = nullptr);
     /// Select variable with highest action
-    BoolVarBranch BOOL_VAR_ACTION_MAX(BoolAction a, BranchTbl tbl = nullptr);
+    BoolVarBranch BOOL_VAR_ACTION_MAX(const BoolAction& a, BranchTbl tbl = nullptr);
     /// Select variable with lowest CHB Q-score
-    BoolVarBranch BOOL_VAR_CHB_MIN(BoolCHB c, BranchTbl tbl = nullptr);
+    BoolVarBranch BOOL_VAR_CHB_MIN(const BoolCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with lowest CHB Q-score
     BoolVarBranch BOOL_VAR_CHB_MIN(BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score
-    BoolVarBranch BOOL_VAR_CHB_MAX(BoolCHB c, BranchTbl tbl = nullptr);
+    BoolVarBranch BOOL_VAR_CHB_MAX(const BoolCHB& c, BranchTbl tbl = nullptr);
     /// Select variable with largest CHB Q-score
     BoolVarBranch BOOL_VAR_CHB_MAX(BranchTbl tbl = nullptr);
     //@}
@@ -5522,7 +5522,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s
         IntValBranch(Select s = SEL_MIN);
         /// Initialize with random number generator \a r
-        IntValBranch(Rnd r);
+        IntValBranch(const Rnd& r);
         /// Initialize with value function \a f and commit function \a c
         IntValBranch(IntBranchVal v, IntBranchCommit c);
         /// Return selection strategy
@@ -5552,7 +5552,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s
         BoolValBranch(Select s = SEL_MIN);
         /// Initialize with random number generator \a r
-        BoolValBranch(Rnd r);
+        BoolValBranch(const Rnd& r);
         /// Initialize with value function \a f and commit function \a c
         BoolValBranch(BoolBranchVal v, BoolBranchCommit c);
         /// Return selection strategy
@@ -5571,7 +5571,7 @@ namespace Gecode {
     /// Select largest value
     IntValBranch INT_VAL_MAX(void);
     /// Select random value
-    IntValBranch INT_VAL_RND(Rnd r);
+    IntValBranch INT_VAL_RND(const Rnd& r);
     /// Select values not greater than mean of smallest and largest value
     IntValBranch INT_VAL_SPLIT_MIN(void);
     /// Select values greater than mean of smallest and largest value
@@ -5597,7 +5597,7 @@ namespace Gecode {
     /// Select largest value
     BoolValBranch BOOL_VAL_MAX(void);
     /// Select random value
-    BoolValBranch BOOL_VAL_RND(Rnd r);
+    BoolValBranch BOOL_VAL_RND(const Rnd& r);
     /**
      * \brief Select value as defined by the value function \a v and commit function \a c
      * Uses a commit function as default that posts the constraints that
@@ -5637,7 +5637,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s
         IntAssign(Select s = SEL_MIN);
         /// Initialize with random number generator \a r
-        IntAssign(Rnd r);
+        IntAssign(const Rnd& r);
         /// Initialize with value function \a f and commit function \a c
         IntAssign(IntBranchVal v, IntBranchCommit c);
         /// Return selection strategy
@@ -5667,7 +5667,7 @@ namespace Gecode {
         /// Initialize with selection strategy \a s
         BoolAssign(Select s = SEL_MIN);
         /// Initialize with random number generator \a r
-        BoolAssign(Rnd r);
+        BoolAssign(const Rnd& r);
         /// Initialize with value function \a f and commit function \a c
         BoolAssign(BoolBranchVal v, BoolBranchCommit c);
         /// Return selection strategy
@@ -5686,7 +5686,7 @@ namespace Gecode {
     /// Select largest value
     IntAssign INT_ASSIGN_MAX(void);
     /// Select random value
-    IntAssign INT_ASSIGN_RND(Rnd r);
+    IntAssign INT_ASSIGN_RND(const Rnd& r);
     /**
      * \brief Select value as defined by the value function \a v and commit function \a c
      *
@@ -5700,7 +5700,7 @@ namespace Gecode {
     /// Select largest value
     BoolAssign BOOL_ASSIGN_MAX(void);
     /// Select random value
-    BoolAssign BOOL_ASSIGN_RND(Rnd r);
+    BoolAssign BOOL_ASSIGN_RND(const Rnd& r);
     /**
      * \brief Select value as defined by the value function \a v and commit function \a c
      *
@@ -5721,21 +5721,21 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, IntVarBranch vars, IntValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, IntVarBranch vars, const IntValBranch& vals,
                                   IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, IntValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, const IntValBranch& vals,
                                   IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, IntVar x, IntValBranch vals, IntVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void branch(Home home, IntVar x, const IntValBranch& vals, IntVarValPrint vvp = nullptr);
     /**
      * \brief Branch over the eventual integer list \a x
      *
@@ -5773,11 +5773,11 @@ namespace Gecode {
      * when posting; otherwise Int::UnknownBranching is thrown.
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, OpenIntVarList x, IntVarBranch vars, IntValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, OpenIntVarList x, IntVarBranch vars, const IntValBranch& vals,
                                   IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /// Branch over an open integer list with tie-breaking selectors
-    GECODE_INT_EXPORT void branch(Home home, OpenIntVarList x, TieBreak<IntVarBranch> vars, IntValBranch vals,
-                                  IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void branch(Home home, OpenIntVarList x, const TieBreak<IntVarBranch>& vars,
+                                  const IntValBranch& vals, IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Branch over an open Boolean list with standard selectors
      *
@@ -5785,72 +5785,74 @@ namespace Gecode {
      * for integers.
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, OpenBoolVarList x, BoolVarBranch vars, BoolValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, OpenBoolVarList x, BoolVarBranch vars, const BoolValBranch& vals,
                                   BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
     /// Branch over an open Boolean list with tie-breaking selectors
-    GECODE_INT_EXPORT void branch(Home home, OpenBoolVarList x, TieBreak<BoolVarBranch> vars, BoolValBranch vals,
-                                  BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void branch(Home home, OpenBoolVarList x, const TieBreak<BoolVarBranch>& vars,
+                                  const BoolValBranch& vals, BoolBranchFilter bf = nullptr,
+                                  BoolVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, BoolVarBranch vars, BoolValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, BoolVarBranch vars, const BoolValBranch& vals,
                                   BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars, BoolValBranch vals,
-                                  BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars,
+                                  const BoolValBranch& vals, BoolBranchFilter bf = nullptr,
+                                  BoolVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, BoolVar x, BoolValBranch vals, BoolVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void branch(Home home, BoolVar x, const BoolValBranch& vals, BoolVarValPrint vvp = nullptr);
 
     /**
      * \brief Assign all \a x with variable selection \a vars with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, const IntVarArgs& x, IntVarBranch vars, IntAssign vals,
+    GECODE_INT_EXPORT void assign(Home home, const IntVarArgs& x, const IntVarBranch& vars, const IntAssign& vals,
                                   IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, IntAssign vals,
+    GECODE_INT_EXPORT void assign(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, const IntAssign& vals,
                                   IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Assign \a x with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, IntVar x, IntAssign vals, IntVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void assign(Home home, IntVar x, const IntAssign& vals, IntVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with variable selection \a vars with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, const BoolVarArgs& x, BoolVarBranch vars, BoolAssign vals,
+    GECODE_INT_EXPORT void assign(Home home, const BoolVarArgs& x, const BoolVarBranch& vars, const BoolAssign& vals,
                                   BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with tie-breaking variable selection \a vars and value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars, BoolAssign vals,
+    GECODE_INT_EXPORT void assign(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars, const BoolAssign& vals,
                                   IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Assign \a x with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void assign(Home home, BoolVar x, BoolAssign vals, BoolVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void assign(Home home, BoolVar x, const BoolAssign& vals, BoolVarValPrint vvp = nullptr);
 
 } // namespace Gecode
 
@@ -5861,14 +5863,14 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    void branch(Home home, const IntVarArgs& x, IntValBranch vals, IntBranchFilter bf = nullptr,
+    void branch(Home home, const IntVarArgs& x, const IntValBranch& vals, IntBranchFilter bf = nullptr,
                 IntVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    void branch(Home home, const BoolVarArgs& x, BoolValBranch vals, BoolBranchFilter bf = nullptr,
+    void branch(Home home, const BoolVarArgs& x, const BoolValBranch& vals, BoolBranchFilter bf = nullptr,
                 BoolVarValPrint vvp = nullptr);
 
     /**
@@ -5876,14 +5878,14 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    void assign(Home home, const IntVarArgs& x, IntAssign vals, IntBranchFilter bf = nullptr,
+    void assign(Home home, const IntVarArgs& x, const IntAssign& vals, IntBranchFilter bf = nullptr,
                 IntVarValPrint vvp = nullptr);
     /**
      * \brief Assign all \a x with value selection \a vals
      *
      * \ingroup TaskModelIntBranch
      */
-    void assign(Home home, const BoolVarArgs& x, BoolAssign vals, BoolBranchFilter bf = nullptr,
+    void assign(Home home, const BoolVarArgs& x, const BoolAssign& vals, BoolBranchFilter bf = nullptr,
                 BoolVarValPrint vvp = nullptr);
 
 } // namespace Gecode
@@ -6011,7 +6013,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, IntVarBranch vars, IntValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, IntVarBranch vars, const IntValBranch& vals,
                                   const Symmetries& syms, IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with tie-breaking variable selection \a
@@ -6024,7 +6026,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, IntValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, const IntValBranch& vals,
                                   const Symmetries& syms, IntBranchFilter bf = nullptr, IntVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with variable selection \a vars and value
@@ -6037,7 +6039,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, BoolVarBranch vars, BoolValBranch vals,
+    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, BoolVarBranch vars, const BoolValBranch& vals,
                                   const Symmetries& syms, BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
     /**
      * \brief Branch over \a x with tie-breaking variable selection \a
@@ -6050,8 +6052,9 @@ namespace Gecode {
      *
      * \ingroup TaskModelIntBranch
      */
-    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars, BoolValBranch vals,
-                                  const Symmetries& syms, BoolBranchFilter bf = nullptr, BoolVarValPrint vvp = nullptr);
+    GECODE_INT_EXPORT void branch(Home home, const BoolVarArgs& x, TieBreak<BoolVarBranch> vars,
+                                  const BoolValBranch& vals, const Symmetries& syms, BoolBranchFilter bf = nullptr,
+                                  BoolVarValPrint vvp = nullptr);
 
 #ifdef GECODE_HAS_CBS
 
@@ -6126,7 +6129,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelInt
      */
-    GECODE_INT_EXPORT void relax(Home home, const IntVarArgs& x, const IntVarArgs& sx, Rnd r, double p);
+    GECODE_INT_EXPORT void relax(Home home, const IntVarArgs& x, const IntVarArgs& sx, const Rnd& r, double p);
 
     /*
      * \brief Relaxed assignment of variables in \a x from values in \a sx
@@ -6149,7 +6152,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelInt
      */
-    GECODE_INT_EXPORT void relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx, Rnd r, double p);
+    GECODE_INT_EXPORT void relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx, const Rnd& r, double p);
 
 } // namespace Gecode
 
@@ -6305,7 +6308,7 @@ namespace Gecode {
      * \brief Create a tracer for integer variables
      * \ingroup TaskIntTrace
      */
-    GECODE_INT_EXPORT void trace(Home home, const IntVarArgs& x, TraceFilter tf,
+    GECODE_INT_EXPORT void trace(Home home, const IntVarArgs& x, const TraceFilter& tf,
                                  int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
                                  IntTracer& t = StdIntTracer::def);
     /**
@@ -6319,7 +6322,7 @@ namespace Gecode {
      * \brief Create a tracer for Boolean Variables
      * \ingroup TaskIntTrace
      */
-    GECODE_INT_EXPORT void trace(Home home, const BoolVarArgs& x, TraceFilter tf,
+    GECODE_INT_EXPORT void trace(Home home, const BoolVarArgs& x, const TraceFilter& tf,
                                  int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
                                  BoolTracer& t = StdBoolTracer::def);
     /**

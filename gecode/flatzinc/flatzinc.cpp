@@ -122,15 +122,15 @@ namespace Gecode { namespace FlatZinc {
                        TieBreak<FloatVarBranch> float_varsel0, FloatValBranch float_valsel0
 #endif
                        )
-            : Brancher(home), done(false), int_varsel(int_varsel0), int_valsel(int_valsel0), bool_varsel(bool_varsel0),
-              bool_valsel(bool_valsel0)
+            : Brancher(home), done(false), int_varsel(std::move(int_varsel0)), int_valsel(std::move(int_valsel0)),
+              bool_varsel(std::move(bool_varsel0)), bool_valsel(std::move(bool_valsel0))
 #ifdef GECODE_HAS_SET_VARS
               ,
-              set_varsel(set_varsel0), set_valsel(set_valsel0)
+              set_varsel(std::move(set_varsel0)), set_valsel(std::move(set_valsel0))
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
               ,
-              float_varsel(float_varsel0), float_valsel(float_valsel0)
+              float_varsel(std::move(float_varsel0)), float_valsel(std::move(float_valsel0))
 #endif
         {
         }
@@ -255,14 +255,15 @@ namespace Gecode { namespace FlatZinc {
              TieBreak<FloatVarBranch> float_varsel, FloatValBranch float_valsel
 #endif
         ) {
-            (void)new (home) AuxVarBrancher(home, int_varsel, int_valsel, bool_varsel, bool_valsel
+            (void)new (home) AuxVarBrancher(home, std::move(int_varsel), std::move(int_valsel), std::move(bool_varsel),
+                                            std::move(bool_valsel)
 #ifdef GECODE_HAS_SET_VARS
-                                            ,
-                                            set_varsel, set_valsel
+                                                ,
+                                            std::move(set_varsel), std::move(set_valsel)
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-                                            ,
-                                            float_varsel, float_valsel
+                                                                       ,
+                                            std::move(float_varsel), std::move(float_valsel)
 #endif
             );
         }
@@ -284,7 +285,7 @@ namespace Gecode { namespace FlatZinc {
                 : r0(r00), r1(r10), n(n0) {}
         };
         std::vector<BI> v;
-        BranchInformationO(std::vector<BI> v0) : v(v0) {}
+        BranchInformationO(std::vector<BI> v0) : v(std::move(v0)) {}
 
     public:
         BranchInformationO(void) {}
@@ -402,7 +403,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     TieBreak<IntVarBranch>
-    annotation_to_int_var_branch(AST::Node* ann, Rnd rnd, double decay) {
+    annotation_to_int_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "input_order")
                 return TieBreak<IntVarBranch>(INT_VAR_NONE());
@@ -451,7 +452,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     IntValBranch
-    annotation_to_int_val_branch(AST::Node* ann, std::string& r0, std::string& r1, Rnd rnd) {
+    annotation_to_int_val_branch(AST::Node* ann, std::string& r0, std::string& r1, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min") {
                 r0 = "=";
@@ -512,7 +513,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     IntAssign
-    annotation_to_int_assign(AST::Node* ann, Rnd rnd) {
+    annotation_to_int_assign(AST::Node* ann, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min")
                 return INT_ASSIGN_MIN();
@@ -531,7 +532,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     TieBreak<BoolVarBranch>
-    annotation_to_bool_var_branch(AST::Node* ann, Rnd rnd, double decay) {
+    annotation_to_bool_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if ((s->id == "input_order") || (s->id == "first_fail") || (s->id == "anti_first_fail") ||
                 (s->id == "smallest") || (s->id == "largest") || (s->id == "max_regret"))
@@ -556,7 +557,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     BoolValBranch
-    annotation_to_bool_val_branch(AST::Node* ann, std::string& r0, std::string& r1, Rnd rnd) {
+    annotation_to_bool_val_branch(AST::Node* ann, std::string& r0, std::string& r1, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min") {
                 r0 = "=";
@@ -617,7 +618,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     BoolAssign
-    annotation_to_bool_assign(AST::Node* ann, Rnd rnd) {
+    annotation_to_bool_assign(AST::Node* ann, const Rnd& rnd) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if ((s->id == "indomain_min") || (s->id == "indomain_median"))
                 return BOOL_ASSIGN_MIN();
@@ -635,7 +636,7 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_SET_VARS
     SetVarBranch
-    annotation_to_set_var_branch(AST::Node* ann, Rnd rnd, double decay) {
+    annotation_to_set_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "input_order")
                 return SET_VAR_NONE();
@@ -674,7 +675,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     SetValBranch
-    annotation_to_set_val_branch(AST::Node* ann, std::string r0, std::string r1, Rnd rnd) {
+    annotation_to_set_val_branch(AST::Node* ann, std::string r0, std::string r1, const Rnd& rnd) {
         (void)rnd;
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "indomain_min") {
@@ -709,7 +710,7 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_FLOAT_VARS
     TieBreak<FloatVarBranch>
-    annotation_to_float_var_branch(AST::Node* ann, Rnd rnd, double decay) {
+    annotation_to_float_var_branch(AST::Node* ann, const Rnd& rnd, double decay) {
         if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
             if (s->id == "input_order")
                 return TieBreak<FloatVarBranch>(FLOAT_VAR_NONE());
@@ -1796,7 +1797,7 @@ namespace Gecode { namespace FlatZinc {
     };
 
     void
-    print_int_var(std::ostream& os, const std::string name, const Int::IntView& x) {
+    print_int_var(std::ostream& os, const std::string& name, const Int::IntView& x) {
         os << "var ";
         if (x.assigned()) {
             os << "int: " << name << " = " << x.val() << ";";
@@ -1817,7 +1818,7 @@ namespace Gecode { namespace FlatZinc {
         os << "\n";
     }
     void
-    print_bool_var(std::ostream& os, const std::string name, const BoolVar& b) {
+    print_bool_var(std::ostream& os, const std::string& name, const BoolVar& b) {
         os << "var bool: " << name;
         if (b.assigned())
             os << " = " << (b.val() ? "true" : "false");
@@ -1825,7 +1826,7 @@ namespace Gecode { namespace FlatZinc {
     }
 #ifdef GECODE_HAS_FLOAT_VARS
     void
-    print_float_var(std::ostream& os, const std::string name, const Float::FloatView& f) {
+    print_float_var(std::ostream& os, const std::string& name, const Float::FloatView& f) {
         os << "var ";
         if (f.assigned())
             os << "float: " << name << " = " << f.med() << ";";

@@ -456,7 +456,7 @@ public:
         post_no_overload();
     }
     void
-    branch(unsigned int p, Rnd r) {
+    branch(unsigned int p, const Rnd& r) {
         switch (p) {
         case 0U:
             Gecode::branch(*this, start, INT_VAR_MIN_MIN(), INT_VAL_MIN());

@@ -34,12 +34,12 @@ namespace Gecode { namespace Int { namespace Count {
 
     template <class VX, class VY>
     forceinline
-    LqInt<VX, VY>::LqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c)
+    LqInt<VX, VY>::LqInt(Home home, ViewArray<VX>& x, int n_s, const VY& y, int c)
         : IntBase<VX, VY>(home, x, n_s, y, c) {}
 
     template <class VX, class VY>
     ExecStatus
-    LqInt<VX, VY>::post(Home home, ViewArray<VX>& x, VY y, int c) {
+    LqInt<VX, VY>::post(Home home, ViewArray<VX>& x, const VY& y, int c) {
         // Eliminate decided views
         int n_x = x.size();
         for (int i = n_x; i--;)
