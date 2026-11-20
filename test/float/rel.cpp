@@ -55,7 +55,8 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             FloatVarXY(Gecode::FloatRelType frt0, int n, Gecode::FloatNum st)
-                : Test("Rel::Float::Var::XY::" + str(frt0) + "::" + str(n), n + 1, -3, 3, st, CPLT_ASSIGNMENT, n == 1),
+                : Test("Rel::Float::Var::XY::" + str(frt0) + "::" + str(n), n + 1, -3, 3, st, COMPLETE_ASSIGNMENT,
+                       n == 1),
                   frt(frt0) {
                 test_subsumption = false;
             }
@@ -105,7 +106,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             FloatVarXX(Gecode::FloatRelType frt0, Gecode::FloatNum st)
-                : Test("Rel::Float::Var::XX::" + str(frt0), 1, -3, 3, st, CPLT_ASSIGNMENT, true), frt(frt0) {
+                : Test("Rel::Float::Var::XX::" + str(frt0), 1, -3, 3, st, COMPLETE_ASSIGNMENT, true), frt(frt0) {
                 test_subsumption = false;
             }
             /// %Test whether \a x is solution
@@ -137,7 +138,7 @@ namespace Test { namespace Float {
             /// Create and register test
             FloatFloat(Gecode::FloatRelType frt0, int n, Gecode::FloatNum c0, Gecode::FloatNum st)
                 : Test("Rel::Float::Float::" + str(frt0) + "::" + str(n) + "::" + str(c0), n, -3, 3, st,
-                       CPLT_ASSIGNMENT, n == 1),
+                       COMPLETE_ASSIGNMENT, n == 1),
                   frt(frt0), c(c0) {
                 test_subsumption = false;
             }

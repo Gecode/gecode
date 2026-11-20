@@ -42,7 +42,7 @@ namespace {
     class FloatSmokeTest : public Test::Float::Test {
     public:
         FloatSmokeTest(void)
-            : ::Test::Float::Test("Public::Smoke", 1, 0.0, 1.0, 1.0, ::Test::Float::CPLT_ASSIGNMENT, false) {}
+            : ::Test::Float::Test("Public::Smoke", 1, 0.0, 1.0, 1.0, ::Test::Float::COMPLETE_ASSIGNMENT, false) {}
 
         ::Test::Float::MaybeType
         solution(const ::Test::Float::Assignment&) const override {

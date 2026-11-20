@@ -55,11 +55,12 @@ namespace Gecode { namespace Support {
 #endif
 
     /// Description of integer types
-    enum IntType {
-        IT_CHAR = 0, ///< char integer type
-        IT_SHRT = 1, ///< short integer type
-        IT_INT = 2   ///< integer type
+    enum class IntType {
+        IT_CHAR = 0,  ///< char integer type
+        IT_SHORT = 1, ///< short integer type
+        IT_INT = 2    ///< integer type
     };
+    using enum IntType;
 
     /// Return type required to represent \a n
     IntType u_type(unsigned int n);
@@ -113,7 +114,7 @@ namespace Gecode { namespace Support {
         /// Maximal value
         static const signed short int max = SHRT_MAX;
         /// Description of type
-        static const IntType description = IT_SHRT;
+        static const IntType description = IT_SHORT;
     };
     /// Traits for unsigned short int
     template <>
@@ -128,7 +129,7 @@ namespace Gecode { namespace Support {
         /// Maximal value
         static const unsigned short int max = USHRT_MAX;
         /// Description of type
-        static const IntType description = IT_SHRT;
+        static const IntType description = IT_SHORT;
     };
     /// Traits for signed integer
     template <>
@@ -166,7 +167,7 @@ namespace Gecode { namespace Support {
         if (n < UCHAR_MAX)
             return IT_CHAR;
         else if (n < USHRT_MAX)
-            return IT_SHRT;
+            return IT_SHORT;
         else
             return IT_INT;
     }
@@ -176,7 +177,7 @@ namespace Gecode { namespace Support {
         if ((n > SCHAR_MIN) && (n < SCHAR_MAX))
             return IT_CHAR;
         else if ((n > SHRT_MIN) && (n < SHRT_MAX))
-            return IT_SHRT;
+            return IT_SHORT;
         else
             return IT_INT;
     }

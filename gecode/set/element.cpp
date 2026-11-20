@@ -52,7 +52,7 @@ namespace Gecode {
         GECODE_POST;
 
         switch (op) {
-        case SOT_DUNION: {
+        case SOT_DISJOINT_UNION: {
             Set::Element::ElementDisjoint<SetView, SetView>::IdxViewArray iv(home, x);
             GECODE_ES_FAIL((Element::ElementDisjoint<SetView, SetView>::post(home, iv, y)));
         }
@@ -61,7 +61,7 @@ namespace Gecode {
             Set::Element::ElementUnion<SetView, SetView, SetView>::IdxViewArray iv(home, x);
             GECODE_ES_FAIL((Element::ElementUnion<SetView, SetView, SetView>::post(home, iv, y, z)));
         } break;
-        case SOT_INTER: {
+        case SOT_INTERSECTION: {
             Set::Element::ElementIntersection<SetView, SetView, SetView>::IdxViewArray iv(home, x);
             GECODE_ES_FAIL((Element::ElementIntersection<SetView, SetView, SetView>::post(home, iv, y, z, universe)));
         } break;
@@ -78,7 +78,7 @@ namespace Gecode {
         GECODE_POST;
 
         switch (op) {
-        case SOT_DUNION: {
+        case SOT_DISJOINT_UNION: {
             Set::Element::ElementDisjoint<SingletonView, SetView>::IdxViewArray iv(home, x);
             GECODE_ES_FAIL((Element::ElementDisjoint<SingletonView, SetView>::post(home, iv, y)));
         }
@@ -87,7 +87,7 @@ namespace Gecode {
             Set::Element::ElementUnion<SingletonView, SetView, SetView>::IdxViewArray iv(home, x);
             GECODE_ES_FAIL((Element::ElementUnion<SingletonView, SetView, SetView>::post(home, iv, y, z)));
         } break;
-        case SOT_INTER: {
+        case SOT_INTERSECTION: {
             Set::Element::ElementIntersection<SingletonView, SetView, SetView>::IdxViewArray iv(home, x);
             GECODE_ES_FAIL(
                 (Element::ElementIntersection<SingletonView, SetView, SetView>::post(home, iv, y, z, universe)));
@@ -106,7 +106,7 @@ namespace Gecode {
         GECODE_POST;
 
         switch (op) {
-        case SOT_DUNION: {
+        case SOT_DISJOINT_UNION: {
             Set::Element::ElementDisjoint<ConstSetView, SetView>::IdxViewArray iv(home, n);
             for (int i = n; i--;) {
                 iv[i].idx = i;
@@ -118,7 +118,7 @@ namespace Gecode {
         case SOT_UNION: {
             GECODE_ES_FAIL((Element::ElementUnionConst<SetView, SetView>::post(home, z, x, y)));
         } break;
-        case SOT_INTER: {
+        case SOT_INTERSECTION: {
             Set::Element::ElementIntersection<ConstSetView, SetView, SetView>::IdxViewArray iv(home, n);
             for (int i = n; i--;) {
                 iv[i].idx = i;

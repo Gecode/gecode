@@ -1137,7 +1137,7 @@ namespace Gecode {
      * \brief Mode for reification
      * \ingroup TaskModelInt
      */
-    enum ReifyMode {
+    enum class ReifyMode {
         /**
          * \brief Equivalence for reification (default)
          *
@@ -1158,8 +1158,9 @@ namespace Gecode {
          * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
          * defines that \f$c\Rightarrow b=1\f$ is propagated.
          */
-        RM_PMI
+        RM_RIMP
     };
+    using enum ReifyMode;
 
     /**
      * \brief Reification specification
@@ -1215,7 +1216,7 @@ namespace Gecode {
      * \brief Relation types for integers
      * \ingroup TaskModelInt
      */
-    enum IntRelType {
+    enum class IntRelType {
         IRT_EQ, ///< Equality (\f$=\f$)
         IRT_NQ, ///< Disequality (\f$\neq\f$)
         IRT_LQ, ///< Less or equal (\f$\leq\f$)
@@ -1223,6 +1224,7 @@ namespace Gecode {
         IRT_GQ, ///< Greater or equal (\f$\geq\f$)
         IRT_GR  ///< Greater (\f$>\f$)
     };
+    using enum IntRelType;
 
     /// Return swapped relation type of \a irt
     IntRelType swap(IntRelType irt);
@@ -1240,13 +1242,14 @@ namespace Gecode {
      * \brief Operation types for Booleans
      * \ingroup TaskModelInt
      */
-    enum BoolOpType {
+    enum class BoolOpType {
         BOT_AND, ///< Conjunction
         BOT_OR,  ///< Disjunction
         BOT_IMP, ///< Implication
         BOT_EQV, ///< Equivalence
         BOT_XOR  ///< Exclusive or
     };
+    using enum BoolOpType;
 
     /**
      * \brief Propagation levels for integer propagators
@@ -1264,7 +1267,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelInt
      */
-    enum IntPropLevel {
+    enum class IntPropLevel : unsigned int {
         /// Simple propagation levels
         IPL_DEF = 0, ///< Default level of propagation
         IPL_VAL = 1, ///< Value propagation
@@ -1274,9 +1277,27 @@ namespace Gecode {
         IPL_BASIC = 4,                                 ///< Use basic propagation algorithm
         IPL_ADVANCED = 8,                              ///< Use advanced propagation algorithm
         IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED, ///< Use both
-        IPL_FULL = IPL_BASIC_ADVANCED,                 ///< Use full propagation
-        IPL_BITS_ = 4                                  ///< Number of bits required (internal)
+        IPL_FULL = IPL_BASIC_ADVANCED                  ///< Use full propagation
     };
+    using enum IntPropLevel;
+
+    /// Combine propagation levels \a a and \a b
+    constexpr IntPropLevel
+    operator|(IntPropLevel a, IntPropLevel b) noexcept {
+        return static_cast<IntPropLevel>(std::to_underlying(a) | std::to_underlying(b));
+    }
+
+    /// Intersect propagation levels \a a and \a b
+    constexpr IntPropLevel
+    operator&(IntPropLevel a, IntPropLevel b) noexcept {
+        return static_cast<IntPropLevel>(std::to_underlying(a) & std::to_underlying(b));
+    }
+
+    /// Add propagation level \a b to \a a
+    constexpr IntPropLevel&
+    operator|=(IntPropLevel& a, IntPropLevel b) noexcept {
+        return a = a | b;
+    }
 
     /// Extract value, bounds, or domain propagation from propagation level
     IntPropLevel vbd(IntPropLevel ipl);
@@ -1295,11 +1316,12 @@ namespace Gecode {
      *
      * \ingroup TaskModelInt
      */
-    enum TaskType {
-        TT_FIXP, //< Task with fixed processing time
-        TT_FIXS, //< Task with fixed start time
-        TT_FIXE  //< Task with fixed end time
+    enum class TaskType {
+        TT_FIXED_PROCESSING, //< Task with fixed processing time
+        TT_FIXED_START,      //< Task with fixed start time
+        TT_FIXED_END         //< Task with fixed end time
     };
+    using enum TaskType;
 
     /**
      * \brief Argument arrays for passing task type arguments
@@ -2689,7 +2711,8 @@ namespace Gecode {
 
         public:
             /// Tuple set lifecycle state and finalized representation
-            enum State { TS_BUILDING, TS_FAILED, TS_DENSE, TS_SPARSE, TS_DENSE_COMPRESSED };
+            enum class State { TS_BUILDING, TS_FAILED, TS_DENSE, TS_SPARSE, TS_DENSE_COMPRESSED };
+            using enum State;
 
         public:
             /// Arity
@@ -4047,13 +4070,13 @@ namespace Gecode {
      * Schedule tasks with flexible times \a flex and fixed times \a fix
      * on a unary resource. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *
@@ -4075,8 +4098,8 @@ namespace Gecode {
      *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
      *    and \a p are of different size.
      *  - Throws an exception of type Int::OutOfLimits, if \a p contains
-     *    an integer that is negative for a task with type <code>TT_FIXP</code>
-     *    or that could generate an overflow.
+     *    an integer that is negative for a task with type
+     *    <code>TT_FIXED_PROCESSING</code> or that could generate an overflow.
      */
     GECODE_INT_EXPORT void unary(Home home, const TaskTypeArgs& t, const IntVarArgs& flex, const IntArgs& fix,
                                  IntPropLevel ipl = IPL_DEF);
@@ -4087,13 +4110,13 @@ namespace Gecode {
      * and whether a task is mandatory \a m (a task is mandatory if the
      * Boolean variable is 1) on a unary resource. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *
@@ -4116,8 +4139,8 @@ namespace Gecode {
      *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
      *    \a p, or \a m are of different size.
      *  - Throws an exception of type Int::OutOfLimits, if \a p contains
-     *    an integer that is negative for a task with type <code>TT_FIXP</code>
-     *    or that could generate an overflow.
+     *    an integer that is negative for a task with type
+     *    <code>TT_FIXED_PROCESSING</code> or that could generate an overflow.
      */
     GECODE_INT_EXPORT void unary(Home home, const TaskTypeArgs& t, const IntVarArgs& flex, const IntArgs& fix,
                                  const BoolVarArgs& m, IntPropLevel ipl = IPL_DEF);
@@ -4187,13 +4210,13 @@ namespace Gecode {
      * Schedule tasks with flexible times \a flex, fixed times \a fix, and
      * use capacity \a u on a cumulative resource with capacity \a c. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *
@@ -4253,13 +4276,13 @@ namespace Gecode {
      * mandatory if the Boolean variable is 1) on a cumulative resource with
      * capacity \a c. For each
      * task, it depends on \a t how the flexible and fix times are interpreted:
-     *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_PROCESSING</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    processing time.
-     *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_START</code>, then
      *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
      *    start time.
-     *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
+     *  - If <code>t[i]</code> is <code>TT_FIXED_END</code>, then
      *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
      *    end time.
      *
@@ -5224,7 +5247,7 @@ namespace Gecode {
     class IntVarBranch : public VarBranch<IntVar> {
     public:
         /// Which variable selection
-        enum Select {
+        enum class Select {
             SEL_NONE = 0,        ///< First unassigned
             SEL_RND,             ///< Random (uniform, for tie breaking)
             SEL_MERIT_MIN,       ///< With least merit
@@ -5276,6 +5299,7 @@ namespace Gecode {
              */
             SEL_REGRET_MAX_MAX
         };
+        using enum Select;
 
     protected:
         /// Which variable to select
@@ -5312,7 +5336,7 @@ namespace Gecode {
     class BoolVarBranch : public VarBranch<BoolVar> {
     public:
         /// Which variable selection
-        enum Select {
+        enum class Select {
             SEL_NONE = 0,   ///< First unassigned
             SEL_RND,        ///< Random (uniform, for tie breaking)
             SEL_MERIT_MIN,  ///< With least merit
@@ -5326,6 +5350,7 @@ namespace Gecode {
             SEL_CHB_MIN,    ///< With lowest CHB
             SEL_CHB_MAX     ///< With highest CHB
         };
+        using enum Select;
 
     protected:
         /// Which variable to select
@@ -5512,7 +5537,7 @@ namespace Gecode {
     class IntValBranch : public ValBranch<IntVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_MIN,       ///< Select smallest value
             SEL_MED,       ///< Select greatest value not greater than the median
             SEL_MAX,       ///< Select largest value
@@ -5525,6 +5550,7 @@ namespace Gecode {
             SEL_VALUES_MIN, ///< Select all values starting from smallest
             SEL_VALUES_MAX  ///< Select all values starting from largest
         };
+        using enum Select;
 
     protected:
         /// Which value to select
@@ -5549,12 +5575,13 @@ namespace Gecode {
     class BoolValBranch : public ValBranch<BoolVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_MIN,       ///< Select smallest value
             SEL_MAX,       ///< Select largest value
             SEL_RND,       ///< Select random value
             SEL_VAL_COMMIT ///< Select value according to user-defined functions
         };
+        using enum Select;
 
     protected:
         /// Which value to select
@@ -5633,13 +5660,14 @@ namespace Gecode {
     class IntAssign : public ValBranch<IntVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_MIN,       ///< Select smallest value
             SEL_MED,       ///< Select greatest value not greater than the median
             SEL_MAX,       ///< Select largest value
             SEL_RND,       ///< Select random value
             SEL_VAL_COMMIT ///< Select value according to user-defined functions
         };
+        using enum Select;
 
     protected:
         /// Which value to select
@@ -5664,12 +5692,13 @@ namespace Gecode {
     class BoolAssign : public ValBranch<BoolVar> {
     public:
         /// Which value selection
-        enum Select {
+        enum class Select {
             SEL_MIN,       ///< Select smallest value
             SEL_MAX,       ///< Select largest value
             SEL_RND,       ///< Select random value
             SEL_VAL_COMMIT ///< Select value according to user-defined functions
         };
+        using enum Select;
 
     protected:
         /// Which value to select

@@ -204,8 +204,8 @@ namespace Gecode {
                 case RM_IMP:
                     GECODE_ES_FAIL((Rel::ReEqDom<IntView, BoolView, RM_IMP>::post(home, x0, x1, r.var())));
                     break;
-                case RM_PMI:
-                    GECODE_ES_FAIL((Rel::ReEqDom<IntView, BoolView, RM_PMI>::post(home, x0, x1, r.var())));
+                case RM_RIMP:
+                    GECODE_ES_FAIL((Rel::ReEqDom<IntView, BoolView, RM_RIMP>::post(home, x0, x1, r.var())));
                     break;
                 default:
                     throw UnknownReifyMode("Int::rel");
@@ -218,8 +218,8 @@ namespace Gecode {
                 case RM_IMP:
                     GECODE_ES_FAIL((Rel::ReEqBnd<IntView, BoolView, RM_IMP>::post(home, x0, x1, r.var())));
                     break;
-                case RM_PMI:
-                    GECODE_ES_FAIL((Rel::ReEqBnd<IntView, BoolView, RM_PMI>::post(home, x0, x1, r.var())));
+                case RM_RIMP:
+                    GECODE_ES_FAIL((Rel::ReEqBnd<IntView, BoolView, RM_RIMP>::post(home, x0, x1, r.var())));
                     break;
                 default:
                     throw UnknownReifyMode("Int::rel");
@@ -234,9 +234,9 @@ namespace Gecode {
                     GECODE_ES_FAIL((Rel::ReEqBnd<IntView, NegBoolView, RM_EQV>::post(home, x0, x1, n)));
                     break;
                 case RM_IMP:
-                    GECODE_ES_FAIL((Rel::ReEqBnd<IntView, NegBoolView, RM_PMI>::post(home, x0, x1, n)));
+                    GECODE_ES_FAIL((Rel::ReEqBnd<IntView, NegBoolView, RM_RIMP>::post(home, x0, x1, n)));
                     break;
-                case RM_PMI:
+                case RM_RIMP:
                     GECODE_ES_FAIL((Rel::ReEqBnd<IntView, NegBoolView, RM_IMP>::post(home, x0, x1, n)));
                     break;
                 default:
@@ -248,9 +248,9 @@ namespace Gecode {
                     GECODE_ES_FAIL((Rel::ReEqDom<IntView, NegBoolView, RM_EQV>::post(home, x0, x1, n)));
                     break;
                 case RM_IMP:
-                    GECODE_ES_FAIL((Rel::ReEqDom<IntView, NegBoolView, RM_PMI>::post(home, x0, x1, n)));
+                    GECODE_ES_FAIL((Rel::ReEqDom<IntView, NegBoolView, RM_RIMP>::post(home, x0, x1, n)));
                     break;
-                case RM_PMI:
+                case RM_RIMP:
                     GECODE_ES_FAIL((Rel::ReEqDom<IntView, NegBoolView, RM_IMP>::post(home, x0, x1, n)));
                     break;
                 default:
@@ -268,8 +268,8 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ES_FAIL((Rel::ReLq<IntView, BoolView, RM_IMP>::post(home, x0, x1, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReLq<IntView, BoolView, RM_PMI>::post(home, x0, x1, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((Rel::ReLq<IntView, BoolView, RM_RIMP>::post(home, x0, x1, r.var())));
                 break;
             default:
                 throw UnknownReifyMode("Int::rel");
@@ -284,9 +284,9 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::ReLq<IntView, NegBoolView, RM_EQV>::post(home, x0, x1, n)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReLq<IntView, NegBoolView, RM_PMI>::post(home, x0, x1, n)));
+                GECODE_ES_FAIL((Rel::ReLq<IntView, NegBoolView, RM_RIMP>::post(home, x0, x1, n)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((Rel::ReLq<IntView, NegBoolView, RM_IMP>::post(home, x0, x1, n)));
                 break;
             default:
@@ -313,8 +313,8 @@ namespace Gecode {
                 case RM_IMP:
                     GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, BoolView, RM_IMP>::post(home, x, n, r.var())));
                     break;
-                case RM_PMI:
-                    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, BoolView, RM_PMI>::post(home, x, n, r.var())));
+                case RM_RIMP:
+                    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, BoolView, RM_RIMP>::post(home, x, n, r.var())));
                     break;
                 default:
                     throw UnknownReifyMode("Int::rel");
@@ -327,8 +327,8 @@ namespace Gecode {
                 case RM_IMP:
                     GECODE_ES_FAIL((Rel::ReEqBndInt<IntView, BoolView, RM_IMP>::post(home, x, n, r.var())));
                     break;
-                case RM_PMI:
-                    GECODE_ES_FAIL((Rel::ReEqBndInt<IntView, BoolView, RM_PMI>::post(home, x, n, r.var())));
+                case RM_RIMP:
+                    GECODE_ES_FAIL((Rel::ReEqBndInt<IntView, BoolView, RM_RIMP>::post(home, x, n, r.var())));
                     break;
                 default:
                     throw UnknownReifyMode("Int::rel");
@@ -343,9 +343,9 @@ namespace Gecode {
                     GECODE_ES_FAIL((Rel::ReEqBndInt<IntView, NegBoolView, RM_EQV>::post(home, x, n, nb)));
                     break;
                 case RM_IMP:
-                    GECODE_ES_FAIL((Rel::ReEqBndInt<IntView, NegBoolView, RM_PMI>::post(home, x, n, nb)));
+                    GECODE_ES_FAIL((Rel::ReEqBndInt<IntView, NegBoolView, RM_RIMP>::post(home, x, n, nb)));
                     break;
-                case RM_PMI:
+                case RM_RIMP:
                     GECODE_ES_FAIL((Rel::ReEqBndInt<IntView, NegBoolView, RM_IMP>::post(home, x, n, nb)));
                     break;
                 default:
@@ -357,9 +357,9 @@ namespace Gecode {
                     GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, NegBoolView, RM_EQV>::post(home, x, n, nb)));
                     break;
                 case RM_IMP:
-                    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, NegBoolView, RM_PMI>::post(home, x, n, nb)));
+                    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, NegBoolView, RM_RIMP>::post(home, x, n, nb)));
                     break;
-                case RM_PMI:
+                case RM_RIMP:
                     GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, NegBoolView, RM_IMP>::post(home, x, n, nb)));
                     break;
                 default:
@@ -377,8 +377,8 @@ namespace Gecode {
             case RM_IMP:
                 GECODE_ES_FAIL((Rel::ReLqInt<IntView, BoolView, RM_IMP>::post(home, x, n, r.var())));
                 break;
-            case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReLqInt<IntView, BoolView, RM_PMI>::post(home, x, n, r.var())));
+            case RM_RIMP:
+                GECODE_ES_FAIL((Rel::ReLqInt<IntView, BoolView, RM_RIMP>::post(home, x, n, r.var())));
                 break;
             default:
                 throw UnknownReifyMode("Int::rel");
@@ -393,9 +393,9 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::ReLqInt<IntView, NegBoolView, RM_EQV>::post(home, x, n, nb)));
                 break;
             case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReLqInt<IntView, NegBoolView, RM_PMI>::post(home, x, n, nb)));
+                GECODE_ES_FAIL((Rel::ReLqInt<IntView, NegBoolView, RM_RIMP>::post(home, x, n, nb)));
                 break;
-            case RM_PMI:
+            case RM_RIMP:
                 GECODE_ES_FAIL((Rel::ReLqInt<IntView, NegBoolView, RM_IMP>::post(home, x, n, nb)));
                 break;
             default:

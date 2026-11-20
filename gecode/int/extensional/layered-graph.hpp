@@ -863,14 +863,14 @@ namespace Gecode { namespace Int { namespace Extensional {
         switch (t_val) {
         case Gecode::Support::IT_CHAR:
             // fall through
-        case Gecode::Support::IT_SHRT:
+        case Gecode::Support::IT_SHORT:
             switch (t_state_idx) {
             case Gecode::Support::IT_CHAR:
                 switch (t_degree) {
                 case Gecode::Support::IT_CHAR:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, short int, unsigned char,
                                                      unsigned char>::post(home, x, dfa);
-                case Gecode::Support::IT_SHRT:
+                case Gecode::Support::IT_SHORT:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, short int, unsigned short int,
                                                      unsigned char>::post(home, x, dfa);
                 case Gecode::Support::IT_INT:
@@ -880,12 +880,12 @@ namespace Gecode { namespace Int { namespace Extensional {
                     GECODE_NEVER;
                 }
                 break;
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 switch (t_degree) {
                 case Gecode::Support::IT_CHAR:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, short int, unsigned char,
                                                      unsigned short int>::post(home, x, dfa);
-                case Gecode::Support::IT_SHRT:
+                case Gecode::Support::IT_SHORT:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, short int, unsigned short int,
                                                      unsigned short int>::post(home, x, dfa);
                 case Gecode::Support::IT_INT:
@@ -900,7 +900,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                 case Gecode::Support::IT_CHAR:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, short int, unsigned char,
                                                      unsigned int>::post(home, x, dfa);
-                case Gecode::Support::IT_SHRT:
+                case Gecode::Support::IT_SHORT:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, short int, unsigned short int,
                                                      unsigned int>::post(home, x, dfa);
                 case Gecode::Support::IT_INT:
@@ -921,7 +921,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                 case Gecode::Support::IT_CHAR:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, int, unsigned char,
                                                      unsigned char>::post(home, x, dfa);
-                case Gecode::Support::IT_SHRT:
+                case Gecode::Support::IT_SHORT:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, int, unsigned short int,
                                                      unsigned char>::post(home, x, dfa);
                 case Gecode::Support::IT_INT:
@@ -931,12 +931,12 @@ namespace Gecode { namespace Int { namespace Extensional {
                     GECODE_NEVER;
                 }
                 break;
-            case Gecode::Support::IT_SHRT:
+            case Gecode::Support::IT_SHORT:
                 switch (t_degree) {
                 case Gecode::Support::IT_CHAR:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, int, unsigned char,
                                                      unsigned short int>::post(home, x, dfa);
-                case Gecode::Support::IT_SHRT:
+                case Gecode::Support::IT_SHORT:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, int, unsigned short int,
                                                      unsigned short int>::post(home, x, dfa);
                 case Gecode::Support::IT_INT:
@@ -951,7 +951,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                 case Gecode::Support::IT_CHAR:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, int, unsigned char,
                                                      unsigned int>::post(home, x, dfa);
-                case Gecode::Support::IT_SHRT:
+                case Gecode::Support::IT_SHORT:
                     return Extensional::LayeredGraph<typename VarTraits<Var>::View, int, unsigned short int,
                                                      unsigned int>::post(home, x, dfa);
                 case Gecode::Support::IT_INT:

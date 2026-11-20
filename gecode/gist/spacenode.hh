@@ -40,7 +40,7 @@ namespace Gecode { namespace Gist {
 
     /** \brief Status of nodes in the search tree
      */
-    enum NodeStatus {
+    enum class NodeStatus {
         SOLVED,       ///< Node representing a solution
         FAILED,       ///< Node representing failure
         BRANCH,       ///< Node representing a branch
@@ -48,6 +48,7 @@ namespace Gecode { namespace Gist {
         STOP,         ///< Node representing stop point
         UNSTOP,       ///< Node representing ignored stop point
     };
+    using enum NodeStatus;
 
     static const unsigned int first_bit = 24;                //< First free bit in status word
     static const unsigned int status_mask = 7 << 20;         //< Mask for accessing status

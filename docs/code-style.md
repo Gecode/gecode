@@ -58,6 +58,21 @@ Representative API changes include:
 | Previous spelling | Current spelling |
 |---|---|
 | `IRT_LE`, `FRT_LE`, `SRT_LE` | `IRT_LT`, `FRT_LT`, `SRT_LT` |
+| `RM_NONE`, `RM_CONSTANT`, `RM_LINEAR`, `RM_LUBY`, `RM_GEOMETRIC` | `RESTART_NONE`, `RESTART_CONSTANT`, `RESTART_LINEAR`, `RESTART_LUBY`, `RESTART_GEOMETRIC` |
+| `RM_PMI` | `RM_RIMP` |
+| `TT_FIXP`, `TT_FIXS`, `TT_FIXE` | `TT_FIXED_PROCESSING`, `TT_FIXED_START`, `TT_FIXED_END` |
+| `SRT_DISJ`, `SRT_CMPL` | `SRT_DISJOINT`, `SRT_COMPLEMENT` |
+| `SOT_DUNION`, `SOT_INTER` | `SOT_DISJOINT_UNION`, `SOT_INTERSECTION` |
+| `SM_STAT` | `SM_STATISTICS` |
+| `RR_NO`, `RR_SOL`, `RR_CMPL`, `RR_LIM` | `RR_NONE`, `RR_SOLUTION`, `RR_COMPLETE`, `RR_LIMIT` |
+| `SearchTracer::AOE` | `SearchTracer::OTHER` |
+| `CPLT_ASSIGNMENT` | `COMPLETE_ASSIGNMENT` |
+| `MT_ANY`, `MT_NOT`, `MT_FIRST` | `MATCH_ANY`, `MATCH_NOT`, `MATCH_FIRST` |
+| `EF_MRKLB`, `EF_MRKUB`, `EF_LM`, `EF_UM`, `EF_DEL` | `EF_MARKED_LBC`, `EF_MARKED_UBC`, `EF_MATCHED_LBC`, `EF_MATCHED_UBC`, `EF_DELETED` |
+| `RET_FST`, `RET_LST` | `RET_START`, `RET_FINISH` |
+| `IT_SHRT` | `IT_SHORT` |
+| `BT_COMP` | `BT_COMPLEMENT` |
+| `EVENT_CHCK`, `EVENT_PRUN` | `EVENT_CHECK`, `EVENT_PRUNE` |
 | `nooverlap(...)` | `no_overlap(...)` |
 | `binpacking(...)` | `bin_packing(...)` |
 | `modeventdelta(...)` | `modification_event_delta(...)` |
@@ -66,10 +81,43 @@ Representative API changes include:
 | `arg2intvarargs(...)` | `arg_to_int_var_args(...)` |
 
 Strict-less relation constants use `_LT`; `_LQ` continues to mean less-or-equal.
-The former `_LE` names have no compatibility aliases.
+The former `_LE` names have no compatibility aliases, and neither do the other
+former constant spellings in the table.
 
 Qt overrides and other external interfaces retain the spellings their APIs
 require. Parser tokens and protocol strings remain unchanged.
+
+## Enums
+
+New enums are `enum class`. Use a plain `enum` only where an existing API
+requires it, or where the values are bits or bit positions held in an `int`,
+as with `TraceEvent`.
+
+A public enum converted from a plain enum keeps its `UPPER_CASE` constants
+usable without qualification through `using enum`, on the line after the enum
+and at the same scope:
+
+```cpp
+enum class IntRelType { IRT_EQ, IRT_NQ, ... };
+using enum IntRelType;
+```
+
+`using enum` cannot name a dependent type, so an enum in a class template
+declares one `static constexpr` alias per constant instead, as
+`CompactStatus<Advisor>::StatusType` does.
+
+A new enum names its constants in `PascalCase` and is always used qualified,
+as in `MetaEvent::Solution`, so it has no `using enum`.
+
+Give an enum operators only if its values form a real bit set. `IntPropLevel`
+is the one such enum, with `operator|`, `operator&`, and `operator|=`. Test a
+bit with `(ipl & IPL_BASIC) != IPL_DEF`. Its underlying type is unsigned
+because `IntPropLevels` stores levels in bit-fields, where a signed type would
+change their values.
+
+All other conversions are explicit: `std::to_underlying` or `static_cast` for
+an array index, a bit position, a packed field, or an `int`-valued option, and
+`static_cast` back to the enum.
 
 ## Checking changes
 

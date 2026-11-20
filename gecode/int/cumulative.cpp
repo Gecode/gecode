@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         } else {
             bool fixp = true;
             for (int i = 0; i < t.size(); i++)
-                if (t[i] != TT_FIXP) {
+                if (t[i] != TT_FIXED_PROCESSING) {
                     fixp = false;
                     break;
                 }
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         } else {
             bool fixp = true;
             for (int i = 0; i < t.size(); i++)
-                if (t[i] != TT_FIXP) {
+                if (t[i] != TT_FIXED_PROCESSING) {
                     fixp = false;
                     break;
                 }

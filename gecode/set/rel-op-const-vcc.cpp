@@ -99,7 +99,7 @@ namespace Gecode {
 
                 GECODE_ES_FAIL((Intersection<ConstSetView, SetView, SetView>::post(home, cy, xv, tmp)));
             } break;
-            case SRT_DISJ: {
+            case SRT_DISJOINT: {
                 SetVar tmp(home);
                 SetView tmpv(tmp);
                 IntSetRanges zi(z);
@@ -111,7 +111,7 @@ namespace Gecode {
                 ConstSetView cy(home, yc);
                 GECODE_ES_FAIL((Intersection<ConstSetView, SetView, SetView>::post(home, cy, x, tmp)));
             } break;
-            case SRT_CMPL: {
+            case SRT_COMPLEMENT: {
                 SetView xv(x);
                 ComplementView<SetView> cx(xv);
                 GECODE_ES_FAIL((Union<ConstSetView, ComplementView<SetView>, ConstSetView>::post(home, yv, cx, zv)));

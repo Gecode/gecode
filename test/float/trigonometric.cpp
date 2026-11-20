@@ -50,7 +50,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             SinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Trigonometric::Sin::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Trigonometric::Sin::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -100,7 +100,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             SinXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Trigonometric::Sin::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Trigonometric::Sin::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -118,7 +118,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             CosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Trigonometric::Cos::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Trigonometric::Cos::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -168,7 +168,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             CosXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Trigonometric::Cos::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Trigonometric::Cos::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -186,7 +186,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             TanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Trigonometric::Tan::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Trigonometric::Tan::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -236,7 +236,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             TanXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Trigonometric::Tan::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Trigonometric::Tan::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -254,7 +254,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ASinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Trigonometric::ASin::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Trigonometric::ASin::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -310,7 +310,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ASinXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Trigonometric::ASin::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Trigonometric::ASin::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -330,7 +330,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ACosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Trigonometric::ACos::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Trigonometric::ACos::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -386,7 +386,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ACosXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Trigonometric::ACos::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Trigonometric::ACos::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -406,7 +406,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ATanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Trigonometric::ATan::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Trigonometric::ATan::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -456,7 +456,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ATanXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Trigonometric::ATan::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Trigonometric::ATan::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {

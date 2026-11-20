@@ -59,14 +59,14 @@ namespace Gecode {
     forceinline unsigned int
     SearchTracer::EngineInfo::wfst(void) const {
         assert((type() == EngineType::DFS) || (type() == EngineType::BAB) || (type() == EngineType::LDS) ||
-               (type() == EngineType::AOE));
+               (type() == EngineType::OTHER));
         return _fst;
     }
 
     forceinline unsigned int
     SearchTracer::EngineInfo::wlst(void) const {
         assert((type() == EngineType::DFS) || (type() == EngineType::BAB) || (type() == EngineType::LDS) ||
-               (type() == EngineType::AOE));
+               (type() == EngineType::OTHER));
         return _lst;
     }
 
@@ -229,7 +229,7 @@ namespace Gecode {
         case EngineType::DFS:
         case EngineType::BAB:
         case EngineType::LDS:
-        case EngineType::AOE:
+        case EngineType::OTHER:
             es[n_e] = EngineInfo(t, n_w, n_w + n);
             break;
         default:

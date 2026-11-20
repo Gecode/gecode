@@ -34,7 +34,7 @@ namespace Gecode { namespace Int {
 
     forceinline void
     Event::init(Event::Type e0, int t0, int i0) {
-        ei = static_cast<unsigned int>(e0 | (i0 << 3));
+        ei = static_cast<unsigned int>(std::to_underlying(e0) | (i0 << 3));
         t = t0;
     }
 

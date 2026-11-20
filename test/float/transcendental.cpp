@@ -60,7 +60,7 @@ namespace Test { namespace Float {
                                bool valid)
                 : Test("Transcendental::PowBaseConsistency::" + str(b) + "::" + str(x) + "::" + str(y) +
                            (log ? "::Log" : "::Pow") + (share ? "::Shared" : "::Separate"),
-                       share ? 1 : 2, -4.0, 8.0, 1.0, CPLT_ASSIGNMENT, false),
+                       share ? 1 : 2, -4.0, 8.0, 1.0, COMPLETE_ASSIGNMENT, false),
                   base(b), input(x), output(y), logarithm(log), shared(share), expected(valid) {
                 test_search = false;
             }
@@ -110,7 +110,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ExpXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Transcendental::Exp::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Transcendental::Exp::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -160,7 +160,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             ExpXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Transcendental::Exp::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Transcendental::Exp::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -178,7 +178,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             LogXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(TestTags::sweep(), "Transcendental::Log::XY::" + s, 2, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(TestTags::sweep(), "Transcendental::Log::XY::" + s, 2, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -234,7 +234,7 @@ namespace Test { namespace Float {
         public:
             /// Create and register test
             LogXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-                : Test(tags, "Transcendental::Log::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false) {}
+                : Test(tags, "Transcendental::Log::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT, false) {}
             /// %Test whether \a x is solution
             MaybeType
             solution(const Assignment& x) const override {
@@ -257,7 +257,7 @@ namespace Test { namespace Float {
             /// Create and register test
             LogNXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Transcendental::Log::N::" + str(_base) + "::XY::" + s, 2, d, st,
-                       CPLT_ASSIGNMENT, false),
+                       COMPLETE_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -318,7 +318,7 @@ namespace Test { namespace Float {
             /// Create and register test
             LogNXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Transcendental::Log::N::" + str(_base) + "::XX::" + s, 1, d, st,
-                       CPLT_ASSIGNMENT, false),
+                       COMPLETE_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -342,7 +342,7 @@ namespace Test { namespace Float {
             /// Create and register test
             PowXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
                 : Test(TestTags::sweep(), "Transcendental::Pow::N::" + str(_base) + "::XY::" + s, 2, d, st,
-                       CPLT_ASSIGNMENT, false),
+                       COMPLETE_ASSIGNMENT, false),
                   base(_base) {}
             /// %Test whether \a x is solution
             MaybeType
@@ -403,7 +403,8 @@ namespace Test { namespace Float {
             /// Create and register test
             PowXX(TestTags tags, const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base,
                   Gecode::FloatNum st)
-                : Test(tags, "Transcendental::Pow::N::" + str(_base) + "::XX::" + s, 1, d, st, CPLT_ASSIGNMENT, false),
+                : Test(tags, "Transcendental::Pow::N::" + str(_base) + "::XX::" + s, 1, d, st, COMPLETE_ASSIGNMENT,
+                       false),
                   base(_base) {}
             /// %Test whether \a x is solution
             MaybeType

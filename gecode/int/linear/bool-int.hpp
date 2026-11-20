@@ -621,13 +621,13 @@ namespace Gecode { namespace Int { namespace Linear {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
             } else {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
             }
         } else {
             normalize();
             if (b.one()) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_REWRITE(*this, (GqBoolInt<VX>::post(home(*this), x, c)));
             } else {
                 if (rm != RM_IMP) {
@@ -659,7 +659,7 @@ namespace Gecode { namespace Int { namespace Linear {
         x.size(n_x);
         if (n_x < c) {
             // RHS too large
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
         } else if (c <= 0) {
             // Whatever the x[i] take for values, the inequality is subsumed
@@ -730,13 +730,13 @@ namespace Gecode { namespace Int { namespace Linear {
                 if (rm != RM_IMP)
                     GECODE_ME_CHECK(b.one_none(home));
             } else {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
             }
         } else {
             normalize();
             if (b.one()) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_REWRITE(*this, (EqBoolInt<VX>::post(home(*this), x, c)));
             } else {
                 if (rm != RM_IMP)
@@ -763,7 +763,7 @@ namespace Gecode { namespace Int { namespace Linear {
         x.size(n_x);
         if ((n_x < c) || (c < 0)) {
             // RHS too large
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
         } else if ((c == 0) && (n_x == 0)) {
             // all variables set, and c == 0: equality
