@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -31,7 +30,6 @@
  *
  */
 
-
 // Needed for Microsoft Visual C++ prior to 2013
 
 #if defined(_MSC_VER) && (_MSC_VER < 1800)
@@ -42,15 +40,14 @@
 
 namespace Gecode {
 
-  /// Return next double value from \a x in direction \a y
-  forceinline double
-  nextafter(double x, double y) {
-    return _nextafter(x,y);
-  }
+    /// Return next double value from \a x in direction \a y
+    forceinline double
+    nextafter(double x, double y) {
+        return _nextafter(x, y);
+    }
 
-}
+} // namespace Gecode
 
 #endif
 
 // STATISTICS: float-other
-

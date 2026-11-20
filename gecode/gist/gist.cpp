@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -41,93 +40,98 @@
 
 namespace Gecode { namespace Gist {
 
-  std::string
-  Inspector::name(void) { return "Inspector"; }
-
-  void
-  Inspector::finalize(void) {}
-
-  Inspector::~Inspector(void) {}
-
-  std::string
-  Comparator::name(void) { return "Comparator"; }
-
-  void
-  Comparator::finalize(void) {}
-
-  Comparator::~Comparator(void) {}
-
-  TextOutput::TextOutput(const std::string& name)
-    : t(nullptr), n(name) {}
-
-  void
-  TextOutput::finalize(void) {
-    delete t;
-    t = nullptr;
-  }
-
-  TextOutput::~TextOutput(void) {
-    delete t;
-  }
-
-  std::string
-  TextOutput::name(void) { return n; }
-
-  void
-  TextOutput::init(void) {
-    if (t == nullptr) {
-      t = new TextOutputI(n);
+    std::string
+    Inspector::name(void) {
+        return "Inspector";
     }
-    t->setVisible(true);
-  }
 
-  std::ostream&
-  TextOutput::getStream(void) {
-    return t->getStream();
-  }
+    void
+    Inspector::finalize(void) {}
 
-  void
-  TextOutput::flush(void) {
-    t->flush();
-  }
+    Inspector::~Inspector(void) {}
 
-  void
-  TextOutput::addHtml(const char* s) {
-    t->insertHtml(s);
-  }
+    std::string
+    Comparator::name(void) {
+        return "Comparator";
+    }
 
-  const Options Options::def;
+    void
+    Comparator::finalize(void) {}
 
-  int
-  explore(Space* root, bool bab, const Options& opt) {
+    Comparator::~Comparator(void) {}
+
+    TextOutput::TextOutput(const std::string& name) : t(nullptr), n(name) {}
+
+    void
+    TextOutput::finalize(void) {
+        delete t;
+        t = nullptr;
+    }
+
+    TextOutput::~TextOutput(void) {
+        delete t;
+    }
+
+    std::string
+    TextOutput::name(void) {
+        return n;
+    }
+
+    void
+    TextOutput::init(void) {
+        if (t == nullptr) {
+            t = new TextOutputI(n);
+        }
+        t->setVisible(true);
+    }
+
+    std::ostream&
+    TextOutput::getStream(void) {
+        return t->getStream();
+    }
+
+    void
+    TextOutput::flush(void) {
+        t->flush();
+    }
+
+    void
+    TextOutput::addHtml(const char* s) {
+        t->insertHtml(s);
+    }
+
+    const Options Options::def;
+
+    int
+    explore(Space* root, bool bab, const Options& opt) {
 
 #ifdef _MSC_VER
-    // Set the plugin search path on Windows when in default installation
-    if (char* gd = getenv("GECODEDIR")) {
-      unsigned int gdl = static_cast<unsigned int>(strlen(gd) + 32U);
-      char* gdb = heap.alloc<char>(gdl);
-      strcpy(gdb, gd);
-      strcat(gdb, "/bin/");
-      QCoreApplication::addLibraryPath(gdb);
-      heap.free(gdb,gdl);
-    }
+        // Set the plugin search path on Windows when in default installation
+        if (char* gd = getenv("GECODEDIR")) {
+            unsigned int gdl = static_cast<unsigned int>(strlen(gd) + 32U);
+            char* gdb = heap.alloc<char>(gdl);
+            strcpy(gdb, gd);
+            strcat(gdb, "/bin/");
+            QCoreApplication::addLibraryPath(gdb);
+            heap.free(gdb, gdl);
+        }
 #endif
 
-    char argv0='\0'; char* argv1=&argv0;
-    int argc=0;
+        char argv0 = '\0';
+        char* argv1 = &argv0;
+        int argc = 0;
 
+        QApplication app(argc, &argv1);
 
-    QApplication app(argc, &argv1);
+        GistMainWindow mw(root, bab, opt);
+        return app.exec();
+    }
 
-    GistMainWindow mw(root, bab, opt);
-    return app.exec();
-  }
+    void
+    stopBranch(Space& home) {
+        StopBrancher::post(home);
+    }
 
-  void
-  stopBranch(Space& home) {
-    StopBrancher::post(home);
-  }
-
-}}
+}} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

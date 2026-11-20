@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,44 +32,43 @@
 
 namespace Gecode {
 
-  forceinline
-  FloatValBranch::FloatValBranch(Select s0)
-    : s(s0) {}
+    forceinline
+    FloatValBranch::FloatValBranch(Select s0)
+        : s(s0) {}
 
-  forceinline
-  FloatValBranch::FloatValBranch(Rnd r)
-    : ValBranch<FloatVar>(r), s(SEL_SPLIT_RND) {}
+    forceinline
+    FloatValBranch::FloatValBranch(Rnd r)
+        : ValBranch<FloatVar>(r), s(SEL_SPLIT_RND) {}
 
-  forceinline
-  FloatValBranch::FloatValBranch(FloatBranchVal v, FloatBranchCommit c)
-    : ValBranch<FloatVar>(v,c), s(SEL_VAL_COMMIT) {}
+    forceinline
+    FloatValBranch::FloatValBranch(FloatBranchVal v, FloatBranchCommit c)
+        : ValBranch<FloatVar>(v, c), s(SEL_VAL_COMMIT) {}
 
-  forceinline FloatValBranch::Select
-  FloatValBranch::select(void) const {
-    return s;
-  }
+    forceinline FloatValBranch::Select
+    FloatValBranch::select(void) const {
+        return s;
+    }
 
+    inline FloatValBranch
+    FLOAT_VAL_SPLIT_MIN(void) {
+        return FloatValBranch(FloatValBranch::SEL_SPLIT_MIN);
+    }
 
-  inline FloatValBranch
-  FLOAT_VAL_SPLIT_MIN(void) {
-    return FloatValBranch(FloatValBranch::SEL_SPLIT_MIN);
-  }
+    inline FloatValBranch
+    FLOAT_VAL_SPLIT_MAX(void) {
+        return FloatValBranch(FloatValBranch::SEL_SPLIT_MAX);
+    }
 
-  inline FloatValBranch
-  FLOAT_VAL_SPLIT_MAX(void) {
-    return FloatValBranch(FloatValBranch::SEL_SPLIT_MAX);
-  }
+    inline FloatValBranch
+    FLOAT_VAL_SPLIT_RND(Rnd r) {
+        return FloatValBranch(r);
+    }
 
-  inline FloatValBranch
-  FLOAT_VAL_SPLIT_RND(Rnd r) {
-    return FloatValBranch(r);
-  }
+    inline FloatValBranch
+    FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c) {
+        return FloatValBranch(v, c);
+    }
 
-  inline FloatValBranch
-  FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c) {
-    return FloatValBranch(v,c);
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch

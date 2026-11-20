@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Gabor Szokoli <szokoli@gecode.dev>
@@ -40,41 +39,41 @@
 
 namespace Gecode {
 
-  void
-  cardinality(Home home, SetVar x, unsigned int i, unsigned int j) {
-    Set::Limits::check(i, "Set::cardinality");
-    Set::Limits::check(j, "Set::cardinality");
-    GECODE_POST;
-    Set::SetView _x(x);
-    GECODE_ME_FAIL(_x.cardMin(home, i));
-    GECODE_ME_FAIL(_x.cardMax(home, j));
-  }
-
-  void
-  cardinality(Home home, const SetVarArgs& x, unsigned int i, unsigned int j) {
-    Set::Limits::check(i, "Set::cardinality");
-    Set::Limits::check(j, "Set::cardinality");
-    GECODE_POST;
-    for (int k=x.size(); k--; ) {
-      Set::SetView _x(x[k]);
-      GECODE_ME_FAIL(_x.cardMin(home, i));
-      GECODE_ME_FAIL(_x.cardMax(home, j));
+    void
+    cardinality(Home home, SetVar x, unsigned int i, unsigned int j) {
+        Set::Limits::check(i, "Set::cardinality");
+        Set::Limits::check(j, "Set::cardinality");
+        GECODE_POST;
+        Set::SetView _x(x);
+        GECODE_ME_FAIL(_x.cardMin(home, i));
+        GECODE_ME_FAIL(_x.cardMax(home, j));
     }
-  }
 
-  void
-  cardinality(Home home, SetVar s, IntVar x) {
-    GECODE_POST;
-    GECODE_ES_FAIL(Set::Int::Card<Set::SetView>::post(home,s, x));
-  }
+    void
+    cardinality(Home home, const SetVarArgs& x, unsigned int i, unsigned int j) {
+        Set::Limits::check(i, "Set::cardinality");
+        Set::Limits::check(j, "Set::cardinality");
+        GECODE_POST;
+        for (int k = x.size(); k--;) {
+            Set::SetView _x(x[k]);
+            GECODE_ME_FAIL(_x.cardMin(home, i));
+            GECODE_ME_FAIL(_x.cardMax(home, j));
+        }
+    }
 
-  void
-  cardinality(Home home, SetVar s, IntVar x, Reify r) {
-    IntVar y(home, 0, static_cast<int>(Set::Limits::card));
-    rel(home, x, IRT_EQ, y, r);
-    cardinality(home, s, y);
-  }
+    void
+    cardinality(Home home, SetVar s, IntVar x) {
+        GECODE_POST;
+        GECODE_ES_FAIL(Set::Int::Card<Set::SetView>::post(home, s, x));
+    }
 
-}
+    void
+    cardinality(Home home, SetVar s, IntVar x, Reify r) {
+        IntVar y(home, 0, static_cast<int>(Set::Limits::card));
+        rel(home, x, IRT_EQ, y, r);
+        cardinality(home, s, y);
+    }
+
+} // namespace Gecode
 
 // STATISTICS: set-post

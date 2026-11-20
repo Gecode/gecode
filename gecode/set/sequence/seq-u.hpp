@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,37 +38,37 @@
 
 namespace Gecode { namespace Set { namespace Sequence {
 
-  /*
-   * "Sequenced union" propagator
-   *
-   */
+    /*
+     * "Sequenced union" propagator
+     *
+     */
 
-  forceinline
-  SeqU::SeqU(Home home, ViewArray<SetView>& x, SetView y)
-    : NaryOnePropagator<SetView,PC_SET_ANY>(home,x, y) {}
+    forceinline
+    SeqU::SeqU(Home home, ViewArray<SetView>& x, SetView y)
+        : NaryOnePropagator<SetView, PC_SET_ANY>(home, x, y) {}
 
-  forceinline
-  SeqU::SeqU(Space& home, SeqU& p)
-    : NaryOnePropagator<SetView,PC_SET_ANY>(home,p) {
-    unionOfDets.update(home, p.unionOfDets);
-  }
-
-  forceinline ExecStatus
-  SeqU::post(Home home, ViewArray<SetView> x, SetView y) {
-    switch (x.size()) {
-    case 0:
-      GECODE_ME_CHECK(y.cardMax(home, 0));
-      return ES_OK;
-    case 1:
-      return Rel::Eq<SetView,SetView>::post(home, x[0], y);
-    default:
-      if (shared(x) || shared(x,y))
-        return ES_FAILED;
-      (void) new (home) SeqU(home,x,y);
-      return ES_OK;
+    forceinline
+    SeqU::SeqU(Space& home, SeqU& p)
+        : NaryOnePropagator<SetView, PC_SET_ANY>(home, p) {
+        unionOfDets.update(home, p.unionOfDets);
     }
-  }
 
-}}}
+    forceinline ExecStatus
+    SeqU::post(Home home, ViewArray<SetView> x, SetView y) {
+        switch (x.size()) {
+        case 0:
+            GECODE_ME_CHECK(y.cardMax(home, 0));
+            return ES_OK;
+        case 1:
+            return Rel::Eq<SetView, SetView>::post(home, x[0], y);
+        default:
+            if (shared(x) || shared(x, y))
+                return ES_FAILED;
+            (void)new (home) SeqU(home, x, y);
+            return ES_OK;
+        }
+    }
+
+}}} // namespace Gecode::Set::Sequence
 
 // STATISTICS: set-prop

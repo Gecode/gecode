@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -36,128 +35,129 @@
 
 namespace Gecode { namespace Int { namespace NValues {
 
-  template<class VY>
-  forceinline
-  EqInt<VY>::EqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y)
-    : IntBase<VY>(home,vs,x,y) {
-    home.notice(*this, AP_WEAKLY);
-  }
-
-  template<class VY>
-  inline ExecStatus
-  EqInt<VY>::post(Home home, ViewArray<IntView>& x, VY y) {
-    if (x.size() == 0) {
-      GECODE_ME_CHECK(y.eq(home,0));
-      return ES_OK;
+    template <class VY>
+    forceinline
+    EqInt<VY>::EqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y)
+        : IntBase<VY>(home, vs, x, y) {
+        home.notice(*this, AP_WEAKLY);
     }
 
-    x.unique();
+    template <class VY>
+    inline ExecStatus
+    EqInt<VY>::post(Home home, ViewArray<IntView>& x, VY y) {
+        if (x.size() == 0) {
+            GECODE_ME_CHECK(y.eq(home, 0));
+            return ES_OK;
+        }
 
-    if (x.size() == 1) {
-      GECODE_ME_CHECK(y.eq(home,1));
-      return ES_OK;
+        x.unique();
+
+        if (x.size() == 1) {
+            GECODE_ME_CHECK(y.eq(home, 1));
+            return ES_OK;
+        }
+
+        GECODE_ME_CHECK(y.gq(home, 1));
+        GECODE_ME_CHECK(y.lq(home, x.size()));
+
+        if (y.max() == 1) {
+            assert(y.assigned());
+            return Rel::NaryEqDom<IntView>::post(home, x);
+        }
+
+        if (y.min() == x.size()) {
+            assert(y.assigned());
+            return Distinct::Dom<IntView>::post(home, x);
+        }
+
+        // Eliminate assigned views and store them into the value set
+        ValSet vs;
+        int n = x.size();
+        for (int i = n; i--;)
+            if (x[i].assigned()) {
+                vs.add(home, x[i].val());
+                x[i] = x[--n];
+            }
+
+        GECODE_ME_CHECK(y.gq(home, vs.size()));
+        GECODE_ME_CHECK(y.lq(home, n + vs.size()));
+
+        if (n == 0) {
+            assert(y.val() == vs.size());
+            return ES_OK;
+        }
+        x.size(n);
+        (void)new (home) EqInt<VY>(home, vs, x, y);
+        return ES_OK;
     }
 
-    GECODE_ME_CHECK(y.gq(home,1));
-    GECODE_ME_CHECK(y.lq(home,x.size()));
+    template <class VY>
+    forceinline
+    EqInt<VY>::EqInt(Space& home, EqInt<VY>& p)
+        : IntBase<VY>(home, p) {}
 
-    if (y.max() == 1) {
-      assert(y.assigned());
-      return Rel::NaryEqDom<IntView>::post(home,x);
+    template <class VY>
+    Propagator*
+    EqInt<VY>::copy(Space& home) {
+        return new (home) EqInt<VY>(home, *this);
     }
 
-    if (y.min() == x.size()) {
-      assert(y.assigned());
-      return Distinct::Dom<IntView>::post(home,x);
+    template <class VY>
+    forceinline size_t
+    EqInt<VY>::dispose(Space& home) {
+        home.ignore(*this, AP_WEAKLY);
+        (void)IntBase<VY>::dispose(home);
+        return sizeof(*this);
     }
 
-    // Eliminate assigned views and store them into the value set
-    ValSet vs;
-    int n = x.size();
-    for (int i=n; i--; )
-      if (x[i].assigned()) {
-        vs.add(home, x[i].val());
-        x[i] = x[--n];
-      }
+    template <class VY>
+    ExecStatus
+    EqInt<VY>::propagate(Space& home, const ModEventDelta& med) {
+        // Add assigned views to value set
+        if (IntView::me(med) == ME_INT_VAL)
+            add(home);
 
-    GECODE_ME_CHECK(y.gq(home,vs.size()));
-    GECODE_ME_CHECK(y.lq(home,n + vs.size()));
+        GECODE_ME_CHECK(y.gq(home, vs.size()));
+        GECODE_ME_CHECK(y.lq(home, x.size() + vs.size()));
 
-    if (n == 0) {
-      assert(y.val() == vs.size());
-      return ES_OK;
-    }
-    x.size(n);
-    (void) new (home) EqInt<VY>(home, vs, x, y);
-    return ES_OK;
-  }
+        if (x.size() == 0)
+            return home.ES_SUBSUMED(*this);
 
-  template<class VY>
-  forceinline
-  EqInt<VY>::EqInt(Space& home, EqInt<VY>& p)
-    : IntBase<VY>(home, p) {}
+        // All values must be in the value set
+        if (y.max() == vs.size())
+            return all_in_valset(home);
 
-  template<class VY>
-  Propagator*
-  EqInt<VY>::copy(Space& home) {
-    return new (home) EqInt<VY>(home, *this);
-  }
+        // Compute positions of disjoint views and eliminate subsumed views
+        Region r;
+        int* dis;
+        int n_dis;
+        disjoint(home, r, dis, n_dis);
 
-  template<class VY>
-  forceinline size_t
-  EqInt<VY>::dispose(Space& home) {
-    home.ignore(*this, AP_WEAKLY);
-    (void) IntBase<VY>::dispose(home);
-    return sizeof(*this);
-  }
+        // The number might have changed due to elimination of subsumed views
+        GECODE_ME_CHECK(y.lq(home, x.size() + vs.size()));
 
-  template<class VY>
-  ExecStatus
-  EqInt<VY>::propagate(Space& home, const ModEventDelta& med) {
-    // Add assigned views to value set
-    if (IntView::me(med) == ME_INT_VAL)
-      add(home);
+        if (x.size() == 0) {
+            assert(y.val() == vs.size());
+            return home.ES_SUBSUMED(*this);
+        }
 
-    GECODE_ME_CHECK(y.gq(home, vs.size()));
-    GECODE_ME_CHECK(y.lq(home, x.size() + vs.size()));
+        GECODE_ES_CHECK(prune_upper(home, g));
 
-    if (x.size() == 0)
-      return home.ES_SUBSUMED(*this);
+        // No lower bound pruning possible
+        if (n_dis == 0)
+            return ES_NOFIX;
 
-    // All values must be in the value set
-    if (y.max() == vs.size())
-      return all_in_valset(home);
+        // Only if the propagator is at fixpoint here, continue with
+        // propagating the lower bound
+        if (IntView::me(Propagator::modeventdelta()) != ME_INT_NONE)
+            return ES_NOFIX;
 
-    // Compute positions of disjoint views and eliminate subsumed views
-    Region r;
-    int* dis; int n_dis;
-    disjoint(home,r,dis,n_dis);
+        // Do lower bound-based pruning
+        GECODE_ES_CHECK(prune_lower(home, dis, n_dis));
 
-    // The number might have changed due to elimination of subsumed views
-    GECODE_ME_CHECK(y.lq(home, x.size() + vs.size()));
-
-    if (x.size() == 0) {
-      assert(y.val() == vs.size());
-      return home.ES_SUBSUMED(*this);
+        return ES_NOFIX;
     }
 
-    GECODE_ES_CHECK(prune_upper(home,g));
-
-    // No lower bound pruning possible
-    if (n_dis == 0)
-      return ES_NOFIX;
-
-    // Only if the propagator is at fixpoint here, continue with
-    // propagating the lower bound
-    if (IntView::me(Propagator::modeventdelta()) != ME_INT_NONE)
-      return ES_NOFIX;
-
-    // Do lower bound-based pruning
-    GECODE_ES_CHECK(prune_lower(home,dis,n_dis));
-
-    return ES_NOFIX;
-  }
-
-}}}
+}}} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

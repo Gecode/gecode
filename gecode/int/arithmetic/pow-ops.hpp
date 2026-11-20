@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,207 +32,225 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  forceinline
-  PowOps::PowOps(int n0) : n(n0) {}
+    forceinline
+    PowOps::PowOps(int n0)
+        : n(n0) {}
 
-  forceinline bool
-  PowOps::even(int m) {
-    return (m & 1) == 0;
-  }
+    forceinline bool
+    PowOps::even(int m) {
+        return (m & 1) == 0;
+    }
 
-  forceinline bool
-  PowOps::even(void) const {
-    return even(n);
-  }
+    forceinline bool
+    PowOps::even(void) const {
+        return even(n);
+    }
 
-  forceinline int
-  PowOps::exp(void) const {
-    return n;
-  }
+    forceinline int
+    PowOps::exp(void) const {
+        return n;
+    }
 
-  forceinline void
-  PowOps::exp(int m) {
-    n=m;
-  }
+    forceinline void
+    PowOps::exp(int m) {
+        n = m;
+    }
 
-  template<class IntType>
-  inline IntType
-  PowOps::pow(IntType x) const {
-    int m = n;
-    IntType p = 1;
-    do {
-      if (even(m)) {
-        x *= x; m >>= 1;
-      } else {
-        p *= x; m--;
-      }
-    } while (m > 0);
-    return p;
-  }
+    template <class IntType>
+    inline IntType
+    PowOps::pow(IntType x) const {
+        int m = n;
+        IntType p = 1;
+        do {
+            if (even(m)) {
+                x *= x;
+                m >>= 1;
+            } else {
+                p *= x;
+                m--;
+            }
+        } while (m > 0);
+        return p;
+    }
 
-  inline int
-  PowOps::tpow(int _x) const {
-    int m = n;
-    long long int p = 1;
-    long long int x = _x;
-    do {
-      if (even(m)) {
-        x *= x; m >>= 1;
-      } else {
-        p *= x; m--;
-      }
-      if (p > Limits::max)
-        return Limits::max+1;
-      if (p < Limits::min)
-        return Limits::min-1;
-    } while (m > 0);
-    return static_cast<int>(p);
-  }
+    inline int
+    PowOps::tpow(int _x) const {
+        int m = n;
+        long long int p = 1;
+        long long int x = _x;
+        do {
+            if (even(m)) {
+                x *= x;
+                m >>= 1;
+            } else {
+                p *= x;
+                m--;
+            }
+            if (p > Limits::max)
+                return Limits::max + 1;
+            if (p < Limits::min)
+                return Limits::min - 1;
+        } while (m > 0);
+        return static_cast<int>(p);
+    }
 
-  forceinline bool
-  PowOps::powgr(long long int r, int x) const {
-    assert(r >= 0);
-    int m = n;
-    long long int y = r;
-    long long int p = 1;
-    do {
-      if (even(m)) {
-        y *= y; m >>= 1;
-        if (y > x)
-          return true;
-      } else {
-        p *= y; m--;
-        if (p > x)
-          return true;
-      }
-    } while (m > 0);
-    assert(y <= x);
-    return false;
-  }
+    forceinline bool
+    PowOps::powgr(long long int r, int x) const {
+        assert(r >= 0);
+        int m = n;
+        long long int y = r;
+        long long int p = 1;
+        do {
+            if (even(m)) {
+                y *= y;
+                m >>= 1;
+                if (y > x)
+                    return true;
+            } else {
+                p *= y;
+                m--;
+                if (p > x)
+                    return true;
+            }
+        } while (m > 0);
+        assert(y <= x);
+        return false;
+    }
 
-  inline int
-  PowOps::fnroot(int x) const {
-    if (x < 2)
-      return x;
-    /*
-     * We look for l such that: l^n <= x < (l+1)^n
-     */
-    long long int l = 1;
-    long long int u = x;
-    do {
-      long long int m = (l + u) >> 1;
-      if (powgr(m,x)) u=m; else l=m;
-    } while (l+1 < u);
-    assert((pow(l) <= x) && (x < pow(l+1)));
-    return static_cast<int>(l);
-  }
+    inline int
+    PowOps::fnroot(int x) const {
+        if (x < 2)
+            return x;
+        /*
+         * We look for l such that: l^n <= x < (l+1)^n
+         */
+        long long int l = 1;
+        long long int u = x;
+        do {
+            long long int m = (l + u) >> 1;
+            if (powgr(m, x))
+                u = m;
+            else
+                l = m;
+        } while (l + 1 < u);
+        assert((pow(l) <= x) && (x < pow(l + 1)));
+        return static_cast<int>(l);
+    }
 
-  forceinline bool
-  PowOps::powle(long long int r, int x) const {
-    assert(r >= 0);
-    int m = n;
-    long long int y = r;
-    long long int p = 1;
-    do {
-      if (even(m)) {
-        y *= y; m >>= 1;
-        if (y >= x)
-          return false;
-      } else {
-        p *= y; m--;
-        if (p >= x)
-          return false;
-      }
-    } while (m > 0);
-    assert(y < x);
-    return true;
-  }
+    forceinline bool
+    PowOps::powle(long long int r, int x) const {
+        assert(r >= 0);
+        int m = n;
+        long long int y = r;
+        long long int p = 1;
+        do {
+            if (even(m)) {
+                y *= y;
+                m >>= 1;
+                if (y >= x)
+                    return false;
+            } else {
+                p *= y;
+                m--;
+                if (p >= x)
+                    return false;
+            }
+        } while (m > 0);
+        assert(y < x);
+        return true;
+    }
 
-  inline int
-  PowOps::cnroot(int x) const {
-    if (x < 2)
-      return x;
-    /*
-     * We look for u such that: (u-1)^n < x <= u^n
-     */
-    long long int l = 1;
-    long long int u = x;
-    do {
-      long long int m = (l + u) >> 1;
-      if (powle(m,x)) l=m; else u=m;
-    } while (l+1 < u);
-    assert((pow(u-1) < x) && (x <= pow(u)));
-    return static_cast<int>(u);
-  }
+    inline int
+    PowOps::cnroot(int x) const {
+        if (x < 2)
+            return x;
+        /*
+         * We look for u such that: (u-1)^n < x <= u^n
+         */
+        long long int l = 1;
+        long long int u = x;
+        do {
+            long long int m = (l + u) >> 1;
+            if (powle(m, x))
+                l = m;
+            else
+                u = m;
+        } while (l + 1 < u);
+        assert((pow(u - 1) < x) && (x <= pow(u)));
+        return static_cast<int>(u);
+    }
 
+    forceinline bool
+    SqrOps::even(void) const {
+        return true;
+    }
 
+    forceinline int
+    SqrOps::exp(void) const {
+        return 2;
+    }
 
-  forceinline bool
-  SqrOps::even(void) const {
-    return true;
-  }
+    forceinline void
+    SqrOps::exp(int) {
+        GECODE_NEVER;
+    }
 
-  forceinline int
-  SqrOps::exp(void) const {
-    return 2;
-  }
+    template <class IntType>
+    inline IntType
+    SqrOps::pow(IntType x) const {
+        return x * x;
+    }
 
-  forceinline void
-  SqrOps::exp(int) {
-    GECODE_NEVER;
-  }
+    inline int
+    SqrOps::tpow(int _x) const {
+        long long int x = _x;
+        if (x * x > Limits::max)
+            return Limits::max + 1;
+        if (x * x < Limits::min)
+            return Limits::min - 1;
+        return static_cast<int>(x * x);
+    }
 
-  template<class IntType>
-  inline IntType
-  SqrOps::pow(IntType x) const {
-    return x * x;
-  }
+    inline int
+    SqrOps::fnroot(int x) const {
+        if (x < 2)
+            return x;
+        /*
+         * We look for l such that: l^2 <= x < (l+1)^2
+         */
+        long long int l = 1;
+        long long int u = x;
+        do {
+            long long int m = (l + u) >> 1;
+            if (m * m > x)
+                u = m;
+            else
+                l = m;
+        } while (l + 1 < u);
+        assert((pow(l) <= x) && (x < pow(l + 1)));
+        return static_cast<int>(l);
+    }
 
-  inline int
-  SqrOps::tpow(int _x) const {
-    long long int x = _x;
-    if (x*x > Limits::max)
-      return Limits::max+1;
-    if (x*x < Limits::min)
-      return Limits::min-1;
-    return static_cast<int>(x*x);
-  }
+    inline int
+    SqrOps::cnroot(int x) const {
+        if (x < 2)
+            return x;
+        /*
+         * We look for u such that: (u-1)^n < x <= u^n
+         */
+        long long int l = 1;
+        long long int u = x;
+        do {
+            long long int m = (l + u) >> 1;
+            if (m * m < x)
+                l = m;
+            else
+                u = m;
+        } while (l + 1 < u);
+        assert((pow(u - 1) < x) && (x <= pow(u)));
+        return static_cast<int>(u);
+    }
 
-  inline int
-  SqrOps::fnroot(int x) const {
-    if (x < 2)
-      return x;
-    /*
-     * We look for l such that: l^2 <= x < (l+1)^2
-     */
-    long long int l = 1;
-    long long int u = x;
-    do {
-      long long int m = (l + u) >> 1;
-      if (m*m > x) u=m; else l=m;
-    } while (l+1 < u);
-    assert((pow(l) <= x) && (x < pow(l+1)));
-    return static_cast<int>(l);
-  }
-
-  inline int
-  SqrOps::cnroot(int x) const {
-    if (x < 2)
-      return x;
-    /*
-     * We look for u such that: (u-1)^n < x <= u^n
-     */
-    long long int l = 1;
-    long long int u = x;
-    do {
-      long long int m = (l + u) >> 1;
-      if (m*m < x) l=m; else u=m;
-    } while (l+1 < u);
-    assert((pow(u-1) < x) && (x <= pow(u)));
-    return static_cast<int>(u);
-  }
-
-}}}
+}}} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-other
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,55 +38,53 @@
 
 namespace Gecode { namespace Set { namespace Convex {
 
-  Actor*
-  Convex::copy(Space& home) {
-    return new (home) Convex(home,*this);
-  }
-
-  ExecStatus
-  Convex::propagate(Space& home, const ModEventDelta&) {
-    //I, drop ranges from UB that are shorter than cardMin
-    //II, add range LB.smallest to LB.largest to LB
-    //III, Drop ranges from UB that do not contain all elements of LB
-    //that is: range.min()>LB.smallest or range.max()<LB.largest
-    //This leaves only one range.
-    //II
-    if (x0.glbSize()>0) {
-      GECODE_ME_CHECK( x0.include(home,x0.glbMin(),x0.glbMax()) );
-    } else {
-      //If lower bound is empty, we can still constrain the cardinality
-      //maximum with the width of the longest range in UB.
-      //No need to do this if there is anything in LB because UB
-      //becomes a single range then.
-       LubRanges<SetView> ubRangeIt(x0);
-       unsigned int maxWidth = 0;
-       for (;ubRangeIt();++ubRangeIt) {
-         assert(ubRangeIt());
-         maxWidth = std::max(maxWidth, ubRangeIt.width());
-       }
-       GECODE_ME_CHECK( x0.cardMax(home,maxWidth) );
+    Actor*
+    Convex::copy(Space& home) {
+        return new (home) Convex(home, *this);
     }
 
+    ExecStatus
+    Convex::propagate(Space& home, const ModEventDelta&) {
+        // I, drop ranges from UB that are shorter than cardMin
+        // II, add range LB.smallest to LB.largest to LB
+        // III, Drop ranges from UB that do not contain all elements of LB
+        // that is: range.min()>LB.smallest or range.max()<LB.largest
+        // This leaves only one range.
+        // II
+        if (x0.glbSize() > 0) {
+            GECODE_ME_CHECK(x0.include(home, x0.glbMin(), x0.glbMax()));
+        } else {
+            // If lower bound is empty, we can still constrain the cardinality
+            // maximum with the width of the longest range in UB.
+            // No need to do this if there is anything in LB because UB
+            // becomes a single range then.
+            LubRanges<SetView> ubRangeIt(x0);
+            unsigned int maxWidth = 0;
+            for (; ubRangeIt(); ++ubRangeIt) {
+                assert(ubRangeIt());
+                maxWidth = std::max(maxWidth, ubRangeIt.width());
+            }
+            GECODE_ME_CHECK(x0.cardMax(home, maxWidth));
+        }
 
-    //I + III
+        // I + III
 
-    Region r;
-    LubRanges<SetView> ubRangeIt(x0);
-    Iter::Ranges::Cache ubRangeItC(r,ubRangeIt);
+        Region r;
+        LubRanges<SetView> ubRangeIt(x0);
+        Iter::Ranges::Cache ubRangeItC(r, ubRangeIt);
 
-    for (; ubRangeItC(); ++ubRangeItC) {
-      if (ubRangeItC.width() < (unsigned int) x0.cardMin()
-          || ubRangeItC.min() > x0.glbMin() //No need to test for empty lb.
-          || ubRangeItC.max() < x0.glbMax()
-          ) {
-        GECODE_ME_CHECK( x0.exclude(home,ubRangeItC.min(), ubRangeItC.max()) );
-      }
+        for (; ubRangeItC(); ++ubRangeItC) {
+            if (ubRangeItC.width() < (unsigned int)x0.cardMin() ||
+                ubRangeItC.min() > x0.glbMin() // No need to test for empty lb.
+                || ubRangeItC.max() < x0.glbMax()) {
+                GECODE_ME_CHECK(x0.exclude(home, ubRangeItC.min(), ubRangeItC.max()));
+            }
+        }
+        if (x0.assigned())
+            return home.ES_SUBSUMED(*this);
+        return ES_FIX;
     }
-    if (x0.assigned())
-      return home.ES_SUBSUMED(*this);
-    return ES_FIX;
-  }
 
-}}}
+}}} // namespace Gecode::Set::Convex
 
 // STATISTICS: set-prop

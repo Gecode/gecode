@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,135 +32,132 @@
 
 namespace Gecode { namespace Int { namespace ViewValGraph {
 
-  /*
-   * Nodes
-   *
-   */
+    /*
+     * Nodes
+     *
+     */
 
-  template<class View>
-  forceinline
-  Node<View>::Node(void) : min(0) {
-    // Must be initialized such that the node is considered unvisited initially
-  }
-  template<class View>
-  forceinline Edge<View>*
-  Node<View>::edge_fst(void) const {
-    return static_cast<Edge<View>*>(BiLink::next());
-  }
-  template<class View>
-  forceinline Edge<View>*
-  Node<View>::edge_lst(void) const {
-    return static_cast<Edge<View>*>(static_cast<BiLink*>(const_cast<Node<View>*>(this)));
-  }
-  template<class View>
-  forceinline void
-  Node<View>::operator delete(void*, size_t) {}
-  template<class View>
-  forceinline void
-  Node<View>::operator delete(void*,Space&) {}
-  template<class View>
-  forceinline void*
-  Node<View>::operator new(size_t s, Space& home) {
-    return home.ralloc(s);
-  }
+    template <class View>
+    forceinline
+    Node<View>::Node(void)
+        : min(0) {
+        // Must be initialized such that the node is considered unvisited initially
+    }
+    template <class View>
+    forceinline Edge<View>*
+    Node<View>::edge_fst(void) const {
+        return static_cast<Edge<View>*>(BiLink::next());
+    }
+    template <class View>
+    forceinline Edge<View>*
+    Node<View>::edge_lst(void) const {
+        return static_cast<Edge<View>*>(static_cast<BiLink*>(const_cast<Node<View>*>(this)));
+    }
+    template <class View>
+    forceinline void
+    Node<View>::operator delete(void*, size_t) {}
+    template <class View>
+    forceinline void
+    Node<View>::operator delete(void*, Space&) {}
+    template <class View>
+    forceinline void*
+    Node<View>::operator new(size_t s, Space& home) {
+        return home.ralloc(s);
+    }
 
-  /*
-   * Value nodes
-   *
-   */
+    /*
+     * Value nodes
+     *
+     */
 
+    template <class View>
+    forceinline
+    ValNode<View>::ValNode(int v)
+        : _val(v), _matching(nullptr) {}
+    template <class View>
+    forceinline
+    ValNode<View>::ValNode(int v, ValNode<View>* n)
+        : _val(v), _matching(nullptr), _next_val(n) {}
+    template <class View>
+    forceinline int
+    ValNode<View>::val(void) const {
+        return _val;
+    }
+    template <class View>
+    forceinline void
+    ValNode<View>::matching(Edge<View>* m) {
+        _matching = m;
+    }
+    template <class View>
+    forceinline Edge<View>*
+    ValNode<View>::matching(void) const {
+        return _matching;
+    }
+    template <class View>
+    forceinline ValNode<View>**
+    ValNode<View>::next_val_ref(void) {
+        return &_next_val;
+    }
+    template <class View>
+    forceinline ValNode<View>*
+    ValNode<View>::next_val(void) const {
+        return _next_val;
+    }
+    template <class View>
+    forceinline void
+    ValNode<View>::next_val(ValNode<View>* n) {
+        _next_val = n;
+    }
 
-  template<class View>
-  forceinline
-  ValNode<View>::ValNode(int v)
-    : _val(v), _matching(nullptr) {}
-  template<class View>
-  forceinline
-  ValNode<View>::ValNode(int v, ValNode<View>* n)
-    : _val(v), _matching(nullptr), _next_val(n) {}
-  template<class View>
-  forceinline int
-  ValNode<View>::val(void) const {
-    return _val;
-  }
-  template<class View>
-  forceinline void
-  ValNode<View>::matching(Edge<View>* m) {
-    _matching = m;
-  }
-  template<class View>
-  forceinline Edge<View>*
-  ValNode<View>::matching(void) const {
-    return _matching;
-  }
-  template<class View>
-  forceinline ValNode<View>**
-  ValNode<View>::next_val_ref(void) {
-    return &_next_val;
-  }
-  template<class View>
-  forceinline ValNode<View>*
-  ValNode<View>::next_val(void) const {
-    return _next_val;
-  }
-  template<class View>
-  forceinline void
-  ValNode<View>::next_val(ValNode<View>* n) {
-    _next_val = n;
-  }
+    /*
+     * View nodes
+     *
+     */
 
+    template <class View>
+    forceinline
+    ViewNode<View>::ViewNode(void)
+        : _view(View(nullptr)) {}
+    template <class View>
+    forceinline
+    ViewNode<View>::ViewNode(View x)
+        : _size(x.size()), _view(x) {}
+    template <class View>
+    forceinline Edge<View>*
+    ViewNode<View>::val_edges(void) const {
+        return _val_edges;
+    }
+    template <class View>
+    forceinline Edge<View>**
+    ViewNode<View>::val_edges_ref(void) {
+        return &_val_edges;
+    }
+    template <class View>
+    forceinline bool
+    ViewNode<View>::fake(void) const {
+        return _view.varimp() == nullptr;
+    }
+    template <class View>
+    forceinline View
+    ViewNode<View>::view(void) const {
+        return _view;
+    }
+    template <class View>
+    forceinline bool
+    ViewNode<View>::changed(void) const {
+        return _size != _view.size();
+    }
+    template <class View>
+    forceinline void
+    ViewNode<View>::update(void) {
+        _size = _view.size();
+    }
+    template <class View>
+    forceinline bool
+    ViewNode<View>::matched(void) const {
+        return Node<View>::edge_fst() != Node<View>::edge_lst();
+    }
 
-
-  /*
-   * View nodes
-   *
-   */
-
-  template<class View>
-  forceinline
-  ViewNode<View>::ViewNode(void)
-    : _view(View(nullptr)) {}
-  template<class View>
-  forceinline
-  ViewNode<View>::ViewNode(View x)
-    : _size(x.size()), _view(x) {}
-  template<class View>
-  forceinline Edge<View>*
-  ViewNode<View>::val_edges(void) const {
-    return _val_edges;
-  }
-  template<class View>
-  forceinline Edge<View>**
-  ViewNode<View>::val_edges_ref(void) {
-    return &_val_edges;
-  }
-  template<class View>
-  forceinline bool
-  ViewNode<View>::fake(void) const {
-    return _view.varimp() == nullptr;
-  }
-  template<class View>
-  forceinline View
-  ViewNode<View>::view(void) const {
-    return _view;
-  }
-  template<class View>
-  forceinline bool
-  ViewNode<View>::changed(void) const {
-    return _size != _view.size();
-  }
-  template<class View>
-  forceinline void
-  ViewNode<View>::update(void) {
-    _size = _view.size();
-  }
-  template<class View>
-  forceinline bool
-  ViewNode<View>::matched(void) const {
-    return Node<View>::edge_fst() != Node<View>::edge_lst();
-  }
-
-}}}
+}}} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop
-

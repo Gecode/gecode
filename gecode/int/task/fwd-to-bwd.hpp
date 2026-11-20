@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,66 +32,66 @@
 
 namespace Gecode { namespace Int {
 
-  /*
-   * Task mapper: map forward task to view to backward task View
-   */
-  template<class TaskView>
-  forceinline int
-  FwdToBwd<TaskView>::est(void) const {
-    return -TaskView::lct();
-  }
-  template<class TaskView>
-  forceinline int
-  FwdToBwd<TaskView>::ect(void) const {
-    return -TaskView::lst();
-  }
-  template<class TaskView>
-  forceinline int
-  FwdToBwd<TaskView>::lst(void) const {
-    return -TaskView::ect();
-  }
-  template<class TaskView>
-  forceinline int
-  FwdToBwd<TaskView>::lct(void) const {
-    return -TaskView::est();
-  }
-  template<class TaskView>
-  forceinline int
-  FwdToBwd<TaskView>::pmin(void) const {
-    return TaskView::pmin();
-  }
-  template<class TaskView>
-  forceinline int
-  FwdToBwd<TaskView>::pmax(void) const {
-    return TaskView::pmax();
-  }
+    /*
+     * Task mapper: map forward task to view to backward task View
+     */
+    template <class TaskView>
+    forceinline int
+    FwdToBwd<TaskView>::est(void) const {
+        return -TaskView::lct();
+    }
+    template <class TaskView>
+    forceinline int
+    FwdToBwd<TaskView>::ect(void) const {
+        return -TaskView::lst();
+    }
+    template <class TaskView>
+    forceinline int
+    FwdToBwd<TaskView>::lst(void) const {
+        return -TaskView::ect();
+    }
+    template <class TaskView>
+    forceinline int
+    FwdToBwd<TaskView>::lct(void) const {
+        return -TaskView::est();
+    }
+    template <class TaskView>
+    forceinline int
+    FwdToBwd<TaskView>::pmin(void) const {
+        return TaskView::pmin();
+    }
+    template <class TaskView>
+    forceinline int
+    FwdToBwd<TaskView>::pmax(void) const {
+        return TaskView::pmax();
+    }
 
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::est(Space& home, int n) {
-    return TaskView::lct(home,-n);
-  }
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::ect(Space& home, int n) {
-    return TaskView::lst(home,-n);
-  }
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::lst(Space& home, int n) {
-    return TaskView::ect(home,-n);
-  }
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::lct(Space& home, int n) {
-    return TaskView::est(home,-n);
-  }
-  template<class TaskView>
-  forceinline ModEvent
-  FwdToBwd<TaskView>::norun(Space& home, int e, int l) {
-    return TaskView::norun(home,-l,-e);
-  }
+    template <class TaskView>
+    forceinline ModEvent
+    FwdToBwd<TaskView>::est(Space& home, int n) {
+        return TaskView::lct(home, -n);
+    }
+    template <class TaskView>
+    forceinline ModEvent
+    FwdToBwd<TaskView>::ect(Space& home, int n) {
+        return TaskView::lst(home, -n);
+    }
+    template <class TaskView>
+    forceinline ModEvent
+    FwdToBwd<TaskView>::lst(Space& home, int n) {
+        return TaskView::ect(home, -n);
+    }
+    template <class TaskView>
+    forceinline ModEvent
+    FwdToBwd<TaskView>::lct(Space& home, int n) {
+        return TaskView::est(home, -n);
+    }
+    template <class TaskView>
+    forceinline ModEvent
+    FwdToBwd<TaskView>::norun(Space& home, int e, int l) {
+        return TaskView::norun(home, -l, -e);
+    }
 
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-var

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -42,175 +41,170 @@
 
 namespace Gecode {
 
-  void
-  distinct(Home home, const IntVarArgs& x, IntPropLevel ipl) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::distinct");
-    GECODE_POST;
-    ViewArray<IntView> xv(home,x);
-    switch (vbd(ipl)) {
-    case IPL_BND:
-      GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
-      break;
-    case IPL_DOM:
-      GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,xv));
-      break;
-    default:
-      GECODE_ES_FAIL(Distinct::Val<IntView>::post(home,xv));
+    void
+    distinct(Home home, const IntVarArgs& x, IntPropLevel ipl) {
+        using namespace Int;
+        if (same(x))
+            throw ArgumentSame("Int::distinct");
+        GECODE_POST;
+        ViewArray<IntView> xv(home, x);
+        switch (vbd(ipl)) {
+        case IPL_BND:
+            GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home, xv));
+            break;
+        case IPL_DOM:
+            GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home, xv));
+            break;
+        default:
+            GECODE_ES_FAIL(Distinct::Val<IntView>::post(home, xv));
+        }
     }
-  }
 
-  void
-  distinct(Home home, const IntArgs& c, const IntVarArgs& x,
-           IntPropLevel ipl) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::distinct");
-    if (c.size() != x.size())
-      throw ArgumentSizeMismatch("Int::distinct");
-    GECODE_POST;
-    ViewArray<OffsetView> cx(home,x.size());
-    for (int i=0; i<c.size(); i++) {
-      long long int cx_min = (static_cast<long long int>(c[i]) +
-                              static_cast<long long int>(x[i].min()));
-      long long int cx_max = (static_cast<long long int>(c[i]) +
-                              static_cast<long long int>(x[i].max()));
-      Limits::check(c[i],"Int::distinct");
-      Limits::check(cx_min,"Int::distinct");
-      Limits::check(cx_max,"Int::distinct");
-      cx[i] = OffsetView(x[i],c[i]);
+    void
+    distinct(Home home, const IntArgs& c, const IntVarArgs& x, IntPropLevel ipl) {
+        using namespace Int;
+        if (same(x))
+            throw ArgumentSame("Int::distinct");
+        if (c.size() != x.size())
+            throw ArgumentSizeMismatch("Int::distinct");
+        GECODE_POST;
+        ViewArray<OffsetView> cx(home, x.size());
+        for (int i = 0; i < c.size(); i++) {
+            long long int cx_min = (static_cast<long long int>(c[i]) + static_cast<long long int>(x[i].min()));
+            long long int cx_max = (static_cast<long long int>(c[i]) + static_cast<long long int>(x[i].max()));
+            Limits::check(c[i], "Int::distinct");
+            Limits::check(cx_min, "Int::distinct");
+            Limits::check(cx_max, "Int::distinct");
+            cx[i] = OffsetView(x[i], c[i]);
+        }
+        switch (vbd(ipl)) {
+        case IPL_BND:
+            GECODE_ES_FAIL(Distinct::Bnd<OffsetView>::post(home, cx));
+            break;
+        case IPL_DOM:
+            GECODE_ES_FAIL(Distinct::Dom<OffsetView>::post(home, cx));
+            break;
+        default:
+            GECODE_ES_FAIL(Distinct::Val<OffsetView>::post(home, cx));
+        }
     }
-    switch (vbd(ipl)) {
-    case IPL_BND:
-      GECODE_ES_FAIL(Distinct::Bnd<OffsetView>::post(home,cx));
-      break;
-    case IPL_DOM:
-      GECODE_ES_FAIL(Distinct::Dom<OffsetView>::post(home,cx));
-      break;
-    default:
-      GECODE_ES_FAIL(Distinct::Val<OffsetView>::post(home,cx));
+
+    void
+    distinct(Home home, const BoolVarArgs& b, const IntVarArgs& x, IntPropLevel ipl) {
+        using namespace Int;
+        if (same(x))
+            throw ArgumentSame("Int::distinct");
+        if (b.size() != x.size())
+            throw ArgumentSizeMismatch("Int::distinct");
+        GECODE_POST;
+
+        int n = x.size();
+        int min = Limits::max;
+        int max = Limits::min;
+        int m = 0;
+        for (int i = 0; i < n; i++)
+            if (!b[i].zero()) {
+                min = std::min(min, x[i].min());
+                max = std::max(max, x[i].max());
+                m++;
+            }
+
+        if (m < 2)
+            return;
+
+        int start;
+        if (max < Limits::max - m)
+            start = max + 1;
+        else if (min > Limits::min + m)
+            start = min - (m + 1);
+        else
+            throw OutOfLimits("Int::distinct");
+
+        ViewArray<IntView> y(home, m);
+        int j = 0;
+        for (int i = 0; i < n; i++)
+            if (b[i].one()) {
+                y[j] = x[i];
+                j++;
+            } else if (b[i].none()) {
+                y[j] = IntVar(home, Limits::min, Limits::max);
+                GECODE_ES_FAIL((Bool::IteDom<IntView, ConstIntView, IntView>::post(home, b[i], x[i], start + j, y[j])));
+                j++;
+            }
+        assert(j == m);
+
+        switch (vbd(ipl)) {
+        case IPL_BND:
+            GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home, y));
+            break;
+        case IPL_DOM:
+            GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home, y));
+            break;
+        default:
+            GECODE_ES_FAIL(Distinct::Val<IntView>::post(home, y));
+        }
     }
-  }
 
-  void
-  distinct(Home home, const BoolVarArgs& b, const IntVarArgs& x,
-           IntPropLevel ipl) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::distinct");
-    if (b.size() != x.size())
-      throw ArgumentSizeMismatch("Int::distinct");
-    GECODE_POST;
+    void
+    distinct(Home home, const IntVarArgs& x, int c, IntPropLevel ipl) {
+        using namespace Int;
+        if (same(x))
+            throw ArgumentSame("Int::distinct");
+        GECODE_POST;
 
-    int n = x.size();
-    int min = Limits::max;
-    int max = Limits::min;
-    int m = 0;
-    for (int i=0; i<n; i++)
-      if (!b[i].zero()) {
-        min = std::min(min,x[i].min());
-        max = std::max(max,x[i].max());
-        m++;
-      }
+        int n = x.size();
+        int min = Limits::max;
+        int max = Limits::min;
+        int m = 0;
+        for (int i = 0; i < n; i++)
+            if (!(x[i].assigned() && (x[i].val() == c))) {
+                min = std::min(min, x[i].min());
+                max = std::max(max, x[i].max());
+                m++;
+            }
 
-    if (m < 2)
-      return;
+        if (m < 2)
+            return;
 
-    int start;
-    if (max < Limits::max-m)
-      start = max+1;
-    else if (min > Limits::min+m)
-      start = min-(m+1);
-    else
-      throw OutOfLimits("Int::distinct");
+        int start;
+        if (max < Limits::max - m)
+            start = max + 1;
+        else if (min > Limits::min + m)
+            start = min - (m + 1);
+        else
+            throw OutOfLimits("Int::distinct");
 
-    ViewArray<IntView> y(home,m);
-    int j = 0;
-    for (int i=0; i<n; i++)
-      if (b[i].one()) {
-        y[j] = x[i]; j++;
-      } else if (b[i].none()) {
-        y[j] = IntVar(home, Limits::min, Limits::max);
-        GECODE_ES_FAIL((Bool::IteDom<IntView,ConstIntView,IntView>::post
-                        (home, b[i], x[i], start+j, y[j])));
-        j++;
-      }
-    assert(j == m);
+        ViewArray<IntView> y(home, m);
+        int j = 0;
+        for (int i = 0; i < n; i++)
+            if (!x[i].in(c)) {
+                y[j] = x[i];
+                j++;
+            } else if (!(x[i].assigned() && (x[i].val() == c))) {
+                y[j] = IntVar(home, Limits::min, Limits::max);
+                GECODE_ES_FAIL(Distinct::EqIte::post(home, x[i], y[j], c, start + j));
+                j++;
+            }
+        assert(j == m);
 
-    switch (vbd(ipl)) {
-    case IPL_BND:
-      GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,y));
-      break;
-    case IPL_DOM:
-      GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,y));
-      break;
-    default:
-      GECODE_ES_FAIL(Distinct::Val<IntView>::post(home,y));
+        switch (vbd(ipl)) {
+        case IPL_BND:
+            GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home, y));
+            break;
+        case IPL_DOM:
+            GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home, y));
+            break;
+        default:
+            GECODE_ES_FAIL(Distinct::Val<IntView>::post(home, y));
+        }
     }
-  }
 
-  void
-  distinct(Home home, const IntVarArgs& x, int c,
-           IntPropLevel ipl) {
-    using namespace Int;
-    if (same(x))
-      throw ArgumentSame("Int::distinct");
-    GECODE_POST;
-
-    int n = x.size();
-    int min = Limits::max;
-    int max = Limits::min;
-    int m = 0;
-    for (int i=0; i<n; i++)
-      if (!(x[i].assigned() && (x[i].val() == c))) {
-        min = std::min(min,x[i].min());
-        max = std::max(max,x[i].max());
-        m++;
-      }
-
-    if (m < 2)
-      return;
-
-    int start;
-    if (max < Limits::max-m)
-      start = max+1;
-    else if (min > Limits::min+m)
-      start = min-(m+1);
-    else
-      throw OutOfLimits("Int::distinct");
-
-    ViewArray<IntView> y(home,m);
-    int j = 0;
-    for (int i=0; i<n; i++)
-      if (!x[i].in(c)) {
-        y[j] = x[i]; j++;
-      } else if (!(x[i].assigned() && (x[i].val() == c))) {
-        y[j] = IntVar(home, Limits::min, Limits::max);
-        GECODE_ES_FAIL(Distinct::EqIte::post
-                       (home, x[i], y[j], c, start+j));
-        j++;
-      }
-    assert(j == m);
-
-    switch (vbd(ipl)) {
-    case IPL_BND:
-      GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,y));
-      break;
-    case IPL_DOM:
-      GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,y));
-      break;
-    default:
-      GECODE_ES_FAIL(Distinct::Val<IntView>::post(home,y));
+    void
+    distinct(Home home, OpenIntVarList list, IntPropLevel) {
+        GECODE_POST;
+        Int::Distinct::Open<Int::IntView>::post(home, OpenViewList<Int::IntView>(list));
     }
-  }
 
-  void
-  distinct(Home home, OpenIntVarList list, IntPropLevel) {
-    GECODE_POST;
-    Int::Distinct::Open<Int::IntView>::post(home,OpenViewList<Int::IntView>(list));
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-post

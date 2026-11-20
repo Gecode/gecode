@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,22 +36,22 @@
 
 namespace Gecode {
 
-  void
-  channel(Home home, FloatVar x0, IntVar x1) {
-    using namespace Float;
-    using namespace Int;
-    GECODE_POST;
-    GECODE_ES_FAIL((Channel::Channel<FloatView,IntView>::post(home,x0,x1)));
-  }
+    void
+    channel(Home home, FloatVar x0, IntVar x1) {
+        using namespace Float;
+        using namespace Int;
+        GECODE_POST;
+        GECODE_ES_FAIL((Channel::Channel<FloatView, IntView>::post(home, x0, x1)));
+    }
 
-  void
-  channel(Home home, FloatVar x0, BoolVar x1) {
-    using namespace Float;
-    using namespace Int;
-    GECODE_POST;
-    GECODE_ES_FAIL((Channel::Channel<FloatView,BoolView>::post(home,x0,x1)));
-  }
+    void
+    channel(Home home, FloatVar x0, BoolVar x1) {
+        using namespace Float;
+        using namespace Int;
+        GECODE_POST;
+        GECODE_ES_FAIL((Channel::Channel<FloatView, BoolView>::post(home, x0, x1)));
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-post

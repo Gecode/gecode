@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,100 +36,96 @@
 
 namespace Gecode {
 
-  void
-  abs(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Abs<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    abs(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Abs<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
+    void
+    max(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Max<FloatView, FloatView, FloatView>::post(home, x0, x1, x2)));
+    }
 
-  void
-  max(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Max<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
-  }
+    void
+    max(Home home, const FloatVarArgs& x, FloatVar y) {
+        using namespace Float;
+        if (x.size() == 0)
+            throw TooFewArguments("Float::max");
+        GECODE_POST;
+        ViewArray<FloatView> xv(home, x);
+        GECODE_ES_FAIL(Arithmetic::NaryMax<FloatView>::post(home, xv, y));
+    }
 
-  void
-  max(Home home, const FloatVarArgs& x, FloatVar y) {
-    using namespace Float;
-    if (x.size() == 0)
-      throw TooFewArguments("Float::max");
-    GECODE_POST;
-    ViewArray<FloatView> xv(home,x);
-    GECODE_ES_FAIL(Arithmetic::NaryMax<FloatView>::post(home,xv,y));
-  }
+    void
+    min(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Min<FloatView, FloatView, FloatView>::post(home, x0, x1, x2)));
+    }
 
+    void
+    min(Home home, const FloatVarArgs& x, FloatVar y) {
+        using namespace Float;
+        if (x.size() == 0)
+            throw TooFewArguments("Float::min");
+        GECODE_POST;
+        ViewArray<MinusView> m(home, x.size());
+        for (int i = x.size(); i--;)
+            m[i] = MinusView(x[i]);
+        MinusView my(y);
+        GECODE_ES_FAIL(Arithmetic::NaryMax<MinusView>::post(home, m, my));
+    }
 
-  void
-  min(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Min<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
-  }
+    void
+    mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Mult<FloatView>::post(home, x0, x1, x2)));
+    }
 
-  void
-  min(Home home, const FloatVarArgs& x, FloatVar y) {
-    using namespace Float;
-    if (x.size() == 0)
-      throw TooFewArguments("Float::min");
-    GECODE_POST;
-    ViewArray<MinusView> m(home,x.size());
-    for (int i=x.size(); i--; )
-      m[i] = MinusView(x[i]);
-    MinusView my(y);
-    GECODE_ES_FAIL(Arithmetic::NaryMax<MinusView>::post(home,m,my));
-  }
+    void
+    sqr(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Sqr<FloatView>::post(home, x0, x1)));
+    }
 
+    void
+    sqrt(Home home, FloatVar x0, FloatVar x1) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Sqrt<FloatView, FloatView>::post(home, x0, x1)));
+    }
 
-  void
-  mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Mult<FloatView>::post(home,x0,x1,x2)));
-  }
+    void
+    pow(Home home, FloatVar x0, int n, FloatVar x1) {
+        using namespace Float;
+        if (n < 0)
+            throw OutOfLimits("pow");
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Pow<FloatView, FloatView>::post(home, x0, x1, n)));
+    }
 
-  void
-  sqr(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Sqr<FloatView>::post(home,x0,x1)));
-  }
+    void
+    nroot(Home home, FloatVar x0, int n, FloatVar x1) {
+        using namespace Float;
+        if (n < 0)
+            throw OutOfLimits("nroot");
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::NthRoot<FloatView, FloatView>::post(home, x0, x1, n)));
+    }
 
-  void
-  sqrt(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Sqrt<FloatView,FloatView>::post(home,x0,x1)));
-  }
+    void
+    div(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
+        using namespace Float;
+        GECODE_POST;
+        GECODE_ES_FAIL((Arithmetic::Div<FloatView, FloatView, FloatView>::post(home, x0, x1, x2)));
+    }
 
-  void
-  pow(Home home, FloatVar x0, int n, FloatVar x1) {
-    using namespace Float;
-    if (n < 0)
-      throw OutOfLimits("pow");
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Pow<FloatView,FloatView>::post(home,x0,x1,n)));
-  }
-
-  void
-  nroot(Home home, FloatVar x0, int n, FloatVar x1) {
-    using namespace Float;
-    if (n < 0)
-      throw OutOfLimits("nroot");
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::NthRoot<FloatView,FloatView>::post(home,x0,x1,n)));
-  }
-
-  void
-  div(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL(
-      (Arithmetic::Div<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: float-post

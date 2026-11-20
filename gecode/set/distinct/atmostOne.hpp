@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,30 +32,30 @@
 
 namespace Gecode { namespace Set { namespace Distinct {
 
-  /*
-   * "AtMostOneIntersection" propagator
-   *
-   */
+    /*
+     * "AtMostOneIntersection" propagator
+     *
+     */
 
-  forceinline
-  AtmostOne::AtmostOne(Home home, ViewArray<SetView>& x, unsigned int _c)
-    : NaryPropagator<SetView, PC_SET_ANY>(home,x), c(_c) {}
+    forceinline
+    AtmostOne::AtmostOne(Home home, ViewArray<SetView>& x, unsigned int _c)
+        : NaryPropagator<SetView, PC_SET_ANY>(home, x), c(_c) {}
 
-  forceinline
-  AtmostOne::AtmostOne(Space& home, AtmostOne& p)
-    : NaryPropagator<SetView, PC_SET_ANY>(home,p), c(p.c) {}
+    forceinline
+    AtmostOne::AtmostOne(Space& home, AtmostOne& p)
+        : NaryPropagator<SetView, PC_SET_ANY>(home, p), c(p.c) {}
 
-  forceinline ExecStatus
-  AtmostOne::post(Home home, ViewArray<SetView> x, unsigned int c) {
-    for (int i=x.size(); i--;) {
-      GECODE_ME_CHECK(x[i].cardMin(home, c));
-      GECODE_ME_CHECK(x[i].cardMax(home, c));
+    forceinline ExecStatus
+    AtmostOne::post(Home home, ViewArray<SetView> x, unsigned int c) {
+        for (int i = x.size(); i--;) {
+            GECODE_ME_CHECK(x[i].cardMin(home, c));
+            GECODE_ME_CHECK(x[i].cardMax(home, c));
+        }
+
+        (void)new (home) AtmostOne(home, x, c);
+        return ES_OK;
     }
 
-    (void) new (home) AtmostOne(home,x,c);
-    return ES_OK;
-  }
-
-}}}
+}}} // namespace Gecode::Set::Distinct
 
 // STATISTICS: set-prop

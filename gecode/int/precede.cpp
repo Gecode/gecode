@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christopher Mears <Chris.Mears@monash.edu>
@@ -39,57 +38,52 @@
 
 namespace Gecode {
 
-  void
-  precede(Home home, const IntVarArgs& x, int s, int t, IntPropLevel) {
-    using namespace Int;
-    Limits::check(s,"Int::precede");
-    Limits::check(t,"Int::precede");
-    GECODE_POST;
+    void
+    precede(Home home, const IntVarArgs& x, int s, int t, IntPropLevel) {
+        using namespace Int;
+        Limits::check(s, "Int::precede");
+        Limits::check(t, "Int::precede");
+        GECODE_POST;
 
-    ViewArray<IntView> y(home, x);
-    GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, s, t));
-  }
-
-  void
-  precede(Home home, const IntVarArgs& x, const IntArgs& c, IntPropLevel) {
-    using namespace Int;
-    if (c.size() < 2)
-      return;
-    for (int i=c.size(); i--; )
-      Limits::check(c[i],"Int::precede");
-    GECODE_POST;
-
-    for (int i=c.size()-1; i--; ) {
-      ViewArray<IntView> y(home, x);
-      GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, c[i], c[i+1]));
+        ViewArray<IntView> y(home, x);
+        GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, s, t));
     }
-  }
 
-  void
-  precede(Home home, OpenIntVarList list,
-          int before, int after, IntPropLevel) {
-    Int::Limits::check(before,"Int::precede");
-    Int::Limits::check(after,"Int::precede");
-    GECODE_POST;
-    Int::Precede::Open<Int::IntView>::post
-      (home,OpenViewList<Int::IntView>(list),before,after);
-  }
+    void
+    precede(Home home, const IntVarArgs& x, const IntArgs& c, IntPropLevel) {
+        using namespace Int;
+        if (c.size() < 2)
+            return;
+        for (int i = c.size(); i--;)
+            Limits::check(c[i], "Int::precede");
+        GECODE_POST;
 
-  void
-  precede(Home home, OpenIntVarList list,
-          const IntArgs& values, IntPropLevel ipl) {
-    if (values.size() < 2)
-      return;
-    for (int i=values.size(); i--; )
-      Int::Limits::check(values[i],"Int::precede");
-    GECODE_POST;
-    for (int i=values.size()-1; i--; )
-      Int::Precede::Open<Int::IntView>::post
-        (home,OpenViewList<Int::IntView>(list),values[i],values[i+1]);
-    (void) ipl;
-  }
+        for (int i = c.size() - 1; i--;) {
+            ViewArray<IntView> y(home, x);
+            GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, c[i], c[i + 1]));
+        }
+    }
 
-}
+    void
+    precede(Home home, OpenIntVarList list, int before, int after, IntPropLevel) {
+        Int::Limits::check(before, "Int::precede");
+        Int::Limits::check(after, "Int::precede");
+        GECODE_POST;
+        Int::Precede::Open<Int::IntView>::post(home, OpenViewList<Int::IntView>(list), before, after);
+    }
+
+    void
+    precede(Home home, OpenIntVarList list, const IntArgs& values, IntPropLevel ipl) {
+        if (values.size() < 2)
+            return;
+        for (int i = values.size(); i--;)
+            Int::Limits::check(values[i], "Int::precede");
+        GECODE_POST;
+        for (int i = values.size() - 1; i--;)
+            Int::Precede::Open<Int::IntView>::post(home, OpenViewList<Int::IntView>(list), values[i], values[i + 1]);
+        (void)ipl;
+    }
+
+} // namespace Gecode
 
 // STATISTICS: int-post
-

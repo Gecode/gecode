@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -41,14 +40,15 @@
 
 namespace Gecode { namespace Support {
 
-  unsigned int hwrnd(void) {
-    unsigned int r;
-    if (rand_s(&r) != 0)
-      throw std::runtime_error("Hardware random initialization failed");
-    return r;
-  }
+    unsigned int
+    hwrnd(void) {
+        unsigned int r;
+        if (rand_s(&r) != 0)
+            throw std::runtime_error("Hardware random initialization failed");
+        return r;
+    }
 
-}}
+}} // namespace Gecode::Support
 
 #else
 
@@ -59,18 +59,19 @@ namespace Gecode { namespace Support {
 
 namespace Gecode { namespace Support {
 
-  unsigned int hwrnd(void) {
-    std::fstream devrandom;
-    devrandom.open("/dev/random", std::fstream::in | std::fstream::binary);
-    unsigned int rnd;
-    devrandom.read(reinterpret_cast<char*>(&rnd),sizeof(unsigned int));
-    if (!devrandom)
-      throw std::runtime_error("Cannot read hardware random source /dev/random");
-    devrandom.close();
-    return rnd;
-  }
+    unsigned int
+    hwrnd(void) {
+        std::fstream devrandom;
+        devrandom.open("/dev/random", std::fstream::in | std::fstream::binary);
+        unsigned int rnd;
+        devrandom.read(reinterpret_cast<char*>(&rnd), sizeof(unsigned int));
+        if (!devrandom)
+            throw std::runtime_error("Cannot read hardware random source /dev/random");
+        devrandom.close();
+        return rnd;
+    }
 
-}}
+}} // namespace Gecode::Support
 
 #endif
 

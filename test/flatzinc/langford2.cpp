@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,14 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest("langford2",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                "langford2", "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -142,15 +138,14 @@ constraint int_lin_le_reif([1], [Fst[5]], 8, BOOL____00026) :: defines_var(BOOL_
 constraint int_lin_le_reif([1], [Fst[6]], 7, BOOL____00032) :: defines_var(BOOL____00032);\n\
 constraint int_lin_le_reif([1], [Fst[7]], 6, BOOL____00038) :: defines_var(BOOL____00038);\n\
 solve  :: int_search(Fst, first_fail, indomain_min, complete) satisfy;\n\
-", "a = array1d(1..14, [1, 7, 1, 2, 6, 4, 2, 5, 3, 7, 4, 6, 3, 5]);\n\
+",
+                "a = array1d(1..14, [1, 7, 1, 2, 6, 4, 2, 5, 3, 7, 4, 6, 3, 5]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

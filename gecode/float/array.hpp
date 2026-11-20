@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,84 +34,84 @@
 
 namespace Gecode {
 
-  /*
-   * Implementation
-   *
-   */
+    /*
+     * Implementation
+     *
+     */
 
-  forceinline
-  FloatValArgs::FloatValArgs(void) : ArgArray<FloatVal>(0) {}
+    forceinline
+    FloatValArgs::FloatValArgs(void)
+        : ArgArray<FloatVal>(0) {}
 
-  forceinline
-  FloatValArgs::FloatValArgs(int n) : ArgArray<FloatVal>(n) {}
+    forceinline
+    FloatValArgs::FloatValArgs(int n)
+        : ArgArray<FloatVal>(n) {}
 
-  forceinline
-  FloatValArgs::FloatValArgs(const SharedArray<FloatVal>& x)
-    : ArgArray<FloatVal>(x.size()) {
-    for (int i=x.size(); i--;)
-      a[i] = x[i];
-  }
-  forceinline
-  FloatValArgs::FloatValArgs(const std::vector<FloatVal>& x)
-    : ArgArray<FloatVal>(x) {}
-  template<class InputIterator>
-  forceinline
-  FloatValArgs::FloatValArgs(InputIterator first, InputIterator last)
-    : ArgArray<FloatVal>(first,last) {}
+    forceinline
+    FloatValArgs::FloatValArgs(const SharedArray<FloatVal>& x)
+        : ArgArray<FloatVal>(x.size()) {
+        for (int i = x.size(); i--;)
+            a[i] = x[i];
+    }
+    forceinline
+    FloatValArgs::FloatValArgs(const std::vector<FloatVal>& x)
+        : ArgArray<FloatVal>(x) {}
+    template <class InputIterator>
+    forceinline
+    FloatValArgs::FloatValArgs(InputIterator first, InputIterator last)
+        : ArgArray<FloatVal>(first, last) {}
 
-  forceinline
-  FloatValArgs::FloatValArgs(int n, const FloatVal* e)
-    : ArgArray<FloatVal>(n, e) {}
+    forceinline
+    FloatValArgs::FloatValArgs(int n, const FloatVal* e)
+        : ArgArray<FloatVal>(n, e) {}
 
-  forceinline
-  FloatValArgs::FloatValArgs(const ArgArray<FloatVal>& a)
-    : ArgArray<FloatVal>(a) {}
+    forceinline
+    FloatValArgs::FloatValArgs(const ArgArray<FloatVal>& a)
+        : ArgArray<FloatVal>(a) {}
 
+    forceinline
+    FloatVarArgs::FloatVarArgs(void) {}
 
-  forceinline
-  FloatVarArgs::FloatVarArgs(void) {}
+    forceinline
+    FloatVarArgs::FloatVarArgs(int n)
+        : VarArgArray<FloatVar>(n) {}
 
-  forceinline
-  FloatVarArgs::FloatVarArgs(int n)
-    : VarArgArray<FloatVar>(n) {}
+    forceinline
+    FloatVarArgs::FloatVarArgs(const FloatVarArgs& a)
+        : VarArgArray<FloatVar>(a) {}
 
-  forceinline
-  FloatVarArgs::FloatVarArgs(const FloatVarArgs& a)
-    : VarArgArray<FloatVar>(a) {}
+    forceinline
+    FloatVarArgs::FloatVarArgs(const VarArray<FloatVar>& a)
+        : VarArgArray<FloatVar>(a) {}
 
-  forceinline
-  FloatVarArgs::FloatVarArgs(const VarArray<FloatVar>& a)
-    : VarArgArray<FloatVar>(a) {}
+    forceinline
+    FloatVarArgs::FloatVarArgs(const std::vector<FloatVar>& a)
+        : VarArgArray<FloatVar>(a) {}
 
-  forceinline
-  FloatVarArgs::FloatVarArgs(const std::vector<FloatVar>& a)
-    : VarArgArray<FloatVar>(a) {}
+    forceinline
+    FloatVarArgs::FloatVarArgs(std::initializer_list<FloatVar> a)
+        : VarArgArray<FloatVar>(a) {}
 
-  forceinline
-  FloatVarArgs::FloatVarArgs(std::initializer_list<FloatVar> a)
-    : VarArgArray<FloatVar>(a) {}
+    template <class InputIterator>
+    forceinline
+    FloatVarArgs::FloatVarArgs(InputIterator first, InputIterator last)
+        : VarArgArray<FloatVar>(first, last) {}
 
-  template<class InputIterator>
-  forceinline
-  FloatVarArgs::FloatVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<FloatVar>(first,last) {}
+    forceinline
+    FloatVarArray::FloatVarArray(void) {}
 
+    forceinline
+    FloatVarArray::FloatVarArray(Space& home, int n)
+        : VarArray<FloatVar>(home, n) {}
 
-  forceinline
-  FloatVarArray::FloatVarArray(void) {}
+    forceinline
+    FloatVarArray::FloatVarArray(const FloatVarArray& a)
+        : VarArray<FloatVar>(a) {}
 
-  forceinline
-  FloatVarArray::FloatVarArray(Space& home, int n)
-    : VarArray<FloatVar>(home,n) {}
+    forceinline
+    FloatVarArray::FloatVarArray(Space& home, const FloatVarArgs& a)
+        : VarArray<FloatVar>(home, a) {}
 
-  forceinline
-  FloatVarArray::FloatVarArray(const FloatVarArray& a)
-    : VarArray<FloatVar>(a) {}
-
-  forceinline
-  FloatVarArray::FloatVarArray(Space& home, const FloatVarArgs& a)
-    : VarArray<FloatVar>(home,a) {}
-
-}
+} // namespace Gecode
 
 // STATISTICS: float-other

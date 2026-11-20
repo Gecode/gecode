@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,27 +34,26 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  Stop*
-  pbsstop(Stop* so) {
-    return new PortfolioStop(so);
-  }
+    Stop*
+    pbsstop(Stop* so) {
+        return new PortfolioStop(so);
+    }
 
-  Stop*
-  pbsstop(Stop* so, Stop* po) {
-    return new PortfolioStop(so,po);
-  }
+    Stop*
+    pbsstop(Stop* so, Stop* po) {
+        return new PortfolioStop(so, po);
+    }
 
-  Engine*
-  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
-            unsigned int n_assets, const Statistics& stat,
-            const Search::Options& opt, bool best) {
-    if (best)
-      return new PBS<true>(assets,stops,coverage,n_assets,stat,opt);
-    else
-      return new PBS<false>(assets,stops,coverage,n_assets,stat,opt);
-  }
+    Engine*
+    pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n_assets,
+              const Statistics& stat, const Search::Options& opt, bool best) {
+        if (best)
+            return new PBS<true>(assets, stops, coverage, n_assets, stat, opt);
+        else
+            return new PBS<false>(assets, stops, coverage, n_assets, stat, opt);
+    }
 
-}}}
+}}} // namespace Gecode::Search::Seq
 
 #ifdef GECODE_HAS_THREADS
 
@@ -63,26 +61,26 @@ namespace Gecode { namespace Search { namespace Seq {
 
 namespace Gecode { namespace Search { namespace Par {
 
-  Stop*
-  pbsstop(Stop* so, const WorkerControl& control) {
-    return new PortfolioStop(so,nullptr,control);
-  }
+    Stop*
+    pbsstop(Stop* so, const WorkerControl& control) {
+        return new PortfolioStop(so, nullptr, control);
+    }
 
-  Stop*
-  pbsstop(Stop* so, Stop* po, const WorkerControl& control) {
-    return new PortfolioStop(so,po,control);
-  }
+    Stop*
+    pbsstop(Stop* so, Stop* po, const WorkerControl& control) {
+        return new PortfolioStop(so, po, control);
+    }
 
-  Engine*
-  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
-            unsigned int n_assets, const Statistics& stat, bool best) {
-    if (best)
-      return new PBS<CollectBest>(assets,stops,coverage,n_assets,stat);
-    else
-      return new PBS<CollectAll>(assets,stops,coverage,n_assets,stat);
-  }
+    Engine*
+    pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n_assets,
+              const Statistics& stat, bool best) {
+        if (best)
+            return new PBS<CollectBest>(assets, stops, coverage, n_assets, stat);
+        else
+            return new PBS<CollectAll>(assets, stops, coverage, n_assets, stat);
+    }
 
-}}}
+}}} // namespace Gecode::Search::Par
 
 #endif
 

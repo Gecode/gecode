@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,82 +32,82 @@
 
 namespace Gecode { namespace Iter { namespace Values {
 
-  /**
-   * \brief Remove duplicate values from from value iterator
-   *
-   * The iterator only requires that the value iterator
-   * iterates values in increasing order. Duplicates in the
-   * iterated value sequence are removed.
-   *
-   * \ingroup FuncIterValues
-   */
-  template<class I>
-  class Unique {
-  protected:
-    /// Value iterator used
-    I i;
-  public:
-    /// \name Constructors and initialization
-    //@{
-    /// Default constructor
-    Unique(void);
-    /// Initialize with value iterator \a i
-    Unique(I& i);
-    /// Initialize with value iterator \a i
-    void init(I& i);
-    //@}
+    /**
+     * \brief Remove duplicate values from from value iterator
+     *
+     * The iterator only requires that the value iterator
+     * iterates values in increasing order. Duplicates in the
+     * iterated value sequence are removed.
+     *
+     * \ingroup FuncIterValues
+     */
+    template <class I>
+    class Unique {
+    protected:
+        /// Value iterator used
+        I i;
 
-    /// \name Iteration control
-    //@{
-    /// Test whether iterator is still at a value or done
-    bool operator ()(void) const;
-    /// Move iterator to next unique value (if possible)
-    void operator ++(void);
-    //@}
+    public:
+        /// \name Constructors and initialization
+        //@{
+        /// Default constructor
+        Unique(void);
+        /// Initialize with value iterator \a i
+        Unique(I& i);
+        /// Initialize with value iterator \a i
+        void init(I& i);
+        //@}
 
-    /// \name Value access
-    //@{
-    /// Return current value
-    int val(void) const;
-    //@}
-  };
+        /// \name Iteration control
+        //@{
+        /// Test whether iterator is still at a value or done
+        bool operator()(void) const;
+        /// Move iterator to next unique value (if possible)
+        void operator++(void);
+        //@}
 
-  template<class I>
-  forceinline
-  Unique<I>::Unique(void) {}
+        /// \name Value access
+        //@{
+        /// Return current value
+        int val(void) const;
+        //@}
+    };
 
-  template<class I>
-  forceinline
-  Unique<I>::Unique(I& i0)
-    : i(i0) {}
+    template <class I>
+    forceinline
+    Unique<I>::Unique(void) {}
 
-  template<class I>
-  forceinline void
-  Unique<I>::init(I& i0) {
-    i = i0;
-  }
+    template <class I>
+    forceinline
+    Unique<I>::Unique(I& i0)
+        : i(i0) {}
 
-  template<class I>
-  forceinline void
-  Unique<I>::operator ++(void) {
-    int n=i;
-    do {
-      ++i;
-    } while (i() && (i.val() == n));
-  }
-  template<class I>
-  forceinline bool
-  Unique<I>::operator ()(void) const {
-    return i();
-  }
+    template <class I>
+    forceinline void
+    Unique<I>::init(I& i0) {
+        i = i0;
+    }
 
-  template<class I>
-  forceinline int
-  Unique<I>::val(void) const {
-    return i.val();
-  }
+    template <class I>
+    forceinline void
+    Unique<I>::operator++(void) {
+        int n = i;
+        do {
+            ++i;
+        } while (i() && (i.val() == n));
+    }
+    template <class I>
+    forceinline bool
+    Unique<I>::operator()(void) const {
+        return i();
+    }
 
-}}}
+    template <class I>
+    forceinline int
+    Unique<I>::val(void) const {
+        return i.val();
+    }
+
+}}} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any
-

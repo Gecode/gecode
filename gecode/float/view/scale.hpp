@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,177 +34,192 @@
 
 namespace Gecode { namespace Float {
 
-  /*
-   * Constructors and initialization
-   *
-   */
-  forceinline
-  ScaleView::ScaleView(void) {}
-  forceinline
-  ScaleView::ScaleView(FloatVal d, const FloatView& y)
-    : DerivedView<FloatView>(y), a(d) {}
+    /*
+     * Constructors and initialization
+     *
+     */
+    forceinline
+    ScaleView::ScaleView(void) {}
+    forceinline
+    ScaleView::ScaleView(FloatVal d, const FloatView& y)
+        : DerivedView<FloatView>(y), a(d) {}
 
+    /*
+     * Value access
+     *
+     */
+    forceinline FloatVal
+    ScaleView::scale(void) const {
+        return a;
+    }
+    forceinline FloatVal
+    ScaleView::domain(void) const {
+        return x.domain() * a;
+    }
+    forceinline FloatNum
+    ScaleView::min(void) const {
+        FloatVal c = x.min();
+        c *= a;
+        return c.min();
+    }
+    forceinline FloatNum
+    ScaleView::max(void) const {
+        FloatVal c = x.max();
+        c *= a;
+        return c.max();
+    }
+    forceinline FloatNum
+    ScaleView::med(void) const {
+        FloatVal c = x.med();
+        c *= a;
+        return (c.min() + c.max()) / 2;
+    }
+    forceinline FloatVal
+    ScaleView::val(void) const {
+        FloatVal c = x.val();
+        c *= a;
+        return c;
+    }
 
-  /*
-   * Value access
-   *
-   */
-  forceinline FloatVal
-  ScaleView::scale(void) const {
-    return a;
-  }
-  forceinline FloatVal
-  ScaleView::domain(void) const {
-    return x.domain()*a;
-  }
-  forceinline FloatNum
-  ScaleView::min(void) const {
-    FloatVal c = x.min(); c *= a; return c.min();
-  }
-  forceinline FloatNum
-  ScaleView::max(void) const {
-    FloatVal c = x.max(); c *= a; return c.max();
-  }
-  forceinline FloatNum
-  ScaleView::med(void) const {
-    FloatVal c = x.med(); c *= a; return (c.min()+c.max())/2;
-  }
-  forceinline FloatVal
-  ScaleView::val(void) const {
-    FloatVal c = x.val(); c *= a; return c;
-  }
+    forceinline FloatNum
+    ScaleView::size(void) const {
+        FloatVal c = x.size();
+        c *= a;
+        return c.max();
+    }
 
-  forceinline FloatNum
-  ScaleView::size(void) const {
-    FloatVal c = x.size(); c *= a; return c.max();
-  }
+    /*
+     * Domain tests
+     *
+     */
+    forceinline bool
+    ScaleView::zero_in(void) const {
+        return x.zero_in();
+    }
+    forceinline bool
+    ScaleView::in(FloatNum n) const {
+        return x.in(n / a);
+    }
+    forceinline bool
+    ScaleView::in(const FloatVal& n) const {
+        return x.in(n / a);
+    }
 
+    /*
+     * Domain update by value
+     *
+     */
+    forceinline ModEvent
+    ScaleView::lq(Space& home, int n) {
+        FloatVal c = n;
+        c /= a;
+        return x.lq(home, c.max());
+    }
+    forceinline ModEvent
+    ScaleView::lq(Space& home, FloatNum n) {
+        FloatVal c = n;
+        c /= a;
+        return x.lq(home, c.max());
+    }
+    forceinline ModEvent
+    ScaleView::lq(Space& home, FloatVal n) {
+        FloatVal c = n;
+        c /= a;
+        return x.lq(home, c.max());
+    }
 
-  /*
-   * Domain tests
-   *
-   */
-  forceinline bool
-  ScaleView::zero_in(void) const {
-    return x.zero_in();
-  }
-  forceinline bool
-  ScaleView::in(FloatNum n) const {
-    return x.in(n/a);
-  }
-  forceinline bool
-  ScaleView::in(const FloatVal& n) const {
-    return x.in(n/a);
-  }
+    forceinline ModEvent
+    ScaleView::gq(Space& home, int n) {
+        FloatVal c = n;
+        c /= a;
+        return x.gq(home, c.min());
+    }
+    forceinline ModEvent
+    ScaleView::gq(Space& home, FloatNum n) {
+        FloatVal c = n;
+        c /= a;
+        return x.gq(home, c.min());
+    }
+    forceinline ModEvent
+    ScaleView::gq(Space& home, FloatVal n) {
+        FloatVal c = n;
+        c /= a;
+        return x.gq(home, c.min());
+    }
 
+    forceinline ModEvent
+    ScaleView::eq(Space& home, int n) {
+        FloatVal c = n;
+        c /= a;
+        return x.eq(home, c);
+    }
+    forceinline ModEvent
+    ScaleView::eq(Space& home, FloatNum n) {
+        FloatVal c = n;
+        c /= a;
+        return x.eq(home, c);
+    }
+    forceinline ModEvent
+    ScaleView::eq(Space& home, const FloatVal& n) {
+        FloatVal c = n;
+        c /= a;
+        return x.eq(home, c);
+    }
 
-  /*
-   * Domain update by value
-   *
-   */
-  forceinline ModEvent
-  ScaleView::lq(Space& home, int n) {
-    FloatVal c = n; c /= a;
-    return x.lq(home,c.max());
-  }
-  forceinline ModEvent
-  ScaleView::lq(Space& home, FloatNum n) {
-    FloatVal c = n; c /= a;
-    return x.lq(home,c.max());
-  }
-  forceinline ModEvent
-  ScaleView::lq(Space& home, FloatVal n) {
-    FloatVal c = n; c /= a;
-    return x.lq(home,c.max());
-  }
+    /*
+     * Delta information for advisors
+     *
+     */
+    forceinline FloatNum
+    ScaleView::min(const Delta& d) const {
+        FloatVal c = x.min(d);
+        c *= a;
+        return c.min();
+    }
+    forceinline FloatNum
+    ScaleView::max(const Delta& d) const {
+        FloatVal c = x.max(d);
+        c *= a;
+        return c.max();
+    }
 
-  forceinline ModEvent
-  ScaleView::gq(Space& home, int n) {
-    FloatVal c = n; c /= a;
-    return x.gq(home,c.min());
-  }
-  forceinline ModEvent
-  ScaleView::gq(Space& home, FloatNum n) {
-    FloatVal c = n; c /= a;
-    return x.gq(home,c.min());
-  }
-  forceinline ModEvent
-  ScaleView::gq(Space& home, FloatVal n) {
-    FloatVal c = n; c /= a;
-    return x.gq(home,c.min());
-  }
+    forceinline ModEventDelta
+    ScaleView::med(ModEvent me) {
+        return VarImpView<FloatVar>::med(me);
+    }
 
-  forceinline ModEvent
-  ScaleView::eq(Space& home, int n) {
-    FloatVal c = n; c /= a;
-    return x.eq(home,c);
-  }
-  forceinline ModEvent
-  ScaleView::eq(Space& home, FloatNum n) {
-    FloatVal c = n; c /= a;
-    return x.eq(home,c);
-  }
-  forceinline ModEvent
-  ScaleView::eq(Space& home, const FloatVal& n) {
-    FloatVal c = n; c /= a;
-    return x.eq(home,c);
-  }
+    /*
+     * Cloning
+     *
+     */
+    forceinline void
+    ScaleView::update(Space& home, ScaleView& y) {
+        DerivedView<FloatView>::update(home, y);
+        a = y.a;
+    }
 
+    /*
+     * Ordering
+     *
+     */
+    forceinline bool
+    ScaleView::operator<(const ScaleView& y) const {
+        return ((base() < y.base()) || ((base() == y.base()) && (scale() < y.scale())));
+    }
 
-  /*
-   * Delta information for advisors
-   *
-   */
-  forceinline FloatNum
-  ScaleView::min(const Delta& d) const {
-    FloatVal c = x.min(d); c *= a; return c.min();
-  }
-  forceinline FloatNum
-  ScaleView::max(const Delta& d) const {
-    FloatVal c = x.max(d); c *= a; return c.max();
-  }
+    /*
+     * View comparison
+     *
+     */
+    forceinline bool
+    operator==(const ScaleView& x, const ScaleView& y) {
+        return (x.base() == y.base()) && (x.scale() == y.scale());
+    }
+    forceinline bool
+    operator!=(const ScaleView& x, const ScaleView& y) {
+        return !(x == y);
+    }
 
-  forceinline ModEventDelta
-  ScaleView::med(ModEvent me) {
-    return VarImpView<FloatVar>::med(me);
-  }
-
-
-  /*
-   * Cloning
-   *
-   */
-  forceinline void
-  ScaleView::update(Space& home, ScaleView& y) {
-    DerivedView<FloatView>::update(home,y);
-    a=y.a;
-  }
-
-  /*
-   * Ordering
-   *
-   */
-  forceinline bool
-  ScaleView::operator <(const ScaleView& y) const {
-    return ((base() < y.base())
-            || ((base() == y.base()) && (scale() < y.scale())));
-  }
-
-
-  /*
-   * View comparison
-   *
-   */
-  forceinline bool
-  operator ==(const ScaleView& x, const ScaleView& y) {
-    return (x.base() == y.base()) && (x.scale() == y.scale());
-  }
-  forceinline bool
-  operator !=(const ScaleView& x, const ScaleView& y) {
-    return !(x == y);
-  }
-
-}}
+}} // namespace Gecode::Float
 
 // STATISTICS: float-var
-

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,15 +32,15 @@
 
 namespace Gecode {
 
-  /// Trace traits for float views
-  template<>
-  class TraceTraits<Float::FloatView> {
-  public:
-    typedef Float::FloatTraceView TraceView;
-    typedef FloatTraceDelta       TraceDelta;
-    typedef FloatNum              SlackValue;
-  };
+    /// Trace traits for float views
+    template <>
+    class TraceTraits<Float::FloatView> {
+    public:
+        typedef Float::FloatTraceView TraceView;
+        typedef FloatTraceDelta TraceDelta;
+        typedef FloatNum SlackValue;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-trace

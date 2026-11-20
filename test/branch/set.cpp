@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -37,31 +36,31 @@
 
 namespace Test { namespace Branch {
 
-  /// %Test brancher
-  class Set : public SetTest {
-  public:
-    /// Create and register test
-    Set(TestTags tags, const std::string& s, const Gecode::IntSet& d, int n)
-      : SetTest(tags,s,n,d) {}
-    /// Post propagators on variables \a x
-    virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) {
-      Gecode::SetVarArgs xx(x.size()-1);
-      for (int i=x.size()-1; i--;)
-        xx[i] = x[i];
-      Gecode::rel(home, Gecode::SOT_DUNION, xx, x[x.size()-1]);
-    }
-  };
+    /// %Test brancher
+    class Set : public SetTest {
+    public:
+        /// Create and register test
+        Set(TestTags tags, const std::string& s, const Gecode::IntSet& d, int n) : SetTest(tags, s, n, d) {}
+        /// Post propagators on variables \a x
+        virtual void
+        post(Gecode::Space& home, Gecode::SetVarArray& x) {
+            Gecode::SetVarArgs xx(x.size() - 1);
+            for (int i = x.size() - 1; i--;)
+                xx[i] = x[i];
+            Gecode::rel(home, Gecode::SOT_DUNION, xx, x[x.size() - 1]);
+        }
+    };
 
-  namespace {
-    Gecode::IntSet d_dense(-2,3);
-    const int v_sparse[6] = {-100,-10,0,10,100,1000};
-    Gecode::IntSet d_sparse(v_sparse,6);
+    namespace {
+        Gecode::IntSet d_dense(-2, 3);
+        const int v_sparse[6] = {-100, -10, 0, 10, 100, 1000};
+        Gecode::IntSet d_sparse(v_sparse, 6);
 
-    Set d_3(TestTags::standard(),"Dense::3",d_dense,3);
-    Set s_3(TestTags::sweep(),"Sparse::3",d_sparse,3);
-  }
+        Set d_3(TestTags::standard(), "Dense::3", d_dense, 3);
+        Set s_3(TestTags::sweep(), "Sparse::3", d_sparse, 3);
+    } // namespace
 
-}}
+}} // namespace Test::Branch
 
 #endif
 

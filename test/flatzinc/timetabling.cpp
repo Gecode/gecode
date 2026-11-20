@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest(TestTags::sweep(),"timetabling",
-std::string("predicate all_different_int(array [int] of var int: x);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                TestTags::sweep(), "timetabling",
+                std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -243,7 +240,8 @@ var 16..18: INT____00147 :: is_defined_var :: var_is_introduced;\n\
 var 1..6: INT____00148 :: is_defined_var :: var_is_introduced;\n\
 var 4..6: INT____00149 :: is_defined_var :: var_is_introduced;\n\
 var 1..6: INT____00150 :: is_defined_var :: var_is_introduced;\n\
-array [1..80] of var 1..3: x :: output_array([1..20, 1..4]);\n")+"\
+array [1..80] of var 1..3: x :: output_array([1..20, 1..4]);\n") +
+                    "\
 array [1..18] of var 1..6: z :: output_array([1..6, 1..3]);\n\
 constraint all_different_int([INT____00002, INT____00004, INT____00006, INT____00008]);\n\
 constraint all_different_int([INT____00010, INT____00012, INT____00014, INT____00015]);\n\
@@ -416,16 +414,15 @@ constraint int_lin_eq([-1, 1], [INT____00145, x[78]], -9) :: defines_var(INT____
 constraint int_lin_eq([-1, 1], [INT____00147, x[79]], -15) :: defines_var(INT____00147) :: domain;\n\
 constraint int_lin_eq([-1, 1], [INT____00149, x[80]], -3) :: defines_var(INT____00149) :: domain;\n\
 solve satisfy;\n\
-", "x = array2d(1..20, 1..4, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);\n\
+",
+                "x = array2d(1..20, 1..4, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);\n\
 z = array2d(1..6, 1..3, [6, 1, 1, 4, 1, 1, 3, 1, 1, 2, 1, 1, 5, 1, 1, 1, 1, 1]);\n\
 ----------\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

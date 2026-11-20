@@ -16,7 +16,7 @@ env:
 
 jobs:
   tidy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -25,6 +25,19 @@ jobs:
       uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
       with:
         enable-cache: false
+
+    - name: Install clang-format 22
+      shell: bash
+      run: |
+        curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o "$RUNNER_TEMP/llvm.asc"
+        sudo install -m 644 "$RUNNER_TEMP/llvm.asc" /usr/share/keyrings/llvm.asc
+        echo 'deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+        sudo apt-get update
+        sudo apt-get install -y clang-format-22
+
+    - name: Formatting check
+      shell: bash
+      run: uv run misc/check.py format-check
 
     - name: Tidy checks
       shell: bash
@@ -38,7 +51,7 @@ jobs:
         include:
           - os: macos-15
             regenerate_varimp: OFF
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             regenerate_varimp: ON
 
     steps:
@@ -49,17 +62,29 @@ jobs:
       with:
         enable-cache: false
 
+    - name: Install clang-format 22
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o "$RUNNER_TEMP/llvm.asc"
+        sudo install -m 644 "$RUNNER_TEMP/llvm.asc" /usr/share/keyrings/llvm.asc
+        echo 'deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+        sudo apt-get update
+        sudo apt-get install -y clang-format-22
+
     - name: Install Ubuntu build deps
       if: runner.os == 'Linux'
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y flex bison libgmp-dev libmpfr-dev
+        sudo apt-get install -y libgmp-dev libmpfr-dev
 
     - name: Install generated-source tools
       if: runner.os == 'macOS'
       shell: bash
-      run: brew install bison flex
+      run: |
+        brew install bison flex llvm@22
+        echo "CLANG_FORMAT=$(brew --prefix llvm@22)/bin/clang-format" >> "$GITHUB_ENV"
 
     - name: Check generated source freshness
       if: runner.os == 'macOS'
@@ -79,7 +104,7 @@ jobs:
           "-DCMAKE_BUILD_TYPE=$BUILD_TYPE"
           "-DGECODE_REGENERATE_VARIMP=${{ matrix.regenerate_varimp }}"
         )
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+        if [ "${{ matrix.os }}" = "ubuntu-24.04" ]; then
           # Keep this path absolute to validate package config handling for absolute install dirs.
           cmake_args+=(
             "-DCMAKE_INSTALL_INCLUDEDIR=/tmp/gecode-install-abs-include"
@@ -101,7 +126,7 @@ jobs:
         cmake --build . --config $BUILD_TYPE --target check
 
     - name: Run public test harness smokes
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-24.04'
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: ctest --build-config "$BUILD_TYPE" --output-on-failure -R '^public-.*-smoke$'
@@ -115,7 +140,7 @@ jobs:
       shell: bash
       run: |
         set -euxo pipefail
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+        if [ "${{ matrix.os }}" = "ubuntu-24.04" ]; then
           bash .github/ci/cmake-consumer-smoke.sh \
             "$GITHUB_WORKSPACE/install" \
             "/tmp/gecode-install-abs-include" \
@@ -132,22 +157,22 @@ jobs:
       run: bash .github/ci/cmake-package-version-checks.sh "$GITHUB_WORKSPACE/install"
 
     - name: Disabled module closure checks
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-24.04'
       shell: bash
       run: bash .github/ci/cmake-closure-checks.sh
 
     - name: CMake custom VIS checks
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-24.04'
       shell: bash
       run: bash .github/ci/cmake-custom-vis-smoke.sh
 
     - name: Gist static macro compatibility
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-24.04'
       shell: bash
       run: bash .github/ci/gist-static-macro-smoke.sh
 
     - name: Qt minimum version checks
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-24.04'
       shell: bash
       run: bash .github/ci/qt-minimum-version-checks.sh
 
@@ -166,7 +191,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y flex bison libgmp-dev libmpfr-dev ninja-build
+        sudo apt-get install -y libgmp-dev libmpfr-dev ninja-build
 
     - name: Install MiniZinc 2.10.1
       shell: bash
@@ -346,7 +371,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y flex bison qt6-base-dev qt6-base-dev-tools libgl1-mesa-dev
+        sudo apt-get install -y qt6-base-dev qt6-base-dev-tools libgl1-mesa-dev
 
     - name: Configure CMake with Qt/Gist
       shell: bash
@@ -385,7 +410,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y flex bison qtbase5-dev qtbase5-dev-tools libgl1-mesa-dev
+        sudo apt-get install -y qtbase5-dev qtbase5-dev-tools libgl1-mesa-dev
 
     - name: Configure CMake with Qt 5/Gist
       shell: bash

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -32,11 +31,11 @@
  */
 
 /// Concatenate \a R and \a LINE
-#define GECODE_CAT2(R,LINE) R ## LINE
+#define GECODE_CAT2(R, LINE) R##LINE
 /// Concatenate macro-expanded \a R and \a LINE
-#define GECODE_CAT(R,LINE) GECODE_CAT2(R,LINE)
+#define GECODE_CAT(R, LINE) GECODE_CAT2(R, LINE)
 /// Generate fresh name with prefix P
-#define GECODE_FRESH(P) GECODE_CAT(GECODE_ ## P, __LINE__)
+#define GECODE_FRESH(P) GECODE_CAT(GECODE_##P, __LINE__)
 
 /**
  * \def GECODE_NEVER

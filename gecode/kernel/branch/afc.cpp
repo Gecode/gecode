@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,7 +34,7 @@
 
 namespace Gecode {
 
-  const AFC AFC::def;
+    const AFC AFC::def;
 
 }
 

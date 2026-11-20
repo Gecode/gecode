@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -35,48 +34,44 @@
 
 namespace Gecode { namespace Search {
 
-  /// Internal access to worker-control state
-  class GECODE_SEARCH_EXPORT WorkerControlAccess {
-  public:
-    /// Attach \a control to a leaf engine with fixed \a capacity
-    static void attach(WorkerControl& control, unsigned int capacity);
-    /// Detach \a control from its leaf engine
-    static void detach(WorkerControl& control);
-    /**
-     * \brief Prepare \a control for another engine with the same capacity
-     *
-     * The owner must have destroyed the previous engine and joined its
-     * workers. Requests and event storage survive the transition. Preparing
-     * an attached control raises WorkerControlInUse; otherwise this operation
-     * is idempotent. Attaching the prepared control with a different capacity
-     * raises InvalidWorkerRequest. This is an internal engine-owner operation.
-     */
-    static void prepare_reuse(WorkerControl& control);
-    /// Return the request generation
-    static unsigned long long int generation(const WorkerControl& control);
-    /// Return the unchanged-capacity fast-admission flag
-    static const std::atomic<bool>*
-    fast_admission(const WorkerControl& control);
-    /// Publish fast admission after reconciling \a generation at capacity
-    static void fast_admission(WorkerControl& control,
-                               unsigned long long int generation);
-    /// Return whether \a x and \a y share one control identity
-    static bool same_identity(const WorkerControl& x,
-                              const WorkerControl& y);
-    /// Return the current request
-    static unsigned int requested(const WorkerControl& control);
-    /// Return a consistent request and generation snapshot
-    static void snapshot(const WorkerControl& control, unsigned int& requested,
-                         unsigned long long int& generation);
-    /// Wait for the event belonging to worker \a worker
-    static void wait(WorkerControl& control, unsigned int worker);
-    /// Signal the event belonging to worker \a worker
-    static void signal(WorkerControl& control, unsigned int worker);
-    /// Signal every worker event
-    static void signal_all(WorkerControl& control);
-  };
+    /// Internal access to worker-control state
+    class GECODE_SEARCH_EXPORT WorkerControlAccess {
+    public:
+        /// Attach \a control to a leaf engine with fixed \a capacity
+        static void attach(WorkerControl& control, unsigned int capacity);
+        /// Detach \a control from its leaf engine
+        static void detach(WorkerControl& control);
+        /**
+         * \brief Prepare \a control for another engine with the same capacity
+         *
+         * The owner must have destroyed the previous engine and joined its
+         * workers. Requests and event storage survive the transition. Preparing
+         * an attached control raises WorkerControlInUse; otherwise this operation
+         * is idempotent. Attaching the prepared control with a different capacity
+         * raises InvalidWorkerRequest. This is an internal engine-owner operation.
+         */
+        static void prepare_reuse(WorkerControl& control);
+        /// Return the request generation
+        static unsigned long long int generation(const WorkerControl& control);
+        /// Return the unchanged-capacity fast-admission flag
+        static const std::atomic<bool>* fast_admission(const WorkerControl& control);
+        /// Publish fast admission after reconciling \a generation at capacity
+        static void fast_admission(WorkerControl& control, unsigned long long int generation);
+        /// Return whether \a x and \a y share one control identity
+        static bool same_identity(const WorkerControl& x, const WorkerControl& y);
+        /// Return the current request
+        static unsigned int requested(const WorkerControl& control);
+        /// Return a consistent request and generation snapshot
+        static void snapshot(const WorkerControl& control, unsigned int& requested, unsigned long long int& generation);
+        /// Wait for the event belonging to worker \a worker
+        static void wait(WorkerControl& control, unsigned int worker);
+        /// Signal the event belonging to worker \a worker
+        static void signal(WorkerControl& control, unsigned int worker);
+        /// Signal every worker event
+        static void signal_all(WorkerControl& control);
+    };
 
-}}
+}} // namespace Gecode::Search
 
 #endif
 

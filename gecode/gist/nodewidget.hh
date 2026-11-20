@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,16 +38,17 @@
 
 namespace Gecode { namespace Gist {
 
-  /// \brief Small node drawings for the status bar
-  class NodeWidget : public QWidget {
-  public:
-    NodeWidget(NodeStatus s);
-  protected:
-    NodeStatus status;
-    void paintEvent(QPaintEvent*);
-  };
+    /// \brief Small node drawings for the status bar
+    class NodeWidget : public QWidget {
+    public:
+        NodeWidget(NodeStatus s);
 
-}}
+    protected:
+        NodeStatus status;
+        void paintEvent(QPaintEvent*);
+    };
+
+}} // namespace Gecode::Gist
 
 #endif
 

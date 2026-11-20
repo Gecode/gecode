@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,19 +32,18 @@
 
 namespace Gecode {
 
-  template<class Char, class Traits>
-  inline std::basic_ostream<Char,Traits>&
-  REG::print(std::basic_ostream<Char,Traits>& os) const {
-    return os << toString();
-  }
+    template <class Char, class Traits>
+    inline std::basic_ostream<Char, Traits>&
+    REG::print(std::basic_ostream<Char, Traits>& os) const {
+        return os << toString();
+    }
 
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const REG& r) {
-    return r.print(os);
-  }
+    template <class Char, class Traits>
+    std::basic_ostream<Char, Traits>&
+    operator<<(std::basic_ostream<Char, Traits>& os, const REG& r) {
+        return r.print(os);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: minimodel-any
-

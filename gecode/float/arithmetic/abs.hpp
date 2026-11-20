@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,50 +36,49 @@
 
 namespace Gecode { namespace Float { namespace Arithmetic {
 
-  template<class A, class B>
-  forceinline
-  Abs<A,B>::Abs(Home home, A x0, B x1)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1) {}
+    template <class A, class B>
+    forceinline
+    Abs<A, B>::Abs(Home home, A x0, B x1)
+        : MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>(home, x0, x1) {}
 
-  template<class A, class B>
-  ExecStatus
-  Abs<A,B>::post(Home home, A x0, B x1) {
-    GECODE_ME_CHECK(x1.eq(home,abs(x0.val())));
-    if (x0.min() >= 0)
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(x1.min(), x1.max())));
-    else if (x0.max() <= 0)
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), -x1.min())));
-    else
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), x1.max())));
-    (void) new (home) Abs<A,B>(home,x0,x1);
-    return ES_OK;
-  }
+    template <class A, class B>
+    ExecStatus
+    Abs<A, B>::post(Home home, A x0, B x1) {
+        GECODE_ME_CHECK(x1.eq(home, abs(x0.val())));
+        if (x0.min() >= 0)
+            GECODE_ME_CHECK(x0.eq(home, FloatVal(x1.min(), x1.max())));
+        else if (x0.max() <= 0)
+            GECODE_ME_CHECK(x0.eq(home, FloatVal(-x1.max(), -x1.min())));
+        else
+            GECODE_ME_CHECK(x0.eq(home, FloatVal(-x1.max(), x1.max())));
+        (void)new (home) Abs<A, B>(home, x0, x1);
+        return ES_OK;
+    }
 
-  template<class A, class B>
-  forceinline
-  Abs<A,B>::Abs(Space& home, Abs<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
+    template <class A, class B>
+    forceinline
+    Abs<A, B>::Abs(Space& home, Abs<A, B>& p)
+        : MixBinaryPropagator<A, PC_FLOAT_BND, B, PC_FLOAT_BND>(home, p) {}
 
-  template<class A, class B>
-  Actor*
-  Abs<A,B>::copy(Space& home) {
-    return new (home) Abs<A,B>(home,*this);
-  }
+    template <class A, class B>
+    Actor*
+    Abs<A, B>::copy(Space& home) {
+        return new (home) Abs<A, B>(home, *this);
+    }
 
-  template<class A, class B>
-  ExecStatus
-  Abs<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,abs(x0.val())));
-    if (x0.min() >= 0)
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(x1.min(), x1.max())));
-    else if (x0.max() <= 0)
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), -x1.min())));
-    else
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), x1.max())));
-    return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
-  }
+    template <class A, class B>
+    ExecStatus
+    Abs<A, B>::propagate(Space& home, const ModEventDelta&) {
+        GECODE_ME_CHECK(x1.eq(home, abs(x0.val())));
+        if (x0.min() >= 0)
+            GECODE_ME_CHECK(x0.eq(home, FloatVal(x1.min(), x1.max())));
+        else if (x0.max() <= 0)
+            GECODE_ME_CHECK(x0.eq(home, FloatVal(-x1.max(), -x1.min())));
+        else
+            GECODE_ME_CHECK(x0.eq(home, FloatVal(-x1.max(), x1.max())));
+        return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    }
 
-}}}
+}}} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop
-

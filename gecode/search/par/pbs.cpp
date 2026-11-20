@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -40,38 +39,38 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  Statistics
-  PortfolioStatistics::update(unsigned int i, const Statistics& s) {
-    Support::Lock lock(m);
-    stat[i + 1] = s;
-    Statistics t;
-    for (unsigned int j = 0U; j < n; j++)
-      t += stat[j];
-    return t;
-  }
-
-  bool
-  PortfolioStop::stop(const Statistics& s, const Options& o) {
-    if (tostop->load(std::memory_order_acquire)) {
-      _cause.store(PortfolioStopCause::Interrupt, std::memory_order_relaxed);
-      return true;
+    Statistics
+    PortfolioStatistics::update(unsigned int i, const Statistics& s) {
+        Support::Lock lock(m);
+        stat[i + 1] = s;
+        Statistics t;
+        for (unsigned int j = 0U; j < n; j++)
+            t += stat[j];
+        return t;
     }
-    if ((po != nullptr) && po->stop(ps->update(asset,s),o)) {
-      _cause.store(PortfolioStopCause::Portfolio, std::memory_order_relaxed);
-      return true;
-    }
-    if ((so != nullptr) && so->stop(s,o)) {
-      _cause.store(PortfolioStopCause::Asset, std::memory_order_relaxed);
-      return true;
-    }
-    return false;
-  }
 
-  void
-  PortfolioStop::wake(void) {
-    WorkerControlAccess::signal_all(worker_control);
-  }
+    bool
+    PortfolioStop::stop(const Statistics& s, const Options& o) {
+        if (tostop->load(std::memory_order_acquire)) {
+            _cause.store(PortfolioStopCause::Interrupt, std::memory_order_relaxed);
+            return true;
+        }
+        if ((po != nullptr) && po->stop(ps->update(asset, s), o)) {
+            _cause.store(PortfolioStopCause::Portfolio, std::memory_order_relaxed);
+            return true;
+        }
+        if ((so != nullptr) && so->stop(s, o)) {
+            _cause.store(PortfolioStopCause::Asset, std::memory_order_relaxed);
+            return true;
+        }
+        return false;
+    }
 
-}}}
+    void
+    PortfolioStop::wake(void) {
+        WorkerControlAccess::signal_all(worker_control);
+    }
+
+}}} // namespace Gecode::Search::Par
 
 // STATISTICS: search-par

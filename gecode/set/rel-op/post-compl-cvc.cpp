@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,16 +38,15 @@
 
 namespace Gecode { namespace Set { namespace RelOp {
 
-  void
-  post_compl(Home home, ConstSetView x, SetOpType op, SetView y,
-             ConstSetView z) {
-    GlbRanges<ConstSetView> zr(z);
-    RangesCompl<GlbRanges<ConstSetView> > zrc(zr);
-    IntSet zc(zrc);
-    ConstSetView cz(home, zc);
-    rel_eq<ConstSetView,SetView,ConstSetView>(home, x, op, y, cz);
-  }
+    void
+    post_compl(Home home, ConstSetView x, SetOpType op, SetView y, ConstSetView z) {
+        GlbRanges<ConstSetView> zr(z);
+        RangesCompl<GlbRanges<ConstSetView>> zrc(zr);
+        IntSet zc(zrc);
+        ConstSetView cz(home, zc);
+        rel_eq<ConstSetView, SetView, ConstSetView>(home, x, op, y, cz);
+    }
 
-}}}
+}}} // namespace Gecode::Set::RelOp
 
 // STATISTICS: set-prop

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,40 +32,40 @@
 
 namespace Gecode { namespace Int {
 
-  template<class Task, class PL>
-  forceinline
-  TaskProp<Task,PL>::TaskProp(Home home, TaskArray<Task>& t0)
-    : Propagator(home), t(t0) {
-    t.subscribe(home,*this,PL::pc);
-  }
+    template <class Task, class PL>
+    forceinline
+    TaskProp<Task, PL>::TaskProp(Home home, TaskArray<Task>& t0)
+        : Propagator(home), t(t0) {
+        t.subscribe(home, *this, PL::pc);
+    }
 
-  template<class Task, class PL>
-  forceinline
-  TaskProp<Task,PL>::TaskProp(Space& home, TaskProp<Task,PL>& p)
-    : Propagator(home,p) {
-    t.update(home,p.t);
-  }
+    template <class Task, class PL>
+    forceinline
+    TaskProp<Task, PL>::TaskProp(Space& home, TaskProp<Task, PL>& p)
+        : Propagator(home, p) {
+        t.update(home, p.t);
+    }
 
-  template<class Task, class PL>
-  PropCost
-  TaskProp<Task,PL>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI,t.size());
-  }
+    template <class Task, class PL>
+    PropCost
+    TaskProp<Task, PL>::cost(const Space&, const ModEventDelta&) const {
+        return PropCost::linear(PropCost::HI, t.size());
+    }
 
-  template<class Task, class PL>
-  void
-  TaskProp<Task,PL>::reschedule(Space& home) {
-    t.reschedule(home,*this,PL::pc);
-  }
+    template <class Task, class PL>
+    void
+    TaskProp<Task, PL>::reschedule(Space& home) {
+        t.reschedule(home, *this, PL::pc);
+    }
 
-  template<class Task, class PL>
-  forceinline size_t
-  TaskProp<Task,PL>::dispose(Space& home) {
-    t.cancel(home,*this,PL::pc);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
+    template <class Task, class PL>
+    forceinline size_t
+    TaskProp<Task, PL>::dispose(Space& home) {
+        t.cancel(home, *this, PL::pc);
+        (void)Propagator::dispose(home);
+        return sizeof(*this);
+    }
 
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-prop

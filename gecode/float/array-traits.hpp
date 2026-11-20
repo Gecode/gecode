@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,64 +34,64 @@
 
 namespace Gecode {
 
-  class FloatVarArgs;
-  class FloatVarArray;
-  class FloatValArgs;
+    class FloatVarArgs;
+    class FloatVarArray;
+    class FloatValArgs;
 
-  /// Traits of %FloatVarArgs
-  template<>
-  class ArrayTraits<VarArgArray<FloatVar> > {
-  public:
-    typedef FloatVarArgs StorageType;
-    typedef FloatVar     ValueType;
-    typedef FloatVarArgs ArgsType;
-  };
+    /// Traits of %FloatVarArgs
+    template <>
+    class ArrayTraits<VarArgArray<FloatVar>> {
+    public:
+        typedef FloatVarArgs StorageType;
+        typedef FloatVar ValueType;
+        typedef FloatVarArgs ArgsType;
+    };
 
-  /// Traits of %FloatVarArray
-  template<>
-  class ArrayTraits<VarArray<FloatVar> > {
-  public:
-    typedef FloatVarArray  StorageType;
-    typedef FloatVar       ValueType;
-    typedef FloatVarArgs   ArgsType;
-  };
+    /// Traits of %FloatVarArray
+    template <>
+    class ArrayTraits<VarArray<FloatVar>> {
+    public:
+        typedef FloatVarArray StorageType;
+        typedef FloatVar ValueType;
+        typedef FloatVarArgs ArgsType;
+    };
 
-  /// Traits of %FloatValArgs
-  template<>
-  class ArrayTraits<ArgArray<FloatVal> > {
-  public:
-    typedef FloatValArgs StorageType;
-    typedef FloatVal     ValueType;
-    typedef FloatValArgs ArgsType;
-  };
+    /// Traits of %FloatValArgs
+    template <>
+    class ArrayTraits<ArgArray<FloatVal>> {
+    public:
+        typedef FloatValArgs StorageType;
+        typedef FloatVal ValueType;
+        typedef FloatValArgs ArgsType;
+    };
 
-  /// Traits of %FloatVarArray
-  template<>
-  class ArrayTraits<FloatVarArray> {
-  public:
-    typedef FloatVarArray  StorageType;
-    typedef FloatVar       ValueType;
-    typedef FloatVarArgs   ArgsType;
-  };
+    /// Traits of %FloatVarArray
+    template <>
+    class ArrayTraits<FloatVarArray> {
+    public:
+        typedef FloatVarArray StorageType;
+        typedef FloatVar ValueType;
+        typedef FloatVarArgs ArgsType;
+    };
 
-  /// Traits of %FloatVarArgs
-  template<>
-  class ArrayTraits<FloatVarArgs> {
-  public:
-    typedef FloatVarArgs StorageType;
-    typedef FloatVar     ValueType;
-    typedef FloatVarArgs ArgsType;
-  };
+    /// Traits of %FloatVarArgs
+    template <>
+    class ArrayTraits<FloatVarArgs> {
+    public:
+        typedef FloatVarArgs StorageType;
+        typedef FloatVar ValueType;
+        typedef FloatVarArgs ArgsType;
+    };
 
-  /// Traits of %FloatValArgs
-  template<>
-  class ArrayTraits<FloatValArgs> {
-  public:
-    typedef FloatValArgs StorageType;
-    typedef FloatVal     ValueType;
-    typedef FloatValArgs ArgsType;
-  };
+    /// Traits of %FloatValArgs
+    template <>
+    class ArrayTraits<FloatValArgs> {
+    public:
+        typedef FloatValArgs StorageType;
+        typedef FloatVal ValueType;
+        typedef FloatValArgs ArgsType;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-other

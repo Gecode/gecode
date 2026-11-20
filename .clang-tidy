@@ -1,0 +1,24 @@
+# Use clang-tidy 22. Keep checks focused on correctness and useful modernization.
+Checks: >-
+  -*,
+  bugprone-assert-side-effect,
+  bugprone-dangling-handle,
+  bugprone-integer-division,
+  bugprone-macro-repeated-side-effects,
+  bugprone-misplaced-widening-cast,
+  bugprone-move-forwarding-reference,
+  bugprone-sizeof-expression,
+  bugprone-suspicious-memset-usage,
+  bugprone-unused-raii,
+  modernize-deprecated-headers,
+  modernize-use-nullptr,
+  modernize-use-override,
+  performance-for-range-copy,
+  performance-inefficient-string-concatenation,
+  performance-move-const-arg,
+  performance-unnecessary-copy-initialization,
+  performance-unnecessary-value-param
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(gecode|test|examples|tools)/'
+ExcludeHeaderFilterRegex: 'gecode/third-party/|gecode/flatzinc/(parser\.tab\.(cpp|hpp)|lexer\.yy\.cpp)$'
+FormatStyle: file

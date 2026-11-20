@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -39,44 +38,44 @@
 
 namespace Gecode {
 
-  class SetVarArgs;
-  class SetVarArray;
+    class SetVarArgs;
+    class SetVarArray;
 
-  /// Traits of %VarArgArray&lt;%SetVar>
-  template<>
-  class ArrayTraits<VarArgArray<SetVar> > {
-  public:
-    typedef SetVarArgs StorageType;
-    typedef SetVar     ValueType;
-    typedef SetVarArgs ArgsType;
-  };
+    /// Traits of %VarArgArray&lt;%SetVar>
+    template <>
+    class ArrayTraits<VarArgArray<SetVar>> {
+    public:
+        typedef SetVarArgs StorageType;
+        typedef SetVar ValueType;
+        typedef SetVarArgs ArgsType;
+    };
 
-  /// Traits of %VarArray&lt;%SetVar>
-  template<>
-  class ArrayTraits<VarArray<SetVar> > {
-  public:
-    typedef SetVarArray  StorageType;
-    typedef SetVar       ValueType;
-    typedef SetVarArgs   ArgsType;
-  };
+    /// Traits of %VarArray&lt;%SetVar>
+    template <>
+    class ArrayTraits<VarArray<SetVar>> {
+    public:
+        typedef SetVarArray StorageType;
+        typedef SetVar ValueType;
+        typedef SetVarArgs ArgsType;
+    };
 
-  /// Traits of %SetVarArray
-  template<>
-  class ArrayTraits<SetVarArray> {
-  public:
-    typedef SetVarArray  StorageType;
-    typedef SetVar       ValueType;
-    typedef SetVarArgs   ArgsType;
-  };
-  /// Traits of %SetVarArgs
-  template<>
-  class ArrayTraits<SetVarArgs> {
-  public:
-    typedef SetVarArgs StorageType;
-    typedef SetVar     ValueType;
-    typedef SetVarArgs ArgsType;
-  };
+    /// Traits of %SetVarArray
+    template <>
+    class ArrayTraits<SetVarArray> {
+    public:
+        typedef SetVarArray StorageType;
+        typedef SetVar ValueType;
+        typedef SetVarArgs ArgsType;
+    };
+    /// Traits of %SetVarArgs
+    template <>
+    class ArrayTraits<SetVarArgs> {
+    public:
+        typedef SetVarArgs StorageType;
+        typedef SetVar ValueType;
+        typedef SetVarArgs ArgsType;
+    };
 
-}
+} // namespace Gecode
 
 // STATISTICS: set-other

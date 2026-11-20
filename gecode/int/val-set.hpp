@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,148 +32,152 @@
 
 namespace Gecode { namespace Int {
 
-  /*
-   * Value sets
-   *
-   */
-  forceinline
-  ValSet::ValSet(void)
-    : fst(nullptr), lst(nullptr), n(0) {}
+    /*
+     * Value sets
+     *
+     */
+    forceinline
+    ValSet::ValSet(void)
+        : fst(nullptr), lst(nullptr), n(0) {}
 
-  forceinline void
-  ValSet::add(Space& home, int v) {
-    RangeList*  c = fst;
-    RangeList** p = &fst;
-    while (c != nullptr) {
-      if (v < c->min()) {
-        if (v+1 == c->min()) {
-          c->min(v); n++;
-          return;
-        } else {
-          *p = new (home) RangeList(v,v,c); n++;
-          return;
+    forceinline void
+    ValSet::add(Space& home, int v) {
+        RangeList* c = fst;
+        RangeList** p = &fst;
+        while (c != nullptr) {
+            if (v < c->min()) {
+                if (v + 1 == c->min()) {
+                    c->min(v);
+                    n++;
+                    return;
+                } else {
+                    *p = new (home) RangeList(v, v, c);
+                    n++;
+                    return;
+                }
+            } else if (v <= c->max()) {
+                // Value already included
+                return;
+            } else if (v == c->max() + 1) {
+                if ((c->next() != nullptr) && (v + 1 == c->next()->min())) {
+                    c->next()->min(c->min());
+                    *p = c->next();
+                    c->dispose(home, c);
+                } else {
+                    c->max(v);
+                }
+                n++;
+                return;
+            } else {
+                p = c->nextRef();
+                c = *p;
+            }
         }
-      } else if (v <= c->max()) {
-        // Value already included
-        return;
-      } else if (v == c->max()+1) {
-        if ((c->next() != nullptr) && (v+1 == c->next()->min())) {
-          c->next()->min(c->min());
-          *p = c->next();
-          c->dispose(home,c);
-        } else {
-          c->max(v);
-        }
+        *p = new (home) RangeList(v, v, nullptr);
         n++;
-        return;
-      } else {
-        p = c->nextRef();
-        c = *p;
-      }
+        lst = *p;
     }
-    *p = new (home) RangeList(v,v,nullptr); n++;
-    lst = *p;
-  }
 
-  forceinline int
-  ValSet::size(void) const {
-    return n;
-  }
-
-  forceinline bool
-  ValSet::empty(void) const {
-    return n == 0;
-  }
-
-  forceinline int
-  ValSet::min(void) const {
-    return fst->min();
-  }
-
-  forceinline int
-  ValSet::max(void) const {
-    return lst->max();
-  }
-
-  forceinline void
-  ValSet::update(Space& home, ValSet& vs) {
-    if (vs.n > 0) {
-      n = vs.n;
-      // Count number of ranges
-      int m = 0;
-      for (RangeList* c = vs.fst; c != nullptr; c = c->next())
-        m++;
-      fst = home.alloc<RangeList>(m);
-      lst = fst + (m-1);
-      int i=0;
-      for (RangeList* c = vs.fst; c != nullptr; c = c->next()) {
-        fst[i].min(c->min()); fst[i].max(c->max());
-        fst[i].next(fst+i+1);
-        i++;
-      }
-      lst->next(nullptr);
+    forceinline int
+    ValSet::size(void) const {
+        return n;
     }
-  }
 
-  forceinline void
-  ValSet::flush(void) {
-    fst = lst = nullptr;
-  }
+    forceinline bool
+    ValSet::empty(void) const {
+        return n == 0;
+    }
 
-  forceinline void
-  ValSet::dispose(Space& home) {
-    if (fst != nullptr)
-      fst->dispose(home,lst);
-  }
+    forceinline int
+    ValSet::min(void) const {
+        return fst->min();
+    }
 
-  forceinline
-  ValSet::Ranges::Ranges(const ValSet& vs)
-    : c(vs.fst) {}
+    forceinline int
+    ValSet::max(void) const {
+        return lst->max();
+    }
 
-  forceinline bool
-  ValSet::Ranges::operator ()(void) const {
-    return c != nullptr;
-  }
+    forceinline void
+    ValSet::update(Space& home, ValSet& vs) {
+        if (vs.n > 0) {
+            n = vs.n;
+            // Count number of ranges
+            int m = 0;
+            for (RangeList* c = vs.fst; c != nullptr; c = c->next())
+                m++;
+            fst = home.alloc<RangeList>(m);
+            lst = fst + (m - 1);
+            int i = 0;
+            for (RangeList* c = vs.fst; c != nullptr; c = c->next()) {
+                fst[i].min(c->min());
+                fst[i].max(c->max());
+                fst[i].next(fst + i + 1);
+                i++;
+            }
+            lst->next(nullptr);
+        }
+    }
 
-  forceinline void
-  ValSet::Ranges::operator ++(void) {
-    c = c->next();
-  }
+    forceinline void
+    ValSet::flush(void) {
+        fst = lst = nullptr;
+    }
 
-  forceinline int
-  ValSet::Ranges::min(void) const {
-    return c->min();
-  }
-  forceinline int
-  ValSet::Ranges::max(void) const {
-    return c->max();
-  }
+    forceinline void
+    ValSet::dispose(Space& home) {
+        if (fst != nullptr)
+            fst->dispose(home, lst);
+    }
 
-  forceinline unsigned int
-  ValSet::Ranges::width(void) const {
-    return c->width();
-  }
+    forceinline
+    ValSet::Ranges::Ranges(const ValSet& vs)
+        : c(vs.fst) {}
 
-  template<class View>
-  forceinline Iter::Ranges::CompareStatus
-  ValSet::compare(View x) const {
-    if (empty() || (x.max() < min()) || (x.min() > max()))
-      return Iter::Ranges::CS_DISJOINT;
-    ValSet::Ranges vsr(*this);
-    ViewRanges<View> xr(x);
-    return Iter::Ranges::compare(xr,vsr);
-  }
+    forceinline bool
+    ValSet::Ranges::operator()(void) const {
+        return c != nullptr;
+    }
 
-  template<class View>
-  forceinline bool
-  ValSet::subset(View x) const {
-    if (empty() || (x.min() < min()) || (x.max() > max()))
-      return false;
-    ValSet::Ranges vsr(*this);
-    ViewRanges<View> xr(x);
-    return Iter::Ranges::subset(xr,vsr);
-  }
+    forceinline void
+    ValSet::Ranges::operator++(void) {
+        c = c->next();
+    }
 
-}}
+    forceinline int
+    ValSet::Ranges::min(void) const {
+        return c->min();
+    }
+    forceinline int
+    ValSet::Ranges::max(void) const {
+        return c->max();
+    }
+
+    forceinline unsigned int
+    ValSet::Ranges::width(void) const {
+        return c->width();
+    }
+
+    template <class View>
+    forceinline Iter::Ranges::CompareStatus
+    ValSet::compare(View x) const {
+        if (empty() || (x.max() < min()) || (x.min() > max()))
+            return Iter::Ranges::CS_DISJOINT;
+        ValSet::Ranges vsr(*this);
+        ViewRanges<View> xr(x);
+        return Iter::Ranges::compare(xr, vsr);
+    }
+
+    template <class View>
+    forceinline bool
+    ValSet::subset(View x) const {
+        if (empty() || (x.min() < min()) || (x.max() > max()))
+            return false;
+        ValSet::Ranges vsr(*this);
+        ViewRanges<View> xr(x);
+        return Iter::Ranges::subset(xr, vsr);
+    }
+
+}} // namespace Gecode::Int
 
 // STATISTICS: int-other

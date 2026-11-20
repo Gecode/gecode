@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -42,339 +41,310 @@
 
 namespace Gecode { namespace Gist {
 
-  /// \brief Representation of a branch in the search tree
-  class Branch {
-  public:
-    /// Alternative number
-    int alternative;
-    /// The best space known when the branch was created
-    SpaceNode* ownBest;
-    const Choice* choice;
+    /// \brief Representation of a branch in the search tree
+    class Branch {
+    public:
+        /// Alternative number
+        int alternative;
+        /// The best space known when the branch was created
+        SpaceNode* ownBest;
+        const Choice* choice;
 
-    /// Constructor
-    Branch(int a, const Choice* c, SpaceNode* best = nullptr)
-      : alternative(a), ownBest(best) {
-        choice = c;
-      }
-  };
+        /// Constructor
+        Branch(int a, const Choice* c, SpaceNode* best = nullptr) : alternative(a), ownBest(best) {
+            choice = c;
+        }
+    };
 
-  BestNode::BestNode(SpaceNode* s0) : s(s0) {}
+    BestNode::BestNode(SpaceNode* s0) : s(s0) {}
 
-  int
-  SpaceNode::recompute(NodeAllocator& na,
-                       BestNode* curBest, int c_d, int a_d) {
-    int rdist = 0;
+    int
+    SpaceNode::recompute(NodeAllocator& na, BestNode* curBest, int c_d, int a_d) {
+        int rdist = 0;
 
-    if (copy == nullptr) {
-      SpaceNode* curNode = this;
-      SpaceNode* lastFixpoint = nullptr;
+        if (copy == nullptr) {
+            SpaceNode* curNode = this;
+            SpaceNode* lastFixpoint = nullptr;
 
-      lastFixpoint = curNode;
+            lastFixpoint = curNode;
 
-      std::stack<Branch> stck;
+            std::stack<Branch> stck;
 
-      int idx = getIndex(na);
-      while (curNode->copy == nullptr) {
-        SpaceNode* parent = curNode->getParent(na);
-        int parentIdx = curNode->getParent();
-        int alternative = curNode->getAlternative(na);
+            int idx = getIndex(na);
+            while (curNode->copy == nullptr) {
+                SpaceNode* parent = curNode->getParent(na);
+                int parentIdx = curNode->getParent();
+                int alternative = curNode->getAlternative(na);
 
+                SpaceNode* ownBest = na.best(idx);
+                Branch b(alternative, parent->choice, curBest == nullptr ? nullptr : ownBest);
+                stck.push(b);
+
+                curNode = parent;
+                idx = parentIdx;
+                rdist++;
+            }
+
+            Space* curSpace;
+            if (Support::marked(curNode->copy)) {
+                curSpace = static_cast<Space*>(Support::unmark(curNode->copy));
+                curNode->copy = nullptr;
+                a_d = -1;
+            } else {
+                curSpace = curNode->copy->clone();
+                curNode->setDistance(0);
+            }
+
+            SpaceNode* lastBest = nullptr;
+            SpaceNode* middleNode = curNode;
+            int curDist = 0;
+
+            while (!stck.empty()) {
+                if (a_d >= 0 && curDist > a_d && curDist == rdist / 2) {
+                    if (curSpace->status() == SS_FAILED) {
+                        copy = static_cast<Space*>(Support::mark(curSpace));
+                        return rdist;
+                    } else {
+                        middleNode->copy = curSpace->clone();
+                    }
+                }
+                Branch b = stck.top();
+                stck.pop();
+
+                if (middleNode == lastFixpoint) {
+                    curSpace->status();
+                }
+
+                curSpace->commit(*b.choice, b.alternative);
+
+                if (b.ownBest != nullptr && b.ownBest != lastBest) {
+                    b.ownBest->acquireSpace(na, curBest, c_d, a_d);
+                    Space* ownBestSpace = static_cast<Space*>(Support::funmark(b.ownBest->copy));
+                    if (ownBestSpace->status() != SS_SOLVED) {
+                        // in the presence of weakly monotonic propagators, we may have to
+                        // use search to find the solution here
+                        ownBestSpace = Gecode::dfs(ownBestSpace);
+                        if (Support::marked(b.ownBest->copy)) {
+                            delete static_cast<Space*>(Support::unmark(b.ownBest->copy));
+                            b.ownBest->copy = static_cast<Space*>(Support::mark(ownBestSpace));
+                        } else {
+                            delete b.ownBest->copy;
+                            b.ownBest->copy = ownBestSpace;
+                        }
+                    }
+                    curSpace->constrain(*ownBestSpace);
+                    lastBest = b.ownBest;
+                }
+                curDist++;
+                middleNode = middleNode->getChild(na, b.alternative);
+                middleNode->setDistance(curDist);
+            }
+            copy = static_cast<Space*>(Support::mark(curSpace));
+        }
+        return rdist;
+    }
+
+    void
+    SpaceNode::acquireSpace(NodeAllocator& na, BestNode* curBest, int c_d, int a_d) {
+        SpaceNode* p = getParent(na);
+        int parentIdx = getParent();
+        int idx = getIndex(na);
+
+        if (getStatus() == UNDETERMINED && curBest != nullptr && na.best(idx) == nullptr && p != nullptr &&
+            curBest->s != na.best(parentIdx)) {
+            na.setBest(idx, curBest->s->getIndex(na));
+        }
         SpaceNode* ownBest = na.best(idx);
-        Branch b(alternative, parent->choice,
-                 curBest == nullptr ? nullptr : ownBest);
-        stck.push(b);
 
-        curNode = parent;
-        idx = parentIdx;
-        rdist++;
-      }
+        if (copy == nullptr && p != nullptr && p->copy != nullptr && Support::marked(p->copy)) {
+            // If parent has a working space, steal it
+            copy = p->copy;
+            p->copy = nullptr;
+            if (p->choice != nullptr)
+                static_cast<Space*>(Support::unmark(copy))->commit(*p->choice, getAlternative(na));
 
-      Space* curSpace;
-      if (Support::marked(curNode->copy)) {
-        curSpace = static_cast<Space*>(Support::unmark(curNode->copy));
-        curNode->copy = nullptr;
-        a_d = -1;
-      } else {
-        curSpace = curNode->copy->clone();
-        curNode->setDistance(0);
-      }
+            if (ownBest != nullptr) {
+                ownBest->acquireSpace(na, curBest, c_d, a_d);
+                Space* ownBestSpace = static_cast<Space*>(Support::funmark(ownBest->copy));
+                if (ownBestSpace->status() != SS_SOLVED) {
+                    // in the presence of weakly monotonic propagators, we may have to
+                    // use search to find the solution here
 
-      SpaceNode* lastBest = nullptr;
-      SpaceNode* middleNode = curNode;
-      int curDist = 0;
+                    ownBestSpace = Gecode::dfs(ownBestSpace);
+                    if (Support::marked(ownBest->copy)) {
+                        delete static_cast<Space*>(Support::unmark(ownBest->copy));
+                        ownBest->copy = static_cast<Space*>(Support::mark(ownBestSpace));
+                    } else {
+                        delete ownBest->copy;
+                        ownBest->copy = ownBestSpace;
+                    }
+                }
+                static_cast<Space*>(Support::unmark(copy))->constrain(*ownBestSpace);
+            }
+            int d = p->getDistance() + 1;
+            if (d > c_d && c_d >= 0 && static_cast<Space*>(Support::unmark(copy))->status() == SS_BRANCH) {
+                copy = static_cast<Space*>(Support::unmark(copy));
+                d = 0;
+            }
+            setDistance(d);
+        }
 
-      while (!stck.empty()) {
-        if (a_d >= 0 &&
-            curDist > a_d &&
-            curDist == rdist / 2) {
-            if (curSpace->status() == SS_FAILED) {
-              copy = static_cast<Space*>(Support::mark(curSpace));
-              return rdist;
-            } else {
-              middleNode->copy = curSpace->clone();
+        if (copy == nullptr) {
+            if (recompute(na, curBest, c_d, a_d) > c_d && c_d >= 0 &&
+                static_cast<Space*>(Support::unmark(copy))->status() == SS_BRANCH) {
+                copy = static_cast<Space*>(Support::unmark(copy));
+                setDistance(0);
             }
         }
-        Branch b = stck.top(); stck.pop();
 
-        if(middleNode == lastFixpoint) {
-          curSpace->status();
+        // always return a fixpoint
+        static_cast<Space*>(Support::funmark(copy))->status();
+        if (Support::marked(copy) && p != nullptr && isOpen() && p->copy != nullptr &&
+            p->getNoOfOpenChildren(na) == 1 && !p->isRoot()) {
+            // last alternative optimization
+
+            copy = static_cast<Space*>(Support::unmark(copy));
+            delete static_cast<Space*>(Support::funmark(p->copy));
+            p->copy = nullptr;
+            setDistance(0);
+            p->setDistance(p->getParent(na)->getDistance() + 1);
         }
+    }
 
-        curSpace->commit(*b.choice, b.alternative);
+    void
+    SpaceNode::closeChild(const NodeAllocator& na, bool hadFailures, bool hadSolutions) {
+        setHasFailedChildren(hasFailedChildren() || hadFailures);
+        setHasSolvedChildren(hasSolvedChildren() || hadSolutions);
 
-        if (b.ownBest != nullptr && b.ownBest != lastBest) {
-          b.ownBest->acquireSpace(na,curBest, c_d, a_d);
-          Space* ownBestSpace =
-            static_cast<Space*>(Support::funmark(b.ownBest->copy));
-          if (ownBestSpace->status() != SS_SOLVED) {
-            // in the presence of weakly monotonic propagators, we may have to
-            // use search to find the solution here
-            ownBestSpace = Gecode::dfs(ownBestSpace);
-            if (Support::marked(b.ownBest->copy)) {
-              delete static_cast<Space*>(Support::unmark(b.ownBest->copy));
-              b.ownBest->copy =
-                static_cast<Space*>(Support::mark(ownBestSpace));
-            } else {
-              delete b.ownBest->copy;
-              b.ownBest->copy = ownBestSpace;
+        bool allClosed = true;
+        for (int i = getNumberOfChildren(); i--;) {
+            if (getChild(na, i)->isOpen()) {
+                allClosed = false;
+                break;
             }
-          }
-          curSpace->constrain(*ownBestSpace);
-          lastBest = b.ownBest;
         }
-        curDist++;
-        middleNode = middleNode->getChild(na,b.alternative);
-        middleNode->setDistance(curDist);
-      }
-      copy = static_cast<Space*>(Support::mark(curSpace));
 
-    }
-    return rdist;
-  }
+        if (allClosed) {
+            setHasOpenChildren(false);
+            for (unsigned int i = 0; i < getNumberOfChildren(); i++)
+                setHasSolvedChildren(hasSolvedChildren() || getChild(na, i)->hasSolvedChildren());
+            SpaceNode* p = getParent(na);
+            if (p != nullptr) {
+                delete static_cast<Space*>(Support::funmark(copy));
+                copy = nullptr;
+                p->closeChild(na, hasFailedChildren(), hasSolvedChildren());
+            }
+        } else {
 
-  void
-  SpaceNode::acquireSpace(NodeAllocator& na,
-                          BestNode* curBest, int c_d, int a_d) {
-    SpaceNode* p = getParent(na);
-    int parentIdx = getParent();
-    int idx = getIndex(na);
-
-    if (getStatus() == UNDETERMINED && curBest != nullptr &&
-        na.best(idx) == nullptr &&
-        p != nullptr && curBest->s != na.best(parentIdx)) {
-      na.setBest(idx, curBest->s->getIndex(na));
-    }
-    SpaceNode* ownBest = na.best(idx);
-
-    if (copy == nullptr && p != nullptr && p->copy != nullptr &&
-        Support::marked(p->copy)) {
-      // If parent has a working space, steal it
-      copy = p->copy;
-      p->copy = nullptr;
-      if (p->choice != nullptr)
-        static_cast<Space*>(Support::unmark(copy))->
-          commit(*p->choice, getAlternative(na));
-
-      if (ownBest != nullptr) {
-        ownBest->acquireSpace(na,curBest, c_d, a_d);
-        Space* ownBestSpace =
-          static_cast<Space*>(Support::funmark(ownBest->copy));
-        if (ownBestSpace->status() != SS_SOLVED) {
-          // in the presence of weakly monotonic propagators, we may have to
-          // use search to find the solution here
-
-          ownBestSpace = Gecode::dfs(ownBestSpace);
-          if (Support::marked(ownBest->copy)) {
-            delete static_cast<Space*>(Support::unmark(ownBest->copy));
-            ownBest->copy =
-              static_cast<Space*>(Support::mark(ownBestSpace));
-          } else {
-            delete ownBest->copy;
-            ownBest->copy = ownBestSpace;
-          }
+            if (hadSolutions) {
+                setHasSolvedChildren(true);
+                SpaceNode* p = getParent(na);
+                while (p != nullptr && !p->hasSolvedChildren()) {
+                    p->setHasSolvedChildren(true);
+                    p = p->getParent(na);
+                }
+            }
+            if (hadFailures) {
+                SpaceNode* p = getParent(na);
+                while (p != nullptr && !p->hasFailedChildren()) {
+                    p->setHasFailedChildren(true);
+                    p = p->getParent(na);
+                }
+            }
         }
-        static_cast<Space*>(Support::unmark(copy))->constrain(*ownBestSpace);
-      }
-      int d = p->getDistance()+1;
-      if (d > c_d && c_d >= 0 &&
-          static_cast<Space*>(Support::unmark(copy))->status() == SS_BRANCH) {
-        copy = static_cast<Space*>(Support::unmark(copy));
-        d = 0;
-      }
-      setDistance(d);
     }
 
-    if (copy == nullptr) {
-      if (recompute(na, curBest, c_d, a_d) > c_d && c_d >= 0 &&
-          static_cast<Space*>(Support::unmark(copy))->status() == SS_BRANCH) {
-        copy = static_cast<Space*>(Support::unmark(copy));
-        setDistance(0);
-      }
+    SpaceNode::SpaceNode(Space* root) : Node(-1, root == nullptr), copy(root), choice(nullptr), nstatus(0) {
+        if (root == nullptr) {
+            setStatus(FAILED);
+            setHasSolvedChildren(false);
+            setHasFailedChildren(true);
+        } else {
+            setStatus(UNDETERMINED);
+            setHasSolvedChildren(false);
+            setHasFailedChildren(false);
+        }
     }
 
-    // always return a fixpoint
-    static_cast<Space*>(Support::funmark(copy))->status();
-    if (Support::marked(copy) && p != nullptr && isOpen() &&
-        p->copy != nullptr && p->getNoOfOpenChildren(na) == 1 &&
-        !p->isRoot()) {
-      // last alternative optimization
-
-      copy = static_cast<Space*>(Support::unmark(copy));
-      delete static_cast<Space*>(Support::funmark(p->copy));
-      p->copy = nullptr;
-      setDistance(0);
-      p->setDistance(p->getParent(na)->getDistance()+1);
-    }
-  }
-
-  void
-  SpaceNode::closeChild(const NodeAllocator& na,
-                        bool hadFailures, bool hadSolutions) {
-    setHasFailedChildren(hasFailedChildren() || hadFailures);
-    setHasSolvedChildren(hasSolvedChildren() || hadSolutions);
-
-    bool allClosed = true;
-    for (int i=getNumberOfChildren(); i--;) {
-      if (getChild(na,i)->isOpen()) {
-        allClosed = false;
-        break;
-      }
-    }
-
-    if (allClosed) {
-      setHasOpenChildren(false);
-      for (unsigned int i=0; i<getNumberOfChildren(); i++)
-        setHasSolvedChildren(hasSolvedChildren() ||
-          getChild(na,i)->hasSolvedChildren());
-      SpaceNode* p = getParent(na);
-      if (p != nullptr) {
+    void
+    SpaceNode::dispose(void) {
+        delete choice;
         delete static_cast<Space*>(Support::funmark(copy));
-        copy = nullptr;
-        p->closeChild(na, hasFailedChildren(), hasSolvedChildren());
-      }
-    } else {
-
-      if (hadSolutions) {
-        setHasSolvedChildren(true);
-        SpaceNode* p = getParent(na);
-        while (p != nullptr && !p->hasSolvedChildren()) {
-          p->setHasSolvedChildren(true);
-          p = p->getParent(na);
-        }
-      }
-      if (hadFailures) {
-        SpaceNode* p = getParent(na);
-        while (p != nullptr && !p->hasFailedChildren()) {
-          p->setHasFailedChildren(true);
-          p = p->getParent(na);
-        }
-      }
     }
 
-  }
-
-  SpaceNode::SpaceNode(Space* root)
-  : Node(-1, root==nullptr),
-    copy(root), choice(nullptr), nstatus(0) {
-    if (root == nullptr) {
-      setStatus(FAILED);
-      setHasSolvedChildren(false);
-      setHasFailedChildren(true);
-    } else {
-      setStatus(UNDETERMINED);
-      setHasSolvedChildren(false);
-      setHasFailedChildren(false);
+    int
+    SpaceNode::getNumberOfChildNodes(NodeAllocator& na, BestNode* curBest, Statistics& stats, int c_d, int a_d) {
+        int kids = 0;
+        if (isUndetermined()) {
+            stats.undetermined--;
+            acquireSpace(na, curBest, c_d, a_d);
+            QVector<QString> labels;
+            switch (static_cast<Space*>(Support::funmark(copy))->status(stats)) {
+            case SS_FAILED: {
+                purge(na);
+                kids = 0;
+                setHasOpenChildren(false);
+                setHasSolvedChildren(false);
+                setHasFailedChildren(true);
+                setStatus(FAILED);
+                stats.failures++;
+                SpaceNode* p = getParent(na);
+                if (p != nullptr)
+                    p->closeChild(na, true, false);
+            } break;
+            case SS_SOLVED: {
+                // Deletes all pending branchers
+                (void)static_cast<Space*>(Support::funmark(copy))->choice();
+                kids = 0;
+                setStatus(SOLVED);
+                setHasOpenChildren(false);
+                setHasSolvedChildren(true);
+                setHasFailedChildren(false);
+                stats.solutions++;
+                if (curBest != nullptr) {
+                    curBest->s = this;
+                }
+                SpaceNode* p = getParent(na);
+                if (p != nullptr)
+                    p->closeChild(na, false, true);
+            } break;
+            case SS_BRANCH: {
+                Space* s = static_cast<Space*>(Support::funmark(copy));
+                choice = s->choice();
+                kids = choice->alternatives();
+                setHasOpenChildren(true);
+                if (dynamic_cast<const StopChoice*>(choice)) {
+                    setStatus(STOP);
+                } else {
+                    setStatus(BRANCH);
+                    stats.choices++;
+                }
+                stats.undetermined += kids;
+                for (int i = 0; i < kids; i++) {
+                    std::ostringstream oss;
+                    s->print(*choice, i, oss);
+                    labels.push_back(QString(oss.str().c_str()));
+                }
+            } break;
+            }
+            static_cast<VisualNode*>(this)->changedStatus(na);
+            setNumberOfChildren(kids, na);
+        } else {
+            kids = getNumberOfChildren();
+        }
+        return kids;
     }
-  }
 
-  void
-  SpaceNode::dispose(void) {
-    delete choice;
-    delete static_cast<Space*>(Support::funmark(copy));
-  }
-
-
-  int
-  SpaceNode::getNumberOfChildNodes(NodeAllocator& na,
-                                   BestNode* curBest, Statistics& stats,
-                                   int c_d, int a_d) {
-    int kids = 0;
-    if (isUndetermined()) {
-      stats.undetermined--;
-      acquireSpace(na, curBest, c_d, a_d);
-      QVector<QString> labels;
-      switch (static_cast<Space*>(Support::funmark(copy))->status(stats)) {
-      case SS_FAILED:
-        {
-          purge(na);
-          kids = 0;
-          setHasOpenChildren(false);
-          setHasSolvedChildren(false);
-          setHasFailedChildren(true);
-          setStatus(FAILED);
-          stats.failures++;
-          SpaceNode* p = getParent(na);
-          if (p != nullptr)
-            p->closeChild(na, true, false);
-        }
-        break;
-      case SS_SOLVED:
-        {
-          // Deletes all pending branchers
-          (void) static_cast<Space*>(Support::funmark(copy))->choice();
-          kids = 0;
-          setStatus(SOLVED);
-          setHasOpenChildren(false);
-          setHasSolvedChildren(true);
-          setHasFailedChildren(false);
-          stats.solutions++;
-          if (curBest != nullptr) {
-            curBest->s = this;
-          }
-          SpaceNode* p = getParent(na);
-          if (p != nullptr)
-            p->closeChild(na, false, true);
-        }
-        break;
-      case SS_BRANCH:
-        {
-          Space* s = static_cast<Space*>(Support::funmark(copy));
-          choice = s->choice();
-          kids = choice->alternatives();
-          setHasOpenChildren(true);
-          if (dynamic_cast<const StopChoice*>(choice)) {
-            setStatus(STOP);
-          } else {
-            setStatus(BRANCH);
-            stats.choices++;
-          }
-          stats.undetermined += kids;
-          for (int i=0; i<kids; i++) {
-            std::ostringstream oss;
-            s->print(*choice,i,oss);
-            labels.push_back(QString(oss.str().c_str()));
-          }
-        }
-        break;
-      }
-      static_cast<VisualNode*>(this)->changedStatus(na);
-      setNumberOfChildren(kids, na);
-    } else {
-      kids = getNumberOfChildren();
+    int
+    SpaceNode::getNoOfOpenChildren(const NodeAllocator& na) {
+        if (!hasOpenChildren())
+            return 0;
+        int noOfOpenChildren = 0;
+        for (int i = getNumberOfChildren(); i--;)
+            noOfOpenChildren += (getChild(na, i)->isOpen());
+        return noOfOpenChildren;
     }
-    return kids;
-  }
 
-  int
-  SpaceNode::getNoOfOpenChildren(const NodeAllocator& na) {
-    if (!hasOpenChildren())
-      return 0;
-    int noOfOpenChildren = 0;
-    for (int i=getNumberOfChildren(); i--;)
-      noOfOpenChildren += (getChild(na,i)->isOpen());
-    return noOfOpenChildren;
-  }
-
-}}
+}} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,28 +32,27 @@
 
 namespace Gecode { namespace Int {
 
-  /*
-   * Test sharing between Boolean and negated Boolean views
-   *
-   */
-  forceinline BoolTest
-  bool_test(const BoolView& b0, const BoolView& b1) {
-    return (b0 == b1) ? BT_SAME : BT_NONE;
-  }
-  forceinline BoolTest
-  bool_test(const BoolView& b0, const NegBoolView& b1) {
-    return (b0 == b1.base()) ? BT_COMP : BT_NONE;
-  }
-  forceinline BoolTest
-  bool_test(const NegBoolView& b0, const BoolView& b1) {
-    return (b0.base() == b1) ? BT_COMP : BT_NONE;
-  }
-  forceinline BoolTest
-  bool_test(const NegBoolView& b0, const NegBoolView& b1) {
-    return (b0 == b1) ? BT_SAME : BT_NONE;
-  }
+    /*
+     * Test sharing between Boolean and negated Boolean views
+     *
+     */
+    forceinline BoolTest
+    bool_test(const BoolView& b0, const BoolView& b1) {
+        return (b0 == b1) ? BT_SAME : BT_NONE;
+    }
+    forceinline BoolTest
+    bool_test(const BoolView& b0, const NegBoolView& b1) {
+        return (b0 == b1.base()) ? BT_COMP : BT_NONE;
+    }
+    forceinline BoolTest
+    bool_test(const NegBoolView& b0, const BoolView& b1) {
+        return (b0.base() == b1) ? BT_COMP : BT_NONE;
+    }
+    forceinline BoolTest
+    bool_test(const NegBoolView& b0, const NegBoolView& b1) {
+        return (b0 == b1) ? BT_SAME : BT_NONE;
+    }
 
-}}
+}} // namespace Gecode::Int
 
 // STATISTICS: int-var
-

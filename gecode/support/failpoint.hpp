@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Zayenz Lagerkvist <lagerkvist@gecode.dev>
@@ -45,30 +44,30 @@
  */
 namespace Gecode { namespace Support { namespace FailPoint {
 
-  /// Named phase for deterministic test failure injection
-  enum class Phase {
-    Disabled,
-    Heap,
-    PropagatorCopy,
-    BrancherCopy,
-    AdvisorCopy,
-    DerivedSpaceCopy,
-    LocalObjectCopy,
-    SpaceDisposeNoticeArray,
-    SpaceDisposalArray,
-    MiniModel
-  };
+    /// Named phase for deterministic test failure injection
+    enum class Phase {
+        Disabled,
+        Heap,
+        PropagatorCopy,
+        BrancherCopy,
+        AdvisorCopy,
+        DerivedSpaceCopy,
+        LocalObjectCopy,
+        SpaceDisposeNoticeArray,
+        SpaceDisposalArray,
+        MiniModel
+    };
 
-  /// Reset all failpoint state
-  GECODE_SUPPORT_EXPORT void reset(void);
-  /// Fail after \a n successful checks for phase \a p
-  GECODE_SUPPORT_EXPORT void fail_after(Phase p, unsigned long long n);
-  /// Check failpoint for phase \a p
-  GECODE_SUPPORT_EXPORT void check(Phase p);
-  /// Number of checks observed for the configured phase
-  GECODE_SUPPORT_EXPORT unsigned long long count(void);
+    /// Reset all failpoint state
+    GECODE_SUPPORT_EXPORT void reset(void);
+    /// Fail after \a n successful checks for phase \a p
+    GECODE_SUPPORT_EXPORT void fail_after(Phase p, unsigned long long n);
+    /// Check failpoint for phase \a p
+    GECODE_SUPPORT_EXPORT void check(Phase p);
+    /// Number of checks observed for the configured phase
+    GECODE_SUPPORT_EXPORT unsigned long long count(void);
 
-}}}
+}}} // namespace Gecode::Support::FailPoint
 
 #endif
 

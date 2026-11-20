@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main author:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,9 +34,8 @@
 
 namespace Gecode {
 
-  const IntPropLevels IntPropLevels::def;
+    const IntPropLevels IntPropLevels::def;
 
 }
 
 // STATISTICS: minimodel-any
-

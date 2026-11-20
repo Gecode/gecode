@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,14 +36,16 @@
 #include <gecode/kernel.hh>
 
 namespace Gecode {
-  /// Range and value iterators
-  namespace Iter {
-    /// Range iterators
-    namespace Ranges {}
-    /// Value iterators
-    namespace Values {}
-  }
-}
+    /// Range and value iterators
+    namespace Iter {
+        /// Range iterators
+        namespace Ranges {
+        }
+        /// Value iterators
+        namespace Values {
+        }
+    } // namespace Iter
+} // namespace Gecode
 
 #include <gecode/iter/ranges-operations.hpp>
 #include <gecode/iter/ranges-minmax.hpp>

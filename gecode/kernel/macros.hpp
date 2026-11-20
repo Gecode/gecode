@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -37,10 +36,10 @@
  * Also sets group information for posting.
  * \ingroup TaskActor
  */
-#define GECODE_POST \
-  if (home.failed()) return;             \
-  ::Gecode::PostInfo gecode_pi_(home);
-
+#define GECODE_POST                                                                                                    \
+    if (home.failed())                                                                                                 \
+        return;                                                                                                        \
+    ::Gecode::PostInfo gecode_pi_(home);
 
 /**
  * \brief Check whether modification event \a me is failed, and forward failure.
@@ -49,10 +48,11 @@
  * or the commit member function of a brancher.
  * \ingroup TaskActor
  */
-#define GECODE_ME_CHECK(me) do {                \
-  if (::Gecode::me_failed(me))                  \
-    return ::Gecode::ES_FAILED;                 \
-  } while (0)
+#define GECODE_ME_CHECK(me)                                                                                            \
+    do {                                                                                                               \
+        if (::Gecode::me_failed(me))                                                                                   \
+            return ::Gecode::ES_FAILED;                                                                                \
+    } while (0)
 
 /**
  * \brief Check whether \a me is failed or modified, and forward failure.
@@ -61,12 +61,13 @@
  * or the commit member function of a brancher.
  * \ingroup TaskActor
  */
-#define GECODE_ME_CHECK_MODIFIED(modified, me) do {             \
-    ::Gecode::ModEvent gecode_me_ ## __LINE__ = (me);           \
-    if (::Gecode::me_failed(gecode_me_ ## __LINE__))            \
-      return ::Gecode::ES_FAILED;                               \
-    modified |= ::Gecode::me_modified(gecode_me_ ## __LINE__);  \
-  } while (0)
+#define GECODE_ME_CHECK_MODIFIED(modified, me)                                                                         \
+    do {                                                                                                               \
+        ::Gecode::ModEvent gecode_me_##__LINE__ = (me);                                                                \
+        if (::Gecode::me_failed(gecode_me_##__LINE__))                                                                 \
+            return ::Gecode::ES_FAILED;                                                                                \
+        modified |= ::Gecode::me_modified(gecode_me_##__LINE__);                                                       \
+    } while (0)
 
 /**
  * \brief Check whether modification event \a me is failed, and fail space \a home.
@@ -74,13 +75,13 @@
  * To be used inside post functions.
  * \ingroup TaskActor
  */
-#define GECODE_ME_FAIL(me) do {   \
-  if (::Gecode::me_failed(me)) {  \
-    (home).fail();                \
-    return;                       \
-  }} while (0)
-
-
+#define GECODE_ME_FAIL(me)                                                                                             \
+    do {                                                                                                               \
+        if (::Gecode::me_failed(me)) {                                                                                 \
+            (home).fail();                                                                                             \
+            return;                                                                                                    \
+        }                                                                                                              \
+    } while (0)
 
 /**
  * \brief Check whether execution status \a es is failed or subsumed, and
@@ -88,11 +89,12 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_ES_CHECK(es) do {                        \
-    ::Gecode::ExecStatus gecode_es_ ## __LINE__ = (es); \
-    if (gecode_es_ ## __LINE__ < ::Gecode::ES_OK)       \
-      return gecode_es_ ## __LINE__;                    \
-  } while (0)
+#define GECODE_ES_CHECK(es)                                                                                            \
+    do {                                                                                                               \
+        ::Gecode::ExecStatus gecode_es_##__LINE__ = (es);                                                              \
+        if (gecode_es_##__LINE__ < ::Gecode::ES_OK)                                                                    \
+            return gecode_es_##__LINE__;                                                                               \
+    } while (0)
 
 /**
  * \brief Check whether execution status \a es is failed, and fail
@@ -100,26 +102,29 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_ES_FAIL(es) do {                                 \
-    ::Gecode::ExecStatus gecode_es_ ## __LINE__ = (es);         \
-    assert(gecode_es_ ## __LINE__ != ::Gecode::ES_SUBSUMED_);   \
-    if (gecode_es_ ## __LINE__ < ::Gecode::ES_OK) {             \
-      (home).fail(); return;                                    \
-    }                                                           \
-  } while (0)
+#define GECODE_ES_FAIL(es)                                                                                             \
+    do {                                                                                                               \
+        ::Gecode::ExecStatus gecode_es_##__LINE__ = (es);                                                              \
+        assert(gecode_es_##__LINE__ != ::Gecode::ES_SUBSUMED_);                                                        \
+        if (gecode_es_##__LINE__ < ::Gecode::ES_OK) {                                                                  \
+            (home).fail();                                                                                             \
+            return;                                                                                                    \
+        }                                                                                                              \
+    } while (0)
 
 /**
  * \brief Rewrite propagator by executing post function
  *
  * \ingroup TaskActor
  */
-#define GECODE_REWRITE(prop,post) do {                                             \
-  ::Gecode::Propagator& gecode_p_ ## __LINE__ = (prop);                            \
-  size_t gecode_s_ ## __LINE__  = gecode_p_ ## __LINE__.dispose(home);             \
-  ::Gecode::ExecStatus gecode_es_ ## __LINE__ = (post);                            \
-  if (gecode_es_ ## __LINE__ != ::Gecode::ES_OK)                                   \
-    return ::Gecode::ES_FAILED;                                                    \
-  return home.ES_SUBSUMED_DISPOSED(gecode_p_ ## __LINE__, gecode_s_ ## __LINE__);  \
-} while (0)
+#define GECODE_REWRITE(prop, post)                                                                                     \
+    do {                                                                                                               \
+        ::Gecode::Propagator& gecode_p_##__LINE__ = (prop);                                                            \
+        size_t gecode_s_##__LINE__ = gecode_p_##__LINE__.dispose(home);                                                \
+        ::Gecode::ExecStatus gecode_es_##__LINE__ = (post);                                                            \
+        if (gecode_es_##__LINE__ != ::Gecode::ES_OK)                                                                   \
+            return ::Gecode::ES_FAILED;                                                                                \
+        return home.ES_SUBSUMED_DISPOSED(gecode_p_##__LINE__, gecode_s_##__LINE__);                                    \
+    } while (0)
 
 // STATISTICS: kernel-other

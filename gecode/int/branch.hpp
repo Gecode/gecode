@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,28 +32,24 @@
 
 namespace Gecode {
 
-  forceinline void
-  branch(Home home, const IntVarArgs& x, IntValBranch vals,
-         IntBranchFilter bf, IntVarValPrint vvp) {
-    branch(home, x, INT_VAR_NONE(), vals, bf, vvp);
-  }
-  forceinline void
-  branch(Home home, const BoolVarArgs& x, BoolValBranch vals,
-         BoolBranchFilter bf, BoolVarValPrint vvp) {
-    branch(home, x, BOOL_VAR_NONE(), vals, bf, vvp);
-  }
+    forceinline void
+    branch(Home home, const IntVarArgs& x, IntValBranch vals, IntBranchFilter bf, IntVarValPrint vvp) {
+        branch(home, x, INT_VAR_NONE(), vals, bf, vvp);
+    }
+    forceinline void
+    branch(Home home, const BoolVarArgs& x, BoolValBranch vals, BoolBranchFilter bf, BoolVarValPrint vvp) {
+        branch(home, x, BOOL_VAR_NONE(), vals, bf, vvp);
+    }
 
-  forceinline void
-  assign(Home home, const IntVarArgs& x, IntAssign vals,
-         IntBranchFilter bf, IntVarValPrint vvp) {
-    assign(home, x, INT_VAR_NONE(), vals, bf, vvp);
-  }
-  forceinline void
-  assign(Home home, const BoolVarArgs& x, BoolAssign vals,
-         BoolBranchFilter bf, BoolVarValPrint vvp) {
-    assign(home, x, BOOL_VAR_NONE(), vals, bf, vvp);
-  }
+    forceinline void
+    assign(Home home, const IntVarArgs& x, IntAssign vals, IntBranchFilter bf, IntVarValPrint vvp) {
+        assign(home, x, INT_VAR_NONE(), vals, bf, vvp);
+    }
+    forceinline void
+    assign(Home home, const BoolVarArgs& x, BoolAssign vals, BoolBranchFilter bf, BoolVarValPrint vvp) {
+        assign(home, x, BOOL_VAR_NONE(), vals, bf, vvp);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: int-branch

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.dev>
@@ -33,17 +32,15 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc {
-
-  namespace {
+namespace Test { namespace FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
-
-      /// Perform creation and registration
-      Create(void) {
-        (void) new FlatZincTest(TestTags::sweep(),"trucking",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+        /// Perform creation and registration
+        Create(void) {
+            (void)new FlatZincTest(
+                TestTags::sweep(), "trucking",
+                "predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -70,17 +67,16 @@ constraint int_lin_le([-20, -18, -15, -13], [x[4], x[10], x[16], x[22]], -19);\n
 constraint int_lin_le([-20, -18, -15, -13], [x[5], x[11], x[17], x[23]], -25);\n\
 constraint int_lin_le([-20, -18, -15, -13], [x[6], x[12], x[18], x[24]], -22);\n\
 solve ::int_search(x, first_fail, indomain_min, complete) minimize INT____00001;\n\
-", "obj = 224;\n\
+",
+                "obj = 224;\n\
 x = array2d(1..4, 1..6, [0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0]);\n\
 ----------\n\
 ==========\n\
 ");
-      }
+        }
     };
 
     Create c;
-  }
-
-}}
+}}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

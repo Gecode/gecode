@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -33,31 +32,30 @@
 
 namespace Gecode {
 
-  forceinline
-  IntAction::IntAction(void) {}
+    forceinline
+    IntAction::IntAction(void) {}
 
-  forceinline
-  IntAction::IntAction(const IntAction& a)
-    : Action(a) {}
+    forceinline
+    IntAction::IntAction(const IntAction& a)
+        : Action(a) {}
 
-  forceinline IntAction&
-  IntAction::operator =(const IntAction& a) {
-    return static_cast<IntAction&>(Action::operator =(a));
-  }
+    forceinline IntAction&
+    IntAction::operator=(const IntAction& a) {
+        return static_cast<IntAction&>(Action::operator=(a));
+    }
 
+    forceinline
+    BoolAction::BoolAction(void) {}
 
-  forceinline
-  BoolAction::BoolAction(void) {}
+    forceinline
+    BoolAction::BoolAction(const BoolAction& a)
+        : Action(a) {}
 
-  forceinline
-  BoolAction::BoolAction(const BoolAction& a)
-    : Action(a) {}
+    forceinline BoolAction&
+    BoolAction::operator=(const BoolAction& a) {
+        return static_cast<BoolAction&>(Action::operator=(a));
+    }
 
-  forceinline BoolAction&
-  BoolAction::operator =(const BoolAction& a) {
-    return static_cast<BoolAction&>(Action::operator =(a));
-  }
-
-}
+} // namespace Gecode
 
 // STATISTICS: int-branch

@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.dev>
@@ -35,17 +34,17 @@
 
 namespace Gecode {
 
-  FloatCHB::FloatCHB(Home home, const FloatVarArgs& x, FloatBranchMerit bm) {
-    ViewArray<Float::FloatView> y(home,x);
-    CHB::init(home,y,bm);
-  }
+    FloatCHB::FloatCHB(Home home, const FloatVarArgs& x, FloatBranchMerit bm) {
+        ViewArray<Float::FloatView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
-  void
-  FloatCHB::init(Home home, const FloatVarArgs& x, FloatBranchMerit bm) {
-    ViewArray<Float::FloatView> y(home,x);
-    CHB::init(home,y,bm);
-  }
+    void
+    FloatCHB::init(Home home, const FloatVarArgs& x, FloatBranchMerit bm) {
+        ViewArray<Float::FloatView> y(home, x);
+        CHB::init(home, y, bm);
+    }
 
-}
+} // namespace Gecode
 
 // STATISTICS: float-branch
