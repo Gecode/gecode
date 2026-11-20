@@ -1,0 +1,7 @@
+schema_version = 1
+tag = "scoped-enums"
+title = "Scoped enums and descriptive constants"
+objective = "Decide and apply where Gecode 7 public enums become enum class and which abbreviated constants get clearer names."
+branch = "feature/breaking-7"
+lifecycle = "open"
+base_commit = "0c81e65ae53173d616dbf2712baa00a29c8d33ba"
