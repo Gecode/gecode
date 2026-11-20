@@ -103,6 +103,12 @@ namespace Test {
     static_assert(std::is_trivially_copyable_v<Gecode::ViewArray<Gecode::Float::FloatView>>);
 #endif
 
+#ifdef GECODE_HAS_FLOAT_VARS
+    // A float value is two bounds and stays trivially copyable.
+    static_assert(std::is_trivially_copyable_v<Gecode::FloatVal>);
+    static_assert(std::is_trivially_copyable_v<Gecode::Float::ScaleView>);
+#endif
+
     /*
      * A home never changes its space, and a space is copied only by
      * cloning, so neither is assignable.
