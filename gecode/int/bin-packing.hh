@@ -176,18 +176,18 @@ namespace Gecode { namespace Int { namespace BinPacking {
         bool nosum(const SizeSet& s, int a, int b);
         /// Perform propagation
         GECODE_INT_EXPORT
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Cost function
         GECODE_INT_EXPORT
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
         GECODE_INT_EXPORT
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Copy propagator during cloning
         GECODE_INT_EXPORT
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Destructor
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Reductions
         static int const n_reductions = 3;
         static void calc_reductions(const ViewArray<Item>& bs, const ViewArray<OffsetView>& l,
@@ -351,7 +351,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         /// Post additional constraints
         ExecStatus post(void);
         /// Return maximal clique found
-        IntSet maxclique(void) const;
+        IntSet maximum_clique(void) const;
         /// Destructor
         ~ConflictGraph(void);
     };

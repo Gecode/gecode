@@ -79,7 +79,7 @@ public:
         distinct(*this, d, opt.ipl());
 
         // Break mirror symmetry
-        rel(*this, x[0], IRT_LE, x[1]);
+        rel(*this, x[0], IRT_LT, x[1]);
         // Break symmetry of dual solution
         rel(*this, d[0], IRT_GR, d[n - 2]);
 
@@ -91,18 +91,18 @@ public:
         d.update(*this, s.d);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new AllInterval(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         const int n = x.size();
         os << "\tx[" << n << "] = {";
         for (int i = 0; i < n - 1; i++)
             os << x[i] << "(" << d[i] << "),";
-        os << x[n - 1] << "}" << std::endl;
+        os << x[n - 1] << "}" << '\n';
     }
 };
 
@@ -117,7 +117,7 @@ main(int argc, char* argv[]) {
     opt.ipl(IPL_BND);
     opt.parse(argc, argv);
     if (opt.size() < 2) {
-        std::cerr << "size must be at least 2!" << std::endl;
+        std::cerr << "size must be at least 2!" << '\n';
         return -1;
     }
     Script::run<AllInterval, DFS, SizeOptions>(opt);

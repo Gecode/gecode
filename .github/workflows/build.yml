@@ -43,6 +43,56 @@ jobs:
       shell: bash
       run: uv run misc/tidy.py --check
 
+  check-extended:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+      with:
+        enable-cache: false
+
+    - name: Install LLVM 22 and check dependencies
+      shell: bash
+      run: |
+        curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o "$RUNNER_TEMP/llvm.asc"
+        sudo install -m 644 "$RUNNER_TEMP/llvm.asc" /usr/share/keyrings/llvm.asc
+        echo 'deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+        sudo apt-get update
+        sudo apt-get install -y clang-22 clang-format-22 clang-tidy-22 clang-tools-22 \
+          ninja-build bison flex graphviz libgmp-dev libmpfr-dev \
+          qt6-base-dev qt6-base-dev-tools libgl1-mesa-dev
+
+    - name: Install Doxygen 1.18.0
+      shell: bash
+      run: |
+        archive="$RUNNER_TEMP/doxygen-1.18.0.linux.bin.tar.gz"
+        curl --fail --location --retry 3 https://www.doxygen.nl/files/doxygen-1.18.0.linux.bin.tar.gz -o "$archive"
+        printf '%s  %s\n' 14fa81bdc34171edb5f1f02b1d60e74802f0439b77fa44e592565d517d72df90 "$archive" | sha256sum --check
+        mkdir -p "$RUNNER_TEMP/doxygen"
+        tar -xzf "$archive" -C "$RUNNER_TEMP/doxygen" --strip-components=1
+        doxygen_bin="$(find "$RUNNER_TEMP/doxygen" -type f -name doxygen -print -quit)"
+        "$doxygen_bin" --version
+        dirname "$doxygen_bin" >> "$GITHUB_PATH"
+
+    - name: Configure full Debug checks
+      shell: bash
+      run: >
+        cmake -S . -B build/check-extended -G Ninja
+        -DCMAKE_BUILD_TYPE=Debug
+        -DCMAKE_C_COMPILER=clang-22 -DCMAKE_CXX_COMPILER=clang++-22
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        -DGECODE_ENABLE_EXPERIMENTAL=ON -DGECODE_ENABLE_CBS=ON
+        -DGECODE_ENABLE_AUDIT=ON -DGECODE_ENABLE_FAULT_INJECTION=ON
+        -DGECODE_ENABLE_QT=ON -DGECODE_ENABLE_GIST=ON -DGECODE_ENABLE_MPFR=ON
+        -DGECODE_ENABLE_EXAMPLES=ON -DGECODE_REGENERATE_VARIMP=ON
+
+    - name: Run all checks
+      shell: bash
+      run: uv run misc/check.py all --build-dir build/check-extended --jobs 4
+
   build-cmake-unix:
     runs-on: ${{ matrix.os }}
     strategy:

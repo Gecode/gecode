@@ -91,7 +91,7 @@ namespace Gecode { namespace Support {
         /// Acquire the mutex and possibly block
         void acquire(void);
         /// Try to acquire the mutex, return true if successful
-        bool tryacquire(void);
+        bool try_acquire(void);
         /// Release the mutex
         void release(void);
         /// Allocate memory from heap
@@ -194,9 +194,9 @@ namespace Gecode { namespace Support {
         /// Initialize, \a d defines whether object is deleted when terminated
         Runnable(bool d = true);
         /// Set whether to delete upon termination
-        void todelete(bool d);
+        void delete_after_run(bool d);
         /// Return whether to be deleted upon termination
-        bool todelete(void) const;
+        bool delete_after_run(void) const;
         /// Return terminator object
         virtual Terminator*
         terminator(void) const {
@@ -264,9 +264,9 @@ namespace Gecode { namespace Support {
         /// Return number of processing units (1 if information not available)
         static unsigned int npu(void);
         /// acquire mutex \a m globally and possibly lock
-        GECODE_SUPPORT_EXPORT static void acquireGlobalMutex(Mutex* m);
+        GECODE_SUPPORT_EXPORT static void acquire_global_mutex(Mutex* m);
         /// release globally acquired mutex \a m
-        GECODE_SUPPORT_EXPORT static void releaseGlobalMutex(Mutex* m);
+        GECODE_SUPPORT_EXPORT static void release_global_mutex(Mutex* m);
 
     private:
         /// A thread cannot be copied

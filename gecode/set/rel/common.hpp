@@ -69,67 +69,67 @@ namespace Gecode { namespace Set { namespace Rel {
     }
 
     forceinline bool
-    subsumesME(ModEvent me0, ModEvent me1, ModEvent me2, ModEvent me) {
+    subsumes_me(ModEvent me0, ModEvent me1, ModEvent me2, ModEvent me) {
         ModEvent cme = SetVarImp::me_combine(me0, SetVarImp::me_combine(me1, me2));
         return SetVarImp::me_combine(cme, me) == cme;
     }
     forceinline bool
-    subsumesME(ModEvent me0, ModEvent me1, ModEvent me) {
+    subsumes_me(ModEvent me0, ModEvent me1, ModEvent me) {
         ModEvent cme = SetVarImp::me_combine(me0, me1);
         return SetVarImp::me_combine(cme, me) == cme;
     }
     forceinline bool
-    subsumesME(ModEvent me0, ModEvent me) {
+    subsumes_me(ModEvent me0, ModEvent me) {
         return SetVarImp::me_combine(me0, me) == me0;
     }
 
     forceinline bool
-    testSetEventLB(ModEvent me0, ModEvent me1, ModEvent me2) {
-        return subsumesME(me0, me1, me2, ME_SET_GLB);
+    test_set_event_lb(ModEvent me0, ModEvent me1, ModEvent me2) {
+        return subsumes_me(me0, me1, me2, ME_SET_GLB);
     }
     forceinline bool
-    testSetEventUB(ModEvent me0, ModEvent me1, ModEvent me2) {
-        return subsumesME(me0, me1, me2, ME_SET_LUB);
+    test_set_event_ub(ModEvent me0, ModEvent me1, ModEvent me2) {
+        return subsumes_me(me0, me1, me2, ME_SET_LUB);
     }
     forceinline bool
-    testSetEventAnyB(ModEvent me0, ModEvent me1, ModEvent me2) {
+    test_set_event_any_b(ModEvent me0, ModEvent me1, ModEvent me2) {
         return (me0 != ME_SET_CARD || me1 != ME_SET_CARD || me2 != ME_SET_CARD);
     }
     forceinline bool
-    testSetEventCard(ModEvent me0, ModEvent me1, ModEvent me2) {
-        return subsumesME(me0, me1, me2, ME_SET_CARD);
+    test_set_event_card(ModEvent me0, ModEvent me1, ModEvent me2) {
+        return subsumes_me(me0, me1, me2, ME_SET_CARD);
     }
     forceinline bool
-    testSetEventLB(ModEvent me0, ModEvent me1) {
-        return subsumesME(me0, me1, ME_SET_GLB);
+    test_set_event_lb(ModEvent me0, ModEvent me1) {
+        return subsumes_me(me0, me1, ME_SET_GLB);
     }
     forceinline bool
-    testSetEventUB(ModEvent me0, ModEvent me1) {
-        return subsumesME(me0, me1, ME_SET_LUB);
+    test_set_event_ub(ModEvent me0, ModEvent me1) {
+        return subsumes_me(me0, me1, ME_SET_LUB);
     }
     forceinline bool
-    testSetEventAnyB(ModEvent me0, ModEvent me1) {
+    test_set_event_any_b(ModEvent me0, ModEvent me1) {
         return (me0 != ME_SET_CARD || me1 != ME_SET_CARD);
     }
     forceinline bool
-    testSetEventCard(ModEvent me0, ModEvent me1) {
-        return subsumesME(me0, me1, ME_SET_CARD);
+    test_set_event_card(ModEvent me0, ModEvent me1) {
+        return subsumes_me(me0, me1, ME_SET_CARD);
     }
     forceinline bool
-    testSetEventLB(ModEvent me0) {
-        return subsumesME(me0, ME_SET_GLB);
+    test_set_event_lb(ModEvent me0) {
+        return subsumes_me(me0, ME_SET_GLB);
     }
     forceinline bool
-    testSetEventUB(ModEvent me0) {
-        return subsumesME(me0, ME_SET_LUB);
+    test_set_event_ub(ModEvent me0) {
+        return subsumes_me(me0, ME_SET_LUB);
     }
     forceinline bool
-    testSetEventAnyB(ModEvent me0) {
+    test_set_event_any_b(ModEvent me0) {
         return (me0 != ME_SET_CARD);
     }
     forceinline bool
-    testSetEventCard(ModEvent me0) {
-        return subsumesME(me0, ME_SET_CARD);
+    test_set_event_card(ModEvent me0) {
+        return subsumes_me(me0, ME_SET_CARD);
     }
 
 }}} // namespace Gecode::Set::Rel

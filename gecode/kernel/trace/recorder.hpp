@@ -122,17 +122,17 @@ namespace Gecode {
         /// Constructor for creation
         ViewTraceRecorder(Home home, ViewArray<View>& x, TraceFilter tf, int te, ViewTracer<View>& t);
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Cost function (record so that propagator runs last)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post recorder propagator
         static ExecStatus post(Home home, ViewArray<View>& x, TraceFilter tf, int te, ViewTracer<View>& t);
         /// \name Trace information
@@ -169,15 +169,15 @@ namespace Gecode {
         /// Constructor for creation
         TraceRecorder(Home home, TraceFilter tf, int te, Tracer& t);
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Cost function (record so that propagator runs last)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post propagator
         static ExecStatus post(Home home, TraceFilter tf, int te, Tracer& t);
         /// \name Trace information

@@ -39,11 +39,11 @@
 namespace Gecode { namespace Search { namespace Seq {
 
     /// Create stop object
-    GECODE_SEARCH_EXPORT Stop* rbsstop(Stop* so);
+    GECODE_SEARCH_EXPORT Stop* rbs_stop(Stop* so);
 
     /// Create restart engine whose first spoke has SpokeCoverage::Full
-    GECODE_SEARCH_EXPORT Engine* rbsengine(Space* hub, Stop* stop, Engine* engine, const Search::Statistics& stat,
-                                           const Options& opt, bool best);
+    GECODE_SEARCH_EXPORT Engine* make_rbs_engine(Space* hub, Stop* stop, Engine* engine, const Search::Statistics& stat,
+                                                 const Options& opt, bool best);
 
     /**
      * \brief Create restart engine
@@ -51,8 +51,8 @@ namespace Gecode { namespace Search { namespace Seq {
      * The value \a coverage is the coverage that the spoke hook declared for
      * the space explored by the first \a engine.
      */
-    GECODE_SEARCH_EXPORT Engine* rbsengine(Space* hub, Stop* stop, Engine* engine, const Search::Statistics& stat,
-                                           const Options& opt, bool best, SpokeCoverage coverage);
+    GECODE_SEARCH_EXPORT Engine* make_rbs_engine(Space* hub, Stop* stop, Engine* engine, const Search::Statistics& stat,
+                                                 const Options& opt, bool best, SpokeCoverage coverage);
 
 }}} // namespace Gecode::Search::Seq
 
@@ -67,7 +67,7 @@ namespace Gecode { namespace Search {
         /// The constructor
         RbsBuilder(const Options& opt);
         /// The actual build function
-        virtual Engine* operator()(Space* s) const;
+        Engine* operator()(Space* s) const override;
     };
 
     template <class T, template <class> class E>
@@ -89,7 +89,7 @@ namespace Gecode {
             throw Search::UninitializedCutoff("RBS::RBS");
         Search::Options e_opt(m_opt.expand());
         Search::Statistics stat;
-        std::unique_ptr<Search::Stop> stop(Search::Seq::rbsstop(m_opt.stop));
+        std::unique_ptr<Search::Stop> stop(Search::Seq::rbs_stop(m_opt.stop));
         e_opt.stop = stop.get();
         // Retain the seed while a potentially nested builder owns its clone.
         e_opt.clone = true;
@@ -123,10 +123,10 @@ namespace Gecode {
             spoke->random_split(sc);
             hub->reserve_brancher_ids(*spoke);
             std::unique_ptr<Search::Engine> leaf(Search::build<T, E>(spoke.get(), e_opt));
-            e = Search::Seq::rbsengine(hub.get(), stop.get(), leaf.get(), stat, m_opt, E<T>::best, sc.coverage());
-            hub.release();
-            stop.release();
-            leaf.release();
+            e = Search::Seq::make_rbs_engine(hub.get(), stop.get(), leaf.get(), stat, m_opt, E<T>::best, sc.coverage());
+            (void)hub.release();
+            (void)stop.release();
+            (void)leaf.release();
         }
     }
 

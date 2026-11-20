@@ -102,9 +102,10 @@ namespace Gecode {
     }
 
     void
-    argmax(Home home, const IntVarArgs& x, IntVar y, bool tiebreak, IntPropLevel) {
+    argmax(Home home, const IntVarArgs& x, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
-        if (x.size() == 0)
+        const int n = x.size();
+        if (n == 0)
             throw TooFewArguments("Int::argmax");
         if (same(x, y))
             throw ArgumentSame("Int::argmax");
@@ -112,24 +113,25 @@ namespace Gecode {
         // Constrain y properly
         IntView yv(y);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<IntView> ix(home, x.size());
-        for (int i = 0; i < x.size(); i++) {
+        IdxViewArray<IntView> ix(home, n);
+        for (int i = 0; i < n; i++) {
             ix[i].idx = i;
             ix[i].view = x[i];
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<IntView, IntView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<IntView, IntView, false>::post(home, ix, yv)));
     }
 
     void
-    argmax(Home home, const IntVarArgs& x, int o, IntVar y, bool tiebreak, IntPropLevel) {
+    argmax(Home home, const IntVarArgs& x, int o, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
+        const int n = x.size();
         Limits::nonnegative(o, "Int::argmax");
-        if (x.size() == 0)
+        if (n == 0)
             throw TooFewArguments("Int::argmax");
         if (same(x, y))
             throw ArgumentSame("Int::argmax");
@@ -137,23 +139,24 @@ namespace Gecode {
         // Constrain y properly
         OffsetView yv(y, -o);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<IntView> ix(home, x.size());
-        for (int i = 0; i < x.size(); i++) {
+        IdxViewArray<IntView> ix(home, n);
+        for (int i = 0; i < n; i++) {
             ix[i].idx = i;
             ix[i].view = x[i];
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<IntView, OffsetView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<IntView, OffsetView, false>::post(home, ix, yv)));
     }
 
     void
-    argmin(Home home, const IntVarArgs& x, IntVar y, bool tiebreak, IntPropLevel) {
+    argmin(Home home, const IntVarArgs& x, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
-        if (x.size() == 0)
+        const int n = x.size();
+        if (n == 0)
             throw TooFewArguments("Int::argmin");
         if (same(x, y))
             throw ArgumentSame("Int::argmin");
@@ -161,24 +164,25 @@ namespace Gecode {
         // Constrain y properly
         IntView yv(y);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<MinusView> ix(home, x.size());
-        for (int i = 0; i < x.size(); i++) {
+        IdxViewArray<MinusView> ix(home, n);
+        for (int i = 0; i < n; i++) {
             ix[i].idx = i;
             ix[i].view = MinusView(x[i]);
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<MinusView, IntView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<MinusView, IntView, false>::post(home, ix, yv)));
     }
 
     void
-    argmin(Home home, const IntVarArgs& x, int o, IntVar y, bool tiebreak, IntPropLevel) {
+    argmin(Home home, const IntVarArgs& x, int o, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
+        const int n = x.size();
         Limits::nonnegative(o, "Int::argmin");
-        if (x.size() == 0)
+        if (n == 0)
             throw TooFewArguments("Int::argmin");
         if (same(x, y))
             throw ArgumentSame("Int::argmin");
@@ -186,104 +190,108 @@ namespace Gecode {
         // Constrain y properly
         OffsetView yv(y, -o);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<MinusView> ix(home, x.size());
-        for (int i = 0; i < x.size(); i++) {
+        IdxViewArray<MinusView> ix(home, n);
+        for (int i = 0; i < n; i++) {
             ix[i].idx = i;
             ix[i].view = MinusView(x[i]);
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<MinusView, OffsetView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<MinusView, OffsetView, false>::post(home, ix, yv)));
     }
 
     void
-    argmax(Home home, const BoolVarArgs& x, IntVar y, bool tiebreak, IntPropLevel) {
+    argmax(Home home, const BoolVarArgs& x, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
-        if (x.size() == 0)
+        const int n = x.size();
+        if (n == 0)
             throw TooFewArguments("Int::argmax");
         GECODE_POST;
         // Constrain y properly
         IntView yv(y);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<BoolView> ix(home, x.size());
-        for (int i = x.size(); i--;) {
+        IdxViewArray<BoolView> ix(home, n);
+        for (int i = n; i--;) {
             ix[i].idx = i;
             ix[i].view = x[i];
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<BoolView, IntView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<BoolView, IntView, false>::post(home, ix, yv)));
     }
 
     void
-    argmax(Home home, const BoolVarArgs& x, int o, IntVar y, bool tiebreak, IntPropLevel) {
+    argmax(Home home, const BoolVarArgs& x, int o, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
+        const int n = x.size();
         Limits::nonnegative(o, "Int::argmax");
-        if (x.size() == 0)
+        if (n == 0)
             throw TooFewArguments("Int::argmax");
         GECODE_POST;
         // Constrain y properly
         OffsetView yv(y, -o);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<BoolView> ix(home, x.size());
-        for (int i = x.size(); i--;) {
+        IdxViewArray<BoolView> ix(home, n);
+        for (int i = n; i--;) {
             ix[i].idx = i;
             ix[i].view = x[i];
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<BoolView, OffsetView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<BoolView, OffsetView, false>::post(home, ix, yv)));
     }
 
     void
-    argmin(Home home, const BoolVarArgs& x, IntVar y, bool tiebreak, IntPropLevel) {
+    argmin(Home home, const BoolVarArgs& x, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
-        if (x.size() == 0)
+        const int n = x.size();
+        if (n == 0)
             throw TooFewArguments("Int::argmin");
         GECODE_POST;
         // Constrain y properly
         IntView yv(y);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<NegBoolView> ix(home, x.size());
-        for (int i = x.size(); i--;) {
+        IdxViewArray<NegBoolView> ix(home, n);
+        for (int i = n; i--;) {
             ix[i].idx = i;
             ix[i].view = NegBoolView(x[i]);
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<NegBoolView, IntView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<NegBoolView, IntView, false>::post(home, ix, yv)));
     }
 
     void
-    argmin(Home home, const BoolVarArgs& x, int o, IntVar y, bool tiebreak, IntPropLevel) {
+    argmin(Home home, const BoolVarArgs& x, int o, IntVar y, bool tie_break, IntPropLevel) {
         using namespace Int;
+        const int n = x.size();
         Limits::nonnegative(o, "Int::argmin");
-        if (x.size() == 0)
+        if (n == 0)
             throw TooFewArguments("Int::argmin");
         GECODE_POST;
         // Constrain y properly
         OffsetView yv(y, -o);
         GECODE_ME_FAIL(yv.gq(home, 0));
-        GECODE_ME_FAIL(yv.le(home, x.size()));
+        GECODE_ME_FAIL(yv.le(home, n));
         // Construct index view array
-        IdxViewArray<NegBoolView> ix(home, x.size());
-        for (int i = x.size(); i--;) {
+        IdxViewArray<NegBoolView> ix(home, n);
+        for (int i = n; i--;) {
             ix[i].idx = i;
             ix[i].view = NegBoolView(x[i]);
         }
-        if (tiebreak)
+        if (tie_break)
             GECODE_ES_FAIL((Arithmetic::ArgMax<NegBoolView, OffsetView, true>::post(home, ix, yv)));
         else
             GECODE_ES_FAIL((Arithmetic::ArgMax<NegBoolView, OffsetView, false>::post(home, ix, yv)));

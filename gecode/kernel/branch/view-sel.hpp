@@ -127,22 +127,22 @@ namespace Gecode {
         /// \name View selection and tie breaking
         //@{
         /// Select a view from \a x starting at \a s and return its position
-        virtual int select(Space& home, ViewArray<View>& x, int s);
+        int select(Space& home, ViewArray<View>& x, int s) override;
         /// Select a view from \a x starting at \a s and return its position
-        virtual int select(Space& home, ViewArray<View>& x, int s, BrancherFilter<View>& f);
+        int select(Space& home, ViewArray<View>& x, int s, BrancherFilter<View>& f) override;
         /// Select ties from \a x starting at \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n);
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n) override;
         /// Select ties from \a x starting at \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f);
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f) override;
         /// Break ties in \a x and update to new ties
-        virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
+        void brk(Space& home, ViewArray<View>& x, int* ties, int& n) override;
         /// Select a view from \a x considering view with positions in \a ties
-        virtual int select(Space& home, ViewArray<View>& x, int* ties, int n);
+        int select(Space& home, ViewArray<View>& x, int* ties, int n) override;
         //@}
         /// \name Resource management and cloning
         //@{
         /// Create copy during cloning
-        virtual ViewSel<View>* copy(Space& home);
+        ViewSel<View>* copy(Space& home) override;
         //@}
     };
 
@@ -175,26 +175,26 @@ namespace Gecode {
         /// \name View selection and tie breaking
         //@{
         /// Select a view from \a x starting from \a s and return its position
-        virtual int select(Space& home, ViewArray<View>& x, int s) override;
+        int select(Space& home, ViewArray<View>& x, int s) override;
         /// Select a view from \a x starting from \a s and return its position
-        virtual int select(Space& home, ViewArray<View>& x, int s, BrancherFilter<View>& f) override;
+        int select(Space& home, ViewArray<View>& x, int s, BrancherFilter<View>& f) override;
         /// Select ties from \a x starting from \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n) override;
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n) override;
         /// Select ties from \a x starting from \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f) override;
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f) override;
         /// Break ties in \a x and update to new ties
-        virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n) override;
+        void brk(Space& home, ViewArray<View>& x, int* ties, int& n) override;
         /// Select a view from \a x considering view with positions in \a ties
-        virtual int select(Space& home, ViewArray<View>& x, int* ties, int n) override;
+        int select(Space& home, ViewArray<View>& x, int* ties, int n) override;
         //@}
         /// \name Resource management and cloning
         //@{
         /// Create copy during cloning
-        virtual ViewSel<View>* copy(Space& home) override;
+        ViewSel<View>* copy(Space& home) override;
         /// Whether dispose must always be called (that is, notice is needed)
-        virtual bool notice(void) const override;
+        bool notice(void) const override;
         /// Delete view selection
-        virtual void dispose(Space& home) override;
+        void dispose(Space& home) override;
         //@}
     };
 
@@ -238,24 +238,24 @@ namespace Gecode {
         /// \name View selection and tie breaking
         //@{
         /// Select a view from \a x starting from \a s and return its position
-        virtual int select(Space& home, ViewArray<View>& x, int s);
+        int select(Space& home, ViewArray<View>& x, int s) override;
         /// Select a view from \a x starting from \a s and return its position
-        virtual int select(Space& home, ViewArray<View>& x, int s, BrancherFilter<View>& f);
+        int select(Space& home, ViewArray<View>& x, int s, BrancherFilter<View>& f) override;
         /// Select ties from \a x starting from \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n);
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n) override;
         /// Select ties from \a x starting from \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f);
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f) override;
         /// Break ties in \a x and update to new ties
-        virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
+        void brk(Space& home, ViewArray<View>& x, int* ties, int& n) override;
         /// Select a view from \a x considering views with positions in \a ties
-        virtual int select(Space& home, ViewArray<View>& x, int* ties, int n);
+        int select(Space& home, ViewArray<View>& x, int* ties, int n) override;
         //@}
         /// \name Resource management and cloning
         //@{
         /// Whether dispose must always be called (that is, notice is needed)
-        virtual bool notice(void) const;
+        bool notice(void) const override;
         /// Delete view selection
-        virtual void dispose(Space& home);
+        void dispose(Space& home) override;
         //@}
     };
 
@@ -282,18 +282,18 @@ namespace Gecode {
         /// \name View selection and tie breaking
         //@{
         /// Select ties from \a x starting from \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n);
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n) override;
         /// Select ties from \a x starting from \a s
-        virtual void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f);
+        void ties(Space& home, ViewArray<View>& x, int s, int* ties, int& n, BrancherFilter<View>& f) override;
         /// Break ties in \a x and update to new ties
-        virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
+        void brk(Space& home, ViewArray<View>& x, int* ties, int& n) override;
         //@}
         /// \name Resource management and cloning
         //@{
         /// Whether dispose must always be called (that is, notice is needed)
-        virtual bool notice(void) const;
+        bool notice(void) const override;
         /// Delete view selection
-        virtual void dispose(Space& home);
+        void dispose(Space& home) override;
         //@}
     };
 
@@ -314,7 +314,7 @@ namespace Gecode {
         /// \name Resource management and cloning
         //@{
         /// Create copy during cloning
-        virtual ViewSel<View>* copy(Space& home);
+        ViewSel<View>* copy(Space& home) override;
         //@}
     };
 
@@ -335,7 +335,7 @@ namespace Gecode {
         /// \name Resource management and cloning
         //@{
         /// Create copy during cloning
-        virtual ViewSel<View>* copy(Space& home);
+        ViewSel<View>* copy(Space& home) override;
         //@}
     };
 
@@ -356,7 +356,7 @@ namespace Gecode {
         /// \name Resource management and cloning
         //@{
         /// Create copy during cloning
-        virtual ViewSel<View>* copy(Space& home);
+        ViewSel<View>* copy(Space& home) override;
         //@}
     };
 
@@ -377,7 +377,7 @@ namespace Gecode {
         /// \name Resource management and cloning
         //@{
         /// Create copy during cloning
-        virtual ViewSel<View>* copy(Space& home);
+        ViewSel<View>* copy(Space& home) override;
         //@}
     };
     //@}

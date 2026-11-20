@@ -204,8 +204,8 @@ namespace Gecode { namespace Int { namespace Sorted {
          *  the x and the y variables
          *  with Glover's matching algorithm.
          *        o  phi is computed with the glover function
-         *        o  phiprime is computed with the revglover function
-         *  glover and revglover are implemented in "matching.hpp"
+         *        o  phiprime is computed with the reverse_glover function
+         *  glover and reverse_glover are implemented in "matching.hpp"
          */
 
         if (!match_fixed) {
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         for (int i = n; i--;)
             if (!y[i].assigned()) {
                 // phiprime is not needed to narrow the domains of the x-variables
-                if (!match_fixed && !revglover(x, y, tau, phiprime, sequence, vertices))
+                if (!match_fixed && !reverse_glover(x, y, tau, phiprime, sequence, vertices))
                     return ES_FAILED;
 
                 if (!narrow_domy(home, x, y, phi, phiprime, nofix))
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace Sorted {
                     if (!glover(x, y, tau, phi, sequence, vertices))
                         return ES_FAILED;
 
-                    if (!revglover(x, y, tau, phiprime, sequence, vertices))
+                    if (!reverse_glover(x, y, tau, phiprime, sequence, vertices))
                         return ES_FAILED;
 
                     if (!narrow_domy(home, x, y, phi, phiprime, nofix))
@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         for (int i = n; i--;)
             sinfo[i].left = sinfo[i].right = sinfo[i].rightmost = sinfo[i].leftmost = i;
 
-        computesccs(x, y, phi, sinfo, scclist);
+        compute_sccs(x, y, phi, sinfo, scclist);
 
         /*
          * STEP 5:

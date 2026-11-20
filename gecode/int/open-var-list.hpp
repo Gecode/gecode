@@ -30,6 +30,8 @@
  *
  */
 
+#include <utility>
+
 namespace Gecode {
 
     template <class Var>
@@ -40,7 +42,8 @@ namespace Gecode {
             Factory create;
             Transition transition;
 
-            Functions(Factory create0, Transition transition0) : create(create0), transition(transition0) {}
+            Functions(Factory create0, Transition transition0)
+                : create(std::move(create0)), transition(std::move(transition0)) {}
         };
 
         IntVar length;
@@ -81,13 +84,13 @@ namespace Gecode {
 
         Object(Home home, Factory create, int max)
             : LocalObject(home), length(home, 0, checked_maximum(max)), materialized(home, 0, max), x(nullptr), n(0),
-              capacity(0), indexed(0), functions(Functions(checked(create), Transition())) {
+              capacity(0), indexed(0), functions(Functions(checked(std::move(create)), Transition())) {
             home.notice(*this, AP_DISPOSE);
         }
 
         Object(Home home, Factory create, Transition t, int max)
             : LocalObject(home), length(home, 0, checked_maximum(max)), materialized(home, 0, max), x(nullptr), n(0),
-              capacity(0), indexed(0), functions(Functions(checked(create), checked(t))) {
+              capacity(0), indexed(0), functions(Functions(checked(std::move(create)), checked(std::move(t)))) {
             home.notice(*this, AP_DISPOSE);
         }
 
@@ -107,13 +110,13 @@ namespace Gecode {
             }
         }
 
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) Object(home, *this);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             if (capacity > 0)
                 heap.free<Var>(x, capacity);
@@ -226,24 +229,24 @@ namespace Gecode { namespace Int {
         }
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) OpenMaterialize(home, *this);
         }
 
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             const int n = length.min() - static_cast<Object*>(object())->n;
             return (n <= 1) ? PropCost::unary(PropCost::LO) : PropCost::linear(PropCost::LO, n);
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             length.reschedule(home, *this, PC_INT_BND);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             static_cast<Object*>(object())->materialize(home, length.min());
             if (home.failed())
                 return ES_FAILED;
@@ -252,8 +255,8 @@ namespace Gecode { namespace Int {
             return ES_FIX;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             length.cancel(home, *this, PC_INT_BND);
             LocalHandle::~LocalHandle();
             (void)Propagator::dispose(home);
@@ -279,13 +282,13 @@ namespace Gecode {
 
     template <class Var>
     OpenVarList<Var>::OpenVarList(Space& home, Factory create, int max)
-        : LocalHandle(new (home) Object(home, create, max)) {
+        : LocalHandle(new (home) Object(home, std::move(create), max)) {
         Int::OpenMaterialize<Var>::post(home, static_cast<Object*>(object()));
     }
 
     template <class Var>
     OpenVarList<Var>::OpenVarList(Space& home, Factory create, Transition t, int max)
-        : LocalHandle(new (home) Object(home, create, t, max)) {
+        : LocalHandle(new (home) Object(home, std::move(create), std::move(t), max)) {
         Int::OpenMaterialize<Var>::post(home, static_cast<Object*>(object()));
     }
 

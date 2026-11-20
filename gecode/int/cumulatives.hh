@@ -100,18 +100,18 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as low quadratic)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, const ViewArray<ViewM>&, const ViewArray<View>&, const ViewArray<ViewP>&,
                                const ViewArray<View>&, const ViewArray<ViewU>&, const SharedArray<int>&, bool);
         /// Dispose propagator
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
 }}} // namespace Gecode::Int::Cumulatives

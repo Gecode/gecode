@@ -74,8 +74,8 @@ namespace Gecode { namespace Driver {
             SR_INT = 1 << 4      ///< Interrupted by user
         };
         /// Test whether search must be stopped
-        virtual bool
-        stop(const Search::Statistics& s, const Search::Options& o) {
+        bool
+        stop(const Search::Statistics& s, const Search::Options& o) override {
             return sigint || ((ns != nullptr) && ns->stop(s, o)) || ((fs != nullptr) && fs->stop(s, o)) ||
                    ((ts != nullptr) && ts->stop(s, o)) || ((rs != nullptr) && rs->stop(s, o));
         }
@@ -102,7 +102,7 @@ namespace Gecode { namespace Driver {
         interrupt(DWORD t) noexcept {
             if (t == CTRL_C_EVENT) {
                 sigint = true;
-                installCtrlHandler(false, true);
+                install_ctrl_handler(false, true);
                 return true;
             }
             return false;
@@ -112,12 +112,12 @@ namespace Gecode { namespace Driver {
         static void
         interrupt(int) {
             sigint = true;
-            installCtrlHandler(false, true);
+            install_ctrl_handler(false, true);
         }
 #endif
         /// Install handler for catching Ctrl-C
         static void
-        installCtrlHandler(bool install, bool force = false) {
+        install_ctrl_handler(bool install, bool force = false) {
             if (force || !sigint) {
 #ifdef GECODE_THREADS_WINDOWS
                 SetConsoleCtrlHandler((PHANDLER_ROUTINE)interrupt, install);
@@ -127,7 +127,7 @@ namespace Gecode { namespace Driver {
             }
         }
         /// Destructor
-        ~CombinedStop(void) {
+        ~CombinedStop(void) override {
             delete ns;
             delete fs;
             delete ts;
@@ -154,7 +154,7 @@ namespace Gecode { namespace Driver {
     /// Create cutoff object from options
     template <class Options>
     inline Search::Cutoff*
-    createCutoff(const Options& o) {
+    create_cutoff(const Options& o) {
         switch (o.restart()) {
         case RM_NONE:
             return nullptr;
@@ -227,7 +227,7 @@ namespace Gecode { namespace Driver {
         /// Initialize
         ScriptGetInfo(void);
         /// Return info for a space (which must be a script)
-        virtual std::string getInfo(const Space& home) const;
+        std::string get_info(const Space& home) const override;
     };
 
 #endif
@@ -272,7 +272,7 @@ namespace Gecode { namespace Driver {
 
     template <class BaseSpace>
     std::string
-    ScriptGetInfo<BaseSpace>::getInfo(const Space& home) const {
+    ScriptGetInfo<BaseSpace>::get_info(const Space& home) const {
         std::stringstream ss;
         if (const ScriptBase<BaseSpace>* sb = dynamic_cast<const ScriptBase<BaseSpace>*>(&home))
             sb->print(ss);
@@ -295,15 +295,15 @@ namespace Gecode { namespace Driver {
     void
     ScriptBase<BaseSpace>::run(const Options& o, Script* s) {
         if ((o.restart() != RM_NONE) && (o.assets() > 0)) {
-            std::cerr << "Cannot use restarts and portfolio..." << std::endl;
+            std::cerr << "Cannot use restarts and portfolio..." << '\n' << std::flush;
             exit(EXIT_FAILURE);
         }
         if (o.restart() != RM_NONE) {
-            runMeta<Script, Engine, Options, RBS>(o, s);
+            run_meta<Script, Engine, Options, RBS>(o, s);
         } else if (o.assets() > 0) {
-            runMeta<Script, Engine, Options, PBS>(o, s);
+            run_meta<Script, Engine, Options, PBS>(o, s);
         } else {
-            runMeta<Script, Engine, Options, EngineToMeta>(o, s);
+            run_meta<Script, Engine, Options, EngineToMeta>(o, s);
         }
     }
 
@@ -311,7 +311,7 @@ namespace Gecode { namespace Driver {
     template <class Script, template <class> class Engine, class Options,
               template <class, template <class> class> class Meta>
     void
-    ScriptBase<BaseSpace>::runMeta(const Options& o, Script* s) {
+    ScriptBase<BaseSpace>::run_meta(const Options& o, Script* s) {
         using namespace std;
 
         ofstream sol_file, log_file;
@@ -357,12 +357,12 @@ namespace Gecode { namespace Driver {
             {
 #ifdef GECODE_HAS_CPPROFILER
                 if (o.profiler_port()) {
-                    CPProfilerSearchTracer::GetInfo* getInfo = nullptr;
-                    getInfo = new ScriptGetInfo<BaseSpace>;
-                    so.tracer = new CPProfilerSearchTracer(o.profiler_id(), o.name(), o.profiler_port(), getInfo);
+                    CPProfilerSearchTracer::GetInfo* get_info = nullptr;
+                    get_info = new ScriptGetInfo<BaseSpace>;
+                    so.tracer = new CPProfilerSearchTracer(o.profiler_id(), o.name(), o.profiler_port(), get_info);
                 }
 #endif
-                l_out << o.name() << endl;
+                l_out << o.name() << '\n' << std::flush;
                 Support::Timer t;
                 unsigned long long int s_l = (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
                 unsigned long long int s_n = 0;
@@ -378,14 +378,14 @@ namespace Gecode { namespace Driver {
                 so.assets = o.assets();
                 so.slice = o.slice();
                 so.stop = CombinedStop::create(o.node(), o.fail(), o.time(), o.restart_limit(), o.interrupt());
-                so.cutoff = createCutoff(o);
+                so.cutoff = create_cutoff(o);
 #ifdef GECODE_HAS_EXPERIMENTAL
                 so.guidance = o.guidance();
 #endif
                 so.clone = false;
                 so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
                 if (o.interrupt())
-                    CombinedStop::installCtrlHandler(true);
+                    CombinedStop::install_ctrl_handler(true);
                 {
                     Meta<Script, Engine> e(s, so);
                     if (o.print_last()) {
@@ -395,6 +395,7 @@ namespace Gecode { namespace Driver {
                             if (ex == nullptr) {
                                 if (px != nullptr) {
                                     px->print(s_out);
+                                    s_out.flush();
                                     delete px;
                                 }
                                 break;
@@ -410,21 +411,22 @@ namespace Gecode { namespace Driver {
                             if (ex == nullptr)
                                 break;
                             ex->print(s_out);
+                            s_out.flush();
                             delete ex;
                             s_n++;
                         } while (s_n < s_l);
                     }
                     if (o.interrupt())
-                        CombinedStop::installCtrlHandler(false);
+                        CombinedStop::install_ctrl_handler(false);
                     Search::Statistics stat = e.statistics();
-                    s_out << endl;
+                    s_out << '\n' << std::flush;
                     if (e.end_reason() == Search::EndReason::Incomplete) {
                         l_out << "Search engine finished without exhausting the search space" << '\n' << '\n';
                     } else if (e.end_reason() == Search::EndReason::Limit) {
-                        l_out << "Search engine stopped..." << endl << "\treason: ";
+                        l_out << "Search engine stopped..." << '\n' << "\treason: ";
                         int r = static_cast<CombinedStop*>(so.stop)->reason(stat, so);
                         if (r & CombinedStop::SR_INT)
-                            l_out << "user interrupt " << endl;
+                            l_out << "user interrupt " << '\n';
                         else {
                             if (r & CombinedStop::SR_NODE)
                                 l_out << "node ";
@@ -434,34 +436,35 @@ namespace Gecode { namespace Driver {
                                 l_out << "time ";
                             if (r & CombinedStop::SR_RESTART)
                                 l_out << "restart ";
-                            l_out << "limit reached" << endl << endl;
+                            l_out << "limit reached" << '\n' << '\n';
                         }
                     }
-                    l_out << "Initial" << endl
-                          << "\tpropagators: " << n_p << endl
-                          << "\tbranchers:   " << n_b << endl
-                          << endl
-                          << "Summary" << endl
+                    l_out << "Initial" << '\n'
+                          << "\tpropagators: " << n_p << '\n'
+                          << "\tbranchers:   " << n_b << '\n'
+                          << '\n'
+                          << "Summary" << '\n'
                           << "\truntime:      ";
                     stop(t, l_out);
-                    l_out << endl
-                          << "\tsolutions:    " << s_n << endl
-                          << "\tpropagations: " << stat.propagate << endl
-                          << "\tnodes:        " << stat.node << endl
-                          << "\tfailures:     " << stat.fail << endl
-                          << "\trestarts:     " << stat.restart << endl
-                          << "\tno-goods:     " << stat.nogood << endl
-                          << "\tpeak depth:   " << stat.depth << endl
+                    l_out << '\n'
+                          << "\tsolutions:    " << s_n << '\n'
+                          << "\tpropagations: " << stat.propagate << '\n'
+                          << "\tnodes:        " << stat.node << '\n'
+                          << "\tfailures:     " << stat.fail << '\n'
+                          << "\trestarts:     " << stat.restart << '\n'
+                          << "\tno-goods:     " << stat.nogood << '\n'
+                          << "\tpeak depth:   " << stat.depth << '\n'
 #ifdef GECODE_PEAKHEAP
-                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << endl
+                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << '\n'
 #endif
-                          << endl;
+                          << '\n'
+                          << std::flush;
                 }
                 delete so.stop;
                 delete so.tracer;
             } break;
             case SM_STAT: {
-                l_out << o.name() << endl;
+                l_out << o.name() << '\n' << std::flush;
                 Support::Timer t;
                 unsigned long long int s_l = (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
                 unsigned long long int s_n = 0;
@@ -479,13 +482,13 @@ namespace Gecode { namespace Driver {
                 so.a_d = o.a_d();
                 so.d_l = o.d_l();
                 so.stop = CombinedStop::create(o.node(), o.fail(), o.time(), o.restart_limit(), o.interrupt());
-                so.cutoff = createCutoff(o);
+                so.cutoff = create_cutoff(o);
 #ifdef GECODE_HAS_EXPERIMENTAL
                 so.guidance = o.guidance();
 #endif
                 so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
                 if (o.interrupt())
-                    CombinedStop::installCtrlHandler(true);
+                    CombinedStop::install_ctrl_handler(true);
                 {
                     Meta<Script, Engine> e(s, so);
                     do {
@@ -496,30 +499,31 @@ namespace Gecode { namespace Driver {
                         s_n++;
                     } while (s_n < s_l);
                     if (o.interrupt())
-                        CombinedStop::installCtrlHandler(false);
+                        CombinedStop::install_ctrl_handler(false);
                     Search::Statistics stat = e.statistics();
-                    l_out << endl
-                          << "\tpropagators:  " << n_p << endl
-                          << "\tbranchers:    " << n_b << endl
+                    l_out << '\n'
+                          << "\tpropagators:  " << n_p << '\n'
+                          << "\tbranchers:    " << n_b << '\n'
                           << "\truntime:      ";
                     stop(t, l_out);
-                    l_out << endl
-                          << "\tsolutions:    " << s_n << endl
-                          << "\tpropagations: " << stat.propagate << endl
-                          << "\tnodes:        " << stat.node << endl
-                          << "\tfailures:     " << stat.fail << endl
-                          << "\trestarts:     " << stat.restart << endl
-                          << "\tno-goods:     " << stat.nogood << endl
-                          << "\tpeak depth:   " << stat.depth << endl
+                    l_out << '\n'
+                          << "\tsolutions:    " << s_n << '\n'
+                          << "\tpropagations: " << stat.propagate << '\n'
+                          << "\tnodes:        " << stat.node << '\n'
+                          << "\tfailures:     " << stat.fail << '\n'
+                          << "\trestarts:     " << stat.restart << '\n'
+                          << "\tno-goods:     " << stat.nogood << '\n'
+                          << "\tpeak depth:   " << stat.depth << '\n'
 #ifdef GECODE_PEAKHEAP
-                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << endl
+                          << "\tpeak memory:  " << static_cast<int>((heap.peak() + 1023) / 1024) << " KB" << '\n'
 #endif
-                          << endl;
+                          << '\n'
+                          << std::flush;
                 }
                 delete so.stop;
             } break;
             case SM_TIME: {
-                l_out << o.name() << endl;
+                l_out << o.name() << '\n' << std::flush;
                 Support::Timer t;
                 double* ts = new double[o.samples()];
                 bool stopped = false;
@@ -538,7 +542,7 @@ namespace Gecode { namespace Driver {
                         sok.a_d = o.a_d();
                         sok.d_l = o.d_l();
                         sok.stop = CombinedStop::create(o.node(), o.fail(), o.time(), o.restart_limit(), false);
-                        sok.cutoff = createCutoff(o);
+                        sok.cutoff = create_cutoff(o);
 #ifdef GECODE_HAS_EXPERIMENTAL
                         sok.guidance = o.guidance();
 #endif
@@ -560,18 +564,19 @@ namespace Gecode { namespace Driver {
                     ts[ns] = t.stop() / o.iterations();
                 }
                 if (stopped) {
-                    l_out << "\tSTOPPED" << endl;
+                    l_out << "\tSTOPPED" << '\n' << std::flush;
                 } else {
                     double m = am(ts, o.samples());
                     double d = dev(ts, o.samples()) * 100.0;
                     l_out << "\truntime: " << setw(20) << right << showpoint << fixed << setprecision(6) << m << "ms"
-                          << setprecision(2) << " (" << d << "% deviation)" << endl;
+                          << setprecision(2) << " (" << d << "% deviation)" << '\n'
+                          << std::flush;
                 }
                 delete[] ts;
             } break;
             }
         } catch (Exception& e) {
-            cerr << "Exception: " << e.what() << "." << endl << "Stopping..." << endl;
+            cerr << "Exception: " << e.what() << "." << '\n' << "Stopping..." << '\n' << std::flush;
             if (sol_file.is_open())
                 sol_file.close();
             if (log_file.is_open())

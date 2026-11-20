@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace GCC {
             if (y[i].assigned()) {
                 noa++;
                 int idx;
-                if (!lookupValue(k, y[i].val(), idx))
+                if (!lookup_value(k, y[i].val(), idx))
                     return ES_FAILED;
                 count[idx]++;
                 if (Card::propagate && (k[idx].max() == 0))
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace GCC {
             return home.ES_SUBSUMED(*this);
         } else if ((x.size() == 1) && (x[0].assigned())) {
             int idx;
-            if (!lookupValue(k, x[0].val(), idx))
+            if (!lookup_value(k, x[0].val(), idx))
                 return ES_FAILED;
             GECODE_ME_CHECK(k[idx].inc());
             for (int j = k.size(); j--;)
@@ -225,7 +225,7 @@ namespace Gecode { namespace Int { namespace GCC {
                     return home.ES_SUBSUMED(*this);
                 } else if ((x.size() == 1) && x[0].assigned()) {
                     int idx;
-                    if (!lookupValue(k, x[0].val(), idx))
+                    if (!lookup_value(k, x[0].val(), idx))
                         return ES_FAILED;
                     GECODE_ME_CHECK(k[idx].inc());
 
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int { namespace GCC {
         for (int i = y.size(); i--;)
             if (y[i].assigned()) {
                 int idx;
-                if (!lookupValue(k, y[i].val(), idx))
+                if (!lookup_value(k, y[i].val(), idx))
                     return ES_FAILED;
                 count[idx]++;
                 if (Card::propagate && (k[idx].max() == 0))
@@ -291,9 +291,9 @@ namespace Gecode { namespace Int { namespace GCC {
     template <class Card>
     inline ExecStatus
     Dom<Card>::post(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
-        GECODE_ES_CHECK((postSideConstraints<Card>(home, x, k)));
+        GECODE_ES_CHECK((post_side_constraints<Card>(home, x, k)));
 
-        if (isDistinct<Card>(x, k))
+        if (is_distinct<Card>(x, k))
             return Distinct::Dom<IntView>::post(home, x);
 
         bool cardfix = true;

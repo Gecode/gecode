@@ -86,7 +86,7 @@ namespace Gecode { namespace Int {
 #ifdef GECODE_HAS_CBS
     template <class Val, class UnsVal>
     forceinline Val
-    ScaleView<Val, UnsVal>::baseval(Val val) const {
+    ScaleView<Val, UnsVal>::base_value(Val val) const {
         return val / a;
     }
 #endif

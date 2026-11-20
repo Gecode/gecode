@@ -89,14 +89,14 @@ public:
         x.update(*this, s.x);
     }
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Eq20(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "\tx[] = " << x << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "\tx[] = " << x << '\n';
     }
 };
 

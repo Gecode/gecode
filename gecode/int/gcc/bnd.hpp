@@ -245,12 +245,12 @@ namespace Gecode { namespace Int { namespace GCC {
                  * in case the variable doesn't belong to a stable set.
                  */
                 if (hall[x0].h > x0) {
-                    hall[i].newBound = pathmax_h(hall, x0);
-                    w = hall[i].newBound;
+                    hall[i].new_bound = pathmax_h(hall, x0);
+                    w = hall[i].new_bound;
                     pathset_h(hall, x0, w, w); // path compression
                 } else {
                     // Do not shrink the variable: take old min as new min
-                    hall[i].newBound = x0;
+                    hall[i].new_bound = x0;
                 }
 
                 /* UNSTABLE SET
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace GCC {
             // update only those variables that are not contained in a stable set
             if ((hall[x0].s <= x0) || (y > hall[x0].s)) {
                 // still have to check this out, how skipping works (consider dominated indices)
-                int m = lps.skipNonNullElementsRight(hall[hall[i].newBound].bounds);
+                int m = lps.skip_non_null_elements_right(hall[hall[i].new_bound].bounds);
                 GECODE_ME_CHECK(x[mu[i]].gq(home, m));
             }
         }
@@ -358,10 +358,10 @@ namespace Gecode { namespace Int { namespace GCC {
                 // FINDING NEW UPPER BOUND
                 if (hall[x0].h < x0) {
                     w = pathmin_h(hall, hall[x0].h);
-                    hall[i].newBound = w;
+                    hall[i].new_bound = w;
                     pathset_h(hall, x0, w, w); // path compression
                 } else {
-                    hall[i].newBound = x0;
+                    hall[i].new_bound = x0;
                 }
                 // UNSTABLE SET
                 if (hall[z].d == lps.sumup(hall[z].bounds, hall[y].bounds - 1)) {
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace GCC {
             int x0 = rank[nu[i]].min;
             int y = rank[nu[i]].max;
             if ((hall[x0].s <= x0) || (y > hall[x0].s)) {
-                int m = lps.skipNonNullElementsLeft(hall[hall[i].newBound].bounds - 1);
+                int m = lps.skip_non_null_elements_left(hall[hall[i].new_bound].bounds - 1);
                 GECODE_ME_CHECK(x[nu[i]].lq(home, m));
             }
         }
@@ -547,7 +547,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     template <class Card>
     ExecStatus
-    Bnd<Card>::pruneCards(Space& home) {
+    Bnd<Card>::prune_cards(Space& home) {
         // Remove all values with 0 max occurrence
         // and remove corresponding occurrence variables from k
 
@@ -589,7 +589,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
 
         if (Card::propagate)
-            GECODE_ES_CHECK(pruneCards(home));
+            GECODE_ES_CHECK(prune_cards(home));
 
         Region r;
         int* count = r.alloc<int>(k.size());
@@ -604,7 +604,7 @@ namespace Gecode { namespace Int { namespace GCC {
                 int idx;
                 // reduction is essential for order on value nodes in dom
                 // hence introduce test for failed lookup
-                if (!lookupValue(k, x[i].val(), idx))
+                if (!lookup_value(k, x[i].val(), idx))
                     return ES_FAILED;
                 count[idx]++;
             } else {
@@ -640,7 +640,7 @@ namespace Gecode { namespace Int { namespace GCC {
                     int idx;
                     // reduction is essential for order on value nodes in dom
                     // hence introduce test for failed lookup
-                    if (!lookupValue(k, x[i].val(), idx))
+                    if (!lookup_value(k, x[i].val(), idx))
                         return ES_FAILED;
                     count[idx]++;
                 } else {
@@ -659,7 +659,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
 
         if (Card::propagate)
-            GECODE_ES_CHECK(pruneCards(home));
+            GECODE_ES_CHECK(prune_cards(home));
 
         int n = x.size();
 
@@ -696,7 +696,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
         // assert that the minimal value of the partial sum structure for
         // LBC is consistent with the smallest value a variable can take
-        assert(lps.minValue() <= x[nu[0]].min());
+        assert(lps.min_value() <= x[nu[0]].min());
         // assert that the maximal value of the partial sum structure for
         // UBC is consistent with the largest value a variable can take
 
@@ -715,7 +715,7 @@ namespace Gecode { namespace Int { namespace GCC {
         // setup bounds and rank
         int min = x[nu[0]].min();
         int max = x[mu[0]].max() + 1;
-        int last = lps.firstValue + 1; // equivalent to last = min -2
+        int last = lps.first_value + 1; // equivalent to last = min -2
         hall[0].bounds = last;
 
         /*
@@ -752,7 +752,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
 
         int rightmost = nb + 1; // rightmost accessible value in bounds
-        hall[rightmost].bounds = ups.lastValue + 1;
+        hall[rightmost].bounds = ups.last_value + 1;
 
         if (Card::propagate) {
             skip_lbc = true;
@@ -776,7 +776,7 @@ namespace Gecode { namespace Int { namespace GCC {
         for (int i = x.size(); i--;)
             if (x[i].assigned()) {
                 int idx;
-                if (!lookupValue(k, x[i].val(), idx))
+                if (!lookup_value(k, x[i].val(), idx))
                     return ES_FAILED;
                 count[idx]++;
             } else {
@@ -807,9 +807,9 @@ namespace Gecode { namespace Int { namespace GCC {
                 break;
             }
 
-        GECODE_ES_CHECK(postSideConstraints<Card>(home, x, k));
+        GECODE_ES_CHECK(post_side_constraints<Card>(home, x, k));
 
-        if (isDistinct<Card>(x, k))
+        if (is_distinct<Card>(x, k))
             return Distinct::Bnd<IntView>::post(home, x);
 
         (void)new (home) Bnd<Card>(home, x, k, cardfix, nolbc);

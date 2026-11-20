@@ -187,7 +187,7 @@ namespace Gecode { namespace Int {
 
     template <class VX, class VY>
     forceinline RelTest
-    rtest_le(VX x, VY y) {
+    rtest_lt(VX x, VY y) {
         if (x.max() < y.min())
             return RT_TRUE;
         if (x.min() >= y.max())
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int {
 
     template <class VX>
     forceinline RelTest
-    rtest_le(VX x, int n) {
+    rtest_lt(VX x, int n) {
         if (x.max() < n)
             return RT_TRUE;
         if (x.min() >= n)

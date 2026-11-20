@@ -55,10 +55,10 @@ public:
         const int n = opt.size();
 
         // Break symmetries by ordering numbers in each group
-        rel(*this, x, IRT_LE);
-        rel(*this, y, IRT_LE);
+        rel(*this, x, IRT_LT);
+        rel(*this, y, IRT_LT);
 
-        rel(*this, x[0], IRT_LE, y[0]);
+        rel(*this, x[0], IRT_LT, y[0]);
 
         IntVarArgs xy(2 * n);
         for (int i = n; i--;) {
@@ -98,13 +98,13 @@ public:
         y.update(*this, s.y);
     }
     /// Copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Partition(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\t";
         int a, b;
         a = b = 0;
@@ -113,14 +113,14 @@ public:
             b += x[i].val() * x[i].val();
             os << x[i] << ", ";
         }
-        os << " = " << a << ", " << b << std::endl << "\t";
+        os << " = " << a << ", " << b << '\n' << "\t";
         a = b = 0;
         for (int i = 0; i < y.size(); i++) {
             a += y[i].val();
             b += y[i].val() * y[i].val();
             os << y[i] << ", ";
         }
-        os << " = " << a << ", " << b << std::endl;
+        os << " = " << a << ", " << b << '\n';
     }
 };
 

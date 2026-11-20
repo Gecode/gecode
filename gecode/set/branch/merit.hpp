@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace Branch {
         : MeritBase<SetView, unsigned int>(home, m) {}
     forceinline unsigned int
     MeritSize::operator()(const Space&, SetView x, int) {
-        return x.unknownSize();
+        return x.unknown_size();
     }
 
     // Degree over size merit
@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Branch {
         : MeritBase<SetView, double>(home, m) {}
     forceinline double
     MeritDegreeSize::operator()(const Space&, SetView x, int) {
-        return static_cast<double>(x.unknownSize()) / static_cast<double>(x.degree());
+        return static_cast<double>(x.unknown_size()) / static_cast<double>(x.degree());
     }
 
     // AFC over size merit
@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace Branch {
         : MeritBase<SetView, double>(home, m), afc(m.afc) {}
     forceinline double
     MeritAFCSize::operator()(const Space&, SetView x, int) {
-        return x.afc() / static_cast<double>(x.unknownSize());
+        return x.afc() / static_cast<double>(x.unknown_size());
     }
     forceinline bool
     MeritAFCSize::notice(void) const {
@@ -120,7 +120,7 @@ namespace Gecode { namespace Set { namespace Branch {
         : MeritBase<SetView, double>(home, m), action(m.action) {}
     forceinline double
     MeritActionSize::operator()(const Space&, SetView x, int i) {
-        return action[i] / static_cast<double>(x.unknownSize());
+        return action[i] / static_cast<double>(x.unknown_size());
     }
     forceinline bool
     MeritActionSize::notice(void) const {
@@ -140,7 +140,7 @@ namespace Gecode { namespace Set { namespace Branch {
         : MeritBase<SetView, double>(home, m), chb(m.chb) {}
     forceinline double
     MeritCHBSize::operator()(const Space&, SetView x, int i) {
-        return chb[i] / static_cast<double>(x.unknownSize());
+        return chb[i] / static_cast<double>(x.unknown_size());
     }
     forceinline bool
     MeritCHBSize::notice(void) const {

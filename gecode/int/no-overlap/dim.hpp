@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         return ES_OK;
     }
     forceinline ExecStatus
-    FixDim::nooverlap(Space& home, int n, int m) {
+    FixDim::no_overlap(Space& home, int n, int m) {
         if (n <= m) {
             Iter::Ranges::Singleton r(n - s + 1, m);
             GECODE_ME_CHECK(c.minus_r(home, r, false));
@@ -79,13 +79,13 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         return ES_OK;
     }
     forceinline ExecStatus
-    FixDim::nooverlap(Space& home, FixDim& d) {
+    FixDim::no_overlap(Space& home, FixDim& d) {
         if (d.sec() > lsc()) {
             // Propagate that d must be after this
             GECODE_ES_CHECK(lec(home, d.lsc()));
             GECODE_ES_CHECK(d.ssc(home, sec()));
         } else {
-            nooverlap(home, d.lsc(), d.sec() - 1);
+            no_overlap(home, d.lsc(), d.sec() - 1);
         }
         return ES_OK;
     }
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         return ES_OK;
     }
     forceinline ExecStatus
-    FlexDim::nooverlap(Space& home, int n, int m) {
+    FlexDim::no_overlap(Space& home, int n, int m) {
         if (n <= m) {
             Iter::Ranges::Singleton r0(n - s.min() + 1, m);
             GECODE_ME_CHECK(c0.minus_r(home, r0, false));
@@ -157,13 +157,13 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         return ES_OK;
     }
     forceinline ExecStatus
-    FlexDim::nooverlap(Space& home, FlexDim& d) {
+    FlexDim::no_overlap(Space& home, FlexDim& d) {
         if (d.sec() > lsc()) {
             // Propagate that d must be after this
             GECODE_ES_CHECK(lec(home, d.lsc()));
             GECODE_ES_CHECK(d.ssc(home, sec()));
         } else {
-            nooverlap(home, d.lsc(), d.sec() - 1);
+            no_overlap(home, d.lsc(), d.sec() - 1);
         }
         return ES_OK;
     }

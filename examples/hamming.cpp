@@ -114,10 +114,10 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         for (int i = 0; i < x.size(); i++) {
-            os << "\t[" << i << "] = " << x[i] << std::endl;
+            os << "\t[" << i << "] = " << x[i] << '\n';
         }
     }
 
@@ -126,8 +126,8 @@ public:
         x.update(*this, s.x);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Hamming(*this);
     }
 };

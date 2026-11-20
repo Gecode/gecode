@@ -66,10 +66,8 @@ extern "C" int isatty(int);
 
 namespace Gecode { namespace FlatZinc {
 
-    typedef std::pair<std::string, Option<std::vector<int>*>> intvartype;
-
     class VarSpec;
-    typedef std::pair<std::string, VarSpec*> varspec;
+    typedef std::pair<std::string, VarSpec*> NamedVarSpec;
 
     /// Strict weak ordering for output items
     class OutputOrder {
@@ -200,10 +198,10 @@ namespace Gecode { namespace FlatZinc {
     class ParserState {
     public:
         ParserState(const std::string& b, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
-            : yyscanner(nullptr), buf(b.c_str()), pos(0), length(b.size()), fg(fg0), hadError(false), err(err0) {}
+            : yyscanner(nullptr), buf(b.c_str()), pos(0), length(b.size()), fg(fg0), had_error(false), err(err0) {}
 
         ParserState(char* buf0, int length0, std::ostream& err0, Gecode::FlatZinc::FlatZincSpace* fg0)
-            : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0), hadError(false), err(err0) {}
+            : yyscanner(nullptr), buf(buf0), pos(0), length(length0), fg(fg0), had_error(false), err(err0) {}
 
         ~ParserState(void);
 
@@ -211,20 +209,20 @@ namespace Gecode { namespace FlatZinc {
         const char* buf;
         unsigned int pos, length;
         Gecode::FlatZinc::FlatZincSpace* fg;
-        std::vector<std::pair<std::string, AST::Node*>> _output;
+        std::vector<std::pair<std::string, AST::Node*>> output_items;
 
         SymbolTable<SymbolEntry> symbols;
 
-        std::vector<varspec> intvars;
-        std::vector<varspec> boolvars;
-        std::vector<varspec> setvars;
-        std::vector<varspec> floatvars;
+        std::vector<NamedVarSpec> int_vars;
+        std::vector<NamedVarSpec> bool_vars;
+        std::vector<NamedVarSpec> set_vars;
+        std::vector<NamedVarSpec> float_vars;
         std::vector<int> arrays;
-        std::vector<AST::SetLit> setvals;
-        std::vector<double> floatvals;
+        std::vector<AST::SetLit> set_values;
+        std::vector<double> float_values;
         std::vector<ConExpr*> constraints;
 
-        std::vector<ConExpr*> domainConstraints;
+        std::vector<ConExpr*> domain_constraints;
 
         int status_idx = -1;
         int complete_idx = -1;
@@ -243,42 +241,42 @@ namespace Gecode { namespace FlatZinc {
         std::vector<std::tuple<FloatVal, FloatVal, int>> uniform_float;
 #endif
 
-        bool hadError;
+        bool had_error;
         std::ostream& err;
 
         int
-        fillBuffer(char* lexBuf, unsigned int lexBufSize) {
+        fill_buffer(char* lex_buffer, unsigned int lex_buffer_size) {
             if (pos >= length)
                 return 0;
-            int num = std::min(length - pos, lexBufSize);
-            memcpy(lexBuf, buf + pos, num);
+            int num = std::min(length - pos, lex_buffer_size);
+            memcpy(lex_buffer, buf + pos, num);
             pos += num;
             return num;
         }
 
         void
         output(std::string x, AST::Node* n) {
-            _output.push_back(std::pair<std::string, AST::Node*>(x, n));
+            output_items.push_back(std::pair<std::string, AST::Node*>(x, n));
         }
 
         AST::Array*
-        getOutput(void) {
+        get_output(void) {
             OutputOrder oo;
-            std::sort(_output.begin(), _output.end(), oo);
+            std::sort(output_items.begin(), output_items.end(), oo);
             AST::Array* a = new AST::Array();
-            for (unsigned int i = 0; i < _output.size(); i++) {
-                a->a.push_back(new AST::String(_output[i].first + " = "));
-                if (_output[i].second->isArray()) {
-                    AST::Array* oa = _output[i].second->getArray();
+            for (unsigned int i = 0; i < output_items.size(); i++) {
+                a->a.push_back(new AST::String(output_items[i].first + " = "));
+                if (output_items[i].second->is_array()) {
+                    AST::Array* oa = output_items[i].second->get_array();
                     for (unsigned int j = 0; j < oa->a.size(); j++) {
                         a->a.push_back(oa->a[j]);
                         oa->a[j] = nullptr;
                     }
-                    delete _output[i].second;
+                    delete output_items[i].second;
                 } else {
-                    a->a.push_back(_output[i].second);
+                    a->a.push_back(output_items[i].second);
                 }
-                _output[i].second = nullptr;
+                output_items[i].second = nullptr;
                 a->a.push_back(new AST::String(";\n"));
             }
             return a;

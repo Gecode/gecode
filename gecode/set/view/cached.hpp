@@ -45,20 +45,20 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::glbSize(void) const {
-        return x.glbSize();
+    CachedView<View>::glb_size(void) const {
+        return x.glb_size();
     }
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::lubSize(void) const {
-        return x.lubSize();
+    CachedView<View>::lub_size(void) const {
+        return x.lub_size();
     }
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::unknownSize(void) const {
-        return x.unknownSize();
+    CachedView<View>::unknown_size(void) const {
+        return x.unknown_size();
     }
 
     template <class View>
@@ -69,56 +69,56 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline bool
-    CachedView<View>::notContains(int n) const {
-        return x.notContains(n);
+    CachedView<View>::not_contains(int n) const {
+        return x.not_contains(n);
     }
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::cardMin(void) const {
-        return x.cardMin();
+    CachedView<View>::card_min(void) const {
+        return x.card_min();
     }
 
     template <class View>
     forceinline unsigned int
-    CachedView<View>::cardMax(void) const {
-        return x.cardMax();
+    CachedView<View>::card_max(void) const {
+        return x.card_max();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::lubMin(void) const {
-        return x.lubMin();
+    CachedView<View>::lub_min(void) const {
+        return x.lub_min();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::lubMax(void) const {
-        return x.lubMax();
+    CachedView<View>::lub_max(void) const {
+        return x.lub_max();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::glbMin(void) const {
-        return x.glbMin();
+    CachedView<View>::glb_min(void) const {
+        return x.glb_min();
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::glbMax(void) const {
-        return x.glbMax();
+    CachedView<View>::glb_max(void) const {
+        return x.glb_max();
     }
 
     template <class View>
     forceinline ModEvent
-    CachedView<View>::cardMin(Space& home, unsigned int m) {
-        return x.cardMin(home, m);
+    CachedView<View>::card_min(Space& home, unsigned int m) {
+        return x.card_min(home, m);
     }
 
     template <class View>
     forceinline ModEvent
-    CachedView<View>::cardMax(Space& home, unsigned int m) {
-        return x.cardMax(home, m);
+    CachedView<View>::card_max(Space& home, unsigned int m) {
+        return x.card_max(home, m);
     }
 
     template <class View>
@@ -160,22 +160,22 @@ namespace Gecode { namespace Set {
     template <class View>
     template <class I>
     ModEvent
-    CachedView<View>::excludeI(Space& home, I& iter) {
-        return x.excludeI(home, iter);
+    CachedView<View>::exclude_i(Space& home, I& iter) {
+        return x.exclude_i(home, iter);
     }
 
     template <class View>
     template <class I>
     ModEvent
-    CachedView<View>::includeI(Space& home, I& iter) {
-        return x.includeI(home, iter);
+    CachedView<View>::include_i(Space& home, I& iter) {
+        return x.include_i(home, iter);
     }
 
     template <class View>
     template <class I>
     ModEvent
-    CachedView<View>::intersectI(Space& home, I& iter) {
-        return x.intersectI(home, iter);
+    CachedView<View>::intersect_i(Space& home, I& iter) {
+        return x.intersect_i(home, iter);
     }
 
     template <class View>
@@ -226,51 +226,51 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline ModEvent
-    CachedView<View>::modevent(const Delta& d) {
-        return View::modevent(d);
+    CachedView<View>::modification_event(const Delta& d) {
+        return View::modification_event(d);
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::glbMin(const Delta& d) const {
-        return x.glbMin(d);
+    CachedView<View>::glb_min(const Delta& d) const {
+        return x.glb_min(d);
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::glbMax(const Delta& d) const {
-        return x.glbMax(d);
+    CachedView<View>::glb_max(const Delta& d) const {
+        return x.glb_max(d);
     }
 
     template <class View>
     forceinline bool
-    CachedView<View>::glbAny(const Delta& d) const {
-        return x.glbAny(d);
+    CachedView<View>::glb_any(const Delta& d) const {
+        return x.glb_any(d);
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::lubMin(const Delta& d) const {
-        return x.lubMin(d);
+    CachedView<View>::lub_min(const Delta& d) const {
+        return x.lub_min(d);
     }
 
     template <class View>
     forceinline int
-    CachedView<View>::lubMax(const Delta& d) const {
-        return x.lubMax(d);
+    CachedView<View>::lub_max(const Delta& d) const {
+        return x.lub_max(d);
     }
 
     template <class View>
     forceinline bool
-    CachedView<View>::lubAny(const Delta& d) const {
-        return x.lubAny(d);
+    CachedView<View>::lub_any(const Delta& d) const {
+        return x.lub_any(d);
     }
 
     template <class View>
     forceinline void
     CachedView<View>::update(Space& home, CachedView<View>& y) {
-        lubCache.update(home, y.lubCache);
-        glbCache.update(home, y.glbCache);
+        lub_cache.update(home, y.lub_cache);
+        glb_cache.update(home, y.glb_cache);
         DerivedView<View>::update(home, y);
     }
 
@@ -280,39 +280,39 @@ namespace Gecode { namespace Set {
      */
     template <class View>
     void
-    CachedView<View>::initCache(Space& home, const IntSet& glb, const IntSet& lub) {
-        glbCache.init(home);
+    CachedView<View>::init_cache(Space& home, const IntSet& glb, const IntSet& lub) {
+        glb_cache.init(home);
         IntSetRanges gr(glb);
-        glbCache.includeI(home, gr);
-        lubCache.init(home);
+        glb_cache.include_i(home, gr);
+        lub_cache.init(home);
         IntSetRanges lr(lub);
-        lubCache.intersectI(home, lr);
+        lub_cache.intersect_i(home, lr);
     }
 
     template <class View>
     forceinline void
-    CachedView<View>::cacheGlb(Space& home) {
+    CachedView<View>::cache_glb(Space& home) {
         GlbRanges<View> gr(DerivedView<View>::base());
-        glbCache.includeI(home, gr);
+        glb_cache.include_i(home, gr);
     }
 
     template <class View>
     forceinline void
-    CachedView<View>::cacheLub(Space& home) {
+    CachedView<View>::cache_lub(Space& home) {
         LubRanges<View> lr(DerivedView<View>::base());
-        lubCache.intersectI(home, lr);
+        lub_cache.intersect_i(home, lr);
     }
 
     template <class View>
     forceinline bool
-    CachedView<View>::glbModified(void) const {
-        return glbCache.size() != glbSize();
+    CachedView<View>::glb_modified(void) const {
+        return glb_cache.size() != glb_size();
     }
 
     template <class View>
     forceinline bool
-    CachedView<View>::lubModified(void) const {
-        return lubCache.size() != lubSize();
+    CachedView<View>::lub_modified(void) const {
+        return lub_cache.size() != lub_size();
     }
 
     /**
@@ -394,14 +394,14 @@ namespace Gecode { namespace Set {
     template <class View>
     forceinline
     GlbDiffRanges<View>::GlbDiffRanges(const CachedView<View>& x)
-        : gr(x.base()), cr(x.glbCache) {
+        : gr(x.base()), cr(x.glb_cache) {
         Iter::Ranges::Diff<GlbRanges<View>, BndSetRanges>::init(gr, cr);
     }
 
     template <class View>
     forceinline
     LubDiffRanges<View>::LubDiffRanges(const CachedView<View>& x)
-        : cr(x.lubCache), lr(x.base()) {
+        : cr(x.lub_cache), lr(x.base()) {
         Iter::Ranges::Diff<BndSetRanges, LubRanges<View>>::init(cr, lr);
     }
 

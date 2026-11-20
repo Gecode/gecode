@@ -56,7 +56,7 @@
 
 namespace {
 
-    enum class Mode { normal, nan };
+    enum class Mode { NORMAL_VALUES, NAN_VALUES };
 
     struct Instance {
         const Mode mode;
@@ -64,7 +64,7 @@ namespace {
         const unsigned int id;
 
         Instance(const char** args, size_t n_args, unsigned int id0)
-            : mode((n_args > 0) && (std::strcmp(args[0], "nan") == 0) ? Mode::nan : Mode::normal),
+            : mode((n_args > 0) && (std::strcmp(args[0], "nan") == 0) ? Mode::NAN_VALUES : Mode::NORMAL_VALUES),
               log((n_args > 1) ? args[1] : ""), id(id0) {}
         Instance(const Instance& other, unsigned int id0) : mode(other.mode), log(other.log), id(id0) {}
     };
@@ -172,7 +172,7 @@ fzn_blackbox(void* value, const int64_t* int_input, size_t n_int_input, const do
         int_output[i] = (n_int_input == 0) ? 1 : int_input[i % n_int_input];
     }
     for (size_t i = 0; i < n_float_output; ++i) {
-        if (instance->mode == Mode::nan) {
+        if (instance->mode == Mode::NAN_VALUES) {
             const uint64_t nan = UINT64_C(0x7ff8000000000000);
             std::memcpy(&float_output[i], &nan, sizeof(nan));
         } else {

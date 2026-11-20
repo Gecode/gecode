@@ -177,14 +177,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SudokuInt(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "  ";
         for (int i = 0; i < nn * nn; i++) {
             if (x[i].assigned()) {
@@ -193,16 +193,16 @@ public:
             } else
                 os << ". ";
             if ((i + 1) % nn == 0)
-                os << std::endl << "  ";
+                os << '\n' << "  ";
         }
-        os << std::endl;
+        os << '\n';
     }
 
 #ifdef GECODE_HAS_SET_VARS
 private:
     /// Post the constraint that \a a and \a b take the same values
     void
-    same(Space& home, int nn, IntVarArgs a, IntVarArgs b) {
+    same(Space& home, int nn, const IntVarArgs& a, const IntVarArgs& b) {
         SetVar u(home, IntSet::empty, 1, nn);
         rel(home, SOT_DUNION, a, u);
         rel(home, SOT_DUNION, b, u);
@@ -341,14 +341,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SudokuSet(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << '\t';
         for (int i = 0; i < nn * nn; i++) {
             for (int j = 0; j < nn; j++) {
@@ -359,9 +359,9 @@ public:
                 }
             }
             if ((i + 1) % nn == 0)
-                os << std::endl << '\t';
+                os << '\n' << '\t';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -377,14 +377,14 @@ public:
     SudokuMixed(const InstanceOptions& opt) : Sudoku(opt), SudokuInt(opt), SudokuSet(opt) {
 
         IntSet is0(0, 0);
-        SetVar dummySet0(*this, is0, is0);
-        IntVar dummyInt0(*this, 0, 0);
+        SetVar dummy_set0(*this, is0, is0);
+        IntVar dummy_int0(*this, 0, 0);
         SetVarArgs ys(nn + 1);
-        ys[0] = dummySet0;
+        ys[0] = dummy_set0;
         for (int i = 0; i < nn; i++)
             ys[i + 1] = y[i];
         IntVarArgs xs(nn * nn + 1);
-        xs[0] = dummyInt0;
+        xs[0] = dummy_int0;
         for (int i = 0; i < nn * nn; i++)
             xs[i + 1] = x[i];
 
@@ -400,14 +400,14 @@ public:
     SudokuMixed(SudokuMixed& s) : Sudoku(s), SudokuInt(s), SudokuSet(s) {}
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SudokuMixed(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         SudokuInt::print(os);
     }
 };
@@ -441,12 +441,11 @@ main(int argc, char* argv[]) {
     opt.parse(argc, argv);
     try {
         if (!SudokuInstance(opt).valid()) {
-            std::cerr << "Error: instance must be a number between 0 and " << n_examples - 1 << " or a file"
-                      << std::endl;
+            std::cerr << "Error: instance must be a number between 0 and " << n_examples - 1 << " or a file" << '\n';
             return 1;
         }
     } catch (const Instance::Error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
         return 1;
     }
 #ifdef GECODE_HAS_SET_VARS

@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     template <class TaskView>
     forceinline ExecStatus
-    edgefinding(Space& home, int c, TaskViewArray<TaskView>& t) {
+    edge_finding(Space& home, int c, TaskViewArray<TaskView>& t) {
         sort<TaskView, STO_LCT, false>(t);
 
         Region r;
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
             while (!ol.lempty() && (ol.lenv() > static_cast<long long int>(c) * t[j].lct())) {
                 int i = ol.responsible();
                 prec[i] = std::max(prec[i], t[j].lct());
-                ol.lremove(i);
+                ol.remove_lambda(i);
             }
             ol.shift(j);
         }
@@ -103,19 +103,19 @@ namespace Gecode { namespace Int { namespace Cumulative {
         Support::quicksort(cap, t.size(), o);
 
         int* capacities = r.alloc<int>(t.size());
-        int* capInv = r.alloc<int>(t.size());
+        int* cap_inv = r.alloc<int>(t.size());
         for (int i = t.size(); i--;) {
             capacities[cap[i]] = t[i].c();
-            capInv[cap[i]] = i;
+            cap_inv[cap[i]] = i;
         }
 
         int n_c = 0;
         for (int i = 0, cur_c = INT_MIN; i < t.size(); i++) {
             if (capacities[i] != cur_c)
                 capacities[n_c++] = cur_c = capacities[i];
-            cap[capInv[i]] = n_c - 1;
+            cap[cap_inv[i]] = n_c - 1;
         }
-        r.free<int>(capInv, t.size());
+        r.free<int>(cap_inv, t.size());
 
         // Compute update values for each capacity and LCut
 
@@ -144,27 +144,27 @@ namespace Gecode { namespace Int { namespace Cumulative {
         // Update est by iterating in parallel over the prec array
         // and the task array, both sorted by lct
 
-        int* precMap = r.alloc<int>(t.size());
+        int* prec_map = r.alloc<int>(t.size());
         for (int i = 0; i < t.size(); i++)
-            precMap[i] = i;
+            prec_map[i] = i;
         PrecOrder po(prec);
-        Support::quicksort(precMap, t.size(), po);
+        Support::quicksort(prec_map, t.size(), po);
 
-        int curJ = 0;
+        int cur_j = 0;
         for (int i = 0; i < t.size(); i++) {
             // discard any curJ with lct > prec[i]:
-            while (curJ < t.size() && t[curJ].lct() > prec[precMap[i]])
-                curJ++;
-            if (curJ >= t.size())
+            while (cur_j < t.size() && t[cur_j].lct() > prec[prec_map[i]])
+                cur_j++;
+            if (cur_j >= t.size())
                 break;
             // if lct[curJ] == prec[i], then LCut(T,j) <= i, so update est[i]
-            int locJ = curJ;
+            int loc_j = cur_j;
             do {
-                if (t[locJ].lct() != t[precMap[i]].lct()) {
-                    GECODE_ME_CHECK(t[precMap[i]].est(home, update[cap[precMap[i]] * t.size() + locJ]));
+                if (t[loc_j].lct() != t[prec_map[i]].lct()) {
+                    GECODE_ME_CHECK(t[prec_map[i]].est(home, update[cap[prec_map[i]] * t.size() + loc_j]));
                     break;
                 }
-            } while (t[locJ].lct() == prec[precMap[i]] && locJ++ < t.size() - 1);
+            } while (t[loc_j].lct() == prec[prec_map[i]] && loc_j++ < t.size() - 1);
         }
 
         return ES_OK;
@@ -172,11 +172,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     template <class Task>
     ExecStatus
-    edgefinding(Space& home, int c, TaskArray<Task>& t) {
+    edge_finding(Space& home, int c, TaskArray<Task>& t) {
         TaskViewArray<typename TaskTraits<Task>::TaskViewFwd> f(t);
-        GECODE_ES_CHECK(edgefinding(home, c, f));
+        GECODE_ES_CHECK(edge_finding(home, c, f));
         TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
-        GECODE_ES_CHECK(edgefinding(home, c, b));
+        GECODE_ES_CHECK(edge_finding(home, c, b));
         return ES_OK;
     }
 

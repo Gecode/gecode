@@ -53,7 +53,7 @@ namespace Gecode {
         case IRT_LQ:
             GECODE_ME_FAIL(x.lq(home, n));
             break;
-        case IRT_LE:
+        case IRT_LT:
             GECODE_ME_FAIL(x.le(home, n));
             break;
         case IRT_GQ:
@@ -91,7 +91,7 @@ namespace Gecode {
                 GECODE_ME_FAIL(xi.lq(home, n));
             }
             break;
-        case IRT_LE:
+        case IRT_LT:
             for (int i = 0; i < x.size(); i++) {
                 IntView xi(x[i]);
                 GECODE_ME_FAIL(xi.le(home, n));
@@ -136,7 +136,7 @@ namespace Gecode {
             break;
         case IRT_GR:
             std::swap(x0, x1); // Fall through
-        case IRT_LE:
+        case IRT_LT:
             GECODE_ES_FAIL((Rel::Le<IntView, IntView>::post(home, x0, x1)));
             break;
         default:
@@ -180,7 +180,7 @@ namespace Gecode {
                 GECODE_ES_FAIL((Rel::Le<IntView, IntView>::post(home, y, x[i])));
             }
             break;
-        case IRT_LE:
+        case IRT_LT:
             for (int i = 0; i < x.size(); i++) {
                 GECODE_ES_FAIL((Rel::Le<IntView, IntView>::post(home, x[i], y)));
             }
@@ -275,7 +275,7 @@ namespace Gecode {
                 throw UnknownReifyMode("Int::rel");
             }
             break;
-        case IRT_LE:
+        case IRT_LT:
             std::swap(x0, x1); // Fall through
         case IRT_GR: {
             NegBoolView n(r.var());
@@ -367,7 +367,7 @@ namespace Gecode {
                 }
             }
         } break;
-        case IRT_LE:
+        case IRT_LT:
             n--; // Fall through
         case IRT_LQ:
             switch (r.mode()) {
@@ -426,7 +426,7 @@ namespace Gecode {
             ViewArray<IntView> y(home, x);
             GECODE_ES_FAIL((Rel::NaryNq<IntView>::post(home, y)));
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             ViewArray<IntView> y(home, x);
             GECODE_ES_FAIL((Rel::NaryLqLe<IntView, 1>::post(home, y)));
         } break;
@@ -461,7 +461,7 @@ namespace Gecode {
             ViewArray<IntView> xv(home, x), yv(home, y);
             GECODE_ES_FAIL((Rel::LexLqLe<IntView, IntView>::post(home, yv, xv, true)));
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             ViewArray<IntView> xv(home, x), yv(home, y);
             GECODE_ES_FAIL((Rel::LexLqLe<IntView, IntView>::post(home, xv, yv, true)));
         } break;
@@ -498,7 +498,7 @@ namespace Gecode {
 
         /// Return view array
         ViewArray<Int::ConstIntView>
-        viewarray(Space& home, const IntArgs& x) {
+        make_view_array(Space& home, const IntArgs& x) {
             ViewArray<Int::ConstIntView> xv(home, x.size());
             for (int i = 0; i < x.size(); i++) {
                 Int::Limits::check(x[i], "Int::rel");
@@ -517,22 +517,22 @@ namespace Gecode {
         switch (irt) {
         case IRT_GR: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView, IntView>::post(home, yv, xv, true)));
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<IntView, ConstIntView>::post(home, xv, yv, true)));
         } break;
         case IRT_GQ: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView, IntView>::post(home, yv, xv, false)));
         } break;
         case IRT_LQ: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexLqLe<IntView, ConstIntView>::post(home, xv, yv, false)));
         } break;
         case IRT_EQ:
@@ -545,7 +545,7 @@ namespace Gecode {
             break;
         case IRT_NQ: {
             ViewArray<IntView> xv(home, x);
-            ViewArray<ConstIntView> yv(viewarray(home, y));
+            ViewArray<ConstIntView> yv(make_view_array(home, y));
             GECODE_ES_FAIL((Rel::LexNq<IntView, ConstIntView>::post(home, xv, yv)));
         } break;
         default:
@@ -574,8 +574,8 @@ namespace Gecode {
         case IRT_LQ:
             Int::Rel::Open<Int::IntView, IRT_LQ>::post(home, x, ipl);
             break;
-        case IRT_LE:
-            Int::Rel::Open<Int::IntView, IRT_LE>::post(home, x, ipl);
+        case IRT_LT:
+            Int::Rel::Open<Int::IntView, IRT_LT>::post(home, x, ipl);
             break;
         case IRT_GQ:
             Int::Rel::Open<Int::IntView, IRT_GQ>::post(home, x, ipl);

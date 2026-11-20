@@ -48,7 +48,7 @@ namespace Gecode { namespace Set { namespace Int {
     template <class View>
     forceinline ExecStatus
     MinElement<View>::post(Home home, View x0, Gecode::Int::IntView x1) {
-        GECODE_ME_CHECK(x0.cardMin(home, 1));
+        GECODE_ME_CHECK(x0.card_min(home, 1));
         (void)new (home) MinElement(home, x0, x1);
         return ES_OK;
     }
@@ -82,14 +82,14 @@ namespace Gecode { namespace Set { namespace Int {
             LubRanges<View> ub(x0);
             GECODE_ME_CHECK(x1.inter_r(home, ub, false));
         }
-        GECODE_ME_CHECK(x1.lq(home, x0.glbMin()));
-        // if cardMin>lbSize?
-        assert(x0.cardMin() >= 1);
+        GECODE_ME_CHECK(x1.lq(home, x0.glb_min()));
+        // if card_min>lbSize?
+        assert(x0.card_min() >= 1);
 
         {
-            /// Compute n-th largest element in x0.lub for n = x0.cardMin()-1
+            /// Compute n-th largest element in x0.lub for n = x0.card_min()-1
             unsigned int size = 0;
-            int maxN = BndSet::MAX_OF_EMPTY;
+            int max_n = BndSet::MAX_OF_EMPTY;
             for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++size) {
             }
             Region r;
@@ -101,16 +101,16 @@ namespace Gecode { namespace Set { namespace Int {
                     ub[2 * i + 1] = ubr.max();
                 }
             }
-            unsigned int x0cm = x0.cardMin() - 1;
+            unsigned int x0cm = x0.card_min() - 1;
             for (unsigned int i = size; i--;) {
                 unsigned int width = static_cast<unsigned int>(ub[2 * i + 1] - ub[2 * i] + 1);
                 if (width > x0cm) {
-                    maxN = static_cast<int>(ub[2 * i + 1] - x0cm);
+                    max_n = static_cast<int>(ub[2 * i + 1] - x0cm);
                     break;
                 }
                 x0cm -= width;
             }
-            GECODE_ME_CHECK(x1.lq(home, maxN));
+            GECODE_ME_CHECK(x1.lq(home, max_n));
         }
 
         GECODE_ME_CHECK(x0.exclude(home, Limits::min, x1.min() - 1));
@@ -154,26 +154,26 @@ namespace Gecode { namespace Set { namespace Int {
         // if x0 is empty, then entailed
         // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then entailed
         // if min(x0.glb) < min(x1), then entailed
-        if ((x0.cardMax() == 0) || ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
-            ((x0.glbSize() > 0) && (x0.glbMin() < x1.min())))
+        if ((x0.card_max() == 0) || ((x1.max() < x0.lub_min()) || (x1.min() > x0.lub_max())) ||
+            ((x0.glb_size() > 0) && (x0.glb_min() < x1.min())))
             return home.ES_SUBSUMED(*this);
         // if x1 is determined and = x0.lub.min: remove it from x0,
         // then entailed
-        if (x1.assigned() && x1.val() == x0.lubMin()) {
+        if (x1.assigned() && x1.val() == x0.lub_min()) {
             GECODE_ME_CHECK(x0.exclude(home, x1.val()));
             return home.ES_SUBSUMED(*this);
         }
         // if min(x0) is decided: remove min(x0) from the domain of x1
         // then entailed
-        if (x0.glbMin() == x0.lubMin()) {
-            GECODE_ME_CHECK(x1.nq(home, x0.glbMin()));
+        if (x0.glb_min() == x0.lub_min()) {
+            GECODE_ME_CHECK(x1.nq(home, x0.glb_min()));
             return home.ES_SUBSUMED(*this);
         }
         // if x1 is determined and = x0.glb.min, then we need at least
         // one more element; if there is only one below, then we must
         // take it.
-        if (x1.assigned() && x0.glbSize() > 0 && x1.val() == x0.glbMin()) {
-            unsigned int oldGlbSize = x0.glbSize();
+        if (x1.assigned() && x0.glb_size() > 0 && x1.val() == x0.glb_min()) {
+            unsigned int old_glb_size = x0.glb_size();
             // if there is only 1 unknown below x1, then we must take it
             UnknownRanges<View> ur(x0);
             assert(ur());
@@ -191,7 +191,7 @@ namespace Gecode { namespace Set { namespace Int {
                     return home.ES_SUBSUMED(*this);
                 }
             }
-            GECODE_ME_CHECK(x0.cardMin(home, oldGlbSize + 1));
+            GECODE_ME_CHECK(x0.card_min(home, old_glb_size + 1));
         }
         // if dom(x1) and lub(x0) are disjoint, then entailed;
         {
@@ -201,11 +201,11 @@ namespace Gecode { namespace Set { namespace Int {
             if (!ir())
                 return home.ES_SUBSUMED(*this);
         }
-        // x0 is fated to eventually contain at least x0.cardMin elements.
-        // therefore min(x0) <= x0.cardMin-th largest element of x0.lub
+        // x0 is fated to eventually contain at least x0.card_min elements.
+        // therefore min(x0) <= x0.card_min-th largest element of x0.lub
         // if x1 > than that, then entailed.
         {
-            // to find the x0.cardMin-th largest element of x0.lub, we need
+            // to find the x0.card_min-th largest element of x0.lub, we need
             // some sort of reverse range iterator. we will need to fake one
             // by storing the ranges of the forward iterator in an array.
             // first we need to know how large the array needs to be. so, let's
@@ -226,7 +226,7 @@ namespace Gecode { namespace Set { namespace Int {
             }
             // now we search from the top the range that contains the
             // nth largest value.
-            unsigned int n = x0.cardMin();
+            unsigned int n = x0.card_min();
             int nth_largest = BndSet::MAX_OF_EMPTY;
             for (int i = num_ranges; i--;) {
                 // number of values in range
@@ -290,17 +290,17 @@ namespace Gecode { namespace Set { namespace Int {
         // if x0 is empty, then b=0 and entailed
         // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then b=0 and entailed
         // if min(x0.glb) < min(x1), then b=0 and entailed
-        if ((x0.cardMax() == 0) || ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
-            ((x0.glbSize() > 0) && (x0.glbMin() < x1.min()))) {
+        if ((x0.card_max() == 0) || ((x1.max() < x0.lub_min()) || (x1.min() > x0.lub_max())) ||
+            ((x0.glb_size() > 0) && (x0.glb_min() < x1.min()))) {
             if (rm != RM_PMI)
                 GECODE_ME_CHECK(b.zero(home));
             return home.ES_SUBSUMED(*this);
         }
         // if min(x0) is decided
-        if (x0.glbMin() == x0.lubMin()) {
+        if (x0.glb_min() == x0.lub_min()) {
             // if x1 is det: check if = min(x0), assign b, entailed
             if (x1.assigned()) {
-                if (x1.val() == x0.glbMin()) {
+                if (x1.val() == x0.glb_min()) {
                     if (rm != RM_IMP)
                         GECODE_ME_CHECK(b.one(home));
                 } else {
@@ -310,7 +310,7 @@ namespace Gecode { namespace Set { namespace Int {
                 return home.ES_SUBSUMED(*this);
             }
             // if min(x0) not in dom(x1): b=0, entailed
-            else if ((x0.glbMin() < x1.min()) || (x0.glbMin() > x1.max()) || !x1.in(x0.glbMin())) {
+            else if ((x0.glb_min() < x1.min()) || (x0.glb_min() > x1.max()) || !x1.in(x0.glb_min())) {
                 if (rm != RM_PMI)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
@@ -327,11 +327,11 @@ namespace Gecode { namespace Set { namespace Int {
         //     return home.ES_SUBSUMED(*this);
         //   }
         // }
-        // // x0 is fated to eventually contain at least x0.cardMin elements.
-        // // therefore min(x0) <= x0.cardMin-th largest element of x0.lub
+        // // x0 is fated to eventually contain at least x0.card_min elements.
+        // // therefore min(x0) <= x0.card_min-th largest element of x0.lub
         // // if x1 > than that, then b=0 and entailed.
         // {
-        //   // to find the x0.cardMin-th largest element of x0.lub, we need
+        //   // to find the x0.card_min-th largest element of x0.lub, we need
         //   // some sort of reverse range iterator. we will need to fake one
         //   // by storing the ranges of the forward iterator in an array.
         //   // first we need to know how large the array needs to be. so, let's
@@ -349,7 +349,7 @@ namespace Gecode { namespace Set { namespace Int {
         //   }
         //   // now we search from the top the range that contains the
         //   // nth largest value.
-        //   int n = x0.cardMin();
+        //   int n = x0.card_min();
         //   int nth_largest = BndSet::MAX_OF_EMPTY;
         //   for (int i=num_ranges; i--; ) {
         //     // number of values in range
@@ -386,7 +386,7 @@ namespace Gecode { namespace Set { namespace Int {
     template <class View>
     ExecStatus
     MaxElement<View>::post(Home home, View x0, Gecode::Int::IntView x1) {
-        GECODE_ME_CHECK(x0.cardMin(home, 1));
+        GECODE_ME_CHECK(x0.card_min(home, 1));
         (void)new (home) MaxElement(home, x0, x1);
         return ES_OK;
     }
@@ -402,9 +402,9 @@ namespace Gecode { namespace Set { namespace Int {
     MaxElement<View>::propagate(Space& home, const ModEventDelta&) {
         LubRanges<View> ub(x0);
         GECODE_ME_CHECK(x1.inter_r(home, ub, false));
-        GECODE_ME_CHECK(x1.gq(home, x0.glbMax()));
-        assert(x0.cardMin() >= 1);
-        GECODE_ME_CHECK(x1.gq(home, x0.lubMinN(x0.cardMin() - 1)));
+        GECODE_ME_CHECK(x1.gq(home, x0.glb_max()));
+        assert(x0.card_min() >= 1);
+        GECODE_ME_CHECK(x1.gq(home, x0.lub_min_n(x0.card_min() - 1)));
         GECODE_ME_CHECK(x0.exclude(home, x1.max() + 1, Limits::max));
 
         if (x1.assigned()) {
@@ -446,26 +446,26 @@ namespace Gecode { namespace Set { namespace Int {
         // if x0 is empty, then entailed
         // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then entailed
         // if max(x0.glb) > max(x1), then entailed
-        if ((x0.cardMax() == 0) || ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
-            ((x0.glbSize() > 0) && (x0.glbMax() > x1.max())))
+        if ((x0.card_max() == 0) || ((x1.max() < x0.lub_min()) || (x1.min() > x0.lub_max())) ||
+            ((x0.glb_size() > 0) && (x0.glb_max() > x1.max())))
             return home.ES_SUBSUMED(*this);
         // if x1 is determined and = max(x0.lub): remove it from x0,
         // then entailed
-        if (x1.assigned() && x1.val() == x0.lubMax()) {
+        if (x1.assigned() && x1.val() == x0.lub_max()) {
             GECODE_ME_CHECK(x0.exclude(home, x1.val()));
             return home.ES_SUBSUMED(*this);
         }
         // if max(x0) is decided: remove max(x0) from the domain of x1
         // then entailed
-        if (x0.glbMax() == x0.lubMax()) {
-            GECODE_ME_CHECK(x1.nq(home, x0.glbMax()));
+        if (x0.glb_max() == x0.lub_max()) {
+            GECODE_ME_CHECK(x1.nq(home, x0.glb_max()));
             return home.ES_SUBSUMED(*this);
         }
         // if x1 is determined and = max(x0.glb), then we need at least
         // one more element; if there is only one above, then we must
         // take it.
-        if (x1.assigned() && x0.glbSize() > 0 && x1.val() == x0.glbMax()) {
-            unsigned int oldGlbSize = x0.glbSize();
+        if (x1.assigned() && x0.glb_size() > 0 && x1.val() == x0.glb_max()) {
+            unsigned int old_glb_size = x0.glb_size();
             // if there is only 1 unknown above x1, then we must take it
             UnknownRanges<View> ur(x0);
             // there is at least one unknown above x1 otherwise it would
@@ -485,7 +485,7 @@ namespace Gecode { namespace Set { namespace Int {
                     return home.ES_SUBSUMED(*this);
                 }
             }
-            GECODE_ME_CHECK(x0.cardMin(home, oldGlbSize + 1));
+            GECODE_ME_CHECK(x0.card_min(home, old_glb_size + 1));
         }
         // if dom(x1) and lub(x0) are disjoint, then entailed
         {
@@ -495,11 +495,11 @@ namespace Gecode { namespace Set { namespace Int {
             if (!ir())
                 return home.ES_SUBSUMED(*this);
         }
-        // x0 is fated to eventually contain at least x0.cardMin elements.
-        // therefore max(x0) >= x0.cardMin-th smallest element of x0.lub.
+        // x0 is fated to eventually contain at least x0.card_min elements.
+        // therefore max(x0) >= x0.card_min-th smallest element of x0.lub.
         // if x1 < than that, then entailed.
         {
-            unsigned int n = x0.cardMin();
+            unsigned int n = x0.card_min();
             int nth_smallest = BndSet::MIN_OF_EMPTY;
             for (LubRanges<View> ur(x0); ur(); ++ur) {
                 if (ur.width() >= n) {
@@ -560,17 +560,17 @@ namespace Gecode { namespace Set { namespace Int {
         // if x0 is empty, then b=0 and entailed
         // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then b=0 and entailed
         // if max(x0.glb) > max(x1), then b=0 and entailed
-        if ((x0.cardMax() == 0) || ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
-            ((x0.glbSize() > 0) && (x0.glbMax() > x1.max()))) {
+        if ((x0.card_max() == 0) || ((x1.max() < x0.lub_min()) || (x1.min() > x0.lub_max())) ||
+            ((x0.glb_size() > 0) && (x0.glb_max() > x1.max()))) {
             if (rm != RM_PMI)
                 GECODE_ME_CHECK(b.zero(home));
             return home.ES_SUBSUMED(*this);
         }
         // if max(x0) is decided
-        if (x0.glbMax() == x0.lubMax()) {
+        if (x0.glb_max() == x0.lub_max()) {
             // if x1 is det: check if = max(x0), assign b, entailed
             if (x1.assigned()) {
-                if (x1.val() == x0.glbMax()) {
+                if (x1.val() == x0.glb_max()) {
                     if (rm != RM_IMP)
                         GECODE_ME_CHECK(b.one(home));
                 } else {
@@ -580,7 +580,7 @@ namespace Gecode { namespace Set { namespace Int {
                 return home.ES_SUBSUMED(*this);
             }
             // if max(x0) not in dom(x1): b=0, entailed
-            else if ((x0.glbMax() < x1.min()) || (x0.glbMax() > x1.max()) || !x1.in(x0.glbMax())) {
+            else if ((x0.glb_max() < x1.min()) || (x0.glb_max() > x1.max()) || !x1.in(x0.glb_max())) {
                 if (rm != RM_PMI)
                     GECODE_ME_CHECK(b.zero(home));
                 return home.ES_SUBSUMED(*this);
@@ -597,11 +597,11 @@ namespace Gecode { namespace Set { namespace Int {
                 return home.ES_SUBSUMED(*this);
             }
         }
-        // x0 is fated to eventually contain at least x0.cardMin elements.
-        // therefore max(x0) >= x0.cardMin-th smallest element of x0.lub.
+        // x0 is fated to eventually contain at least x0.card_min elements.
+        // therefore max(x0) >= x0.card_min-th smallest element of x0.lub.
         // if x1 < than that, then b=0, entailed.
         {
-            unsigned int n = x0.cardMin();
+            unsigned int n = x0.card_min();
             int nth_smallest = BndSet::MIN_OF_EMPTY;
             for (LubRanges<View> ur(x0); ur(); ++ur) {
                 if (ur.width() >= n) {

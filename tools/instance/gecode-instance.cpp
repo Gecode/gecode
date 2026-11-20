@@ -233,11 +233,11 @@ main(int argc, char* argv[]) {
             }
         }
     } catch (const Instance::Error& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
         return 1;
     } catch (const std::exception& e) {
         // For example, running out of memory
-        std::cerr << "gecode-instance: " << e.what() << std::endl;
+        std::cerr << "gecode-instance: " << e.what() << '\n';
         return 1;
     }
     return 0;

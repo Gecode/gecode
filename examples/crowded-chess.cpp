@@ -87,8 +87,8 @@ namespace {
         Bishops(Bishops& s) : Space(s), n(s.n) {
             k.update(*this, s.k);
         }
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new Bishops(*this);
         }
     };
@@ -331,14 +331,14 @@ public:
     }
 
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new CrowdedChess(*this);
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<IntVarArray> m(s, n);
         char names[PMAX];
         names[E] = '.';
@@ -374,9 +374,9 @@ public:
                     }
                 }
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -393,7 +393,7 @@ main(int argc, char* argv[]) {
     opt.size(8);
     opt.parse(argc, argv);
     if (opt.size() < 5) {
-        std::cerr << "Error: size must be at least 5" << std::endl;
+        std::cerr << "Error: size must be at least 5" << '\n';
         return 1;
     }
     init_bishops(opt.size());

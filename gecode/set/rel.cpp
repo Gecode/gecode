@@ -69,7 +69,7 @@ namespace Gecode { namespace Set {
         case SRT_LQ:
             GECODE_ES_FAIL((Lq<View0, View1, false>::post(home, x0, x1)));
             break;
-        case SRT_LE:
+        case SRT_LT:
             GECODE_ES_FAIL((Lq<View0, View1, true>::post(home, x0, x1)));
             break;
         case SRT_GQ:
@@ -129,7 +129,7 @@ namespace Gecode { namespace Set {
         case SRT_LQ:
             GECODE_ES_FAIL((ReLq<View0, View1, rm, false>::post(home, x, y, b)));
             break;
-        case SRT_LE:
+        case SRT_LT:
             GECODE_ES_FAIL((ReLq<View0, View1, rm, true>::post(home, x, y, b)));
             break;
         case SRT_GQ:
@@ -157,7 +157,7 @@ namespace Gecode {
     rel(Home home, SetVar s, SetRelType r, IntVar x) {
         using namespace Set;
         Gecode::Int::IntView xv(x);
-        SingletonView xsingle(xv);
+        SingletonView x_singleton(xv);
         rel_post<SetView, SingletonView>(home, s, r, xv);
     }
 
@@ -198,16 +198,16 @@ namespace Gecode {
     rel(Home home, SetVar s, SetRelType rt, IntVar x, Reify r) {
         using namespace Set;
         Gecode::Int::IntView xv(x);
-        SingletonView xsingle(xv);
+        SingletonView x_singleton(xv);
         switch (r.mode()) {
         case RM_EQV:
-            rel_re<SetView, SingletonView, RM_EQV>(home, s, rt, xsingle, r.var());
+            rel_re<SetView, SingletonView, RM_EQV>(home, s, rt, x_singleton, r.var());
             break;
         case RM_IMP:
-            rel_re<SetView, SingletonView, RM_IMP>(home, s, rt, xsingle, r.var());
+            rel_re<SetView, SingletonView, RM_IMP>(home, s, rt, x_singleton, r.var());
             break;
         case RM_PMI:
-            rel_re<SetView, SingletonView, RM_PMI>(home, s, rt, xsingle, r.var());
+            rel_re<SetView, SingletonView, RM_PMI>(home, s, rt, x_singleton, r.var());
             break;
         default:
             throw Gecode::Int::UnknownReifyMode("Set::rel");

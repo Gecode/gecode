@@ -52,8 +52,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new IntTestSpace(*this);
         }
     };
@@ -70,8 +70,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new BoolTestSpace(*this);
         }
     };
@@ -90,8 +90,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new SetTestSpace(*this);
         }
     };
@@ -112,8 +112,8 @@ namespace Test { namespace Assign {
             x.update(*this, s.x);
         }
         /// Copy space during cloning
-        virtual Gecode::Space*
-        copy(void) {
+        Gecode::Space*
+        copy(void) override {
             return new FloatTestSpace(*this);
         }
     };
@@ -202,9 +202,10 @@ namespace Test { namespace Assign {
                 solutions++;
             }
             if (solutions != 1) {
-                std::cout << "FAILURE" << std::endl
-                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << std::endl
-                          << "\t" << int_assign_name[val] << std::endl;
+                std::cout << "FAILURE" << '\n'
+                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << '\n'
+                          << "\t" << int_assign_name[val] << '\n'
+                          << std::flush;
                 delete root;
                 return false;
             }
@@ -257,9 +258,10 @@ namespace Test { namespace Assign {
                 solutions++;
             }
             if (solutions != 1) {
-                std::cout << "FAILURE" << std::endl
-                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << std::endl
-                          << "\t" << int_assign_name[val] << std::endl;
+                std::cout << "FAILURE" << '\n'
+                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << '\n'
+                          << "\t" << int_assign_name[val] << '\n'
+                          << std::flush;
                 delete root;
                 return false;
             }
@@ -351,9 +353,10 @@ namespace Test { namespace Assign {
                 solutions++;
             }
             if (solutions != 1) {
-                std::cout << "FAILURE" << std::endl
-                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << std::endl
-                          << "\t" << set_assign_name[val] << std::endl;
+                std::cout << "FAILURE" << '\n'
+                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << '\n'
+                          << "\t" << set_assign_name[val] << '\n'
+                          << std::flush;
                 delete root;
                 return false;
             }
@@ -432,9 +435,10 @@ namespace Test { namespace Assign {
                 solutions++;
             }
             if (solutions != 1) {
-                std::cout << "FAILURE" << std::endl
-                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << std::endl
-                          << "\t" << float_assign_name[val] << std::endl;
+                std::cout << "FAILURE" << '\n'
+                          << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << '\n'
+                          << "\t" << float_assign_name[val] << '\n'
+                          << std::flush;
                 delete root;
                 return false;
             }

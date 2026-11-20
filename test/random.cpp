@@ -251,11 +251,11 @@ namespace Test { namespace Random {
             ViewArray<IntView> views(*this, vars);
             ViewSel<IntView>* selectors[] = {new (*this) ViewSelRnd<IntView, Random>(*this, own)};
             if (multi) {
-                Int::Branch::postviewvaluesbrancher<1, true>(*this, views, selectors, nullptr, nullptr);
+                Int::Branch::post_view_values_brancher<1, true>(*this, views, selectors, nullptr, nullptr);
             } else {
                 using Values = ValSelCommit<Int::Branch::ValSelRnd<IntView, Random>, Int::Branch::ValCommitEq<IntView>>;
                 value = new (*this) Values(*this, INT_VAL_MIN(), different ? own.split(99) : own);
-                postviewvalbrancher<IntView, 1, int, 2>(*this, views, selectors, value, nullptr, nullptr);
+                post_view_value_brancher<IntView, 1, int, 2>(*this, views, selectors, value, nullptr, nullptr);
             }
             variable = selectors[0];
         }
@@ -394,7 +394,7 @@ namespace Test { namespace Random {
         LDSBSpace() : x(*this, 4, 0, 3) {
             using namespace Gecode;
             Symmetries syms;
-            syms << VariableSymmetry(x);
+            syms << variable_symmetry(x);
             distinct(*this, x);
             branch(*this, x, INT_VAR_RND(Rnd(42)), INT_VAL_RND(Rnd(7)), syms);
         }

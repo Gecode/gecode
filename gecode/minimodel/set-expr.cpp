@@ -339,14 +339,14 @@ namespace Gecode {
                 case SRT_LQ:
                     invsrt = SRT_GQ;
                     break;
-                case SRT_LE:
+                case SRT_LT:
                     invsrt = SRT_GR;
                     break;
                 case SRT_GQ:
                     invsrt = SRT_LQ;
                     break;
                 case SRT_GR:
-                    invsrt = SRT_LE;
+                    invsrt = SRT_LT;
                     break;
                 case SRT_EQ:
                 case SRT_NQ:
@@ -689,7 +689,7 @@ namespace Gecode {
         return r;
     }
     SetExpr
-    setunion(const SetVarArgs& x) {
+    set_union(const SetVarArgs& x) {
         if (x.size() == 0)
             return SetExpr(IntSet::empty);
         SetExpr r(x[0]);
@@ -698,7 +698,7 @@ namespace Gecode {
         return r;
     }
     SetExpr
-    setdunion(const SetVarArgs& x) {
+    set_disjoint_union(const SetVarArgs& x) {
         if (x.size() == 0)
             return SetExpr(IntSet::empty);
         SetExpr r(x[0]);
@@ -722,8 +722,8 @@ namespace Gecode {
             /// Constructor
             SetNonLinIntExpr(const SetExpr& e0, SetNonLinIntExprType t0) : t(t0), e(e0) {}
             /// Post expression
-            virtual IntVar
-            post(Home home, IntVar* ret, const IntPropLevels&) const {
+            IntVar
+            post(Home home, IntVar* ret, const IntPropLevels&) const override {
                 IntVar m = result(home, ret);
                 switch (t) {
                 case SNLE_CARD:
@@ -741,14 +741,14 @@ namespace Gecode {
                 }
                 return m;
             }
-            virtual void
-            post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const {
+            void
+            post(Home home, IntRelType irt, int c, const IntPropLevels& ipls) const override {
                 if (t == SNLE_CARD && irt != IRT_NQ) {
                     switch (irt) {
                     case IRT_LQ:
                         cardinality(home, e.post(home), 0U, static_cast<unsigned int>(c));
                         break;
-                    case IRT_LE:
+                    case IRT_LT:
                         cardinality(home, e.post(home), 0U, static_cast<unsigned int>(c - 1));
                         break;
                     case IRT_GQ:
@@ -766,19 +766,19 @@ namespace Gecode {
                 } else if (t == SNLE_MIN && (irt == IRT_GR || irt == IRT_GQ)) {
                     c = (irt == IRT_GQ ? c : c + 1);
                     dom(home, e.post(home), SRT_SUB, c, Set::Limits::max);
-                } else if (t == SNLE_MAX && (irt == IRT_LE || irt == IRT_LQ)) {
+                } else if (t == SNLE_MAX && (irt == IRT_LT || irt == IRT_LQ)) {
                     c = (irt == IRT_LQ ? c : c - 1);
                     dom(home, e.post(home), SRT_SUB, Set::Limits::min, c);
                 } else {
                     rel(home, post(home, nullptr, ipls), irt, c);
                 }
             }
-            virtual void
-            post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const {
+            void
+            post(Home home, IntRelType irt, int c, BoolVar b, const IntPropLevels& ipls) const override {
                 if (t == SNLE_MIN && (irt == IRT_GR || irt == IRT_GQ)) {
                     c = (irt == IRT_GQ ? c : c + 1);
                     dom(home, e.post(home), SRT_SUB, c, Set::Limits::max, b);
-                } else if (t == SNLE_MAX && (irt == IRT_LE || irt == IRT_LQ)) {
+                } else if (t == SNLE_MAX && (irt == IRT_LT || irt == IRT_LQ)) {
                     c = (irt == IRT_LQ ? c : c - 1);
                     dom(home, e.post(home), SRT_SUB, Set::Limits::min, c, b);
                 } else {

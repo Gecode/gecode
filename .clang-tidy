@@ -1,24 +1,61 @@
 # Use clang-tidy 22. Keep checks focused on correctness and useful modernization.
 Checks: >-
   -*,
+  clang-analyzer-core.*,
   bugprone-assert-side-effect,
   bugprone-dangling-handle,
+  bugprone-inaccurate-erase,
   bugprone-integer-division,
   bugprone-macro-repeated-side-effects,
   bugprone-misplaced-widening-cast,
   bugprone-move-forwarding-reference,
   bugprone-sizeof-expression,
+  bugprone-suspicious-memory-comparison,
   bugprone-suspicious-memset-usage,
   bugprone-unused-raii,
+  bugprone-unused-return-value,
+  bugprone-use-after-move,
+  bugprone-virtual-near-miss,
   modernize-deprecated-headers,
   modernize-use-nullptr,
   modernize-use-override,
+  performance-avoid-endl,
+  performance-faster-string-find,
   performance-for-range-copy,
+  performance-implicit-conversion-in-loop,
+  performance-inefficient-algorithm,
   performance-inefficient-string-concatenation,
+  performance-inefficient-vector-operation,
   performance-move-const-arg,
+  performance-move-constructor-init,
+  performance-no-automatic-move,
   performance-unnecessary-copy-initialization,
-  performance-unnecessary-value-param
+  readability-identifier-naming
 WarningsAsErrors: '*'
 HeaderFilterRegex: '(gecode|test|examples|tools)/'
 ExcludeHeaderFilterRegex: 'gecode/third-party/|gecode/flatzinc/(parser\.tab\.(cpp|hpp)|lexer\.yy\.cpp)$'
 FormatStyle: file
+
+CheckOptions:
+  # Explicit discards document intentional ownership handoffs.
+  bugprone-unused-return-value.AllowCastToVoid: true
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.EnumConstantCase: UPPER_CASE
+  readability-identifier-naming.ConstantCase: lower_case
+  # Constants and functions standing for constant values, such as
+  # ME_INT_VAL, ES_SUBSUMED, and INT_VAR_SIZE_MIN, may use UPPER_CASE.
+  readability-identifier-naming.ConstantIgnoredRegexp: '^(_?[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.FunctionIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.MethodIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[A-Z][A-Z0-9_]*)$'
+  readability-identifier-naming.VariableIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.MemberIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.ParameterIgnoredRegexp: '^(_[a-z][a-z0-9_]*|[a-z][a-z0-9_]*_)$'
+  readability-identifier-naming.EnumConstantIgnoredRegexp: '^[A-Z][A-Z0-9_]*_$'
+  # New scoped enums name their constants in PascalCase, as EndReason::Limit;
+  # scoped enums converted from plain enums keep UPPER_CASE.
+  readability-identifier-naming.ScopedEnumConstantCase: UPPER_CASE
+  readability-identifier-naming.ScopedEnumConstantIgnoredRegexp: '^([A-Z][a-zA-Z0-9]*|[A-Z][A-Z0-9_]*_)$'

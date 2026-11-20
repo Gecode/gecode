@@ -106,10 +106,10 @@ public:
         IntVarArgs p2(*this, 28, 0, (width + 1) * height - 1);
 
         if (opt.propagation() == PROP_ELEMENT) {
-            int dominoCount = 0;
+            int domino_count = 0;
 
-            int possibleDiffsA[] = {1, width + 1};
-            IntSet possibleDiffs(possibleDiffsA, 2);
+            int possible_diffs_a[] = {1, width + 1};
+            IntSet possible_diffs(possible_diffs_a, 2);
 
             for (int i = 0; i <= 6; i++)
                 for (int j = i; j <= 6; j++) {
@@ -119,25 +119,25 @@ public:
                     // The separator column makes sure that a field
                     // at the right border is not adjacent to the first field
                     // in the next row.
-                    IntVar diff(*this, possibleDiffs);
-                    abs(*this, expr(*this, p1[dominoCount] - p2[dominoCount]), diff, IPL_DOM);
+                    IntVar diff(*this, possible_diffs);
+                    abs(*this, expr(*this, p1[domino_count] - p2[domino_count]), diff, IPL_DOM);
 
                     // If the piece is symmetrical, order the locations
                     if (i == j)
-                        rel(*this, p1[dominoCount], IRT_LE, p2[dominoCount]);
+                        rel(*this, p1[domino_count], IRT_LT, p2[domino_count]);
 
                     // Link the current piece to the board
-                    element(*this, board, p1[dominoCount], i);
-                    element(*this, board, p2[dominoCount], j);
+                    element(*this, board, p1[domino_count], i);
+                    element(*this, board, p2[domino_count], j);
 
                     // Link the current piece to the array where its
                     // number is stored.
-                    element(*this, x, p1[dominoCount], dominoCount);
-                    element(*this, x, p2[dominoCount], dominoCount);
-                    dominoCount++;
+                    element(*this, x, p1[domino_count], domino_count);
+                    element(*this, x, p2[domino_count], domino_count);
+                    domino_count++;
                 }
         } else {
-            int dominoCount = 0;
+            int domino_count = 0;
 
             for (int i = 0; i <= 6; i++)
                 for (int j = i; j <= 6; j++) {
@@ -160,13 +160,13 @@ public:
                                 valids |= REG(pos + width + 1) + REG(pos);
                         }
                     }
-                    extensional(*this, IntVarArgs({p1[dominoCount], p2[dominoCount]}), valids);
+                    extensional(*this, IntVarArgs({p1[domino_count], p2[domino_count]}), valids);
 
                     // Link the current piece to the array where its
                     // number is stored.
-                    element(*this, x, p1[dominoCount], dominoCount);
-                    element(*this, x, p2[dominoCount], dominoCount);
-                    dominoCount++;
+                    element(*this, x, p1[domino_count], domino_count);
+                    element(*this, x, p2[domino_count], domino_count);
+                    domino_count++;
                 }
         }
 
@@ -181,8 +181,8 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         for (int h = 0; h < height; ++h) {
             os << "\t";
             for (int w = 0; w < width; ++w) {
@@ -190,17 +190,17 @@ public:
                 char c = val < 10 ? '0' + val : 'A' + (val - 10);
                 os << c;
             }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
     /// Constructor for cloning \a s
     Domino(Domino& s) : Script(s), spec(s.spec), width(s.width), height(s.height) {
         x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Domino(*this);
     }
 };
@@ -217,7 +217,7 @@ main(int argc, char* argv[]) {
     opt.propagation(Domino::PROP_EXTENSIONAL, "extensional");
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     Script::run<Domino, DFS, SizeOptions>(opt);

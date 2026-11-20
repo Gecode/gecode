@@ -412,6 +412,8 @@ run(PuzzleOptions& opt) {
             Script::run<Model, AStar, PuzzleOptions>(opt);
         else
             Script::run<Model, CABS, PuzzleOptions>(opt);
+        // The guidance lives only in this block
+        opt.guidance(nullptr);
     } break;
 #endif
     }

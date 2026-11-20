@@ -98,9 +98,9 @@ public:
                });
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "\t" << le << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "\t" << le << '\n';
     }
 
     /// Constructor for cloning \a s
@@ -108,8 +108,8 @@ public:
         le.update(*this, s.le);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Money(*this);
     }
 };

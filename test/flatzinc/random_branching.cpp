@@ -48,7 +48,7 @@ namespace Test { namespace FlatZinc { namespace {
         Gecode::BoolVarArray b;
         IntBoolSpace(void) : x(*this, 5, 0, 3), b(*this, 3, 0, 1) {
             using namespace Gecode;
-            Gecode::FlatZinc::branch(*this, x, b, Gecode::FlatZinc::INTBOOL_VAR_AFC_SIZE_MAX(0.99),
+            Gecode::FlatZinc::branch(*this, x, b, Gecode::FlatZinc::int_bool_var_afc_size_max(0.99),
                                      INT_VAL_RND(Rnd(3)));
         }
         IntBoolSpace(IntBoolSpace& s) : Space(s) {
@@ -96,6 +96,7 @@ namespace Test { namespace FlatZinc { namespace {
         Opt opt("random-options");
         args.insert(args.begin(), "random-options");
         std::vector<char*> argv;
+        argv.reserve(args.size());
         for (std::string& a : args)
             argv.push_back(a.data());
         int argc = static_cast<int>(argv.size());

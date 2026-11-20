@@ -81,13 +81,13 @@ public:
         f.update(*this, p.f);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new CartesianHeart(*this);
     }
     /// Add constraints to current model to get next solution (not too close)
-    virtual void
-    constrain(const Space& _b) {
+    void
+    constrain(const Space& _b) override {
         const CartesianHeart& b = static_cast<const CartesianHeart&>(_b);
         rel(*this,
             (f[0] >= (b.f[0].max() + step)) || (f[1] >= (b.f[1].max() + step)) || (f[1] <= (b.f[1].min() - step)));
@@ -101,17 +101,17 @@ public:
      * is far enough from \a other to satisfy constrain, so parallel search keeps
      * the same kind of solutions as sequential search. This is not an order.
      */
-    virtual SpaceComparison
-    compare(const Space& _other) const {
+    SpaceComparison
+    compare(const Space& _other) const override {
         const CartesianHeart& b = static_cast<const CartesianHeart&>(_other);
         bool apart = (f[0].min() >= (b.f[0].max() + step)) || (f[1].min() >= (b.f[1].max() + step)) ||
                      (f[1].max() <= (b.f[1].min() - step));
         return apart ? SpaceComparison::Better : SpaceComparison::Worse;
     }
     /// Print solution coordinates
-    virtual void
-    print(std::ostream& os) const {
-        os << "XY " << f[0].med() << " " << f[1].med() << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "XY " << f[0].med() << " " << f[1].med() << '\n';
     }
 };
 

@@ -61,16 +61,16 @@ namespace Test { namespace Int {
     void
     RandomAssignment::next(Gecode::Support::RandomGenerator& rand) {
         for (int i = this->n; i--;)
-            this->vals[i] = this->randval(rand);
+            this->vals[i] = this->random_value(rand);
         this->a--;
     }
 
     void
     RandomMixAssignment::next(Gecode::Support::RandomGenerator& rand) {
         for (int i = n - _n1; i--;)
-            vals[i] = randval(d, rand);
+            vals[i] = random_value(d, rand);
         for (int i = _n1; i--;)
-            vals[n - _n1 + i] = randval(_d1, rand);
+            vals[n - _n1 + i] = random_value(_d1, rand);
         a--;
     }
 
@@ -97,7 +97,7 @@ namespace Test { namespace Int {
         Gecode::BoolVar b(*this, 0, 1);
         r = Gecode::Reify(b, Gecode::RM_EQV);
         if (opt.log)
-            olog << ind(2) << "Initial: x[]=" << x << std::endl;
+            olog << ind(2) << "Initial: x[]=" << x << '\n';
     }
 
     TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t, Gecode::ReifyMode rm)
@@ -110,7 +110,7 @@ namespace Test { namespace Int {
         Gecode::BoolVar b(*this, 0, 1);
         r = Gecode::Reify(b, rm);
         if (opt.log)
-            olog << ind(2) << "Initial: x[]=" << x << " b=" << r.var() << std::endl;
+            olog << ind(2) << "Initial: x[]=" << x << " b=" << r.var() << '\n';
     }
 
     TestSpace::TestSpace(TestSpace& s) : Gecode::Space(s), d(s.d), test(s.test), reified(s.reified) {
@@ -140,11 +140,11 @@ namespace Test { namespace Int {
         if (reified) {
             test->post(*this, x, r);
             if (opt.log)
-                olog << ind(3) << "Posting reified propagator" << std::endl;
+                olog << ind(3) << "Posting reified propagator" << '\n';
         } else {
             test->post(*this, x);
             if (opt.log)
-                olog << ind(3) << "Posting propagator" << std::endl;
+                olog << ind(3) << "Posting propagator" << '\n';
         }
     }
 
@@ -153,7 +153,7 @@ namespace Test { namespace Int {
         if (opt.log) {
             olog << ind(3) << "Fixpoint: " << x;
             bool f = (status() == Gecode::SS_FAILED);
-            olog << std::endl << ind(3) << "     -->  " << x << std::endl;
+            olog << '\n' << ind(3) << "     -->  " << x << '\n';
             return f;
         } else {
             return status() == Gecode::SS_FAILED;
@@ -184,7 +184,7 @@ namespace Test { namespace Int {
                 unsigned int offset = rand(n);
                 v = static_cast<int>(static_cast<long long>(a[i]) + 1LL + offset);
                 assert((v > a[i]) && (v <= x[i].max()));
-                irt = IRT_LE;
+                irt = IRT_LT;
             }
             break;
         case 1:
@@ -237,7 +237,7 @@ namespace Test { namespace Int {
             case Gecode::IRT_LQ:
                 olog << "<=";
                 break;
-            case Gecode::IRT_LE:
+            case Gecode::IRT_LT:
                 olog << "<";
                 break;
             case Gecode::IRT_GQ:
@@ -247,7 +247,7 @@ namespace Test { namespace Int {
                 olog << ">";
                 break;
             }
-            olog << " " << n << std::endl;
+            olog << " " << n << '\n';
         }
         Gecode::rel(*this, x[i], irt, n);
     }
@@ -257,7 +257,7 @@ namespace Test { namespace Int {
         int n = sol ? 1 : 0;
         assert(reified);
         if (opt.log)
-            olog << ind(4) << "b = " << n << std::endl;
+            olog << ind(4) << "b = " << n << '\n';
         Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
     }
 
@@ -291,7 +291,7 @@ namespace Test { namespace Int {
                 unsigned int offset = rand(n);
                 int v = static_cast<int>(static_cast<long long>(x[i].min()) + 1LL + offset);
                 assert((v > x[i].min()) && (v <= x[i].max()));
-                rel(i, Gecode::IRT_LE, v);
+                rel(i, Gecode::IRT_LT, v);
             }
             if (rand(2) && !x[i].assigned()) {
                 unsigned int n = static_cast<unsigned int>(x[i].max()) - static_cast<unsigned int>(x[i].min());
@@ -324,7 +324,7 @@ namespace Test { namespace Int {
     }
 
     bool
-    TestSpace::prune(const Assignment& a, bool testfix, Gecode::Support::RandomGenerator& rand) {
+    TestSpace::prune(const Assignment& a, bool test_fixpoint, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         // Select variable to be pruned
         int i = rndvar(rand);
@@ -335,33 +335,33 @@ namespace Test { namespace Int {
         if (irt != IRT_EQ)
             rel(i, irt, v);
         if (Base::fixpoint(rand)) {
-            if (failed() || !testfix)
+            if (failed() || !test_fixpoint)
                 return true;
             TestSpace* c = static_cast<TestSpace*>(clone());
             if (opt.log)
-                olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+                olog << ind(3) << "Testing fixpoint on copy" << '\n';
             c->post();
             if (c->failed()) {
                 if (opt.log)
-                    olog << ind(4) << "Copy failed after posting" << std::endl;
+                    olog << ind(4) << "Copy failed after posting" << '\n';
                 delete c;
                 return false;
             }
             for (int j = x.size(); j--;)
                 if (x[j].size() != c->x[j].size()) {
                     if (opt.log)
-                        olog << ind(4) << "Different domain size" << std::endl;
+                        olog << ind(4) << "Different domain size" << '\n';
                     delete c;
                     return false;
                 }
             if (reified && (r.var().size() != c->r.var().size())) {
                 if (opt.log)
-                    olog << ind(4) << "Different control variable" << std::endl;
+                    olog << ind(4) << "Different control variable" << '\n';
                 delete c;
                 return false;
             }
             if (opt.log)
-                olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
+                olog << ind(3) << "Finished testing fixpoint on copy" << '\n';
             delete c;
         }
         return true;
@@ -379,7 +379,7 @@ namespace Test { namespace Int {
     }
 
     bool
-    TestSpace::disabled(const Assignment& a, TestSpace& c, bool testfix, Gecode::Support::RandomGenerator& rand) {
+    TestSpace::disabled(const Assignment& a, TestSpace& c, bool test_fixpoint, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         // Disable propagators
         c.disable();
@@ -395,30 +395,30 @@ namespace Test { namespace Int {
         }
         // Enable propagators
         c.enable();
-        if (!testfix)
+        if (!test_fixpoint)
             return true;
         if (failed()) {
             if (!c.failed()) {
                 if (opt.log)
-                    olog << ind(3) << "No failure on disabled copy" << std::endl;
+                    olog << ind(3) << "No failure on disabled copy" << '\n';
                 return false;
             }
             return true;
         }
         if (c.failed()) {
             if (opt.log)
-                olog << ind(3) << "Failure on disabled copy" << std::endl;
+                olog << ind(3) << "Failure on disabled copy" << '\n';
             return false;
         }
         for (int j = x.size(); j--;) {
             if (x[j].size() != c.x[j].size()) {
                 if (opt.log)
-                    olog << ind(4) << "Different domain size" << std::endl;
+                    olog << ind(4) << "Different domain size" << '\n';
                 return false;
             }
             if (reified && (r.var().size() != c.r.var().size())) {
                 if (opt.log)
-                    olog << ind(4) << "Different control variable" << std::endl;
+                    olog << ind(4) << "Different control variable" << '\n';
                 return false;
             }
         }
@@ -436,7 +436,7 @@ namespace Test { namespace Int {
                                                                Gecode::IPL_BASIC};
 
     const Gecode::IntRelType IntRelTypes::irts[] = {Gecode::IRT_EQ, Gecode::IRT_NQ, Gecode::IRT_LQ,
-                                                    Gecode::IRT_LE, Gecode::IRT_GQ, Gecode::IRT_GR};
+                                                    Gecode::IRT_LT, Gecode::IRT_GQ, Gecode::IRT_GR};
 
     const Gecode::BoolOpType BoolOpTypes::bots[] = {Gecode::BOT_AND, Gecode::BOT_OR, Gecode::BOT_IMP, Gecode::BOT_EQV,
                                                     Gecode::BOT_XOR};
@@ -450,7 +450,7 @@ namespace Test { namespace Int {
 #define CHECK_TEST(T, M)                                                                                               \
     do {                                                                                                               \
         if (opt.log)                                                                                                   \
-            olog << ind(3) << "Check: " << (M) << std::endl;                                                           \
+            olog << ind(3) << "Check: " << (M) << '\n';                                                                \
         if (!(T)) {                                                                                                    \
             problem = (M);                                                                                             \
             delete s;                                                                                                  \
@@ -463,7 +463,7 @@ namespace Test { namespace Int {
     do {                                                                                                               \
         if (opt.log) {                                                                                                 \
             olog.str("");                                                                                              \
-            olog << ind(2) << "Testing: " << (T) << std::endl;                                                         \
+            olog << ind(2) << "Testing: " << (T) << '\n';                                                              \
         }                                                                                                              \
         test = (T);                                                                                                    \
     } while (false)
@@ -498,7 +498,7 @@ namespace Test { namespace Int {
         while (a.has_more()) {
             bool sol = solution(a);
             if (opt.log) {
-                olog << ind(1) << "Assignment: " << a << (sol ? " (solution)" : " (no solution)") << std::endl;
+                olog << ind(1) << "Assignment: " << a << (sol ? " (solution)" : " (no solution)") << '\n';
             }
 
             START_TEST("Assignment (after posting)");
@@ -509,13 +509,13 @@ namespace Test { namespace Int {
                 switch (_rand(2)) {
                 case 0:
                     if (opt.log)
-                        olog << ind(3) << "No copy" << std::endl;
+                        olog << ind(3) << "No copy" << '\n';
                     sc = s;
                     s = nullptr;
                     break;
                 case 1:
                     if (opt.log)
-                        olog << ind(3) << "Copy" << std::endl;
+                        olog << ind(3) << "Copy" << '\n';
                     if (s->status() != SS_FAILED) {
                         sc = static_cast<TestSpace*>(s->clone());
                     } else {
@@ -616,7 +616,7 @@ namespace Test { namespace Int {
                 TestSpace* s = new TestSpace(arity, dom, this);
                 s->post();
                 while (!s->failed() && !s->assigned())
-                    if (!s->prune(a, testfix, _rand)) {
+                    if (!s->prune(a, test_fixpoint, _rand)) {
                         problem = "No fixpoint";
                         delete s;
                         goto failed;
@@ -637,13 +637,13 @@ namespace Test { namespace Int {
                 s->post();
                 c->post();
                 while (!s->failed() && !s->assigned())
-                    if (!s->disabled(a, *c, testfix, _rand)) {
+                    if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                         problem = "Different result after re-enable";
                         delete s;
                         delete c;
                         goto failed;
                     }
-                if (testfix && (s->failed() != c->failed())) {
+                if (test_fixpoint && (s->failed() != c->failed())) {
                     problem = "Different failure after re-enable";
                     delete s;
                     delete c;
@@ -744,7 +744,7 @@ namespace Test { namespace Int {
                         TestSpace* s = new TestSpace(arity, dom, this, RM_EQV);
                         s->post();
                         while (!s->failed() && (!s->assigned() || !s->r.var().assigned()))
-                            if (!s->prune(a, testfix, _rand)) {
+                            if (!s->prune(a, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 goto failed;
@@ -766,7 +766,7 @@ namespace Test { namespace Int {
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || !s->r.var().assigned()))
-                            if (!s->disabled(a, *c, testfix, _rand)) {
+                            if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 delete c;
@@ -886,7 +886,7 @@ namespace Test { namespace Int {
                         TestSpace* s = new TestSpace(arity, dom, this, RM_IMP);
                         s->post();
                         while (!s->failed() && (!s->assigned() || (!sol && !s->r.var().assigned())))
-                            if (!s->prune(a, testfix, _rand)) {
+                            if (!s->prune(a, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 goto failed;
@@ -908,7 +908,7 @@ namespace Test { namespace Int {
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || (!sol && !s->r.var().assigned())))
-                            if (!s->disabled(a, *c, testfix, _rand)) {
+                            if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 delete c;
@@ -1028,7 +1028,7 @@ namespace Test { namespace Int {
                         TestSpace* s = new TestSpace(arity, dom, this, RM_PMI);
                         s->post();
                         while (!s->failed() && (!s->assigned() || (sol && !s->r.var().assigned())))
-                            if (!s->prune(a, testfix, _rand)) {
+                            if (!s->prune(a, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 goto failed;
@@ -1050,7 +1050,7 @@ namespace Test { namespace Int {
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || (sol && !s->r.var().assigned())))
-                            if (!s->disabled(a, *c, testfix, _rand)) {
+                            if (!s->disabled(a, *c, test_fixpoint, _rand)) {
                                 problem = "No fixpoint";
                                 delete s;
                                 delete c;
@@ -1070,7 +1070,7 @@ namespace Test { namespace Int {
                 }
             }
 
-            if (testsearch) {
+            if (test_search) {
                 if (sol) {
                     START_TEST("Search");
                     TestSpace* s = e_s.next();
@@ -1087,7 +1087,7 @@ namespace Test { namespace Int {
             a.next(_rand);
         }
 
-        if (testsearch) {
+        if (test_search) {
             test = "Search";
             if (e_s.next() != nullptr) {
                 problem = "Excess solutions";
@@ -1095,7 +1095,7 @@ namespace Test { namespace Int {
             }
         }
 
-        switch (contest) {
+        switch (consistency_test_level) {
         case CTL_NONE:
             break;
         case CTL_DOMAIN: {
@@ -1148,11 +1148,11 @@ namespace Test { namespace Int {
 
     failed:
         if (opt.log)
-            olog << "FAILURE" << std::endl
-                 << ind(1) << "Test:       " << test << std::endl
-                 << ind(1) << "Problem:    " << problem << std::endl;
+            olog << "FAILURE" << '\n'
+                 << ind(1) << "Test:       " << test << '\n'
+                 << ind(1) << "Problem:    " << problem << '\n';
         if (a.has_more() && opt.log)
-            olog << ind(1) << "Assignment: " << a << std::endl;
+            olog << ind(1) << "Assignment: " << a << '\n';
         delete ap;
 
         return false;
@@ -1199,7 +1199,7 @@ namespace Test { namespace Int {
         void
         post_open(void) {
             if (opt.log)
-                olog << ind(3) << "Posting with " << list.known_length() << " open-list items" << std::endl;
+                olog << ind(3) << "Posting with " << list.known_length() << " open-list items" << '\n';
             static_cast<OpenTest*>(test)->post(*this, list, x);
         }
 
@@ -1234,8 +1234,7 @@ namespace Test { namespace Int {
             checked++;
             if (opt.log) {
                 olog.str("");
-                olog << ind(1) << "Open-list assignment: " << a << (sol ? " (solution)" : " (no solution)")
-                     << std::endl;
+                olog << ind(1) << "Open-list assignment: " << a << (sol ? " (solution)" : " (no solution)") << '\n';
             }
 
             const auto complete = [&](OpenTestSpace& s) {
@@ -1283,7 +1282,7 @@ namespace Test { namespace Int {
 
                     if (n == clone_at) {
                         if (opt.log)
-                            olog << ind(3) << "Cloning open list" << std::endl;
+                            olog << ind(3) << "Cloning open list" << '\n';
                         const int before = s.list.known_length();
                         const int length_min = s.list.length().min();
                         const int length_max = s.list.length().max();
@@ -1305,12 +1304,12 @@ namespace Test { namespace Int {
                         const int end = std::min(items, n + 1 + static_cast<int>(_rand(2)));
                         if (_rand(2) == 0) {
                             if (opt.log)
-                                olog << ind(3) << "Appending through item " << end - 1 << std::endl;
+                                olog << ind(3) << "Appending through item " << end - 1 << '\n';
                             for (int i = s.list.known_length(); i < end; i++)
                                 s.list.append(s, s.x[i]);
                         } else {
                             if (opt.log)
-                                olog << ind(3) << "Requiring " << end << " items" << std::endl;
+                                olog << ind(3) << "Requiring " << end << " items" << '\n';
                             Gecode::rel(s, s.list.length(), IRT_GQ, end);
                         }
                     }
@@ -1320,7 +1319,7 @@ namespace Test { namespace Int {
 
             if (!history()) {
                 if (opt.log)
-                    olog << "FAILURE in incremental open-list history" << std::endl;
+                    olog << "FAILURE in incremental open-list history" << '\n';
                 return false;
             }
         }

@@ -59,7 +59,7 @@ namespace Gecode {
                 GECODE_ES_FAIL((Intersection<ConstSetView, SetView, ConstSetView>::post(home, cy, x, zv)));
             } break;
             case SRT_LQ:
-            case SRT_LE:
+            case SRT_LT:
             case SRT_GQ:
             case SRT_GR: {
                 GlbRanges<ConstSetView> yr(yv);
@@ -103,7 +103,7 @@ namespace Gecode {
                 SetVar tmp(home);
                 SetView tmpv(tmp);
                 IntSetRanges zi(z);
-                GECODE_ME_FAIL(tmpv.excludeI(home, zi));
+                GECODE_ME_FAIL(tmpv.exclude_i(home, zi));
 
                 GlbRanges<ConstSetView> yr(yv);
                 RangesCompl<GlbRanges<ConstSetView>> yrc(yr);

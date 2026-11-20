@@ -65,8 +65,8 @@ namespace Test { namespace Set {
         return cur;
     }
 
-    SetAssignment::SetAssignment(int n0, const Gecode::IntSet& d0, int _withInt)
-        : n(n0), dsv(new CountableSet[n]), ir(_withInt, d0), done(false), lub(d0), withInt(_withInt) {
+    SetAssignment::SetAssignment(int n0, const Gecode::IntSet& d0, int _with_int)
+        : n(n0), dsv(new CountableSet[n]), ir(_with_int, d0), done(false), lub(d0), with_int(_with_int) {
         for (int i = n; i--;)
             dsv[i].init(lub);
     }
@@ -81,7 +81,7 @@ namespace Test { namespace Set {
             dsv[i].init(lub);
             --i;
             if (i < 0) {
-                if (withInt == 0) {
+                if (with_int == 0) {
                     done = true;
                     return;
                 }
@@ -109,7 +109,7 @@ operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
         Gecode::IntSet icsv(csv);
         os << icsv << ((i != n - 1) ? "," : "}");
     }
-    if (a.withInt > 0)
+    if (a.with_int > 0)
         os << a.ints();
     return os;
 }
@@ -117,7 +117,7 @@ operator<<(std::ostream& os, const Test::Set::SetAssignment& a) {
 namespace Test { namespace Set {
 
     SetTestSpace::SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, bool log)
-        : d(d0), y(*this, i, d), withInt(i), r(Gecode::BoolVar(*this, 0, 1), Gecode::RM_EQV), reified(false), test(t) {
+        : d(d0), y(*this, i, d), with_int(i), r(Gecode::BoolVar(*this, 0, 1), Gecode::RM_EQV), reified(false), test(t) {
         using namespace Gecode;
         IntSet u(Gecode::Set::Limits::min, Gecode::Set::Limits::max);
         x = SetVarArray(*this, n, Gecode::IntSet::empty, u);
@@ -129,23 +129,23 @@ namespace Test { namespace Set {
         if (opt.log && log) {
             olog << ind(2) << "Initial: x[]=" << x;
             olog << " y[]=" << y;
-            olog << std::endl;
+            olog << '\n';
         }
     }
 
     SetTestSpace::SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t, Gecode::ReifyMode rm, bool log)
-        : d(d0), x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d), withInt(i), r(Gecode::BoolVar(*this, 0, 1), rm),
-          reified(true), test(t) {
+        : d(d0), x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d), with_int(i),
+          r(Gecode::BoolVar(*this, 0, 1), rm), reified(true), test(t) {
         if (opt.log && log) {
             olog << ind(2) << "Initial: x[]=" << x;
             olog << " y[]=" << y;
             olog << " b=" << r.var();
-            olog << std::endl;
+            olog << '\n';
         }
     }
 
     SetTestSpace::SetTestSpace(SetTestSpace& s)
-        : Gecode::Space(s), d(s.d), withInt(s.withInt), reified(s.reified), test(s.test) {
+        : Gecode::Space(s), d(s.d), with_int(s.with_int), reified(s.reified), test(s.test) {
         x.update(*this, s.x);
         y.update(*this, s.y);
         Gecode::BoolVar b;
@@ -165,20 +165,20 @@ namespace Test { namespace Set {
         if (reified) {
             test->post(*this, x, y, r);
             if (opt.log)
-                olog << ind(3) << "Posting reified propagator" << std::endl;
+                olog << ind(3) << "Posting reified propagator" << '\n';
         } else {
             test->post(*this, x, y);
             if (opt.log)
-                olog << ind(3) << "Posting propagator" << std::endl;
+                olog << ind(3) << "Posting propagator" << '\n';
         }
     }
 
     bool
     SetTestSpace::failed(void) {
         if (opt.log) {
-            olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=" << y << std::endl;
+            olog << ind(3) << "Fixpoint: x[]=" << x << " y[]=" << y << '\n';
             bool f = (status() == Gecode::SS_FAILED);
-            olog << ind(3) << "     -->  x[]=" << x << " y[]=" << y << std::endl;
+            olog << ind(3) << "     -->  x[]=" << x << " y[]=" << y << '\n';
             return f;
         } else {
             return status() == Gecode::SS_FAILED;
@@ -201,7 +201,7 @@ namespace Test { namespace Set {
             case Gecode::SRT_LQ:
                 olog << "<=";
                 break;
-            case Gecode::SRT_LE:
+            case Gecode::SRT_LT:
                 olog << "<";
                 break;
             case Gecode::SRT_GQ:
@@ -226,17 +226,17 @@ namespace Test { namespace Set {
                 olog << "^-1 = ";
                 break;
             }
-            olog << is << std::endl;
+            olog << is << '\n';
         }
         Gecode::dom(*this, x[i], srt, is);
     }
 
     void
-    SetTestSpace::cardinality(int i, int cmin, int cmax) {
+    SetTestSpace::cardinality(int i, int min_cardinality, int max_cardinality) {
         if (opt.log) {
-            olog << ind(4) << cmin << " <= #(x[" << i << "]) <= " << cmax << std::endl;
+            olog << ind(4) << min_cardinality << " <= #(x[" << i << "]) <= " << max_cardinality << '\n';
         }
-        Gecode::cardinality(*this, x[i], cmin, cmax);
+        Gecode::cardinality(*this, x[i], min_cardinality, max_cardinality);
     }
 
     void
@@ -253,7 +253,7 @@ namespace Test { namespace Set {
             case Gecode::IRT_LQ:
                 olog << "<=";
                 break;
-            case Gecode::IRT_LE:
+            case Gecode::IRT_LT:
                 olog << "<";
                 break;
             case Gecode::IRT_GQ:
@@ -263,7 +263,7 @@ namespace Test { namespace Set {
                 olog << ">";
                 break;
             }
-            olog << " " << n << std::endl;
+            olog << " " << n << '\n';
         }
         Gecode::rel(*this, y[i], irt, n);
     }
@@ -273,7 +273,7 @@ namespace Test { namespace Set {
         int n = sol ? 1 : 0;
         assert(reified);
         if (opt.log)
-            olog << ind(4) << "b = " << n << std::endl;
+            olog << ind(4) << "b = " << n << '\n';
         Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
     }
 
@@ -286,7 +286,7 @@ namespace Test { namespace Set {
             if (Base::fixpoint(rand) && failed())
                 return;
         }
-        for (int i = withInt; i--;) {
+        for (int i = with_int; i--;) {
             rel(i, Gecode::IRT_EQ, a.ints()[i]);
             if (Base::fixpoint(rand) && failed())
                 return;
@@ -305,66 +305,66 @@ namespace Test { namespace Set {
     }
 
     void
-    SetTestSpace::removeFromLub(int v, int i, const SetAssignment& a) {
+    SetTestSpace::remove_from_lub(int v, int i, const SetAssignment& a) {
         using namespace Gecode;
         SetVarUnknownRanges ur(x[i]);
         CountableSetRanges air(a.lub, a[i]);
         Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, CountableSetRanges> diff(ur, air);
         Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, CountableSetRanges>>
-            diffV(diff);
-        for (int j = 0; j < v; j++, ++diffV) {
+            diff_v(diff);
+        for (int j = 0; j < v; j++, ++diff_v) {
         }
-        rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
+        rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diff_v.val(), diff_v.val()));
     }
 
     void
-    SetTestSpace::removeFromLub(int v, int i, const SetAssignment& a, SetTestSpace& c) {
+    SetTestSpace::remove_from_lub(int v, int i, const SetAssignment& a, SetTestSpace& c) {
         using namespace Gecode;
         SetVarUnknownRanges ur(x[i]);
         CountableSetRanges air(a.lub, a[i]);
         Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, CountableSetRanges> diff(ur, air);
         Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges, CountableSetRanges>>
-            diffV(diff);
-        for (int j = 0; j < v; j++, ++diffV) {
+            diff_v(diff);
+        for (int j = 0; j < v; j++, ++diff_v) {
         }
-        rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
-        c.rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
+        rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diff_v.val(), diff_v.val()));
+        c.rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diff_v.val(), diff_v.val()));
     }
 
     void
-    SetTestSpace::addToGlb(int v, int i, const SetAssignment& a) {
+    SetTestSpace::add_to_glb(int v, int i, const SetAssignment& a) {
         using namespace Gecode;
         SetVarUnknownRanges ur(x[i]);
         CountableSetRanges air(a.lub, a[i]);
         Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, CountableSetRanges> inter(ur, air);
         Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, CountableSetRanges>>
-            interV(inter);
-        for (int j = 0; j < v; j++, ++interV) {
+            inter_v(inter);
+        for (int j = 0; j < v; j++, ++inter_v) {
         }
-        rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
+        rel(i, Gecode::SRT_SUP, Gecode::IntSet(inter_v.val(), inter_v.val()));
     }
 
     void
-    SetTestSpace::addToGlb(int v, int i, const SetAssignment& a, SetTestSpace& c) {
+    SetTestSpace::add_to_glb(int v, int i, const SetAssignment& a, SetTestSpace& c) {
         using namespace Gecode;
         SetVarUnknownRanges ur(x[i]);
         CountableSetRanges air(a.lub, a[i]);
         Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, CountableSetRanges> inter(ur, air);
         Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, CountableSetRanges>>
-            interV(inter);
-        for (int j = 0; j < v; j++, ++interV) {
+            inter_v(inter);
+        for (int j = 0; j < v; j++, ++inter_v) {
         }
-        rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
-        c.rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
+        rel(i, Gecode::SRT_SUP, Gecode::IntSet(inter_v.val(), inter_v.val()));
+        c.rel(i, Gecode::SRT_SUP, Gecode::IntSet(inter_v.val(), inter_v.val()));
     }
 
     bool
-    SetTestSpace::fixprob(void) {
+    SetTestSpace::check_fixpoint(void) {
         if (failed())
             return true;
         SetTestSpace* c = static_cast<SetTestSpace*>(clone());
         if (opt.log)
-            olog << ind(3) << "Testing fixpoint on copy" << std::endl;
+            olog << ind(3) << "Testing fixpoint on copy" << '\n';
         c->post();
         if (c->failed()) {
             delete c;
@@ -372,8 +372,8 @@ namespace Test { namespace Set {
         }
 
         for (int i = x.size(); i--;)
-            if (x[i].glbSize() != c->x[i].glbSize() || x[i].lubSize() != c->x[i].lubSize() ||
-                x[i].cardMin() != c->x[i].cardMin() || x[i].cardMax() != c->x[i].cardMax()) {
+            if (x[i].glb_size() != c->x[i].glb_size() || x[i].lub_size() != c->x[i].lub_size() ||
+                x[i].card_min() != c->x[i].card_min() || x[i].card_max() != c->x[i].card_max()) {
                 delete c;
                 return false;
             }
@@ -387,7 +387,7 @@ namespace Test { namespace Set {
             return false;
         }
         if (opt.log)
-            olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
+            olog << ind(3) << "Finished testing fixpoint on copy" << '\n';
         delete c;
         return true;
     }
@@ -395,7 +395,7 @@ namespace Test { namespace Set {
     bool
     SetTestSpace::same(SetTestSpace& c) {
         if (opt.log)
-            olog << ind(3) << "Testing whether enabled space is the same" << std::endl;
+            olog << ind(3) << "Testing whether enabled space is the same" << '\n';
         bool f = failed();
         bool cf = c.failed();
         if (f != cf)
@@ -404,8 +404,8 @@ namespace Test { namespace Set {
             return true;
 
         for (int i = x.size(); i--;)
-            if (x[i].glbSize() != c.x[i].glbSize() || x[i].lubSize() != c.x[i].lubSize() ||
-                x[i].cardMin() != c.x[i].cardMin() || x[i].cardMax() != c.x[i].cardMax())
+            if (x[i].glb_size() != c.x[i].glb_size() || x[i].lub_size() != c.x[i].lub_size() ||
+                x[i].card_min() != c.x[i].card_min() || x[i].card_max() != c.x[i].card_max())
                 return false;
 
         for (int i = y.size(); i--;)
@@ -415,37 +415,37 @@ namespace Test { namespace Set {
         if (reified && (r.var().size() != c.r.var().size()))
             return false;
         if (opt.log)
-            olog << ind(3) << "Finished testing whether enabled space is the same" << std::endl;
+            olog << ind(3) << "Finished testing whether enabled space is the same" << '\n';
         return true;
     }
 
     bool
     SetTestSpace::prune(const SetAssignment& a, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
-        bool setsAssigned = true;
+        bool sets_assigned = true;
         for (int j = x.size(); j--;)
             if (!x[j].assigned()) {
-                setsAssigned = false;
+                sets_assigned = false;
                 break;
             }
-        bool intsAssigned = true;
+        bool ints_assigned = true;
         for (int j = y.size(); j--;)
             if (!y[j].assigned()) {
-                intsAssigned = false;
+                ints_assigned = false;
                 break;
             }
 
         // Select variable to be pruned
         int i;
-        if (intsAssigned) {
+        if (ints_assigned) {
             i = rand(x.size());
-        } else if (setsAssigned) {
+        } else if (sets_assigned) {
             i = rand(y.size());
         } else {
             i = rand(x.size() + y.size());
         }
 
-        if (setsAssigned || i >= x.size()) {
+        if (sets_assigned || i >= x.size()) {
             if (i >= x.size())
                 i = i - x.size();
             while (y[i].assigned()) {
@@ -459,7 +459,7 @@ namespace Test { namespace Set {
                 if (a.ints()[i] < y[i].max()) {
                     int v = a.ints()[i] + 1 + rand(static_cast<unsigned int>(y[i].max() - a.ints()[i]));
                     assert((v > a.ints()[i]) && (v <= y[i].max()));
-                    rel(i, Gecode::IRT_LE, v);
+                    rel(i, Gecode::IRT_LT, v);
                 }
                 break;
             case 1:
@@ -493,7 +493,7 @@ namespace Test { namespace Set {
                 }
                 rel(i, Gecode::IRT_NQ, v);
             }
-            return (!Base::fixpoint(rand) || fixprob());
+            return (!Base::fixpoint(rand) || check_fixpoint());
         }
         while (x[i].assigned()) {
             i = (i + 1) % x.size();
@@ -505,79 +505,79 @@ namespace Test { namespace Set {
         CountableSetRanges air2(a.lub, a[i]);
         Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, CountableSetRanges> inter(ur2, air2);
 
-        CountableSetRanges aisizer(a.lub, a[i]);
-        unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
+        CountableSetRanges assignment_ranges(a.lub, a[i]);
+        unsigned int assignment_size = Gecode::Iter::Ranges::size(assignment_ranges);
 
         // Select mode for pruning
         switch (rand(5)) {
         case 0:
             if (inter()) {
                 int v = rand(Gecode::Iter::Ranges::size(inter));
-                addToGlb(v, i, a);
+                add_to_glb(v, i, a);
             }
             break;
         case 1:
             if (diff()) {
                 int v = rand(Gecode::Iter::Ranges::size(diff));
-                removeFromLub(v, i, a);
+                remove_from_lub(v, i, a);
             }
             break;
         case 2:
-            if (x[i].cardMin() < aisize) {
-                unsigned int newc = x[i].cardMin() + 1 + rand(aisize - x[i].cardMin());
-                assert(newc > x[i].cardMin());
-                assert(newc <= aisize);
-                cardinality(i, newc, Gecode::Set::Limits::card);
+            if (x[i].card_min() < assignment_size) {
+                unsigned int new_cardinality = x[i].card_min() + 1 + rand(assignment_size - x[i].card_min());
+                assert(new_cardinality > x[i].card_min());
+                assert(new_cardinality <= assignment_size);
+                cardinality(i, new_cardinality, Gecode::Set::Limits::card);
             }
             break;
         case 3:
-            if (x[i].cardMax() > aisize) {
-                unsigned int newc = x[i].cardMax() - 1 - rand(x[i].cardMax() - aisize);
-                assert(newc < x[i].cardMax());
-                assert(newc >= aisize);
-                cardinality(i, 0, newc);
+            if (x[i].card_max() > assignment_size) {
+                unsigned int new_cardinality = x[i].card_max() - 1 - rand(x[i].card_max() - assignment_size);
+                assert(new_cardinality < x[i].card_max());
+                assert(new_cardinality >= assignment_size);
+                cardinality(i, 0, new_cardinality);
             }
             break;
         default:
             if (inter()) {
                 int v = rand(Gecode::Iter::Ranges::size(inter));
-                addToGlb(v, i, a);
+                add_to_glb(v, i, a);
             } else {
                 int v = rand(Gecode::Iter::Ranges::size(diff));
-                removeFromLub(v, i, a);
+                remove_from_lub(v, i, a);
             }
         }
-        return (!Base::fixpoint(rand) || fixprob());
+        return (!Base::fixpoint(rand) || check_fixpoint());
     }
 
     bool
     SetTestSpace::disabled(const SetAssignment& a, SetTestSpace& c, Gecode::Support::RandomGenerator& rand) {
         c.disable();
         using namespace Gecode;
-        bool setsAssigned = true;
+        bool sets_assigned = true;
         for (int j = x.size(); j--;)
             if (!x[j].assigned()) {
-                setsAssigned = false;
+                sets_assigned = false;
                 break;
             }
-        bool intsAssigned = true;
+        bool ints_assigned = true;
         for (int j = y.size(); j--;)
             if (!y[j].assigned()) {
-                intsAssigned = false;
+                ints_assigned = false;
                 break;
             }
 
         // Select variable to be pruned
         int i;
-        if (intsAssigned) {
+        if (ints_assigned) {
             i = rand(x.size());
-        } else if (setsAssigned) {
+        } else if (sets_assigned) {
             i = rand(y.size());
         } else {
             i = rand(x.size() + y.size());
         }
 
-        if (setsAssigned || i >= x.size()) {
+        if (sets_assigned || i >= x.size()) {
             if (i >= x.size())
                 i = i - x.size();
             while (y[i].assigned()) {
@@ -591,8 +591,8 @@ namespace Test { namespace Set {
                 if (a.ints()[i] < y[i].max()) {
                     int v = a.ints()[i] + 1 + rand(static_cast<unsigned int>(y[i].max() - a.ints()[i]));
                     assert((v > a.ints()[i]) && (v <= y[i].max()));
-                    rel(i, Gecode::IRT_LE, v);
-                    c.rel(i, Gecode::IRT_LE, v);
+                    rel(i, Gecode::IRT_LT, v);
+                    c.rel(i, Gecode::IRT_LT, v);
                 }
                 break;
             case 1:
@@ -641,48 +641,48 @@ namespace Test { namespace Set {
         CountableSetRanges air2(a.lub, a[i]);
         Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges, CountableSetRanges> inter(ur2, air2);
 
-        CountableSetRanges aisizer(a.lub, a[i]);
-        unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
+        CountableSetRanges assignment_ranges(a.lub, a[i]);
+        unsigned int assignment_size = Gecode::Iter::Ranges::size(assignment_ranges);
 
         // Select mode for pruning
         switch (rand(5)) {
         case 0:
             if (inter()) {
                 int v = rand(Gecode::Iter::Ranges::size(inter));
-                addToGlb(v, i, a, c);
+                add_to_glb(v, i, a, c);
             }
             break;
         case 1:
             if (diff()) {
                 int v = rand(Gecode::Iter::Ranges::size(diff));
-                removeFromLub(v, i, a, c);
+                remove_from_lub(v, i, a, c);
             }
             break;
         case 2:
-            if (x[i].cardMin() < aisize) {
-                unsigned int newc = x[i].cardMin() + 1 + rand(aisize - x[i].cardMin());
-                assert(newc > x[i].cardMin());
-                assert(newc <= aisize);
-                cardinality(i, newc, Gecode::Set::Limits::card);
-                c.cardinality(i, newc, Gecode::Set::Limits::card);
+            if (x[i].card_min() < assignment_size) {
+                unsigned int new_cardinality = x[i].card_min() + 1 + rand(assignment_size - x[i].card_min());
+                assert(new_cardinality > x[i].card_min());
+                assert(new_cardinality <= assignment_size);
+                cardinality(i, new_cardinality, Gecode::Set::Limits::card);
+                c.cardinality(i, new_cardinality, Gecode::Set::Limits::card);
             }
             break;
         case 3:
-            if (x[i].cardMax() > aisize) {
-                unsigned int newc = x[i].cardMax() - 1 - rand(x[i].cardMax() - aisize);
-                assert(newc < x[i].cardMax());
-                assert(newc >= aisize);
-                cardinality(i, 0, newc);
-                c.cardinality(i, 0, newc);
+            if (x[i].card_max() > assignment_size) {
+                unsigned int new_cardinality = x[i].card_max() - 1 - rand(x[i].card_max() - assignment_size);
+                assert(new_cardinality < x[i].card_max());
+                assert(new_cardinality >= assignment_size);
+                cardinality(i, 0, new_cardinality);
+                c.cardinality(i, 0, new_cardinality);
             }
             break;
         default:
             if (inter()) {
                 int v = rand(Gecode::Iter::Ranges::size(inter));
-                addToGlb(v, i, a, c);
+                add_to_glb(v, i, a, c);
             } else {
                 int v = rand(Gecode::Iter::Ranges::size(diff));
-                removeFromLub(v, i, a, c);
+                remove_from_lub(v, i, a, c);
             }
         }
         c.enable();
@@ -709,7 +709,7 @@ namespace Test { namespace Set {
 #define CHECK_TEST(T, M)                                                                                               \
     do {                                                                                                               \
         if (opt.log)                                                                                                   \
-            olog << ind(3) << "Check: " << (M) << std::endl;                                                           \
+            olog << ind(3) << "Check: " << (M) << '\n';                                                                \
         if (!(T)) {                                                                                                    \
             problem = (M);                                                                                             \
             delete s;                                                                                                  \
@@ -722,7 +722,7 @@ namespace Test { namespace Set {
     do {                                                                                                               \
         if (opt.log) {                                                                                                 \
             olog.str("");                                                                                              \
-            olog << ind(2) << "Testing: " << (T) << std::endl;                                                         \
+            olog << ind(2) << "Testing: " << (T) << '\n';                                                              \
         }                                                                                                              \
         test = (T);                                                                                                    \
     } while (false)
@@ -733,27 +733,27 @@ namespace Test { namespace Set {
         const char* test = "NONE";
         const char* problem = "NONE";
 
-        SetAssignment* ap = new SetAssignment(arity, lub, withInt);
+        SetAssignment* ap = new SetAssignment(arity, lub, with_int);
         SetAssignment& a = *ap;
         while (a()) {
             bool is_sol = solution(a);
             if (opt.log)
-                olog << ind(1) << "Assignment: " << a << (is_sol ? " (solution)" : " (no solution)") << std::endl;
+                olog << ind(1) << "Assignment: " << a << (is_sol ? " (solution)" : " (no solution)") << '\n';
             START_TEST("Assignment (after posting)");
             {
-                SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this);
+                SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this);
                 SetTestSpace* sc = nullptr;
                 s->post();
                 switch (_rand(2)) {
                 case 0:
                     if (opt.log)
-                        olog << ind(3) << "No copy" << std::endl;
+                        olog << ind(3) << "No copy" << '\n';
                     sc = s;
                     s = nullptr;
                     break;
                 case 1:
                     if (opt.log)
-                        olog << ind(3) << "Copy" << std::endl;
+                        olog << ind(3) << "Copy" << '\n';
                     if (s->status() != Gecode::SS_FAILED) {
                         sc = static_cast<SetTestSpace*>(s->clone());
                     } else {
@@ -767,7 +767,7 @@ namespace Test { namespace Set {
                 sc->assign(a, _rand);
                 if (is_sol) {
                     CHECK_TEST(!sc->failed(), "Failed on solution");
-                    CHECK_TEST(sc->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(sc->subsumed(test_subsumption), "No subsumption");
                 } else {
                     CHECK_TEST(sc->failed(), "Solved on non-solution");
                 }
@@ -776,14 +776,14 @@ namespace Test { namespace Set {
             }
             START_TEST("Assignment (after posting, disable)");
             {
-                SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this);
+                SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this);
                 s->post();
                 s->disable();
                 s->assign(a, _rand);
                 s->enable();
                 if (is_sol) {
                     CHECK_TEST(!s->failed(), "Failed on solution");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                 } else {
                     CHECK_TEST(s->failed(), "Solved on non-solution");
                 }
@@ -791,12 +791,12 @@ namespace Test { namespace Set {
             }
             START_TEST("Assignment (before posting)");
             {
-                SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this);
+                SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this);
                 s->assign(a, _rand);
                 s->post();
                 if (is_sol) {
                     CHECK_TEST(!s->failed(), "Failed on solution");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                 } else {
                     CHECK_TEST(s->failed(), "Solved on non-solution");
                 }
@@ -804,7 +804,7 @@ namespace Test { namespace Set {
             }
             START_TEST("Prune");
             {
-                SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this);
+                SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this);
                 s->post();
                 while (!s->failed() && !s->assigned())
                     if (!s->prune(a, _rand)) {
@@ -815,7 +815,7 @@ namespace Test { namespace Set {
                 s->assign(a, _rand);
                 if (is_sol) {
                     CHECK_TEST(!s->failed(), "Failed on solution");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                 } else {
                     CHECK_TEST(s->failed(), "Solved on non-solution");
                 }
@@ -824,8 +824,8 @@ namespace Test { namespace Set {
             if (disabled) {
                 START_TEST("Prune (disable)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this);
-                    SetTestSpace* c = new SetTestSpace(arity, lub, withInt, this);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this);
+                    SetTestSpace* c = new SetTestSpace(arity, lub, with_int, this);
                     s->post();
                     c->post();
                     while (!s->failed() && !s->assigned())
@@ -850,37 +850,37 @@ namespace Test { namespace Set {
             if (reified) {
                 START_TEST("Assignment reified (rewrite after post, <=>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->post();
                     s->rel(is_sol);
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     delete s;
                 }
                 START_TEST("Assignment reified (rewrite after post, =>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->post();
                     s->rel(is_sol);
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     delete s;
                 }
                 START_TEST("Assignment reified (rewrite after post, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->post();
                     s->rel(is_sol);
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     delete s;
                 }
                 {
                     START_TEST("Assignment reified (rewrite failure, <=>)");
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->post();
                     s->rel(!is_sol);
                     s->assign(a, _rand);
@@ -889,13 +889,13 @@ namespace Test { namespace Set {
                 }
                 {
                     START_TEST("Assignment reified (rewrite failure, =>)");
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->post();
                     s->rel(!is_sol);
                     s->assign(a, _rand);
                     if (is_sol) {
                         CHECK_TEST(!s->failed(), "Failed");
-                        CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                        CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     } else {
                         CHECK_TEST(s->failed(), "Not failed");
                     }
@@ -903,7 +903,7 @@ namespace Test { namespace Set {
                 }
                 {
                     START_TEST("Assignment reified (rewrite failure, <=)");
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->post();
                     s->rel(!is_sol);
                     s->assign(a, _rand);
@@ -911,43 +911,43 @@ namespace Test { namespace Set {
                         CHECK_TEST(s->failed(), "Not failed");
                     } else {
                         CHECK_TEST(!s->failed(), "Failed");
-                        CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                        CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     }
                     delete s;
                 }
                 START_TEST("Assignment reified (immediate rewrite, <=>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->rel(is_sol);
                     s->post();
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     delete s;
                 }
                 START_TEST("Assignment reified (immediate rewrite, =>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->rel(is_sol);
                     s->post();
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     delete s;
                 }
                 START_TEST("Assignment reified (immediate rewrite, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->rel(is_sol);
                     s->post();
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     delete s;
                 }
                 START_TEST("Assignment reified (immediate failure, <=>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->rel(!is_sol);
                     s->post();
                     s->assign(a, _rand);
@@ -956,13 +956,13 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (immediate failure, =>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->rel(!is_sol);
                     s->post();
                     s->assign(a, _rand);
                     if (is_sol) {
                         CHECK_TEST(!s->failed(), "Failed");
-                        CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                        CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     } else {
                         CHECK_TEST(s->failed(), "Not failed");
                     }
@@ -970,7 +970,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (immediate failure, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->rel(!is_sol);
                     s->post();
                     s->assign(a, _rand);
@@ -978,17 +978,17 @@ namespace Test { namespace Set {
                         CHECK_TEST(s->failed(), "Not failed");
                     } else {
                         CHECK_TEST(!s->failed(), "Failed");
-                        CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                        CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     }
                     delete s;
                 }
                 START_TEST("Assignment reified (before posting, <=>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->assign(a, _rand);
                     s->post();
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -999,11 +999,11 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (before posting, =>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->assign(a, _rand);
                     s->post();
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
                     } else {
@@ -1014,11 +1014,11 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (before posting, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->assign(a, _rand);
                     s->post();
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -1029,11 +1029,11 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, <=>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->post();
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -1044,11 +1044,11 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, =>)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->post();
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
                     } else {
@@ -1059,11 +1059,11 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, <=)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->post();
                     s->assign(a, _rand);
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -1074,13 +1074,13 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, <=>, disable)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->post();
                     s->disable();
                     s->assign(a, _rand);
                     s->enable();
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -1091,13 +1091,13 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, =>, disable)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->post();
                     s->disable();
                     s->assign(a, _rand);
                     s->enable();
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
                     } else {
@@ -1108,13 +1108,13 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Assignment reified (after posting, <=, disable)");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->post();
                     s->disable();
                     s->assign(a, _rand);
                     s->enable();
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -1125,7 +1125,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Prune reified, <=>");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_EQV);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_EQV);
                     s->post();
                     while (!s->failed() && (!s->assigned() || !s->r.var().assigned()))
                         if (!s->prune(a, _rand)) {
@@ -1134,7 +1134,7 @@ namespace Test { namespace Set {
                             goto failed;
                         }
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -1145,7 +1145,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Prune reified, =>");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_IMP);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_IMP);
                     s->post();
                     while (!s->failed() && (!s->assigned() || (!is_sol && !s->r.var().assigned()))) {
                         if (!s->prune(a, _rand)) {
@@ -1155,7 +1155,7 @@ namespace Test { namespace Set {
                         }
                     }
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
                     } else {
@@ -1166,7 +1166,7 @@ namespace Test { namespace Set {
                 }
                 START_TEST("Prune reified, <=");
                 {
-                    SetTestSpace* s = new SetTestSpace(arity, lub, withInt, this, RM_PMI);
+                    SetTestSpace* s = new SetTestSpace(arity, lub, with_int, this, RM_PMI);
                     s->post();
                     while (!s->failed() && (!s->assigned() || (is_sol && !s->r.var().assigned())))
                         if (!s->prune(a, _rand)) {
@@ -1175,7 +1175,7 @@ namespace Test { namespace Set {
                             goto failed;
                         }
                     CHECK_TEST(!s->failed(), "Failed");
-                    CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
+                    CHECK_TEST(s->subsumed(test_subsumption), "No subsumption");
                     if (is_sol) {
                         CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
                         CHECK_TEST(s->r.var().val() == 1, "Zero on solution");
@@ -1191,11 +1191,11 @@ namespace Test { namespace Set {
         return true;
     failed:
         if (opt.log)
-            olog << "FAILURE" << std::endl
-                 << ind(1) << "Test:       " << test << std::endl
-                 << ind(1) << "Problem:    " << problem << std::endl;
+            olog << "FAILURE" << '\n'
+                 << ind(1) << "Test:       " << test << '\n'
+                 << ind(1) << "Problem:    " << problem << '\n';
         if (a() && opt.log)
-            olog << ind(1) << "Assignment: " << a << std::endl;
+            olog << ind(1) << "Assignment: " << a << '\n';
         delete ap;
 
         return false;

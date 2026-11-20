@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace Int {
             els_arr[i] = elements[i];
         IntSet els(els_arr, elements.size());
         IntSetRanges er(els);
-        GECODE_ME_CHECK(x.intersectI(home, er));
+        GECODE_ME_CHECK(x.intersect_i(home, er));
         (void)new (home) Weights(home, elements, weights, x, y);
         return ES_OK;
     }
@@ -205,7 +205,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Compute the weight of the elements in the iterator \a I
     template <class I>
     forceinline int
-    weightI(SharedArray<int>& elements, SharedArray<int>& weights, I& iter) {
+    weight_i(SharedArray<int>& elements, SharedArray<int>& weights, I& iter) {
         int sum = 0;
         int i = 0;
         Iter::Ranges::ToValues<I> v(iter);
@@ -240,97 +240,97 @@ namespace Gecode { namespace Set { namespace Int {
             // Collect the weights of the elements in the unknown set in an array
             int size = elements.size();
             Region r;
-            int* minWeights = r.alloc<int>(size);
-            int* maxWeights = r.alloc<int>(size);
+            int* min_weights = r.alloc<int>(size);
+            int* max_weights = r.alloc<int>(size);
 
             UnknownRanges<View> ur(x);
             Iter::Ranges::ToValues<UnknownRanges<View>> urv(ur);
             for (int i = 0; i < size; i++) {
                 if (!urv() || elements[i] < urv.val()) {
-                    minWeights[i] = INT_MAX;
-                    maxWeights[i] = INT_MIN;
+                    min_weights[i] = INT_MAX;
+                    max_weights[i] = INT_MIN;
                 } else {
                     assert(elements[i] == urv.val());
-                    minWeights[i] = weights[i];
-                    maxWeights[i] = weights[i];
+                    min_weights[i] = weights[i];
+                    max_weights[i] = weights[i];
                     ++urv;
                 }
             }
 
             // Sort the weights of the unknown elements
             IntLess il;
-            Support::quicksort<int>(minWeights, size, il);
-            Support::quicksort<int>(maxWeights, size, il);
+            Support::quicksort<int>(min_weights, size, il);
+            Support::quicksort<int>(max_weights, size, il);
 
             // The maximum number of elements that can still be added to x
-            int delta = static_cast<int>(std::min(x.unknownSize(), x.cardMax() - x.glbSize()));
+            int delta = static_cast<int>(std::min(x.unknown_size(), x.card_max() - x.glb_size()));
 
             // The weight of the elements already in x
             GlbRanges<View> glb(x);
-            int glbWeight = weightI<GlbRanges<View>>(elements, weights, glb);
+            int glb_weight = weight_i<GlbRanges<View>>(elements, weights, glb);
 
             // Compute the weight of the current lower bound of x, plus at most
             // delta-1 further elements with smallest negative weights. This weight
             // determines which elements in the upper bound cannot possibly be
             // added to x (those whose weight would exceed the capacity even if
             // all other elements are minimal)
-            int lowWeight = glbWeight;
+            int low_weight = glb_weight;
             for (int i = 0; i < delta - 1; i++) {
-                if (minWeights[i] >= 0)
+                if (min_weights[i] >= 0)
                     break;
-                lowWeight += minWeights[i];
+                low_weight += min_weights[i];
             }
 
             // Compute the lowest possible weight of x. If there is another element
             // with negative weight left, then add its weight to lowWeight.
             // Otherwise lowWeight is already the lowest possible weight.
-            int lowestWeight = lowWeight;
-            if (delta > 0 && minWeights[delta - 1] < 0)
-                lowestWeight += minWeights[delta - 1];
+            int lowest_weight = low_weight;
+            if (delta > 0 && min_weights[delta - 1] < 0)
+                lowest_weight += min_weights[delta - 1];
 
             // If after including the minimal number of required elements,
             // no more element with negative weight is available, then
             // a tighter lower bound can be computed.
-            if ((x.cardMin() - x.glbSize() > 0 && minWeights[x.cardMin() - x.glbSize() - 1] >= 0) ||
-                minWeights[0] >= 0) {
-                int lowestPosWeight = glbWeight;
-                for (unsigned int i = 0; i < x.cardMin() - x.glbSize(); i++) {
-                    lowestPosWeight += minWeights[i];
+            if ((x.card_min() - x.glb_size() > 0 && min_weights[x.card_min() - x.glb_size() - 1] >= 0) ||
+                min_weights[0] >= 0) {
+                int lowest_pos_weight = glb_weight;
+                for (unsigned int i = 0; i < x.card_min() - x.glb_size(); i++) {
+                    lowest_pos_weight += min_weights[i];
                 }
-                lowestWeight = std::max(lowestWeight, lowestPosWeight);
+                lowest_weight = std::max(lowest_weight, lowest_pos_weight);
             }
 
             // Compute the highest possible weight of x as the weight of the lower
             // bound plus the weight of the delta heaviest elements still in the
             // upper bound.
-            int highestWeight = glbWeight;
+            int highest_weight = glb_weight;
             for (int i = 0; i < delta; i++) {
-                if (maxWeights[size - i - 1] <= 0)
+                if (max_weights[size - i - 1] <= 0)
                     break;
-                highestWeight += maxWeights[size - i - 1];
+                highest_weight += max_weights[size - i - 1];
             }
 
             // Prune the weight using the computed bounds
-            GECODE_ME_CHECK(y.gq(home, lowestWeight));
-            GECODE_ME_CHECK(y.lq(home, highestWeight));
+            GECODE_ME_CHECK(y.gq(home, lowest_weight));
+            GECODE_ME_CHECK(y.lq(home, highest_weight));
 
             // Exclude all elements that are too heavy from the set x.
             // Elements are too heavy if their weight alone already
             // exceeds the remaining capacity
-            int remainingCapacity = y.max() - lowWeight;
+            int remaining_capacity = y.max() - low_weight;
 
             UnknownRanges<View> ur2(x);
             Iter::Ranges::ToValues<UnknownRanges<View>> urv2(ur2);
-            OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View>>> ov(remainingCapacity, elements, weights,
+            OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View>>> ov(remaining_capacity, elements, weights,
                                                                              urv2);
             Iter::Values::ToRanges<OverweightValues<Iter::Ranges::ToValues<UnknownRanges<View>>>> ovr(ov);
-            me = x.excludeI(home, ovr);
+            me = x.exclude_i(home, ovr);
             GECODE_ME_CHECK(me);
         }
         if (x.assigned()) {
             // If x is assigned, just compute its weight and assign y.
             GlbRanges<View> glb(x);
-            int w = weightI<GlbRanges<View>>(elements, weights, glb);
+            int w = weight_i<GlbRanges<View>>(elements, weights, glb);
             GECODE_ME_CHECK(y.eq(home, w));
             return home.ES_SUBSUMED(*this);
         }

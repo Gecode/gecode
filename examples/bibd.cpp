@@ -68,15 +68,15 @@ public:
         derive();
     }
     /// Print help message
-    virtual void
-    help(void) {
+    void
+    help(void) override {
         Options::help();
-        std::cerr << "\t(unsigned int) default: " << v << std::endl
-                  << "\t\tparameter v" << std::endl
-                  << "\t(unsigned int) default: " << k << std::endl
-                  << "\t\tparameter k" << std::endl
-                  << "\t(unsigned int) default: " << lambda << std::endl
-                  << "\t\tparameter lambda" << std::endl;
+        std::cerr << "\t(unsigned int) default: " << v << '\n'
+                  << "\t\tparameter v" << '\n'
+                  << "\t(unsigned int) default: " << k << '\n'
+                  << "\t\tparameter k" << '\n'
+                  << "\t(unsigned int) default: " << lambda << '\n'
+                  << "\t\tparameter lambda" << '\n';
     }
 };
 
@@ -141,17 +141,17 @@ public:
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "\tBIBD(" << opt.v << "," << opt.k << "," << opt.lambda << ")" << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "\tBIBD(" << opt.v << "," << opt.k << "," << opt.lambda << ")" << '\n';
         Matrix<BoolVarArray> p(_p, opt.b, opt.v);
         for (int i = 0; i < opt.v; i++) {
             os << "\t\t";
             for (int j = 0; j < opt.b; j++)
                 os << p(j, i) << " ";
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 
     /// Constructor for cloning \a s
@@ -160,8 +160,8 @@ public:
     }
 
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new BIBD(*this);
     }
 };

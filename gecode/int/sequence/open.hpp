@@ -113,13 +113,13 @@ namespace Gecode { namespace Int { namespace Sequence {
         }
 
     public:
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::linear(PropCost::HI, list.known_length());
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             OpenListPropagator<View>::reschedule(home);
             first = 0;
             last = list.known_length() - width;
@@ -156,13 +156,13 @@ namespace Gecode { namespace Int { namespace Sequence {
             : OpenWindowPropagator<View>(home, p), values(p.values), lower(p.lower), upper(p.upper) {}
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) Open(home, *this);
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& advisor, const Delta&) {
+        ExecStatus
+        advise(Space& home, Advisor& advisor, const Delta&) override {
             OpenWindowAdvisor& a = static_cast<OpenWindowAdvisor&>(advisor);
             View x(list[a.index]);
             if (undecided(x, values))
@@ -173,8 +173,8 @@ namespace Gecode { namespace Int { namespace Sequence {
             return home.ES_NOFIX_DISPOSE(council, a);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             for (int i = processed; i < size; i++)
                 if (undecided(list[i], values))
@@ -232,8 +232,8 @@ namespace Gecode { namespace Int { namespace Sequence {
             return closed() && ((size < width) || council.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             home.ignore(*this, AP_DISPOSE);
             values.~IntSet();
             dispose_windows(home);
@@ -293,13 +293,13 @@ namespace Gecode { namespace Int { namespace Sequence {
         }
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) OpenSlidingSumEq(home, *this);
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             if ((processed < width) && (size >= width)) {
                 if (width == 1) {
@@ -341,8 +341,8 @@ namespace Gecode { namespace Int { namespace Sequence {
             return closed() ? home.ES_SUBSUMED(*this) : ES_FIX;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             OpenListPropagator<View>::dispose_base(home);
             return sizeof(*this);
         }
@@ -379,14 +379,14 @@ namespace Gecode { namespace Int { namespace Sequence {
             : OpenWindowPropagator<View>(home, p), lower(p.lower), upper(p.upper) {}
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) OpenSlidingSumBnd(home, *this);
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& advisor, const Delta& delta) {
-            if (View::modevent(delta) == ME_INT_DOM)
+        ExecStatus
+        advise(Space& home, Advisor& advisor, const Delta& delta) override {
+            if (View::modification_event(delta) == ME_INT_DOM)
                 return ES_FIX;
             OpenWindowAdvisor& a = static_cast<OpenWindowAdvisor&>(advisor);
             changed(a.index);
@@ -395,8 +395,8 @@ namespace Gecode { namespace Int { namespace Sequence {
             return ES_NOFIX;
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             for (int i = processed; i < size; i++)
                 if (!list[i].assigned())
@@ -475,8 +475,8 @@ namespace Gecode { namespace Int { namespace Sequence {
             return closed() && ((size < width) || council.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             dispose_windows(home);
             return sizeof(*this);
         }

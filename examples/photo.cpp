@@ -120,7 +120,7 @@ public:
             branch(*this, pos, INT_VAR_NONE(), INT_VAL_MIN());
             break;
         case BRANCH_DEGREE:
-            branch(*this, pos, tiebreak(INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
+            branch(*this, pos, tie_break(INT_VAR_DEGREE_MAX(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
             break;
         case BRANCH_AFC_SIZE:
             branch(*this, pos, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
@@ -129,7 +129,7 @@ public:
     }
     /// Relax the last solution for large neighbourhood search
     void
-    spoke(SpokeContext& sc) {
+    spoke(SpokeContext& sc) override {
         if ((sc.engine() == MetaEngine::Restart) && (sc.last() != nullptr) && (p > 0.0)) {
             const Photo& l = static_cast<const Photo&>(*sc.last());
             relax(*this, pos, l.pos, rnd.split(sc), p);
@@ -142,18 +142,18 @@ public:
         violations.update(*this, s.violations);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new Photo(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "\tpos[] = " << pos << std::endl << "\tviolations: " << violations << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "\tpos[] = " << pos << '\n' << "\tviolations: " << violations << '\n';
     }
     /// Return solution cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return violations;
     }
 };
@@ -176,7 +176,7 @@ main(int argc, char* argv[]) {
     opt.branching(Photo::BRANCH_AFC_SIZE, "afc");
     opt.parse(argc, argv);
     if (opt.size() >= n_pi) {
-        std::cerr << "Error: size must be between 0 and " << n_pi - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_pi - 1 << '\n';
         return 1;
     }
     IntMinimizeScript::run<Photo, BAB, SizeOptions>(opt);

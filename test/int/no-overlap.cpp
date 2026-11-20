@@ -59,8 +59,8 @@ namespace Test { namespace Int {
                 : Test(tags, "NoOverlap::Int::2::" + str(m) + "::" + str(w0) + "::" + str(h0), 2 * w0.size(), 0, m - 1),
                   w(w0), h(h0) {}
             /// %Test whether \a xy is solution
-            virtual bool
-            solution(const Assignment& xy) const {
+            bool
+            solution(const Assignment& xy) const override {
                 int n = xy.size() / 2;
                 for (int i = 0; i < n; i++) {
                     int xi = xy[2 * i + 0], yi = xy[2 * i + 1];
@@ -73,8 +73,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xy
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xy) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xy) override {
                 using namespace Gecode;
                 int n = xy.size() / 2;
                 IntVarArgs x(n), y(n);
@@ -82,7 +82,7 @@ namespace Test { namespace Int {
                     x[i] = xy[2 * i + 0];
                     y[i] = xy[2 * i + 1];
                 }
-                nooverlap(home, x, w, y, h);
+                no_overlap(home, x, w, y, h);
             }
         };
         /// %Test for no-overlap with optional rectangles
@@ -100,8 +100,8 @@ namespace Test { namespace Int {
                        3 * w0.size(), 0, m - 1),
                   w(w0), h(h0) {}
             /// %Test whether \a xyo is solution
-            virtual bool
-            solution(const Assignment& xyo) const {
+            bool
+            solution(const Assignment& xyo) const override {
                 int n = xyo.size() / 3;
                 for (int i = 0; i < n; i++) {
                     int xi = xyo[3 * i + 0], yi = xyo[3 * i + 1];
@@ -117,8 +117,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xwyho
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xyo) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xyo) override {
                 using namespace Gecode;
                 int n = xyo.size() / 3;
                 IntVarArgs x(n), y(n);
@@ -128,7 +128,7 @@ namespace Test { namespace Int {
                     y[i] = xyo[3 * i + 1];
                     o[i] = expr(home, xyo[3 * i + 2] > 0);
                 }
-                nooverlap(home, x, w, y, h, o);
+                no_overlap(home, x, w, y, h, o);
             }
         };
 
@@ -138,8 +138,8 @@ namespace Test { namespace Int {
             /// Create and register test with maximal value \a m and \a n rectangles
             Var2(int m, int n) : Test(TestTags::sweep(), "NoOverlap::Var::2::" + str(m) + "::" + str(n), 4 * n, 0, m) {}
             /// %Test whether \a xwyh is solution
-            virtual bool
-            solution(const Assignment& xwyh) const {
+            bool
+            solution(const Assignment& xwyh) const override {
                 int n = xwyh.size() / 4;
                 for (int i = 0; i < n; i++) {
                     int xi = xwyh[4 * i + 0], yi = xwyh[4 * i + 2];
@@ -154,8 +154,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xwyh
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xwyh) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xwyh) override {
                 using namespace Gecode;
                 int n = xwyh.size() / 4;
                 IntVarArgs x0(n), w(n), x1(n), y0(n), h(n), y1(n);
@@ -167,7 +167,7 @@ namespace Test { namespace Int {
                     h[i] = xwyh[4 * i + 3];
                     y1[i] = expr(home, y0[i] + h[i]);
                 }
-                nooverlap(home, x0, w, x1, y0, h, y1);
+                no_overlap(home, x0, w, x1, y0, h, y1);
             }
         };
 
@@ -177,11 +177,11 @@ namespace Test { namespace Int {
             /// Create and register test with maximal value \a m and \a n rectangles
             VarOpt2(int m, int n)
                 : Test(TestTags::sweep(), "NoOverlap::Var::Opt::2::" + str(m) + "::" + str(n), 5 * n, 0, m) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a xwyho is solution
-            virtual bool
-            solution(const Assignment& xwyho) const {
+            bool
+            solution(const Assignment& xwyho) const override {
                 int n = xwyho.size() / 5;
                 for (int i = 0; i < n; i++) {
                     int xi = xwyho[5 * i + 0], yi = xwyho[5 * i + 2];
@@ -199,8 +199,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xwyho
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xwyho) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xwyho) override {
                 using namespace Gecode;
                 int n = xwyho.size() / 5;
                 IntVarArgs x0(n), w(n), x1(n), y0(n), h(n), y1(n);
@@ -214,7 +214,7 @@ namespace Test { namespace Int {
                     y1[i] = expr(home, y0[i] + h[i]);
                     o[i] = expr(home, xwyho[5 * i + 4] > 0);
                 }
-                nooverlap(home, x0, w, x1, y0, h, y1, o);
+                no_overlap(home, x0, w, x1, y0, h, y1, o);
             }
         };
 
@@ -225,11 +225,11 @@ namespace Test { namespace Int {
             VarOptShared2(int m, int n)
                 : Test(TestTags::sweep(), "NoOverlap::Var::Opt::Shared::2::" + str(m) + "::" + str(n), 2 * n + 2, 0,
                        m) {
-                testfix = false;
+                test_fixpoint = false;
             }
             /// %Test whether \a xwyho is solution
-            virtual bool
-            solution(const Assignment& xwyho) const {
+            bool
+            solution(const Assignment& xwyho) const override {
                 int n = (xwyho.size() - 2) / 2;
                 for (int i = 0; i < n; i++) {
                     int xi = xwyho[2 * i + 0], yi = xwyho[2 * i + 0];
@@ -247,8 +247,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post constraint on \a xwyho
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& xwyho) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& xwyho) override {
                 using namespace Gecode;
                 int n = (xwyho.size() - 2) / 2;
                 IntVarArgs x0(n), w(n), x1(n), y0(n), h(n), y1(n);
@@ -262,7 +262,7 @@ namespace Test { namespace Int {
                     y1[i] = expr(home, y0[i] + h[i]);
                     o[i] = expr(home, xwyho[2 * n + (i % 2)] > 0);
                 }
-                nooverlap(home, x0, w, x1, y0, h, y1, o);
+                no_overlap(home, x0, w, x1, y0, h, y1, o);
             }
         };
 

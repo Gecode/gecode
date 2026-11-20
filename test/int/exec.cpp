@@ -55,8 +55,8 @@ namespace Test { namespace Int {
             IntWait(int n, bool sf0)
                 : Test("Wait::Int::" + str(n) + "::" + (sf0 ? "std::function" : "funptr"), n, 0, n, false), sf(sf0) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 for (int i = 0; i < x.size(); i++)
                     for (int j = i + 1; j < x.size(); j++)
                         if (x[i] == x[j])
@@ -64,8 +64,8 @@ namespace Test { namespace Int {
                 return true;
             }
             /// Post wait on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 auto f = static_cast<std::function<void(Space&)>>([](Space& home) { c(home); });
                 if (x.size() > 1) {
@@ -102,16 +102,16 @@ namespace Test { namespace Int {
             BoolWait(int n, bool sf0)
                 : Test("Wait::Bool::" + str(n) + "::" + (sf0 ? "std::function" : "funptr"), n, 0, 1, false), sf(sf0) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 int t = 0;
                 for (int i = 0; i < x.size(); i++)
                     t += x[i];
                 return t == 2;
             }
             /// Post wait on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 BoolVarArgs b(x.size());
                 for (int i = b.size(); i--;)
@@ -152,13 +152,13 @@ namespace Test { namespace Int {
             When(bool sf0)
                 : Test(std::string("When::") + (sf0 ? "std::function" : "funptr"), 1, 0, 1, false), sf(sf0) {}
             /// Check whether \a x is solution
-            virtual bool
-            solution(const Assignment& x) const {
+            bool
+            solution(const Assignment& x) const override {
                 return x[0] == 0;
             }
             /// Post when on \a x
-            virtual void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) {
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
                 using namespace Gecode;
                 if (sf) {
                     auto sft = static_cast<std::function<void(Space&)>>([](Space& home) { t(home); });

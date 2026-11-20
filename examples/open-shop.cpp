@@ -129,37 +129,37 @@ protected:
                 new (&tasks[k++]) Task(j, i, dur(i, j));
         int* t0_tasks = re.alloc<int>(spec.n * spec.m); // Earliest possible tasks
 
-        bool stopCROSH = false;
+        bool stop_crosh = false;
 
-        int maxIterations;
+        int max_iterations;
         switch (spec.n) {
         case 3:
-            maxIterations = 5;
+            max_iterations = 5;
             break;
         case 4:
-            maxIterations = 25;
+            max_iterations = 25;
             break;
         case 5:
-            maxIterations = 50;
+            max_iterations = 50;
             break;
         case 6:
-            maxIterations = 1000;
+            max_iterations = 1000;
             break;
         case 7:
-            maxIterations = 10000;
+            max_iterations = 10000;
             break;
         case 8:
-            maxIterations = 10000;
+            max_iterations = 10000;
             break;
         case 9:
-            maxIterations = 10000;
+            max_iterations = 10000;
             break;
         default:
-            maxIterations = 25000;
+            max_iterations = 25000;
             break;
         }
         int iteration = 0;
-        while (!stopCROSH && maxmakespan > minmakespan) {
+        while (!stop_crosh && maxmakespan > minmakespan) {
             for (int i = spec.n; i--;)
                 ct_j[i] = 0;
             for (int i = spec.m; i--;)
@@ -201,8 +201,8 @@ protected:
             }
 
             maxmakespan = std::min(maxmakespan, cmax);
-            if (iteration++ > maxIterations)
-                stopCROSH = true; // Iterate a couple of times
+            if (iteration++ > max_iterations)
+                stop_crosh = true; // Iterate a couple of times
         }
     }
 
@@ -263,14 +263,14 @@ public:
     }
 
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new OpenShop(*this);
     }
 
     /// Minimize the makespan
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return makespan;
     }
 
@@ -288,8 +288,8 @@ public:
     };
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Region re;
         PrintTask* m = re.alloc<PrintTask>(spec.n);
         for (int i = 0; i < spec.m; i++) {
@@ -304,9 +304,9 @@ public:
             os << "Machine " << i << ": ";
             for (int j = 0; j < spec.n; j++)
                 os << "\t" << m[j].job << "(" << m[j].p << ")";
-            os << " = " << m[spec.n - 1].start + m[spec.n - 1].p << std::endl;
+            os << " = " << m[spec.n - 1].start + m[spec.n - 1].p << '\n';
         }
-        os << "Makespan: " << makespan << std::endl;
+        os << "Makespan: " << makespan << '\n';
     }
 };
 
@@ -321,7 +321,7 @@ main(int argc, char* argv[]) {
     opt.solutions(0);
     opt.parse(argc, argv);
     if (opt.size() >= n_examples) {
-        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << std::endl;
+        std::cerr << "Error: size must be between 0 and " << n_examples - 1 << '\n';
         return 1;
     }
     IntMinimizeScript::run<OpenShop, BAB, SizeOptions>(opt);

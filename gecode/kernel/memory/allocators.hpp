@@ -239,7 +239,7 @@ namespace Gecode {
         /// Returns the largest size for which a call to allocate might succeed.
         size_type
         max_size(void) const noexcept {
-            return std::numeric_limits<size_type>::max() / (sizeof(T) > 0 ? sizeof(T) : 1);
+            return std::numeric_limits<size_type>::max() / sizeof(T);
         }
         /**
          * \brief Allocates storage
@@ -405,7 +405,7 @@ namespace Gecode {
         /// Returns the largest size for which a call to allocate might succeed.
         size_type
         max_size(void) const noexcept {
-            return std::numeric_limits<size_type>::max() / (sizeof(T) > 0 ? sizeof(T) : 1);
+            return std::numeric_limits<size_type>::max() / sizeof(T);
         }
 
         /**

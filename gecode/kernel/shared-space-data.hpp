@@ -45,7 +45,7 @@ namespace Gecode { namespace Kernel {
             /// Default constructor
             Data(void);
             /// Destructor
-            virtual ~Data(void);
+            ~Data(void) override;
         };
         /// Initialize
         SharedSpaceData(void);

@@ -1094,9 +1094,9 @@ namespace Gecode {
     /// Intersection of set variables
     GECODE_MINIMODEL_EXPORT SetExpr inter(const SetVarArgs&);
     /// Union of set variables
-    GECODE_MINIMODEL_EXPORT SetExpr setunion(const SetVarArgs&);
+    GECODE_MINIMODEL_EXPORT SetExpr set_union(const SetVarArgs&);
     /// Disjoint union of set variables
-    GECODE_MINIMODEL_EXPORT SetExpr setdunion(const SetVarArgs&);
+    GECODE_MINIMODEL_EXPORT SetExpr set_disjoint_union(const SetVarArgs&);
 
     /// Cardinality of set expression
     GECODE_MINIMODEL_EXPORT LinIntExpr cardinality(const SetExpr&);
@@ -1418,7 +1418,7 @@ namespace Gecode {
         /// Initialize with given expression tree \a
         REG(Exp* e);
         /// Return string representatinon of expression tree
-        std::string toString(void) const;
+        std::string to_string(void) const;
 
     public:
         /// Initialize as empty sequence (epsilon)
@@ -1625,12 +1625,12 @@ namespace Gecode {
      *
      * Supports domain consistent propagation only.
      */
-    void atmost(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl = IPL_DEF);
+    void at_most(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
      *
      * Supports domain consistent propagation only.
      */
-    void atmost(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl = IPL_DEF);
+    void at_most(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
      *
      * Supports domain consistent propagation only.
@@ -1638,17 +1638,17 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      *  \a x and \a y are of different size.
      */
-    void atmost(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl = IPL_DEF);
+    void at_most(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
      *
      * Supports domain consistent propagation only.
      */
-    void atmost(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl = IPL_DEF);
+    void at_most(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
      *
      * Supports domain consistent propagation only.
      */
-    void atmost(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl = IPL_DEF);
+    void at_most(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
      *
      * Supports domain consistent propagation only.
@@ -1656,18 +1656,18 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      *  \a x and \a y are of different size.
      */
-    void atmost(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl = IPL_DEF);
+    void at_most(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl = IPL_DEF);
 
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
      *
      * Supports domain consistent propagation only.
      */
-    void atleast(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl = IPL_DEF);
+    void at_least(Home home, const IntVarArgs& x, int n, int m, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
      *
      * Supports domain consistent propagation only.
      */
-    void atleast(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl = IPL_DEF);
+    void at_least(Home home, const IntVarArgs& x, IntVar y, int m, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
      *
      * Supports domain consistent propagation only.
@@ -1675,17 +1675,17 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      *  \a x and \a y are of different size.
      */
-    void atleast(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl = IPL_DEF);
+    void at_least(Home home, const IntVarArgs& x, const IntArgs& y, int m, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
      *
      * Supports domain consistent propagation only.
      */
-    void atleast(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl = IPL_DEF);
+    void at_least(Home home, const IntVarArgs& x, int n, IntVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
      *
      * Supports domain consistent propagation only.
      */
-    void atleast(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl = IPL_DEF);
+    void at_least(Home home, const IntVarArgs& x, IntVar y, IntVar z, IntPropLevel ipl = IPL_DEF);
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
      *
      * Supports domain consistent propagation only.
@@ -1693,7 +1693,7 @@ namespace Gecode {
      * Throws an exception of type Int::ArgumentSizeMismatch, if
      *  \a x and \a y are of different size.
      */
-    void atleast(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl = IPL_DEF);
+    void at_least(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z, IntPropLevel ipl = IPL_DEF);
 
     /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
      *
@@ -2070,10 +2070,10 @@ namespace Gecode {
         IntMinimizeSpace(IntMinimizeSpace& s);
         /// Member function constraining according to decreasing cost
         GECODE_MINIMODEL_EXPORT
-        virtual void constrain(const Space& best);
+        void constrain(const Space& best) override;
         /// Compare integer costs (both costs must be assigned)
         GECODE_MINIMODEL_EXPORT
-        virtual SpaceComparison compare(const Space& other) const;
+        SpaceComparison compare(const Space& other) const override;
         /// Return variable with current cost
         virtual IntVar cost(void) const = 0;
     };
@@ -2090,10 +2090,10 @@ namespace Gecode {
         IntMaximizeSpace(IntMaximizeSpace& s);
         /// Member function constraining according to increasing cost
         GECODE_MINIMODEL_EXPORT
-        virtual void constrain(const Space& best);
+        void constrain(const Space& best) override;
         /// Compare integer costs (both costs must be assigned)
         GECODE_MINIMODEL_EXPORT
-        virtual SpaceComparison compare(const Space& other) const;
+        SpaceComparison compare(const Space& other) const override;
         /// Return variable with current cost
         virtual IntVar cost(void) const = 0;
     };
@@ -2110,10 +2110,10 @@ namespace Gecode {
         IntLexMinimizeSpace(IntLexMinimizeSpace& s);
         /// Member function constraining according to decreasing costs
         GECODE_MINIMODEL_EXPORT
-        virtual void constrain(const Space& best);
+        void constrain(const Space& best) override;
         /// Compare integer costs lexicographically
         GECODE_MINIMODEL_EXPORT
-        virtual SpaceComparison compare(const Space& other) const;
+        SpaceComparison compare(const Space& other) const override;
         /// Return variables with current costs
         virtual IntVarArgs cost(void) const = 0;
     };
@@ -2130,10 +2130,10 @@ namespace Gecode {
         IntLexMaximizeSpace(IntLexMaximizeSpace& s);
         /// Member function constraining according to increasing costs
         GECODE_MINIMODEL_EXPORT
-        virtual void constrain(const Space& best);
+        void constrain(const Space& best) override;
         /// Compare integer costs lexicographically
         GECODE_MINIMODEL_EXPORT
-        virtual SpaceComparison compare(const Space& other) const;
+        SpaceComparison compare(const Space& other) const override;
         /// Return variables with current costs
         virtual IntVarArgs cost(void) const = 0;
     };
@@ -2165,10 +2165,10 @@ namespace Gecode {
         FloatMinimizeSpace(FloatMinimizeSpace& s);
         /// Member function constraining according to cost
         GECODE_MINIMODEL_EXPORT
-        virtual void constrain(const Space& best);
+        void constrain(const Space& best) override;
         /// Compare upper endpoints of assigned costs (same step required)
         GECODE_MINIMODEL_EXPORT
-        virtual SpaceComparison compare(const Space& other) const;
+        SpaceComparison compare(const Space& other) const override;
         /// Return variable with current cost
         virtual FloatVar cost(void) const = 0;
     };
@@ -2198,10 +2198,10 @@ namespace Gecode {
         FloatMaximizeSpace(FloatMaximizeSpace& s);
         /// Member function constraining according to cost
         GECODE_MINIMODEL_EXPORT
-        virtual void constrain(const Space& best);
+        void constrain(const Space& best) override;
         /// Compare lower endpoints of assigned costs (same step required)
         GECODE_MINIMODEL_EXPORT
-        virtual SpaceComparison compare(const Space& other) const;
+        SpaceComparison compare(const Space& other) const override;
         /// Return variable with current cost
         virtual FloatVar cost(void) const = 0;
     };

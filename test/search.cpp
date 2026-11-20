@@ -384,9 +384,9 @@ namespace Test {
         /// Values for selecting how to constrain
         enum HowToConstrain {
             HTC_NONE,   ///< Do not constrain
-            HTC_LEX_LE, ///< Constrain for lexically smallest
+            HTC_LEX_LT, ///< Constrain for lexically smallest
             HTC_LEX_GR, ///< Constrain for lexically biggest
-            HTC_BAL_LE, ///< Constrain for smallest balance
+            HTC_BAL_LT, ///< Constrain for smallest balance
             HTC_BAL_GR  ///< Constrain for largest balance
         };
 
@@ -409,8 +409,8 @@ namespace Test {
             /// Verify that this is best solution
             virtual bool best(void) const = 0;
             /// Hub hook that does not restart after a solution and keeps the branchers of a portfolio
-            virtual void
-            hub(HubContext& hc) {
+            void
+            hub(HubContext& hc) override {
                 if (hc.engine() == MetaEngine::Restart) {
                     if (hc.last() != nullptr)
                         constrain(*hc.last());
@@ -434,21 +434,21 @@ namespace Test {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new FailImmediate(*this);
             }
             /// Add constraint for next better solution
-            virtual void
-            constrain(const Space&) {}
+            void
+            constrain(const Space&) override {}
             /// Return number of solutions
-            virtual int
-            solutions(void) const {
+            int
+            solutions(void) const override {
                 return 0;
             }
             /// Verify that this is best solution
-            virtual bool
-            best(void) const {
+            bool
+            best(void) const override {
                 return false;
             }
             /// Return name
@@ -470,28 +470,28 @@ namespace Test {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new SolveImmediate(*this);
             }
             /// Add constraint for next better solution
-            virtual void
-            constrain(const Space&) {
+            void
+            constrain(const Space&) override {
                 fail();
             }
             /// Treat the single solution as equivalent across best-search assets
-            virtual SpaceComparison
-            compare(const Space&) const {
+            SpaceComparison
+            compare(const Space&) const override {
                 return SpaceComparison::Equivalent;
             }
             /// Return number of solutions
-            virtual int
-            solutions(void) const {
+            int
+            solutions(void) const override {
                 return 1;
             }
             /// Verify that this is best solution
-            virtual bool
-            best(void) const {
+            bool
+            best(void) const override {
                 return true;
             }
             /// Return name
@@ -553,26 +553,26 @@ namespace Test {
                 x.update(*this, s.x);
             }
             /// Copy during cloning
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new HasSolutions(*this);
             }
             /// Add constraint for next better solution
-            virtual void
-            constrain(const Space& _s) {
+            void
+            constrain(const Space& _s) override {
                 const HasSolutions& s = static_cast<const HasSolutions&>(_s);
                 switch (htc) {
                 case HTC_NONE:
                     break;
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                 case HTC_LEX_GR: {
                     IntVarArgs y(6);
                     for (int i = 0; i < 6; i++)
                         y[i] = IntVar(*this, s.x[i].val(), s.x[i].val());
-                    lex(*this, x, (htc == HTC_LEX_LE) ? IRT_LE : IRT_GR, y);
+                    lex(*this, x, (htc == HTC_LEX_LT) ? IRT_LT : IRT_GR, y);
                     break;
                 }
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                 case HTC_BAL_GR: {
                     IntVarArgs y(6);
                     for (int i = 0; i < 6; i++)
@@ -581,37 +581,37 @@ namespace Test {
                     IntVar ys(*this, -18, 18);
                     rel(*this, x[0] + x[1] + x[2] - x[3] - x[4] - x[5] == xs);
                     rel(*this, y[0] + y[1] + y[2] - y[3] - y[4] - y[5] == ys);
-                    rel(*this, expr(*this, abs(xs)), (htc == HTC_BAL_LE) ? IRT_LE : IRT_GR, expr(*this, abs(ys)));
+                    rel(*this, expr(*this, abs(xs)), (htc == HTC_BAL_LT) ? IRT_LT : IRT_GR, expr(*this, abs(ys)));
                     break;
                 }
                 }
             }
             /// Compare objectives used by best solution search
-            virtual SpaceComparison
-            compare(const Space& _s) const {
+            SpaceComparison
+            compare(const Space& _s) const override {
                 const HasSolutions& s = dynamic_cast<const HasSolutions&>(_s);
                 if (htc != s.htc)
                     throw DynamicCastFailed("HasSolutions::compare");
                 int c = 0;
                 int sc = 0;
                 switch (htc) {
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                 case HTC_LEX_GR:
                     for (int i = 0; i < x.size(); i++) {
                         if (x[i].val() == s.x[i].val())
                             continue;
-                        bool better = (htc == HTC_LEX_LE) ? (x[i].val() < s.x[i].val()) : (x[i].val() > s.x[i].val());
+                        bool better = (htc == HTC_LEX_LT) ? (x[i].val() < s.x[i].val()) : (x[i].val() > s.x[i].val());
                         return better ? SpaceComparison::Better : SpaceComparison::Worse;
                     }
                     return SpaceComparison::Equivalent;
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                 case HTC_BAL_GR:
                     c = std::abs(x[0].val() + x[1].val() + x[2].val() - x[3].val() - x[4].val() - x[5].val());
                     sc = std::abs(s.x[0].val() + s.x[1].val() + s.x[2].val() - s.x[3].val() - s.x[4].val() -
                                   s.x[5].val());
                     if (c == sc)
                         return SpaceComparison::Equivalent;
-                    return ((htc == HTC_BAL_LE) ? (c < sc) : (c > sc)) ? SpaceComparison::Better
+                    return ((htc == HTC_BAL_LT) ? (c < sc) : (c > sc)) ? SpaceComparison::Better
                                                                        : SpaceComparison::Worse;
                 case HTC_NONE:
                     return SpaceComparison::Equivalent;
@@ -621,8 +621,8 @@ namespace Test {
                 return SpaceComparison::Incomparable;
             }
             /// Return number of solutions
-            virtual int
-            solutions(void) const {
+            int
+            solutions(void) const override {
                 if (htb1 == HTB_NONE) {
                     assert((htb2 == HTB_NONE) && (htb3 == HTB_NONE));
                     return 1;
@@ -634,21 +634,21 @@ namespace Test {
                 return 8;
             }
             /// Verify that this is best solution
-            virtual bool
-            best(void) const {
+            bool
+            best(void) const override {
                 if ((htb1 == HTB_NONE) || (htb2 == HTB_NONE) || (htb3 == HTB_NONE) || (htb1 == HTB_UNARY) ||
                     (htb2 == HTB_UNARY) || (htb3 == HTB_UNARY))
                     return true;
                 switch (htc) {
                 case HTC_NONE:
                     return true;
-                case HTC_LEX_LE:
+                case HTC_LEX_LT:
                     return ((x[0].val() == 4) && (x[1].val() == 5) && (x[2].val() == 2) && (x[3].val() == 3) &&
                             (x[4].val() == 0) && (x[5].val() == 1));
                 case HTC_LEX_GR:
                     return ((x[0].val() == 5) && (x[1].val() == 4) && (x[2].val() == 3) && (x[3].val() == 2) &&
                             (x[4].val() == 1) && (x[5].val() == 0));
-                case HTC_BAL_LE:
+                case HTC_BAL_LT:
                     return ((x[0].val() == 4) && (x[1].val() == 5) && (x[2].val() == 2) && (x[3].val() == 3) &&
                             (x[4].val() == 0) && (x[5].val() == 1));
                 case HTC_BAL_GR:
@@ -665,8 +665,8 @@ namespace Test {
                 return "Sol";
             }
             /// Rule out that solution is found more than once during restarts
-            virtual void
-            hub(HubContext& hc) {
+            void
+            hub(HubContext& hc) override {
                 // For portfolio search, keep the branchers
                 if (hc.engine() != MetaEngine::Restart)
                     return;
@@ -1319,12 +1319,12 @@ namespace Test {
                 switch (htc) {
                 case HTC_NONE:
                     return "None";
-                case HTC_LEX_LE:
-                    return "LexLe";
+                case HTC_LEX_LT:
+                    return "LexLt";
                 case HTC_LEX_GR:
                     return "LexGr";
-                case HTC_BAL_LE:
-                    return "BalLe";
+                case HTC_BAL_LT:
+                    return "BalLt";
                 case HTC_BAL_GR:
                     return "BalGr";
                 default:
@@ -1391,9 +1391,7 @@ namespace Test {
                 }
                 int live = 0;
                 std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
-                PortfolioSeed* seed = root.get();
-                if (!clone)
-                    root.release();
+                PortfolioSeed* seed = clone ? root.get() : root.release();
                 Gecode::Search::Options o;
                 o.assets = 1;
                 o.threads = threads;
@@ -1405,7 +1403,8 @@ namespace Test {
                 try {
                     if (restart) {
                         Gecode::RBS<PortfolioSeed> engine(seed, o);
-                        cutoff.release();
+                        // The completed RBS engine owns the cutoff.
+                        (void)cutoff.release();
                     } else {
                         Gecode::PBS<PortfolioSeed> engine(seed, o);
                     }
@@ -1426,9 +1425,7 @@ namespace Test {
                         for (int failing : {-1, 0, 1}) {
                             int live = 0;
                             std::unique_ptr<PortfolioSeed> root(new PortfolioSeed(live));
-                            PortfolioSeed* seed = root.get();
-                            if (!clone)
-                                root.release();
+                            PortfolioSeed* seed = clone ? root.get() : root.release();
                             Gecode::Search::Options o;
                             o.assets = 2;
                             o.threads = threads;
@@ -1490,7 +1487,7 @@ namespace Test {
                 o.worker_control = control;
                 o.stop = &pause;
                 // Best-solution search needs an objective; it then ends with the best
-                HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, E<HasSolutions>::best ? HTC_LEX_LE : HTC_NONE);
+                HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, E<HasSolutions>::best ? HTC_LEX_LT : HTC_NONE);
                 E<HasSolutions> engine(&root, o);
                 auto result = std::async(std::launch::async, [&] { return engine.next(); });
                 auto reached = pause.reached.get_future();
@@ -1578,6 +1575,7 @@ namespace Test {
                   int& solutions, bool& best) {
                 std::atomic<bool> done(false);
                 std::vector<std::thread> resizers;
+                resizers.reserve(controls.size());
                 for (Gecode::Search::WorkerControl& control : controls)
                     resizers.emplace_back([&done, &control, capacity, seed = _rand.next()] {
                         Gecode::Support::RandomGenerator rand(seed);
@@ -1621,7 +1619,7 @@ namespace Test {
                         return false;
                 }
                 {
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl control(threads);
                     Gecode::Search::Options o;
                     o.threads = threads;
@@ -1632,7 +1630,7 @@ namespace Test {
                 }
                 {
                     // Restarts rebuild the leaf engine under the same control.
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl control(threads);
                     Gecode::Search::Options o;
                     o.threads = threads;
@@ -1643,7 +1641,7 @@ namespace Test {
                         return false;
                 }
                 {
-                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LE);
+                    HasSolutions root(HTB_BINARY, HTB_BINARY, HTB_BINARY, HTC_LEX_LT);
                     WorkerControl controls[2] = {WorkerControl(threads), WorkerControl(threads)};
                     Gecode::SEBs sebs(2);
                     for (int i = 0; i < 2; i++) {
@@ -1815,12 +1813,12 @@ namespace Test {
             MinObjective(MinObjective& s) : IntMinimizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new MinObjective(*this);
             }
-            virtual IntVar
-            cost(void) const {
+            IntVar
+            cost(void) const override {
                 return x;
             }
         };
@@ -1833,12 +1831,12 @@ namespace Test {
             MaxObjective(MaxObjective& s) : IntMaximizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new MaxObjective(*this);
             }
-            virtual IntVar
-            cost(void) const {
+            IntVar
+            cost(void) const override {
                 return x;
             }
         };
@@ -1856,22 +1854,22 @@ namespace Test {
             ExternalObjective(ExternalObjective& s) : IntMinimizeSpace(s), constraints(s.constraints) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new ExternalObjective(*this);
             }
-            virtual IntVar
-            cost(void) const {
+            IntVar
+            cost(void) const override {
                 return x;
             }
-            virtual void
-            constrain(const Space& s) {
+            void
+            constrain(const Space& s) override {
                 if (constraints != nullptr)
                     constraints->fetch_add(1);
                 IntMinimizeSpace::constrain(s);
             }
-            virtual void
-            hub(HubContext& hc) {
+            void
+            hub(HubContext& hc) override {
                 // Keep the branchers for the assets of a portfolio
                 if (hc.engine() == MetaEngine::Restart)
                     Space::hub(hc);
@@ -1889,16 +1887,16 @@ namespace Test {
             ParallelObjective(ParallelObjective& s) : IntMinimizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new ParallelObjective(*this);
             }
-            virtual IntVar
-            cost(void) const {
+            IntVar
+            cost(void) const override {
                 return x;
             }
-            virtual void
-            hub(HubContext& hc) {
+            void
+            hub(HubContext& hc) override {
                 // Keep the branchers for the assets of a portfolio
                 if (hc.engine() == MetaEngine::Restart)
                     Space::hub(hc);
@@ -1927,23 +1925,23 @@ namespace Test {
                 live++;
                 x.update(*this, s.x);
             }
-            virtual ~FailingParallelObjective(void) {
+            ~FailingParallelObjective(void) override {
                 live--;
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new FailingParallelObjective(*this);
             }
-            virtual SpaceComparison
-            compare(const Space& s) const {
+            SpaceComparison
+            compare(const Space& s) const override {
                 if (failure == MISSING)
                     return Space::compare(s);
                 if (failure == THROWN)
                     throw ComparisonError();
                 return SpaceComparison::Incomparable;
             }
-            virtual void
-            hub(HubContext& hc) {
+            void
+            hub(HubContext& hc) override {
                 // Keep the branchers for the assets of a portfolio
                 if (hc.engine() == MetaEngine::Restart)
                     Space::hub(hc);
@@ -1955,12 +1953,12 @@ namespace Test {
         public:
             IncomparableObjective(int v) : ExternalObjective(v) {}
             IncomparableObjective(IncomparableObjective& s) : ExternalObjective(s) {}
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new IncomparableObjective(*this);
             }
-            virtual SpaceComparison
-            compare(const Space&) const {
+            SpaceComparison
+            compare(const Space&) const override {
                 return SpaceComparison::Incomparable;
             }
         };
@@ -1970,8 +1968,8 @@ namespace Test {
         public:
             UnsupportedObjective(void) {}
             UnsupportedObjective(UnsupportedObjective& s) : Space(s) {}
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new UnsupportedObjective(*this);
             }
         };
@@ -2009,12 +2007,12 @@ namespace Test {
 
         public:
             ExternalIncumbent(void) : Base("Search::ExternalIncumbent") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Gecode::Search::Options o;
                 std::atomic<int> constraints(0);
                 ExternalObjective* bm = new ExternalObjective(&constraints);
-                Gecode::Search::Engine* bab = Gecode::Search::babengine(bm, o);
+                Gecode::Search::Engine* bab = Gecode::Search::make_bab_engine(bm, o);
                 delete bm;
                 if (!updates(*bab, constraints)) {
                     delete bab;
@@ -2034,7 +2032,7 @@ namespace Test {
                 delete rbs;
 
                 ExternalObjective im(nullptr);
-                if (!rejects_incomparable(Gecode::Search::babengine(&im, Gecode::Search::Options())))
+                if (!rejects_incomparable(Gecode::Search::make_bab_engine(&im, Gecode::Search::Options())))
                     return false;
 #ifdef GECODE_HAS_EXPERIMENTAL
                 Gecode::Search::HeuristicGuidance g(Gecode::Sense::Minimize, [](const Space& s) -> std::int64_t {
@@ -2052,7 +2050,7 @@ namespace Test {
 
                 UnsupportedObjective unsupported;
                 UnsupportedObjective* um = static_cast<UnsupportedObjective*>(unsupported.clone());
-                Gecode::Search::Engine* missing = Gecode::Search::babengine(um, Gecode::Search::Options());
+                Gecode::Search::Engine* missing = Gecode::Search::make_bab_engine(um, Gecode::Search::Options());
                 delete um;
                 missing->constrain(unsupported);
                 try {
@@ -2079,7 +2077,7 @@ namespace Test {
                 return o;
             }
             static bool
-            resetSearch(Gecode::Search::Engine* e) {
+            reset_search(Gecode::Search::Engine* e) {
                 e->reset(new ParallelObjective);
                 int previous = 11;
                 ParallelObjective* s;
@@ -2106,7 +2104,7 @@ namespace Test {
                     bool correct = (s != nullptr) && (s->x.val() == v);
                     delete s;
                     if (!correct) {
-                        olog << "Pending solution violates bound " << bound << "; expected " << v << std::endl;
+                        olog << "Pending solution violates bound " << bound << "; expected " << v << '\n';
                         return false;
                     }
                 }
@@ -2114,7 +2112,7 @@ namespace Test {
                 bool exhausted = (s == nullptr);
                 delete s;
                 if (!exhausted)
-                    olog << "Unexpected pending solution after bound " << bound << std::endl;
+                    olog << "Unexpected pending solution after bound " << bound << '\n';
                 return exhausted;
             }
             static bool
@@ -2144,17 +2142,17 @@ namespace Test {
                 }
                 if (!reported || !preserved)
                     olog << "Pending failure: nogoods reported=" << reported << ", constrain preserved=" << preserved
-                         << std::endl;
+                         << '\n';
                 return reported && preserved && (live == 0);
             }
             static bool
-            missingFailure(void) {
+            missing_failure(void) {
                 std::atomic<int> live(0);
                 Gecode::Search::TimeStop stop(5000);
                 Gecode::Search::Options o = options();
                 o.stop = &stop;
                 FailingParallelObjective* m = new FailingParallelObjective(FailingParallelObjective::MISSING, live);
-                Gecode::Search::Engine* e = Gecode::Search::babengine(m, o);
+                Gecode::Search::Engine* e = Gecode::Search::make_bab_engine(m, o);
                 delete m;
                 bool repeated = false;
                 try {
@@ -2171,24 +2169,24 @@ namespace Test {
                     delete e;
                     return false;
                 }
-                bool recovered = resetSearch(e);
+                bool recovered = reset_search(e);
                 delete e;
                 return recovered && (live == 0);
             }
             static bool
-            thrownFailure(void) {
+            thrown_failure(void) {
                 std::atomic<int> live(0);
                 Gecode::Search::TimeStop stop(5000);
                 Gecode::Search::Options o = options();
                 o.stop = &stop;
                 FailingParallelObjective* m = new FailingParallelObjective(FailingParallelObjective::THROWN, live);
-                Gecode::Search::Engine* e = Gecode::Search::babengine(m, o);
+                Gecode::Search::Engine* e = Gecode::Search::make_bab_engine(m, o);
                 delete m;
                 try {
                     while (Space* s = e->next())
                         delete s;
                 } catch (const ComparisonError&) {
-                    bool recovered = resetSearch(e);
+                    bool recovered = reset_search(e);
                     delete e;
                     return recovered && (live == 0);
                 }
@@ -2196,20 +2194,20 @@ namespace Test {
                 return false;
             }
             static bool
-            incomparableFailure(void) {
+            incomparable_failure(void) {
                 std::atomic<int> live(0);
                 Gecode::Search::TimeStop stop(5000);
                 Gecode::Search::Options o = options();
                 o.stop = &stop;
                 FailingParallelObjective* m =
                     new FailingParallelObjective(FailingParallelObjective::INCOMPARABLE, live);
-                Gecode::Search::Engine* e = Gecode::Search::babengine(m, o);
+                Gecode::Search::Engine* e = Gecode::Search::make_bab_engine(m, o);
                 delete m;
                 try {
                     while (Space* s = e->next())
                         delete s;
                 } catch (const Gecode::Search::Incomparable&) {
-                    bool recovered = resetSearch(e);
+                    bool recovered = reset_search(e);
                     delete e;
                     return recovered && (live == 0);
                 }
@@ -2219,8 +2217,8 @@ namespace Test {
 
         public:
             ParallelBABComparison(void) : Base("Search::ParallelBABComparison") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 bool pending = true;
                 for (int bound = 11; bound >= 7; bound--)
                     if (!pending_bound(bound))
@@ -2246,7 +2244,7 @@ namespace Test {
                     return false;
 
                 m = new ParallelObjective;
-                Gecode::Search::Engine* bounded = Gecode::Search::babengine(m, o);
+                Gecode::Search::Engine* bounded = Gecode::Search::make_bab_engine(m, o);
                 delete m;
                 if (Space* first = bounded->next())
                     delete first;
@@ -2263,7 +2261,7 @@ namespace Test {
                     }
                 }
                 delete bounded;
-                return missingFailure() && thrownFailure() && incomparableFailure();
+                return missing_failure() && thrown_failure() && incomparable_failure();
             }
         };
 
@@ -2308,8 +2306,8 @@ namespace Test {
 
         public:
             PortfolioComparison(void) : Base("Search::PortfolioComparison") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Gecode::Search::Options o = options();
                 ParallelObjective* m = new ParallelObjective;
                 Gecode::PBS<ParallelObjective, Gecode::BAB> pbs(m, o);
@@ -2386,12 +2384,12 @@ namespace Test {
             ParallelFloatObjective(ParallelFloatObjective& s) : FloatMinimizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new ParallelFloatObjective(*this);
             }
-            virtual FloatVar
-            cost(void) const {
+            FloatVar
+            cost(void) const override {
                 return x;
             }
         };
@@ -2404,12 +2402,12 @@ namespace Test {
             FloatMinObjective(FloatMinObjective& s) : FloatMinimizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new FloatMinObjective(*this);
             }
-            virtual FloatVar
-            cost(void) const {
+            FloatVar
+            cost(void) const override {
                 return x;
             }
         };
@@ -2422,12 +2420,12 @@ namespace Test {
             FloatMaxObjective(FloatMaxObjective& s) : FloatMaximizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new FloatMaxObjective(*this);
             }
-            virtual FloatVar
-            cost(void) const {
+            FloatVar
+            cost(void) const override {
                 return x;
             }
         };
@@ -2444,12 +2442,12 @@ namespace Test {
             LexObjective(LexObjective& s) : IntLexMinimizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new LexObjective(*this);
             }
-            virtual IntVarArgs
-            cost(void) const {
+            IntVarArgs
+            cost(void) const override {
                 return x;
             }
         };
@@ -2468,8 +2466,8 @@ namespace Test {
 
         public:
             FloatObjectiveComparison(void) : Base("Search::FloatObjectiveComparison") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 const FloatNum next = std::nextafter(1.0, 2.0);
                 FloatMinObjective m9(9.5, 1.0), m10(10.0, 1.0), m10b(10.0, 1.0), mzero(10.0), madj(FloatVal(1.0, next));
                 FloatMaxObjective x11(10.5, 1.0), x10(10.0, 1.0), x10b(10.0, 1.0), xadj(FloatVal(1.0, next));
@@ -2527,7 +2525,7 @@ namespace Test {
                 o.threads = 2;
                 o.stop = &stop;
                 ParallelFloatObjective* root = new ParallelFloatObjective;
-                std::unique_ptr<Gecode::Search::Engine> bab(Gecode::Search::babengine(root, o));
+                std::unique_ptr<Gecode::Search::Engine> bab(Gecode::Search::make_bab_engine(root, o));
                 delete root;
                 bab->constrain(ParallelFloatObjective(10.0));
                 bab->constrain(ParallelFloatObjective(9.5));
@@ -2560,12 +2558,12 @@ namespace Test {
             LexMaxObjective(LexMaxObjective& s) : IntLexMaximizeSpace(s) {
                 x.update(*this, s.x);
             }
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new LexMaxObjective(*this);
             }
-            virtual IntVarArgs
-            cost(void) const {
+            IntVarArgs
+            cost(void) const override {
                 return x;
             }
         };
@@ -2575,8 +2573,8 @@ namespace Test {
         public:
             PlainSpace(void) {}
             PlainSpace(PlainSpace& s) : Space(s) {}
-            virtual Space*
-            copy(void) {
+            Space*
+            copy(void) override {
                 return new PlainSpace(*this);
             }
         };
@@ -2585,8 +2583,8 @@ namespace Test {
         class Comparison : public Base {
         public:
             Comparison(void) : Base("Search::Comparison") {}
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 MinObjective one(1, 1), two(2, 2), one_again(1, 1), open(0, 2);
                 if ((one.compare(two) != SpaceComparison::Better) || (two.compare(one) != SpaceComparison::Worse) ||
                     (one.compare(one_again) != SpaceComparison::Equivalent))
@@ -2671,8 +2669,8 @@ namespace Test {
                        htb1, htb2, htb3),
                   c_d(c_d0), a_d(a_d0), t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -2712,8 +2710,8 @@ namespace Test {
                        htb1, htb2, htb3),
                   t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -2758,8 +2756,8 @@ namespace Test {
                        htb1, htb2, htb3, htc),
                   c_d(c_d0), a_d(a_d0), t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3, htc);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -2799,8 +2797,8 @@ namespace Test {
                 : Test("RBS::" + e + "::" + Model::name() + "::" + str(t0), HTB_BINARY, HTB_BINARY, HTB_BINARY, htc0),
                   t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3, htc);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -3471,8 +3469,8 @@ namespace Test {
                        HTB_BINARY),
                   best(b), a(a0), t(t0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
                 Gecode::Search::Options o;
@@ -3534,8 +3532,8 @@ namespace Test {
                        HTB_BINARY, HTB_BINARY, HTB_BINARY),
                   best(b), portfolio_threads(portfolio_threads0), asset_threads(asset_threads0) {}
             /// Run test
-            virtual bool
-            run(void) {
+            bool
+            run(void) override {
                 using namespace Gecode;
                 Model* m = new Model(htb1, htb2, htb3);
                 Gecode::Search::FailStop f(2);
@@ -4453,7 +4451,7 @@ namespace Test {
             run(void) override {
                 // A failed root, also for a portfolio of portfolios
                 NoSolution failed;
-                Gecode::rel(failed, failed.x[0], Gecode::IRT_LE, 0);
+                Gecode::rel(failed, failed.x[0], Gecode::IRT_LT, 0);
                 // An asset of a portfolio of portfolios fails at its root
                 FailingAsset failing;
                 for (unsigned int t : {1U, 2U, 4U})
@@ -4525,7 +4523,7 @@ namespace Test {
             }
         };
 
-        const HowToConstrain ConstrainTypes::htcs[4] = {HTC_LEX_LE, HTC_LEX_GR, HTC_BAL_LE, HTC_BAL_GR};
+        const HowToConstrain ConstrainTypes::htcs[4] = {HTC_LEX_LT, HTC_LEX_GR, HTC_BAL_LT, HTC_BAL_GR};
 
         /// Help class to create and register tests
         class Create {
@@ -4599,7 +4597,7 @@ namespace Test {
                 for (unsigned int t = 1; t <= 4; t++) {
                     (void)new RBS<HasSolutions, Gecode::DFS>("DFS", t);
                     (void)new RBS<HasSolutions, Gecode::LDS>("LDS", t);
-                    (void)new RBS<HasSolutions, Gecode::BAB>("BAB", t, HTC_LEX_LE);
+                    (void)new RBS<HasSolutions, Gecode::BAB>("BAB", t, HTC_LEX_LT);
                     (void)new RBS<FailImmediate, Gecode::DFS>("DFS", t);
                     (void)new RBS<FailImmediate, Gecode::LDS>("LDS", t);
                     (void)new RBS<FailImmediate, Gecode::BAB>("BAB", t);

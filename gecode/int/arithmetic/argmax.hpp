@@ -34,17 +34,17 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     forceinline
-    ArgMax<VA, VB, tiebreak>::ArgMax(Home home, IdxViewArray<VA>& x0, VB y0)
+    ArgMax<VA, VB, tie_break>::ArgMax(Home home, IdxViewArray<VA>& x0, VB y0)
         : Propagator(home), x(x0), y(y0) {
         x.subscribe(home, *this, PC_INT_BND);
         y.subscribe(home, *this, PC_INT_DOM);
     }
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     ExecStatus
-    ArgMax<VA, VB, tiebreak>::post(Home home, IdxViewArray<VA>& x, VB y) {
+    ArgMax<VA, VB, tie_break>::post(Home home, IdxViewArray<VA>& x, VB y) {
         assert(x.size() > 0);
         if (x.size() == 1) {
             GECODE_ME_CHECK(y.eq(home, x[0].idx));
@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             while (x[max].idx < y.val())
                 max++;
             assert(x[max].idx == y.val());
-            if (tiebreak)
+            if (tie_break)
                 for (int i = 0; i < max; i++)
                     GECODE_ES_CHECK((Rel::Le<VA, VA>::post(home, x[i].view, x[max].view)));
             else
@@ -62,41 +62,41 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             for (int i = max + 1; i < x.size(); i++)
                 GECODE_ES_CHECK((Rel::Lq<VA, VA>::post(home, x[i].view, x[max].view)));
         } else {
-            (void)new (home) ArgMax<VA, VB, tiebreak>(home, x, y);
+            (void)new (home) ArgMax<VA, VB, tie_break>(home, x, y);
         }
         return ES_OK;
     }
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     forceinline
-    ArgMax<VA, VB, tiebreak>::ArgMax(Space& home, ArgMax<VA, VB, tiebreak>& p)
+    ArgMax<VA, VB, tie_break>::ArgMax(Space& home, ArgMax<VA, VB, tie_break>& p)
         : Propagator(home, p) {
         x.update(home, p.x);
         y.update(home, p.y);
     }
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     Actor*
-    ArgMax<VA, VB, tiebreak>::copy(Space& home) {
-        return new (home) ArgMax<VA, VB, tiebreak>(home, *this);
+    ArgMax<VA, VB, tie_break>::copy(Space& home) {
+        return new (home) ArgMax<VA, VB, tie_break>(home, *this);
     }
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     PropCost
-    ArgMax<VA, VB, tiebreak>::cost(const Space&, const ModEventDelta&) const {
+    ArgMax<VA, VB, tie_break>::cost(const Space&, const ModEventDelta&) const {
         return PropCost::linear(PropCost::LO, x.size() + 1);
     }
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     void
-    ArgMax<VA, VB, tiebreak>::reschedule(Space& home) {
+    ArgMax<VA, VB, tie_break>::reschedule(Space& home) {
         x.reschedule(home, *this, PC_INT_BND);
         y.reschedule(home, *this, PC_INT_DOM);
     }
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     ExecStatus
-    ArgMax<VA, VB, tiebreak>::propagate(Space& home, const ModEventDelta&) {
+    ArgMax<VA, VB, tie_break>::propagate(Space& home, const ModEventDelta&) {
         /*
          * A key invariant is as follows: for each value i in the domain
          * of y there is an index-value pair with index i in x.
@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
          * - if l==u, then exists q in y: x(q).max = u
          */
 
-        if (tiebreak && (l == u))
+        if (tie_break && (l == u))
             GECODE_ME_CHECK(y.lq(home, p));
 
         if (y.assigned()) {
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
             while (x[max].idx < y.val())
                 max++;
             assert(x[max].idx == y.val());
-            if (tiebreak)
+            if (tie_break)
                 for (int i = 0; i < max; i++)
                     GECODE_ES_CHECK((Rel::Le<VA, VA>::post(home(*this), x[i].view, x[max].view)));
             else
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         {
             int i = 0;
             // Elements which must be smaller (for tiebreaking)
-            if (tiebreak)
+            if (tie_break)
                 while ((i < x.size()) && (x[i].idx < y.min())) {
                     GECODE_ME_CHECK(x[i].view.le(home, u));
                     i++;
@@ -244,12 +244,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                 i++;
             }
         }
-        return tiebreak ? ES_NOFIX : ES_FIX;
+        return tie_break ? ES_NOFIX : ES_FIX;
     }
 
-    template <class VA, class VB, bool tiebreak>
+    template <class VA, class VB, bool tie_break>
     forceinline size_t
-    ArgMax<VA, VB, tiebreak>::dispose(Space& home) {
+    ArgMax<VA, VB, tie_break>::dispose(Space& home) {
         x.cancel(home, *this, PC_INT_BND);
         y.cancel(home, *this, PC_INT_DOM);
         (void)Propagator::dispose(home);

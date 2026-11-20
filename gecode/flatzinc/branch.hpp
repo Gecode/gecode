@@ -38,15 +38,15 @@ namespace Gecode { namespace FlatZinc {
 
     forceinline
     IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAFC i, BoolAFC b)
-        : s(s0), iafc(i), bafc(b) {}
+        : s(s0), int_afc_data(i), bool_afc_data(b) {}
 
     forceinline
     IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAction i, BoolAction b)
-        : s(s0), iaction(i), baction(b) {}
+        : s(s0), int_action_data(i), bool_action_data(b) {}
 
     forceinline
     IntBoolVarBranch::IntBoolVarBranch(Select s0, IntCHB i, BoolCHB b)
-        : s(s0), ichb(i), bchb(b) {}
+        : s(s0), int_chb_data(i), bool_chb_data(b) {}
 
     forceinline IntBoolVarBranch::Select
     IntBoolVarBranch::select(void) const {
@@ -54,114 +54,114 @@ namespace Gecode { namespace FlatZinc {
     }
 
     forceinline IntAFC
-    IntBoolVarBranch::intafc(void) const {
-        return iafc;
+    IntBoolVarBranch::int_afc(void) const {
+        return int_afc_data;
     }
     forceinline BoolAFC
-    IntBoolVarBranch::boolafc(void) const {
-        return bafc;
+    IntBoolVarBranch::bool_afc(void) const {
+        return bool_afc_data;
     }
 
     forceinline IntAction
-    IntBoolVarBranch::intaction(void) const {
-        return iaction;
+    IntBoolVarBranch::int_action(void) const {
+        return int_action_data;
     }
     forceinline BoolAction
-    IntBoolVarBranch::boolaction(void) const {
-        return baction;
+    IntBoolVarBranch::bool_action(void) const {
+        return bool_action_data;
     }
 
     forceinline IntCHB
-    IntBoolVarBranch::intchb(void) const {
-        return ichb;
+    IntBoolVarBranch::int_chb(void) const {
+        return int_chb_data;
     }
     forceinline BoolCHB
-    IntBoolVarBranch::boolchb(void) const {
-        return bchb;
+    IntBoolVarBranch::bool_chb(void) const {
+        return bool_chb_data;
     }
     forceinline void
     IntBoolVarBranch::expand(Home home, const IntVarArgs& x, const BoolVarArgs& y) {
         switch (select()) {
         case IntBoolVarBranch::SEL_AFC_MAX:
         case IntBoolVarBranch::SEL_AFC_SIZE_MAX:
-            if (!iafc)
-                iafc = IntAFC(home, x, decay());
-            if (!bafc)
-                bafc = BoolAFC(home, y, decay());
+            if (!int_afc_data)
+                int_afc_data = IntAFC(home, x, decay());
+            if (!bool_afc_data)
+                bool_afc_data = BoolAFC(home, y, decay());
             break;
         case IntBoolVarBranch::SEL_ACTION_MAX:
         case IntBoolVarBranch::SEL_ACTION_SIZE_MAX:
-            if (!iaction)
-                iaction = IntAction(home, x, decay());
-            if (!baction)
-                baction = BoolAction(home, y, decay());
+            if (!int_action_data)
+                int_action_data = IntAction(home, x, decay());
+            if (!bool_action_data)
+                bool_action_data = BoolAction(home, y, decay());
             break;
         case IntBoolVarBranch::SEL_CHB_MAX:
         case IntBoolVarBranch::SEL_CHB_SIZE_MAX:
-            if (!ichb)
-                ichb = IntCHB(home, x);
-            if (!bchb)
-                bchb = BoolCHB(home, y);
+            if (!int_chb_data)
+                int_chb_data = IntCHB(home, x);
+            if (!bool_chb_data)
+                bool_chb_data = BoolCHB(home, y);
             break;
         default:;
         }
     }
 
     inline IntBoolVarBranch
-    INTBOOL_VAR_AFC_MAX(double d) {
+    int_bool_var_afc_max(double d) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_MAX, d);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_AFC_MAX(IntAFC ia, BoolAFC ba) {
+    int_bool_var_afc_max(IntAFC ia, BoolAFC ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_MAX, ia, ba);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_ACTION_MAX(double d) {
+    int_bool_var_action_max(double d) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_MAX, d);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_ACTION_MAX(IntAction ia, BoolAction ba) {
+    int_bool_var_action_max(IntAction ia, BoolAction ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_MAX, ia, ba);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_CHB_MAX(double d) {
+    int_bool_var_chb_max(double d) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_MAX, d);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_CHB_MAX(IntCHB ic, BoolCHB bc) {
+    int_bool_var_chb_max(IntCHB ic, BoolCHB bc) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_MAX, ic, bc);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_AFC_SIZE_MAX(double d) {
+    int_bool_var_afc_size_max(double d) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_SIZE_MAX, d);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_AFC_SIZE_MAX(IntAFC ia, BoolAFC ba) {
+    int_bool_var_afc_size_max(IntAFC ia, BoolAFC ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_SIZE_MAX, ia, ba);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_ACTION_SIZE_MAX(double d) {
+    int_bool_var_action_size_max(double d) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_SIZE_MAX, d);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_ACTION_SIZE_MAX(IntAction ia, BoolAction ba) {
+    int_bool_var_action_size_max(IntAction ia, BoolAction ba) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_SIZE_MAX, ia, ba);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_CHB_SIZE_MAX(double d) {
+    int_bool_var_chb_size_max(double d) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_SIZE_MAX, d);
     }
     inline IntBoolVarBranch
-    INTBOOL_VAR_CHB_SIZE_MAX(IntCHB ic, BoolCHB bc) {
+    int_bool_var_chb_size_max(IntCHB ic, BoolCHB bc) {
         return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_SIZE_MAX, ic, bc);
     }
 
     forceinline
     MeritMaxAFC::MeritMaxAFC(Space&, const IntBoolVarBranch& ibvb)
-        : iafc(ibvb.intafc()), bafc(ibvb.boolafc()) {}
+        : int_afc_data(ibvb.int_afc()), bool_afc_data(ibvb.bool_afc()) {}
     forceinline
     MeritMaxAFC::MeritMaxAFC(Space&, MeritMaxAFC& m)
-        : iafc(m.iafc), bafc(m.bafc) {}
+        : int_afc_data(m.int_afc_data), bool_afc_data(m.bool_afc_data) {}
     forceinline double
     MeritMaxAFC::operator()(Int::IntView x, int) const {
         return x.afc();
@@ -172,16 +172,16 @@ namespace Gecode { namespace FlatZinc {
     }
     forceinline void
     MeritMaxAFC::dispose(void) {
-        iafc.~IntAFC();
-        bafc.~BoolAFC();
+        int_afc_data.~IntAFC();
+        bool_afc_data.~BoolAFC();
     }
 
     forceinline
     MeritMaxAFCSize::MeritMaxAFCSize(Space&, const IntBoolVarBranch& ibvb)
-        : iafc(ibvb.intafc()), bafc(ibvb.boolafc()) {}
+        : int_afc_data(ibvb.int_afc()), bool_afc_data(ibvb.bool_afc()) {}
     forceinline
     MeritMaxAFCSize::MeritMaxAFCSize(Space&, MeritMaxAFCSize& m)
-        : iafc(m.iafc), bafc(m.bafc) {}
+        : int_afc_data(m.int_afc_data), bool_afc_data(m.bool_afc_data) {}
     forceinline double
     MeritMaxAFCSize::operator()(Int::IntView x, int) const {
         return x.afc() / x.size();
@@ -192,88 +192,88 @@ namespace Gecode { namespace FlatZinc {
     }
     forceinline void
     MeritMaxAFCSize::dispose(void) {
-        iafc.~IntAFC();
-        bafc.~BoolAFC();
+        int_afc_data.~IntAFC();
+        bool_afc_data.~BoolAFC();
     }
 
     forceinline
     MeritMaxAction::MeritMaxAction(Space&, const IntBoolVarBranch& ibvb)
-        : iaction(ibvb.intaction()), baction(ibvb.boolaction()) {}
+        : int_action_data(ibvb.int_action()), bool_action_data(ibvb.bool_action()) {}
     forceinline
     MeritMaxAction::MeritMaxAction(Space&, MeritMaxAction& m)
-        : iaction(m.iaction), baction(m.baction) {}
+        : int_action_data(m.int_action_data), bool_action_data(m.bool_action_data) {}
     forceinline double
     MeritMaxAction::operator()(Int::IntView, int i) const {
-        return iaction[i];
+        return int_action_data[i];
     }
     forceinline double
     MeritMaxAction::operator()(Int::BoolView, int i) const {
-        return baction[i];
+        return bool_action_data[i];
     }
     forceinline void
     MeritMaxAction::dispose(void) {
-        iaction.~IntAction();
-        baction.~BoolAction();
+        int_action_data.~IntAction();
+        bool_action_data.~BoolAction();
     }
 
     forceinline
     MeritMaxActionSize::MeritMaxActionSize(Space&, const IntBoolVarBranch& ibvb)
-        : iaction(ibvb.intaction()), baction(ibvb.boolaction()) {}
+        : int_action_data(ibvb.int_action()), bool_action_data(ibvb.bool_action()) {}
     forceinline
     MeritMaxActionSize::MeritMaxActionSize(Space&, MeritMaxActionSize& m)
-        : iaction(m.iaction), baction(m.baction) {}
+        : int_action_data(m.int_action_data), bool_action_data(m.bool_action_data) {}
     forceinline double
     MeritMaxActionSize::operator()(Int::IntView x, int i) const {
-        return iaction[i] / x.size();
+        return int_action_data[i] / x.size();
     }
     forceinline double
     MeritMaxActionSize::operator()(Int::BoolView, int i) const {
-        return baction[i] / 2.0;
+        return bool_action_data[i] / 2.0;
     }
     forceinline void
     MeritMaxActionSize::dispose(void) {
-        iaction.~IntAction();
-        baction.~BoolAction();
+        int_action_data.~IntAction();
+        bool_action_data.~BoolAction();
     }
 
     forceinline
     MeritMaxCHB::MeritMaxCHB(Space&, const IntBoolVarBranch& ibvb)
-        : ichb(ibvb.intchb()), bchb(ibvb.boolchb()) {}
+        : int_chb_data(ibvb.int_chb()), bool_chb_data(ibvb.bool_chb()) {}
     forceinline
     MeritMaxCHB::MeritMaxCHB(Space&, MeritMaxCHB& m)
-        : ichb(m.ichb), bchb(m.bchb) {}
+        : int_chb_data(m.int_chb_data), bool_chb_data(m.bool_chb_data) {}
     forceinline double
     MeritMaxCHB::operator()(Int::IntView, int i) const {
-        return ichb[i];
+        return int_chb_data[i];
     }
     forceinline double
     MeritMaxCHB::operator()(Int::BoolView, int i) const {
-        return bchb[i];
+        return bool_chb_data[i];
     }
     forceinline void
     MeritMaxCHB::dispose(void) {
-        ichb.~IntCHB();
-        bchb.~BoolCHB();
+        int_chb_data.~IntCHB();
+        bool_chb_data.~BoolCHB();
     }
 
     forceinline
     MeritMaxCHBSize::MeritMaxCHBSize(Space&, const IntBoolVarBranch& ibvb)
-        : ichb(ibvb.intchb()), bchb(ibvb.boolchb()) {}
+        : int_chb_data(ibvb.int_chb()), bool_chb_data(ibvb.bool_chb()) {}
     forceinline
     MeritMaxCHBSize::MeritMaxCHBSize(Space&, MeritMaxCHBSize& m)
-        : ichb(m.ichb), bchb(m.bchb) {}
+        : int_chb_data(m.int_chb_data), bool_chb_data(m.bool_chb_data) {}
     forceinline double
     MeritMaxCHBSize::operator()(Int::IntView x, int i) const {
-        return ichb[i] / x.size();
+        return int_chb_data[i] / x.size();
     }
     forceinline double
     MeritMaxCHBSize::operator()(Int::BoolView, int i) const {
-        return bchb[i] / 2.0;
+        return bool_chb_data[i] / 2.0;
     }
     forceinline void
     MeritMaxCHBSize::dispose(void) {
-        ichb.~IntCHB();
-        bchb.~BoolCHB();
+        int_chb_data.~IntCHB();
+        bool_chb_data.~BoolCHB();
     }
 
     forceinline

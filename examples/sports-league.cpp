@@ -248,14 +248,14 @@ public:
         /// (h,a) and (a,h) are the same game, focus on home (that is, h<a)
         for (int p = 0; p < periods(); p++)
             for (int w = 0; w < teams; w++)
-                rel(*this, h(p, w), IRT_LE, a(p, w));
+                rel(*this, h(p, w), IRT_LT, a(p, w));
 
         // Home teams in first week are ordered
         {
             IntVarArgs h0(periods());
             for (int p = 0; p < periods(); p++)
                 h0[p] = h(p, 0);
-            rel(*this, h0, IRT_LE);
+            rel(*this, h0, IRT_LT);
         }
 
         // Fix first pair
@@ -301,13 +301,13 @@ public:
         game.update(*this, s.game);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new SportsLeague(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         // print period index
         os << "\t       ";
         for (int p = 0; p < periods(); p++) {
@@ -315,7 +315,7 @@ public:
             os.width(2);
             os << p << "] ";
         }
-        os << std::endl;
+        os << '\n';
         // print entries
         for (int w = 0; w < weeks(); w++) {
             os << "\tW[";
@@ -327,7 +327,7 @@ public:
                 os.width(2);
                 os << a(p, w).val() << " ";
             }
-            os << std::endl;
+            os << '\n';
         }
     }
 };
@@ -342,11 +342,11 @@ main(int argc, char* argv[]) {
     opt.size(18);
     opt.parse(argc, argv);
     if (opt.size() < 5) {
-        std::cerr << "No Solution for less than 5 teams!" << std::endl;
+        std::cerr << "No Solution for less than 5 teams!" << '\n';
         return 1;
     }
     if (opt.size() % 2 != 0) {
-        std::cerr << "Number of teams has to be even!" << std::endl;
+        std::cerr << "Number of teams has to be even!" << '\n';
         return 1;
     }
     Script::run<SportsLeague, DFS, SizeOptions>(opt);

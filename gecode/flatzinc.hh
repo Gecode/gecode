@@ -111,26 +111,26 @@ namespace Gecode { namespace FlatZinc {
         std::vector<std::string> sv_names;
 #endif
         AST::Array* _output;
-        void printElem(std::ostream& out, AST::Node* ai, const Gecode::IntVarArray& iv, const Gecode::BoolVarArray& bv
+        void print_elem(std::ostream& out, AST::Node* ai, const Gecode::IntVarArray& iv, const Gecode::BoolVarArray& bv
 #ifdef GECODE_HAS_SET_VARS
-                       ,
-                       const Gecode::SetVarArray& sv
+                        ,
+                        const Gecode::SetVarArray& sv
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-                       ,
-                       const Gecode::FloatVarArray& fv
+                        ,
+                        const Gecode::FloatVarArray& fv
 #endif
         ) const;
-        void printElemDiff(std::ostream& out, AST::Node* ai, const Gecode::IntVarArray& iv1,
-                           const Gecode::IntVarArray& iv2, const Gecode::BoolVarArray& bv1,
-                           const Gecode::BoolVarArray& bv2
+        void print_elem_diff(std::ostream& out, AST::Node* ai, const Gecode::IntVarArray& iv1,
+                             const Gecode::IntVarArray& iv2, const Gecode::BoolVarArray& bv1,
+                             const Gecode::BoolVarArray& bv2
 #ifdef GECODE_HAS_SET_VARS
-                           ,
-                           const Gecode::SetVarArray& sv1, const Gecode::SetVarArray& sv2
+                             ,
+                             const Gecode::SetVarArray& sv1, const Gecode::SetVarArray& sv2
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-                           ,
-                           const Gecode::FloatVarArray& fv1, const Gecode::FloatVarArray& fv2
+                             ,
+                             const Gecode::FloatVarArray& fv1, const Gecode::FloatVarArray& fv2
 #endif
         ) const;
     public:
@@ -148,56 +148,57 @@ namespace Gecode { namespace FlatZinc {
 #endif
         ) const;
 
-        void printDiff(std::ostream& out, const Gecode::IntVarArray& iv1, const Gecode::IntVarArray& iv2,
-                       const Gecode::BoolVarArray& bv1, const Gecode::BoolVarArray& bv2
+        void print_diff(std::ostream& out, const Gecode::IntVarArray& iv1, const Gecode::IntVarArray& iv2,
+                        const Gecode::BoolVarArray& bv1, const Gecode::BoolVarArray& bv2
 #ifdef GECODE_HAS_SET_VARS
-                       ,
-                       const Gecode::SetVarArray& sv1, const Gecode::SetVarArray& sv2
+                        ,
+                        const Gecode::SetVarArray& sv1, const Gecode::SetVarArray& sv2
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-                       ,
-                       const Gecode::FloatVarArray& fv1, const Gecode::FloatVarArray& fv2
+                        ,
+                        const Gecode::FloatVarArray& fv1, const Gecode::FloatVarArray& fv2
 #endif
         ) const;
 
         ~Printer(void);
 
-        void addIntVarName(const std::string& n);
+        void add_int_var_name(const std::string& n);
         const std::string&
-        intVarName(int i) const {
+        int_var_name(int i) const {
             return iv_names[i];
         }
-        void addBoolVarName(const std::string& n);
+        void add_bool_var_name(const std::string& n);
         const std::string&
-        boolVarName(int i) const {
+        bool_var_name(int i) const {
             return bv_names[i];
         }
 #ifdef GECODE_HAS_FLOAT_VARS
-        void addFloatVarName(const std::string& n);
+        void add_float_var_name(const std::string& n);
         const std::string&
-        floatVarName(int i) const {
+        float_var_name(int i) const {
             return fv_names[i];
         }
 #endif
 #ifdef GECODE_HAS_SET_VARS
-        void addSetVarName(const std::string& n);
+        void add_set_var_name(const std::string& n);
         const std::string&
-        setVarName(int i) const {
+        set_var_name(int i) const {
             return sv_names[i];
         }
 #endif
 
-        void shrinkElement(AST::Node* node, std::map<int, int>& iv, std::map<int, int>& bv, std::map<int, int>& sv,
-                           std::map<int, int>& fv);
+        void shrink_element(AST::Node* node, std::map<int, int>& iv, std::map<int, int>& bv, std::map<int, int>& sv,
+                            std::map<int, int>& fv);
 
-        void shrinkArrays(Space& home, int& optVar, bool optVarIsInt, Gecode::IntVarArray& iv, Gecode::BoolVarArray& bv
+        void shrink_arrays(Space& home, int& opt_var, bool opt_var_is_int, Gecode::IntVarArray& iv,
+                           Gecode::BoolVarArray& bv
 #ifdef GECODE_HAS_SET_VARS
-                          ,
-                          Gecode::SetVarArray& sv
+                           ,
+                           Gecode::SetVarArray& sv
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-                          ,
-                          Gecode::FloatVarArray& fv
+                           ,
+                           Gecode::FloatVarArray& fv
 #endif
         );
 
@@ -215,7 +216,7 @@ namespace Gecode { namespace FlatZinc {
         /// \name Search options
         //@{
         Gecode::Driver::IntOption _solutions;            ///< How many solutions
-        Gecode::Driver::BoolOption _allSolutions;        ///< Return all solutions
+        Gecode::Driver::BoolOption _all_solutions;       ///< Return all solutions
         Gecode::Driver::DoubleOption _threads;           ///< How many threads to use
         Gecode::Driver::BoolOption _free;                ///< Use free search
         Gecode::Driver::DoubleOption _decay;             ///< Decay option
@@ -251,7 +252,7 @@ namespace Gecode { namespace FlatZinc {
         /// Constructor
         FlatZincOptions(const char* s)
             : Gecode::BaseOptions(s), _solutions("n", "number of solutions (0 = all, -1 = one/best)", -1),
-              _allSolutions("a", "return all solutions (equal to -n 0)"),
+              _all_solutions("a", "return all solutions (equal to -n 0)"),
               _threads("p", "number of threads (0 = #processing units)", Gecode::Search::Config::threads),
               _free("f", "free search, no need to follow search-specification"), _decay("decay", "decay factor", 0.99),
               _c_d("c-d", "recomputation commit distance", Gecode::Search::Config::c_d),
@@ -289,7 +290,7 @@ namespace Gecode { namespace FlatZinc {
             add(_threads);
             add(_c_d);
             add(_a_d);
-            add(_allSolutions);
+            add(_all_solutions);
             add(_free);
             add(_decay);
             add(_node);
@@ -316,7 +317,7 @@ namespace Gecode { namespace FlatZinc {
         void
         parse(int& argc, char* argv[]) {
             Gecode::BaseOptions::parse(argc, argv);
-            if (_allSolutions.value() && _solutions.value() == -1) {
+            if (_all_solutions.value() && _solutions.value() == -1) {
                 _solutions.value(0);
             }
             if (_time_limit.value()) {
@@ -326,11 +327,12 @@ namespace Gecode { namespace FlatZinc {
                 _mode.value(Gecode::SM_STAT);
         }
 
-        virtual void
-        help(void) {
-            std::cerr << "Gecode FlatZinc interpreter" << std::endl
-                      << " - FlatZinc text interface" << std::endl
-                      << std::endl;
+        void
+        help(void) override {
+            std::cerr << "Gecode FlatZinc interpreter" << '\n'
+                      << " - FlatZinc text interface" << '\n'
+                      << '\n'
+                      << std::flush;
             Gecode::BaseOptions::help();
         }
 
@@ -339,8 +341,8 @@ namespace Gecode { namespace FlatZinc {
             return _solutions.value();
         }
         bool
-        allSolutions(void) const {
-            return _allSolutions.value();
+        all_solutions(void) const {
+            return _all_solutions.value();
         }
         double
         threads(void) const {
@@ -451,8 +453,8 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
         void
-        allSolutions(bool b) {
-            _allSolutions.value(b);
+        all_solutions(bool b) {
+            _all_solutions.value(b);
         }
     };
 
@@ -497,20 +499,20 @@ namespace Gecode { namespace FlatZinc {
 
     protected:
         /// Initialisation data (only used for posting constraints)
-        FlatZincSpaceInitData* _initData;
+        FlatZincSpaceInitData* _init_data;
         /// Number of integer variables
-        int intVarCount;
+        int int_var_count;
         /// Number of Boolean variables
-        int boolVarCount;
+        int bool_var_count;
         /// Number of float variables
-        int floatVarCount;
+        int float_var_count;
         /// Number of set variables
-        int setVarCount;
+        int set_var_count;
 
         /// Index of the variable to optimize
-        int _optVar;
+        int _opt_var;
         /// Whether variable to optimize is integer (or float)
-        bool _optVarIsInt;
+        bool _opt_var_is_int;
 
         /// Whether to solve as satisfaction or optimization problem
         Meth _method;
@@ -519,13 +521,13 @@ namespace Gecode { namespace FlatZinc {
         unsigned int _lns;
 
         /// Initial solution to start the LNS (or nullptr for no LNS)
-        IntSharedArray _lnsInitialSolution;
+        IntSharedArray _lns_initial_solution;
 
         /// Random number generator
         Rnd _random;
 
         /// Annotations on the solve item
-        AST::Array* _solveAnnotations;
+        AST::Array* _solve_annotations;
 
         /// Copy constructor
         FlatZincSpace(FlatZincSpace&);
@@ -534,12 +536,12 @@ namespace Gecode { namespace FlatZinc {
         friend class BlackBoxAccess;
         /// Run the search engine
         template <template <class> class Engine>
-        void runEngine(std::ostream& out, const Printer& p, const FlatZincOptions& opt,
-                       Gecode::Support::Timer& t_total);
+        void run_engine(std::ostream& out, const Printer& p, const FlatZincOptions& opt,
+                        Gecode::Support::Timer& t_total);
         /// Run the meta search engine
         template <template <class> class Engine, template <class, template <class> class> class Meta>
-        void runMeta(std::ostream& out, const Printer& p, const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
-        void branchWithPlugin(AST::Node* ann);
+        void run_meta(std::ostream& out, const Printer& p, const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
+        void branch_with_plugin(AST::Node* ann);
 
     public:
         /// The integer variables
@@ -651,38 +653,38 @@ namespace Gecode { namespace FlatZinc {
         Gecode::FloatNum step;
 #endif
         /// Whether the introduced variables still need to be copied
-        bool needAuxVars;
+        bool need_aux_vars;
         /// Construct empty space
         FlatZincSpace(Rnd& random = defrnd);
 
         /// Destructor
-        ~FlatZincSpace(void);
+        ~FlatZincSpace(void) override;
 
         /// Initialize space with given number of variables
-        void init(int intVars, int boolVars, int setVars, int floatVars);
+        void init(int int_vars, int bool_vars, int set_vars, int float_vars);
 
         /// Create new integer variable from specification
-        void newIntVar(IntVarSpec* vs);
+        void new_int_var(IntVarSpec* vs);
         /// Link integer variable \a iv to Boolean variable \a bv
-        void aliasBool2Int(int iv, int bv);
+        void alias_bool2_int(int iv, int bv);
         /// Return linked Boolean variable for integer variable \a iv
-        int aliasBool2Int(int iv);
+        int alias_bool2_int(int iv);
         /// Create new Boolean variable from specification
-        void newBoolVar(BoolVarSpec* vs);
+        void new_bool_var(BoolVarSpec* vs);
         /// Create new set variable from specification
-        void newSetVar(SetVarSpec* vs);
+        void new_set_var(SetVarSpec* vs);
         /// Create new float variable from specification
-        void newFloatVar(FloatVarSpec* vs);
+        void new_float_var(FloatVarSpec* vs);
 
         /// Post a constraint specified by \a ce
-        void postConstraints(std::vector<ConExpr*>& ces);
+        void post_constraints(std::vector<ConExpr*>& ces);
 
         /// Post the solve item
         void solve(AST::Array* annotation);
         /// Post that integer variable \a var should be minimized
-        void minimize(int var, bool isInt, AST::Array* annotation);
+        void minimize(int var, bool is_int, AST::Array* annotation);
         /// Post that integer variable \a var should be maximized
-        void maximize(int var, bool isInt, AST::Array* annotation);
+        void maximize(int var, bool is_int, AST::Array* annotation);
 
         /// Run the search
         void run(std::ostream& out, const Printer& p, const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
@@ -691,7 +693,7 @@ namespace Gecode { namespace FlatZinc {
         void print(std::ostream& out, const Printer& p) const;
 #ifdef GECODE_HAS_CPPROFILER
         /// Get string representing the domains of variables (for cpprofiler)
-        std::string getDomains(const Printer& p) const;
+        std::string get_domains(const Printer& p) const;
 #endif
         /// Compare this space with space \a s and print the differences on
         /// \a out
@@ -705,7 +707,7 @@ namespace Gecode { namespace FlatZinc {
          * maximization ranks upper endpoints, independently of the step used by
          * constrain().
          */
-        virtual SpaceComparison compare(const Space& s) const;
+        SpaceComparison compare(const Space& s) const override;
         /// Compare this space with space \a s and print the differences on
         /// \a out using \a p
         void compare(const FlatZincSpace& s, std::ostream& out, const Printer& p) const;
@@ -714,89 +716,90 @@ namespace Gecode { namespace FlatZinc {
          * \brief Remove all variables not needed for output
          *
          * After calling this function, no new constraints can be posted through
-         * FlatZinc variable references, and the createBranchers method must
+         * FlatZinc variable references, and the create_branchers method must
          * not be called again.
          *
          */
-        void shrinkArrays(Printer& p);
+        void shrink_arrays(Printer& p);
 
         /// Return whether to solve a satisfaction or optimization problem
         Meth method(void) const;
 
         /// Return index of variable used for optimization
-        int optVar(void) const;
+        int opt_var(void) const;
         /// Return whether variable used for optimization is integer (or float)
-        bool optVarIsInt(void) const;
+        bool opt_var_is_int(void) const;
 
         /**
          * \brief Create branchers corresponding to the solve item annotations
          *
-         * If \a ignoreUnknown is true, unknown solve item annotations will be
+         * If \a ignore_unknown is true, unknown solve item annotations will be
          * ignored, otherwise a warning is written to \a err.
          *
          * Random branchers use the seed or complete state configured in \a opt.
          *
          */
-        void createBranchers(Printer& p, AST::Node* ann, FlatZincOptions& opt, bool ignoreUnknown,
-                             std::ostream& err = std::cerr);
+        void create_branchers(Printer& p, AST::Node* ann, FlatZincOptions& opt, bool ignore_unknown,
+                              std::ostream& err = std::cerr);
 
         /// Return the solve item annotations
-        AST::Array* solveAnnotations(void) const;
+        AST::Array* solve_annotations(void) const;
 
         /// Information for printing branches
-        BranchInformation branchInfo;
+        BranchInformation branch_info;
 
         /// Implement optimization
-        virtual void constrain(const Space& s);
+        void constrain(const Space& s) override;
         /// Copy function
-        virtual Gecode::Space* copy(void);
+        Gecode::Space* copy(void) override;
         /// Spoke hook for restarts: on_restart and LNS spokes have partial coverage
-        virtual void spoke(SpokeContext& sc);
+        void spoke(SpokeContext& sc) override;
 
         /// \name AST to variable and value conversion
         //@{
         /// Convert \a arg (array of integers) to IntArgs
-        IntArgs arg2intargs(AST::Node* arg, int offset = 0);
+        IntArgs arg_to_int_args(AST::Node* arg, int offset = 0);
         /// Convert \a arg (array of integers) to IntSharedArray
-        IntSharedArray arg2intsharedarray(AST::Node* arg, int offset = 0);
+        IntSharedArray arg_to_int_shared_array(AST::Node* arg, int offset = 0);
         /// Convert \a arg (array of Booleans) to IntArgs
-        IntArgs arg2boolargs(AST::Node* arg, int offset = 0);
+        IntArgs arg_to_bool_args(AST::Node* arg, int offset = 0);
         /// Convert \a arg (array of integers) to IntSharedArray
-        IntSharedArray arg2boolsharedarray(AST::Node* arg, int offset = 0);
+        IntSharedArray arg_to_bool_shared_array(AST::Node* arg, int offset = 0);
         /// Convert \a n to IntSet
-        IntSet arg2intset(AST::Node* n);
+        IntSet arg_to_int_set(AST::Node* n);
         /// Convert \a arg to IntSetArgs
-        IntSetArgs arg2intsetargs(AST::Node* arg, int offset = 0);
+        IntSetArgs arg_to_int_set_args(AST::Node* arg, int offset = 0);
         /// Convert \a arg to IntVarArgs
-        IntVarArgs arg2intvarargs(AST::Node* arg, int offset = 0);
+        IntVarArgs arg_to_int_var_args(AST::Node* arg, int offset = 0);
         /// Convert \a arg to BoolVarArgs
-        BoolVarArgs arg2boolvarargs(AST::Node* arg, int offset = 0, int siv = -1);
+        BoolVarArgs arg_to_bool_var_args(AST::Node* arg, int offset = 0, int siv = -1);
         /// Convert \a n to BoolVar
-        BoolVar arg2BoolVar(AST::Node* n);
+        BoolVar arg_to_bool_var(AST::Node* n);
         /// Convert \a n to IntVar
-        IntVar arg2IntVar(AST::Node* n);
+        IntVar arg_to_int_var(AST::Node* n);
         /// Convert \a a to TupleSet
-        TupleSet arg2tupleset(const IntArgs& a, int noOfVars);
+        TupleSet arg_to_tuple_set(const IntArgs& a, int no_of_vars);
         /// Check if \a b is array of Booleans (or has a single integer)
-        bool isBoolArray(AST::Node* b, int& singleInt);
+        bool is_bool_array(AST::Node* b, int& single_int);
 #ifdef GECODE_HAS_SET_VARS
         /// Convert \a n to SetVar
-        SetVar arg2SetVar(AST::Node* n);
+        SetVar arg_to_set_var(AST::Node* n);
         /// Convert \a n to SetVarArgs
-        SetVarArgs arg2setvarargs(AST::Node* arg, int offset = 0, int doffset = 0, const IntSet& od = IntSet::empty);
+        SetVarArgs arg_to_set_var_args(AST::Node* arg, int offset = 0, int doffset = 0,
+                                       const IntSet& od = IntSet::empty);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
         /// Convert \a n to FloatValArgs
-        FloatValArgs arg2floatargs(AST::Node* arg, int offset = 0);
+        FloatValArgs arg_to_float_args(AST::Node* arg, int offset = 0);
         /// Convert \a n to FloatVar
-        FloatVar arg2FloatVar(AST::Node* n);
+        FloatVar arg_to_float_var(AST::Node* n);
         /// Convert \a n to FloatVarArgs
-        FloatVarArgs arg2floatvarargs(AST::Node* arg, int offset = 0);
+        FloatVarArgs arg_to_float_var_args(AST::Node* arg, int offset = 0);
 #endif
         /// Convert \a ann to integer propagation level
-        IntPropLevel ann2ipl(AST::Node* ann);
+        IntPropLevel annotation_to_int_prop_level(AST::Node* ann);
         /// Share DFA \a a if possible
-        DFA getSharedDFA(DFA& a);
+        DFA get_shared_dfa(DFA& a);
         //@}
     };
 
@@ -810,7 +813,7 @@ namespace Gecode { namespace FlatZinc {
         Error(const std::string& where, const std::string& what, AST::Array* const ann)
             : msg(make_message(where, what, ann)) {}
         const std::string&
-        toString(void) const {
+        to_string(void) const {
             return msg;
         }
 
@@ -841,11 +844,11 @@ namespace Gecode { namespace FlatZinc {
             std::vector<std::string> result;
             if (ann) {
                 for (const auto& i : ann->a) {
-                    if (i->isArray()) {
-                        auto nested_result = get_constraint_names(i->getArray());
+                    if (i->is_array()) {
+                        auto nested_result = get_constraint_names(i->get_array());
                         result.insert(result.end(), nested_result.begin(), nested_result.end());
-                    } else if (i->isCall("mzn_constraint_name")) {
-                        result.emplace_back(i->getCall()->args->getString());
+                    } else if (i->is_call("mzn_constraint_name")) {
+                        result.emplace_back(i->get_call()->args->get_string());
                     }
                 }
             }
@@ -863,7 +866,7 @@ namespace Gecode { namespace FlatZinc {
      * deleted rather than reused.
      */
     GECODE_FLATZINC_EXPORT
-    FlatZincSpace* parse(const std::string& fileName, Printer& p, std::ostream& err = std::cerr,
+    FlatZincSpace* parse(const std::string& file_name, Printer& p, std::ostream& err = std::cerr,
                          FlatZincSpace* fzs = nullptr, Rnd& rnd = defrnd);
 
     /**

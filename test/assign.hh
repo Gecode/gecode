@@ -68,7 +68,7 @@ namespace Test {
             /// Construct and register test
             IntTest(const std::string& s, int a, const Gecode::IntSet& d);
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
             /// Post assignment on variables \a x
             virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
         };
@@ -86,7 +86,7 @@ namespace Test {
             /// Construct and register test
             BoolTest(const std::string& s, int a);
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
             /// Post assignment on variables \a x
             virtual void post(Gecode::Space& home, Gecode::BoolVarArray& x) = 0;
         };
@@ -108,7 +108,7 @@ namespace Test {
             /// Construct and register test
             SetTest(const std::string& s, int a, const Gecode::IntSet& d);
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
             /// Post assignment on variables \a x
             virtual void post(Gecode::Space& home, Gecode::SetVarArray& x) = 0;
         };
@@ -132,7 +132,7 @@ namespace Test {
             /// Construct and register test
             FloatTest(const std::string& s, int a, const Gecode::FloatVal& d);
             /// Perform test
-            virtual bool run(void);
+            bool run(void) override;
             /// Post assignment on variables \a x
             virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) = 0;
         };

@@ -71,7 +71,7 @@ namespace Gecode { namespace Int {
 
     forceinline int
     BoolVarImp::val(void) const {
-        assert(status() != NONE);
+        assert(status() != unassigned_status);
         return min();
     }
 
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int {
     }
     forceinline bool
     BoolVarImp::assigned(void) const {
-        return status() != NONE;
+        return status() != unassigned_status;
     }
 
     forceinline unsigned int
@@ -123,15 +123,15 @@ namespace Gecode { namespace Int {
      */
     forceinline bool
     BoolVarImp::zero(void) const {
-        return status() < NONE;
+        return status() < unassigned_status;
     }
     forceinline bool
     BoolVarImp::one(void) const {
-        return status() > NONE;
+        return status() > unassigned_status;
     }
     forceinline bool
     BoolVarImp::none(void) const {
-        return status() == NONE;
+        return status() == unassigned_status;
     }
 
     /*
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline ModEvent
-    BoolVarImp::modevent(const Delta&) {
+    BoolVarImp::modification_event(const Delta&) {
         return ME_BOOL_VAL;
     }
     forceinline int

@@ -119,6 +119,46 @@ options as numbers in config.hpp. A quoted value broke compilation.
 
 [ENTRY]
 Module: other
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Move owned branching and open-variable-list callbacks through constructors
+instead of copying them repeatedly. Avoid copying read-only argument arrays
+in examples, reserve worker-control thread storage, and buffer multi-line
+output while flushing complete solutions, progress, and protocol messages.
+[MORE]
+Expand clang-tidy checks for hidden copies, container operations, missed moves,
+stream flushing, and correctness errors.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Rename the strict-less relation constants IRT_LE, FRT_LE, and SRT_LE to
+IRT_LT, FRT_LT, and SRT_LT. Remove the old spellings without compatibility
+aliases to avoid confusion with less-or-equal. Relation values and semantics
+are unchanged; the less-or-equal constants retain the _LQ suffix.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Require C++23 and adopt four-space indentation and a 120-column limit with
+clang-format 22.
+Functions, variables, and members use snake_case; types retain PascalCase.
+Constants and functions that stand for constant values, such as ME_INT_VAL,
+ES_SUBSUMED, and INT_VAR_SIZE_MIN, retain UPPER_CASE. Public API names
+change, including no_overlap, bin_packing, and modification_event_delta.
+Update downstream source code before recompiling.
+[MORE]
+Add formatting, clang-tidy, and extended repository check commands. Extended
+checks include generated sources, CTest suites, installed-package consumers,
+and documentation. EditorConfig replaces per-file indentation headers.
+
+[ENTRY]
+Module: other
 What:   removed
 Rank:   major
 [DESCRIPTION]

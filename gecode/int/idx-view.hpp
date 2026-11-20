@@ -118,14 +118,14 @@ namespace Gecode { namespace Int {
     template <class View>
     forceinline IdxView<View>&
     IdxViewArray<View>::operator[](int i) {
-        assert((i >= 0) && (i < size()));
+        assert((xs != nullptr) && (i >= 0) && (i < size()));
         return xs[i];
     }
 
     template <class View>
     forceinline const IdxView<View>&
     IdxViewArray<View>::operator[](int i) const {
-        assert((i >= 0) && (i < size()));
+        assert((xs != nullptr) && (i >= 0) && (i < size()));
         return xs[i];
     }
 

@@ -54,7 +54,7 @@ namespace Test { namespace Groups {
                 distinct((*this)(b), x, IPL_DOM);
                 // fall through
             case 1:
-                rel((*this)(a), x[0], Gecode::IRT_LE, x[1]);
+                rel((*this)(a), x[0], Gecode::IRT_LT, x[1]);
                 break;
             default:
                 break;
@@ -65,8 +65,8 @@ namespace Test { namespace Groups {
             x.update(*this, s.x);
         }
         /// Copy during cloning
-        virtual Space*
-        copy(void) {
+        Space*
+        copy(void) override {
             return new GroupSpace(*this);
         }
     };
@@ -88,7 +88,7 @@ namespace Test { namespace Groups {
               all(all0) {}
         /// Perform actual tests
         bool
-        run(void) {
+        run(void) override {
             using namespace Gecode;
             GroupSpace* s = new GroupSpace(n);
             if (fix)

@@ -97,7 +97,7 @@ public:
         }
 
         // Symmetry breaking: the last word must be later in the wordlist
-        rel(*this, words[0], IRT_LE, words[w_l - 1]);
+        rel(*this, words[0], IRT_LT, words[w_l - 1]);
 
         switch (opt.branching()) {
         case BRANCH_WORDS:
@@ -115,13 +115,13 @@ public:
         letters.update(*this, s.letters);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new WordSquare(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         Matrix<IntVarArray> ml(letters, w_l, w_l);
         for (int i = 0; i < w_l; i++) {
             os << "\t\t";
@@ -131,9 +131,9 @@ public:
                 } else {
                     os << ".";
                 }
-            os << std::endl;
+            os << '\n';
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 
@@ -150,7 +150,7 @@ main(int argc, char* argv[]) {
     opt.parse(argc, argv);
     dict.init(opt.file());
     if (opt.size() > static_cast<unsigned int>(dict.len())) {
-        std::cerr << "Error: size must be between 0 and " << dict.len() << std::endl;
+        std::cerr << "Error: size must be between 0 and " << dict.len() << '\n';
         return 1;
     }
     Script::run<WordSquare, DFS, SizeOptions>(opt);

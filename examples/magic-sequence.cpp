@@ -89,20 +89,20 @@ public:
         s.update(*this, e.s);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new MagicSequence(*this);
     }
     /// Print sequence
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         os << "\t";
         for (int i = 0; i < n; i++) {
             os << s[i] << ", ";
             if ((i + 1) % 20 == 0)
-                os << std::endl << "\t";
+                os << '\n' << "\t";
         }
-        os << std::endl;
+        os << '\n';
     }
 };
 

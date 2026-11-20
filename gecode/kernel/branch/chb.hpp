@@ -72,7 +72,7 @@ namespace Gecode {
             Storage(Home home, ViewArray<View>& x, typename BranchTraits<typename View::VarType>::Merit bm);
             /// Delete object
             GECODE_KERNEL_EXPORT
-            ~Storage(void);
+            ~Storage(void) override;
             /// Bump failure count and alpha
             void bump(void);
             /// Update chb information at position \a i
@@ -169,19 +169,19 @@ namespace Gecode {
         /// Constructor for creation
         Recorder(Home home, ViewArray<View>& x, CHB& chb);
         /// Copy propagator during cloning
-        virtual Propagator* copy(Space& home);
+        Propagator* copy(Space& home) override;
         /// Cost function (record so that propagator runs last)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Give advice to propagator when \a home has failed
-        virtual void advise(Space& home, Advisor& a);
+        void advise(Space& home, Advisor& a) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
         /// Post chb recorder propagator
         static ExecStatus post(Home home, ViewArray<View>& x, CHB& chb);
     };

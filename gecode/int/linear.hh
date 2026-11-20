@@ -78,11 +78,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Cost function (defined as low binary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -112,11 +112,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Cost function (defined as low binary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -147,9 +147,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for rewriting \a p during cloning
         EqBin(Space& home, Propagator& p, A x0, B x1, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0+x_1 = c\f$
         static ExecStatus post(Home home, A x0, B x1, Val c);
     };
@@ -181,9 +181,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$(x_0+x_1 = c)\equiv \operatorname{rm}(b)\f$
         static ExecStatus post(Home home, A x0, B x1, Val c, Ctrl b);
     };
@@ -216,11 +216,11 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for rewriting \a p during cloning
         NqBin(Space& home, Propagator& p, A x0, B x1, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Cost function (defined as low unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Post propagator for \f$x_0+x_1 \neq c\f$
         static ExecStatus post(Home home, A x0, B x1, Val c);
     };
@@ -253,9 +253,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for rewriting \a p during cloning
         LqBin(Space& home, Propagator& p, A x0, B x1, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0+x_1 \leq c\f$
         static ExecStatus post(Home home, A x0, B x1, Val c);
     };
@@ -288,9 +288,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for rewriting \a p during cloning
         GqBin(Space& home, Propagator& p, A x0, B x1, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0+x_1 \geq c\f$
         static ExecStatus post(Home home, A x0, B x1, Val c);
     };
@@ -322,9 +322,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$(x_0+x_1 \leq c)\equiv \operatorname{rm}(b)\f$
         static ExecStatus post(Home home, A x0, B x1, Val c, BoolView b);
     };
@@ -369,11 +369,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Cost function (defined as low ternary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -405,9 +405,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for rewriting \a p during cloning
         EqTer(Space& home, Propagator& p, A x0, B x1, C x2, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0+x_1+x_2 = c\f$
         static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
     };
@@ -441,9 +441,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for rewriting \a p during cloning
         NqTer(Space& home, Propagator& p, A x0, B x1, C x2, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0+x_1+x_2 \neq c\f$
         static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
     };
@@ -477,9 +477,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for rewriting \a p during cloning
         LqTer(Space& home, Propagator& p, A x0, B x1, C x2, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$x_0+x_1+x_2 \leq c\f$
         static ExecStatus post(Home home, A x0, B x1, C x2, Val c);
     };
@@ -521,11 +521,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Cost function (defined as low linear)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -551,9 +551,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -598,9 +598,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for creation
         Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     };
@@ -629,16 +629,16 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for creation
         DomEq(Home home, ViewArray<View>& x, ViewArray<View>& y, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /**
          * \brief Cost function
          *
          * If in stage for bounds propagation, the cost is
          * low linear. Otherwise it is high crazy.
          */
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
         static ExecStatus post(Home home, ViewArray<View>& x, ViewArray<View>& y, Val c);
     };
@@ -670,9 +670,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for creation
         ReEq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\equiv \operatorname{rm}(b)\f$
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
     };
@@ -703,9 +703,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for creation
         Nq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\neq c\f$
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     };
@@ -736,9 +736,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for creation
         Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c);
     };
@@ -770,9 +770,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for creation
         ReLq(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\equiv \operatorname{rm}(b)\f$
         static ExecStatus post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
     };
@@ -815,9 +815,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Cost function (defined as high unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -842,13 +842,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
         static ExecStatus post(Home home, ViewArray<VX>& x, int c);
     };
@@ -875,13 +875,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
         static ExecStatus post(Home home, ViewArray<VX>& x, int c);
     };
@@ -910,15 +910,15 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Copy propagator during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Cost function (defined as low linear)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
         static ExecStatus post(Home home, ViewArray<VX>& b, int c);
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -947,9 +947,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Cost function (defined as high unary)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -980,13 +980,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq\right) c \equiv \operatorname{rm}(b)\f$
         static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
     };
@@ -1013,13 +1013,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Give advice to propagator
-        virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+        ExecStatus advise(Space& home, Advisor& a, const Delta& d) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = c\right)\equiv \operatorname{rm}(b)\f$
         static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
     };
@@ -1050,11 +1050,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Cost function (defined as low linear)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -1077,9 +1077,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = y+c\f$
         static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
     };
@@ -1104,9 +1104,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq y+c\f$
         static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
     };
@@ -1131,9 +1131,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq y+c\f$
         static ExecStatus post(Home home, ViewArray<XV>& x, YV y, int c);
     };
@@ -1252,11 +1252,11 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a pr
         LinBoolScale(Space& home, Propagator& pr, SBAP& p, SBAN& n, VX x, int c);
         /// Cost function (defined as low linear)
-        virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+        PropCost cost(const Space& home, const ModEventDelta& med) const override;
         /// Schedule function
-        virtual void reschedule(Space& home);
+        void reschedule(Space& home) override;
         /// Delete propagator and return its size
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     /**
@@ -1279,9 +1279,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a pr
         EqBoolScale(Space& home, Propagator& pr, SBAP& p, SBAN& n, VX x, int c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
     };
@@ -1306,9 +1306,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a pr
         LqBoolScale(Space& home, Propagator& pr, SBAP& p, SBAN& n, VX x, int c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
     };
@@ -1333,9 +1333,9 @@ namespace Gecode { namespace Int { namespace Linear {
         /// Constructor for cloning \a pr
         NqBoolScale(Space& home, Propagator& pr, SBAP& p, SBAN& n, VX x, int c);
         /// Create copy during cloning
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Perform propagation
-        virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+        ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator
         static ExecStatus post(Home home, SBAP& p, SBAN& n, VX x, int c);
     };

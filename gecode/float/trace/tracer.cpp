@@ -42,7 +42,7 @@ namespace Gecode {
         os << "trace<Float>::init(id:" << t.id();
         if (t.group().in())
             os << ",g:" << t.group().id();
-        os << ") slack: 100.00% (" << t.slack().initial() << " width)" << std::endl;
+        os << ") slack: 100.00% (" << t.slack().initial() << " width)" << '\n' << std::flush;
     }
 
     void
@@ -51,7 +51,8 @@ namespace Gecode {
         os << "trace<Float>::prune(id:" << t.id();
         if (t.group().in())
             os << ",g:" << t.group().id();
-        os << "): [" << i << "] = " << t[i] << " - [" << d.min() << ".." << d.max() << "] by " << vti << std::endl;
+        os << "): [" << i << "] = " << t[i] << " - [" << d.min() << ".." << d.max() << "] by " << vti << '\n'
+           << std::flush;
     }
 
     void
@@ -66,7 +67,8 @@ namespace Gecode {
         double p_c = 100.0 * (sl_c / sl_i);
         double p_d = 100.0 * (sl_p / sl_i) - p_c;
         os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
-           << '%' << std::endl;
+           << '%' << '\n'
+           << std::flush;
     }
 
     void
@@ -81,7 +83,8 @@ namespace Gecode {
         double p_c = 100.0 * (sl_c / sl_i);
         double p_d = 100.0 * (sl_p / sl_i) - p_c;
         os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
-           << '%' << std::endl;
+           << '%' << '\n'
+           << std::flush;
     }
 
     void
@@ -96,7 +99,8 @@ namespace Gecode {
         double p_c = 100.0 * (sl_c / sl_i);
         double p_d = 100.0 * (sl_p / sl_i) - p_c;
         os << std::showpoint << std::setprecision(4) << p_c << "% - " << std::showpoint << std::setprecision(4) << p_d
-           << '%' << std::endl;
+           << '%' << '\n'
+           << std::flush;
     }
 
     StdFloatTracer StdFloatTracer::def;

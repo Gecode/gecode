@@ -45,16 +45,16 @@ namespace Gecode {
         switch (rt) {
         case IRT_EQ: {
             Gecode::Int::IntView xv(x);
-            Set::SingletonView xsingle(xv);
-            GECODE_ES_FAIL((Set::Rel::Eq<Set::SetView, Set::SingletonView>::post(home, s, xsingle)));
+            Set::SingletonView x_singleton(xv);
+            GECODE_ES_FAIL((Set::Rel::Eq<Set::SetView, Set::SingletonView>::post(home, s, x_singleton)));
 
         } break;
         case IRT_NQ: {
             Gecode::Set::SetView sv(s);
-            GECODE_ME_FAIL(sv.cardMin(home, 1));
+            GECODE_ME_FAIL(sv.card_min(home, 1));
             Gecode::Int::IntView xv(x);
-            Set::SingletonView xsingle(xv);
-            GECODE_ES_FAIL((Set::Rel::NoSubset<Set::SingletonView, Set::SetView>::post(home, xsingle, sv)));
+            Set::SingletonView x_singleton(xv);
+            GECODE_ES_FAIL((Set::Rel::NoSubset<Set::SingletonView, Set::SetView>::post(home, x_singleton, sv)));
 
         } break;
         case IRT_LQ: {
@@ -62,9 +62,9 @@ namespace Gecode {
             rel(home, tmp, IRT_LQ, x);
             GECODE_ES_FAIL(Set::Int::MaxElement<Set::SetView>::post(home, s, tmp));
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             IntVar tmp(home, Int::Limits::min, Int::Limits::max);
-            rel(home, tmp, IRT_LE, x);
+            rel(home, tmp, IRT_LT, x);
             GECODE_ES_FAIL(Set::Int::MaxElement<Set::SetView>::post(home, s, tmp));
         } break;
         case IRT_GQ: {
@@ -176,9 +176,9 @@ namespace Gecode {
             rel(home, tmp, IRT_LQ, x, r);
             Gecode::Set::Int::remax(home, s, tmp, r);
         } break;
-        case IRT_LE: {
+        case IRT_LT: {
             IntVar tmp(home, Int::Limits::min, Int::Limits::max);
-            rel(home, tmp, IRT_LE, x, r);
+            rel(home, tmp, IRT_LT, x, r);
             Gecode::Set::Int::remax(home, s, tmp, r);
         } break;
         case IRT_GQ: {
@@ -203,7 +203,7 @@ namespace Gecode {
     }
 
     void
-    notMin(Home home, SetVar s, IntVar x) {
+    not_min(Home home, SetVar s, IntVar x) {
         GECODE_POST;
         GECODE_ES_FAIL(Set::Int::NotMinElement<Set::SetView>::post(home, s, x));
     }
@@ -233,7 +233,7 @@ namespace Gecode {
     }
 
     void
-    notMax(Home home, SetVar s, IntVar x) {
+    not_max(Home home, SetVar s, IntVar x) {
         GECODE_POST;
         GECODE_ES_FAIL(Set::Int::NotMaxElement<Set::SetView>::post(home, s, x));
     }

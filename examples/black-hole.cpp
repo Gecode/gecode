@@ -137,14 +137,14 @@ public:
         // between two consecutive cards is 1 or 12.
         if (opt.propagation() == PROPAGATION_REIFIED) {
             // Build table for accessing the rank of a card
-            IntArgs modtable(52);
+            IntArgs modulo_table(52);
             for (int i = 0; i < 52; ++i) {
-                modtable[i] = i % 13;
+                modulo_table[i] = i % 13;
             }
             for (int i = 0; i < 51; ++i) {
                 IntVar x1(*this, 0, 12), x2(*this, 0, 12);
-                element(*this, modtable, x[i], x1);
-                element(*this, modtable, x[i + 1], x2);
+                element(*this, modulo_table, x[i], x1);
+                element(*this, modulo_table, x[i + 1], x2);
                 const int dr[2] = {1, 12};
                 IntVar diff(*this, IntSet(dr, 2));
                 rel(*this, abs(x1 - x2) == diff, IPL_DOM);
@@ -252,30 +252,30 @@ public:
         return v;
     }
     /// Print instance and solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "Layout:" << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "Layout:" << '\n';
         for (int i = 0; i < 17; i++) {
             for (int j = 0; j < 3; j++)
                 os << card(layout[i][j]) << " ";
             if ((i + 1) % 3 == 0)
-                os << std::endl;
+                os << '\n';
             else
                 os << "  \t";
         }
-        os << std::endl << std::endl;
+        os << '\n' << '\n';
 
-        os << "Solution:" << std::endl;
+        os << "Solution:" << '\n';
         for (int i = 0; i < 52; ++i) {
             if (x[i].assigned())
                 os << card(x[i].val()) << " ";
             else
                 os << "   ";
             if ((i + 1) % 13 == 0)
-                os << std::endl;
+                os << '\n';
         }
-        os << std::endl;
-        os << std::endl;
+        os << '\n';
+        os << '\n';
     }
 
     /// Constructor for cloning \a s
@@ -284,8 +284,8 @@ public:
         y.update(*this, s.y);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new BlackHole(*this);
     }
 };

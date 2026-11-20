@@ -247,22 +247,22 @@ namespace Gecode { namespace Set { namespace Rel {
         if (xlm) {
             CSIter i(*this, 0, 0);
             Iter::Values::ToRanges<CSIter> ir(i);
-            GECODE_ME_CHECK(x.includeI(home, ir));
+            GECODE_ME_CHECK(x.include_i(home, ir));
         }
         if (xum) {
             CSIter i(*this, 0, 1);
             Iter::Values::ToRanges<CSIter> ir(i);
-            GECODE_ME_CHECK(x.intersectI(home, ir));
+            GECODE_ME_CHECK(x.intersect_i(home, ir));
         }
         if (ylm) {
             CSIter i(*this, 2 * xsize, 0);
             Iter::Values::ToRanges<CSIter> ir(i);
-            GECODE_ME_CHECK(y.includeI(home, ir));
+            GECODE_ME_CHECK(y.include_i(home, ir));
         }
         if (yum) {
             CSIter i(*this, 2 * xsize, 1);
             Iter::Values::ToRanges<CSIter> ir(i);
-            GECODE_ME_CHECK(y.intersectI(home, ir));
+            GECODE_ME_CHECK(y.intersect_i(home, ir));
         }
         return ES_OK;
     }
@@ -323,7 +323,7 @@ namespace Gecode { namespace Set { namespace Rel {
     ExecStatus
     Lq<View0, View1, strict>::post(Home home, View0 x, View1 y) {
         if (strict)
-            GECODE_ME_CHECK(y.cardMin(home, 1));
+            GECODE_ME_CHECK(y.card_min(home, 1));
         if (same(x, y))
             return strict ? ES_FAILED : ES_OK;
         (void)new (home) Lq(home, x, y);
@@ -339,17 +339,17 @@ namespace Gecode { namespace Set { namespace Rel {
     template <class View0, class View1, bool strict>
     ExecStatus
     Lq<View0, View1, strict>::propagate(Space& home, const ModEventDelta&) {
-        if ((!strict) && x1.cardMax() == 0) {
-            GECODE_ME_CHECK(x0.cardMax(home, 0));
+        if ((!strict) && x1.card_max() == 0) {
+            GECODE_ME_CHECK(x0.card_max(home, 0));
         }
 
-        if (x0.cardMax() == 0) {
+        if (x0.card_max() == 0) {
             return home.ES_SUBSUMED(*this);
         }
 
-        if (x0.glbMin() < x1.lubMin())
+        if (x0.glb_min() < x1.lub_min())
             return ES_FAILED;
-        if (x1.glbMin() < x0.lubMin())
+        if (x1.glb_min() < x0.lub_min())
             return home.ES_SUBSUMED(*this);
 
         bool assigned = x0.assigned() && x1.assigned();
@@ -404,7 +404,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
         if (i == n) { // case: $
             if (strict)
-                goto rewrite_le;
+                goto rewrite_lt;
             else
                 goto rewrite_lq;
         }
@@ -413,7 +413,7 @@ namespace Gecode { namespace Set { namespace Rel {
             goto rewrite_lq;
 
         if (cs.xmin(i) > cs.ymax(i)) // case: >
-            goto rewrite_le;
+            goto rewrite_lt;
 
         if (cs.xmax(i) <= cs.ymin(i)) {
             // case: <= (invariant: not =, <)
@@ -460,7 +460,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
             if (i == n) { // case: $
                 if (strict) {
-                    goto rewrite_le;
+                    goto rewrite_lt;
                 } else {
                     GECODE_ES_CHECK(cs.prune(home, x0, x1));
                     return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
@@ -468,7 +468,7 @@ namespace Gecode { namespace Set { namespace Rel {
             }
 
             if (cs.xmin(i) > cs.ymax(i)) // case: >
-                goto rewrite_le;
+                goto rewrite_lt;
 
             GECODE_ES_CHECK(cs.prune(home, x0, x1));
             return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
@@ -477,7 +477,7 @@ namespace Gecode { namespace Set { namespace Rel {
         GECODE_ES_CHECK(cs.prune(home, x0, x1));
         return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
 
-    rewrite_le:
+    rewrite_lt:
         GECODE_ME_CHECK(cs.xlq(firsti, false));
         GECODE_ME_CHECK(cs.ygq(firsti, true));
         GECODE_ES_CHECK(cs.prune(home, x0, x1));

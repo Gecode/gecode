@@ -45,7 +45,7 @@ namespace Gecode { namespace Kernel {
             /// Initialize description for brancher \a b, number of alternatives \a a.
             Description(const Brancher& b, unsigned int a);
             /// Archive into \a e
-            virtual void archive(Archive& e) const;
+            void archive(Archive& e) const override;
         };
         /// Function to call
         SharedData<std::function<void(Space& home)>> f;
@@ -58,21 +58,21 @@ namespace Gecode { namespace Kernel {
 
     public:
         /// Check status of brancher, return true if alternatives left
-        virtual bool status(const Space& home) const;
+        bool status(const Space& home) const override;
         /// Return choice
-        virtual const Choice* choice(Space& home);
+        const Choice* choice(Space& home) override;
         /// Return choice
-        virtual const Choice* choice(const Space& home, Archive& a);
+        const Choice* choice(const Space& home, Archive& a) override;
         /// Perform commit
-        virtual ExecStatus commit(Space& home, const Choice& ch, unsigned int a);
+        ExecStatus commit(Space& home, const Choice& ch, unsigned int a) override;
         /// Print explanation
-        virtual void print(const Space&, const Choice&, unsigned int, std::ostream& o) const;
+        void print(const Space&, const Choice&, unsigned int, std::ostream& o) const override;
         /// Copy brancher
-        virtual Actor* copy(Space& home);
+        Actor* copy(Space& home) override;
         /// Post brancher
         static void post(Home home, std::function<void(Space& home)> f);
         /// Dispose brancher
-        virtual size_t dispose(Space& home);
+        size_t dispose(Space& home) override;
     };
 
     forceinline

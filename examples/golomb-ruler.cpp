@@ -73,7 +73,7 @@ public:
         rel(*this, m[0], IRT_EQ, 0);
 
         // Order marks
-        rel(*this, m, IRT_LE);
+        rel(*this, m, IRT_LT);
 
         // Number of marks and differences
         const int n = m.size();
@@ -92,21 +92,21 @@ public:
 
         // Symmetry breaking
         if (n > 2)
-            rel(*this, d[0], IRT_LE, d[n_d - 1]);
+            rel(*this, d[0], IRT_LT, d[n_d - 1]);
 
         branch(*this, m, INT_VAR_NONE(), INT_VAL_MIN());
     }
 
     /// Return cost
-    virtual IntVar
-    cost(void) const {
+    IntVar
+    cost(void) const override {
         return m[m.size() - 1];
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "\tm[" << m.size() << "] = " << m << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "\tm[" << m.size() << "] = " << m << '\n';
     }
 
     /// Constructor for cloning \a s
@@ -114,8 +114,8 @@ public:
         m.update(*this, s.m);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new GolombRuler(*this);
     }
 };

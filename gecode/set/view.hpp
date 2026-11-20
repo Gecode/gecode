@@ -71,26 +71,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return maximum cardinality
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return n-th smallest element of the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return the number of unknown elements
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -98,15 +98,15 @@ namespace Gecode { namespace Set {
         /// Test whether \a i is in the greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// \name Domain update by value
         //@{
         /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent cardMin(Space& home, unsigned int m);
+        ModEvent card_min(Space& home, unsigned int m);
         /// Restrict cardinality to be less than or equal to \a m
-        ModEvent cardMax(Space& home, unsigned int m);
+        ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -135,31 +135,31 @@ namespace Gecode { namespace Set {
 
         /// Remove range sequence described by \a i from least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Include range sequence described by \a i in greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Intersect least upper bound with range sequence described by \a i
         template <class I>
-        ModEvent intersectI(Space& home, I& iter);
+        ModEvent intersect_i(Space& home, I& iter);
         //@}
 
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         /// Return minimum value just pruned from glb
-        int glbMin(const Delta& d) const;
+        int glb_min(const Delta& d) const;
         /// Return maximum value just pruned from glb
-        int glbMax(const Delta& d) const;
+        int glb_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from glb
-        bool glbAny(const Delta& d) const;
+        bool glb_any(const Delta& d) const;
         /// Return minimum value just pruned from lub
-        int lubMin(const Delta& d) const;
+        int lub_min(const Delta& d) const;
         /// Return maximum value just pruned from lub
-        int lubMax(const Delta& d) const;
+        int lub_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from lub
-        bool lubAny(const Delta& d) const;
+        bool lub_any(const Delta& d) const;
         //@}
     };
 
@@ -191,7 +191,7 @@ namespace Gecode { namespace Set {
     private:
         int* ranges;
         int size;
-        unsigned int domSize;
+        unsigned int dom_size;
 
     public:
         /// \name Constructors and initialization
@@ -205,26 +205,26 @@ namespace Gecode { namespace Set {
         /// \name Value access
         //@{
         /// Return minimum cardinality
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return maximum cardinality
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return n-th smallest element of the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return the number of unknown elements
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -232,15 +232,15 @@ namespace Gecode { namespace Set {
         /// Test whether \a i is in the greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// \name Domain update by value
         //@{
         /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent cardMin(Space& home, unsigned int m);
+        ModEvent card_min(Space& home, unsigned int m);
         /// Restrict cardinality to be less than or equal to \a m
-        ModEvent cardMax(Space& home, unsigned int m);
+        ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -269,13 +269,13 @@ namespace Gecode { namespace Set {
 
         /// Remove range sequence described by \a i from least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Include range sequence described by \a i in greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Intersect least upper bound with range sequence described by \a i
         template <class I>
-        ModEvent intersectI(Space& home, I& iter);
+        ModEvent intersect_i(Space& home, I& iter);
         //@}
 
         /// \name Cloning
@@ -287,17 +287,17 @@ namespace Gecode { namespace Set {
         /// \name Delta information for advisors
         //@{
         /// Return minimum value just pruned from glb
-        int glbMin(const Delta& d) const;
+        int glb_min(const Delta& d) const;
         /// Return maximum value just pruned from glb
-        int glbMax(const Delta& d) const;
+        int glb_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from glb
-        bool glbAny(const Delta& d) const;
+        bool glb_any(const Delta& d) const;
         /// Return minimum value just pruned from lub
-        int lubMin(const Delta& d) const;
+        int lub_min(const Delta& d) const;
         /// Return maximum value just pruned from lub
-        int lubMax(const Delta& d) const;
+        int lub_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from lub
-        bool lubAny(const Delta& d) const;
+        bool lub_any(const Delta& d) const;
         //@}
 
         /// \name Ordering
@@ -343,26 +343,26 @@ namespace Gecode { namespace Set {
         /// \name Value access
         //@{
         /// Return minimum cardinality
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return maximum cardinality
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return n-th smallest element of the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return the number of unknown elements
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -370,15 +370,15 @@ namespace Gecode { namespace Set {
         /// Test whether \a i is in the greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// \name Domain update by value
         //@{
         /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent cardMin(Space& home, unsigned int m);
+        ModEvent card_min(Space& home, unsigned int m);
         /// Restrict cardinality to be less than or equal to \a m
-        ModEvent cardMax(Space& home, unsigned int m);
+        ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -407,29 +407,29 @@ namespace Gecode { namespace Set {
 
         /// Remove range sequence described by \a i from least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Include range sequence described by \a i in greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Intersect least upper bound with range sequence described by \a i
         template <class I>
-        ModEvent intersectI(Space& home, I& iter);
+        ModEvent intersect_i(Space& home, I& iter);
         //@}
 
         /// \name Delta information for advisors
         //@{
         /// Return minimum value just pruned from glb
-        int glbMin(const Delta& d) const;
+        int glb_min(const Delta& d) const;
         /// Return maximum value just pruned from glb
-        int glbMax(const Delta& d) const;
+        int glb_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from glb
-        bool glbAny(const Delta& d) const;
+        bool glb_any(const Delta& d) const;
         /// Return minimum value just pruned from lub
-        int lubMin(const Delta& d) const;
+        int lub_min(const Delta& d) const;
         /// Return maximum value just pruned from lub
-        int lubMax(const Delta& d) const;
+        int lub_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from lub
-        bool lubAny(const Delta& d) const;
+        bool lub_any(const Delta& d) const;
         //@}
     };
 
@@ -470,26 +470,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return maximum cardinality
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return n-th smallest element of the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return the number of unknown elements
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -497,15 +497,15 @@ namespace Gecode { namespace Set {
         /// Test whether \a i is in the greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// \name Domain update by value
         //@{
         /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent cardMin(Space& home, unsigned int m);
+        ModEvent card_min(Space& home, unsigned int m);
         /// Restrict cardinality to be less than or equal to \a m
-        ModEvent cardMax(Space& home, unsigned int m);
+        ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -534,29 +534,29 @@ namespace Gecode { namespace Set {
 
         /// Remove range sequence described by \a i from least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Include range sequence described by \a i in greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Intersect least upper bound with range sequence described by \a i
         template <class I>
-        ModEvent intersectI(Space& home, I& iter);
+        ModEvent intersect_i(Space& home, I& iter);
         //@}
 
         /// \name Delta information for advisors
         //@{
         /// Return minimum value just pruned from glb
-        int glbMin(const Delta& d) const;
+        int glb_min(const Delta& d) const;
         /// Return maximum value just pruned from glb
-        int glbMax(const Delta& d) const;
+        int glb_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from glb
-        bool glbAny(const Delta& d) const;
+        bool glb_any(const Delta& d) const;
         /// Return minimum value just pruned from lub
-        int lubMin(const Delta& d) const;
+        int lub_min(const Delta& d) const;
         /// Return maximum value just pruned from lub
-        int lubMax(const Delta& d) const;
+        int lub_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from lub
-        bool lubAny(const Delta& d) const;
+        bool lub_any(const Delta& d) const;
         //@}
     };
 
@@ -611,26 +611,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return maximum cardinality
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return n-th smallest element of the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return the number of unknown elements
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -638,15 +638,15 @@ namespace Gecode { namespace Set {
         /// Test whether \a i is in the greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// \name Domain update by value
         //@{
         /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent cardMin(Space& home, unsigned int m);
+        ModEvent card_min(Space& home, unsigned int m);
         /// Restrict cardinality to be less than or equal to \a m
-        ModEvent cardMax(Space& home, unsigned int m);
+        ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -675,13 +675,13 @@ namespace Gecode { namespace Set {
 
         /// Remove range sequence described by \a i from least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Include range sequence described by \a i in greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Intersect least upper bound with range sequence described by \a i
         template <class I>
-        ModEvent intersectI(Space& home, I& iter);
+        ModEvent intersect_i(Space& home, I& iter);
         //@}
 
         /// \name View-dependent propagator support
@@ -717,19 +717,19 @@ namespace Gecode { namespace Set {
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         /// Return minimum value just pruned from glb
-        int glbMin(const Delta& d) const;
+        int glb_min(const Delta& d) const;
         /// Return maximum value just pruned from glb
-        int glbMax(const Delta& d) const;
+        int glb_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from glb
-        bool glbAny(const Delta& d) const;
+        bool glb_any(const Delta& d) const;
         /// Return minimum value just pruned from lub
-        int lubMin(const Delta& d) const;
+        int lub_min(const Delta& d) const;
         /// Return maximum value just pruned from lub
-        int lubMax(const Delta& d) const;
+        int lub_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from lub
-        bool lubAny(const Delta& d) const;
+        bool lub_any(const Delta& d) const;
         //@}
     };
 
@@ -782,26 +782,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return maximum cardinality
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return \a n-th smallest element of the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return the number of unknown elements
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -809,15 +809,15 @@ namespace Gecode { namespace Set {
         /// Test whether \a i is in the greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// \name Domain update by value
         //@{
         /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent cardMin(Space& home, unsigned int m);
+        ModEvent card_min(Space& home, unsigned int m);
         /// Restrict cardinality to be less than or equal to \a m
-        ModEvent cardMax(Space& home, unsigned int m);
+        ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -846,13 +846,13 @@ namespace Gecode { namespace Set {
 
         /// Remove range sequence described by \a i from least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Include range sequence described by \a i in greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Intersect least upper bound with range sequence described by \a i
         template <class I>
-        ModEvent intersectI(Space& home, I& iter);
+        ModEvent intersect_i(Space& home, I& iter);
         //@}
 
         /// \name View-dependent propagator support
@@ -886,19 +886,19 @@ namespace Gecode { namespace Set {
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         /// Return minimum value just pruned from glb
-        int glbMin(const Delta& d) const;
+        int glb_min(const Delta& d) const;
         /// Return maximum value just pruned from glb
-        int glbMax(const Delta& d) const;
+        int glb_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from glb
-        bool glbAny(const Delta& d) const;
+        bool glb_any(const Delta& d) const;
         /// Return minimum value just pruned from lub
-        int lubMin(const Delta& d) const;
+        int lub_min(const Delta& d) const;
         /// Return maximum value just pruned from lub
-        int lubMax(const Delta& d) const;
+        int lub_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from lub
-        bool lubAny(const Delta& d) const;
+        bool lub_any(const Delta& d) const;
         //@}
     };
 
@@ -946,9 +946,9 @@ namespace Gecode { namespace Set {
         using DerivedView<View>::x;
 
         /// The cached least upper bound
-        LUBndSet lubCache;
+        LUBndSet lub_cache;
         /// The cached greatest lower bound
-        GLBndSet glbCache;
+        GLBndSet glb_cache;
 
     public:
         /// \name Constructors and initialization
@@ -963,26 +963,26 @@ namespace Gecode { namespace Set {
         //@{
 
         /// Return minimum cardinality
-        unsigned int cardMin(void) const;
+        unsigned int card_min(void) const;
         /// Return maximum cardinality
-        unsigned int cardMax(void) const;
+        unsigned int card_max(void) const;
         /// Return minimum of the least upper bound
-        int lubMin(void) const;
+        int lub_min(void) const;
         /// Return maximum of the least upper bound
-        int lubMax(void) const;
+        int lub_max(void) const;
         /// Return \a n-th smallest element of the least upper bound
-        int lubMinN(unsigned int n) const;
+        int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glbMin(void) const;
+        int glb_min(void) const;
         /// Return maximum of the greatest lower bound
-        int glbMax(void) const;
+        int glb_max(void) const;
 
         /// Return the number of elements in the greatest lower bound
-        unsigned int glbSize(void) const;
+        unsigned int glb_size(void) const;
         /// Return the number of elements in the least upper bound
-        unsigned int lubSize(void) const;
+        unsigned int lub_size(void) const;
         /// Return the number of unknown elements
-        unsigned int unknownSize(void) const;
+        unsigned int unknown_size(void) const;
         //@}
 
         /// \name Domain tests
@@ -990,15 +990,15 @@ namespace Gecode { namespace Set {
         /// Test whether \a i is in the greatest lower bound
         bool contains(int i) const;
         /// Test whether \a i is not in the least upper bound
-        bool notContains(int i) const;
+        bool not_contains(int i) const;
         //@}
 
         /// \name Domain update by value
         //@{
         /// Restrict cardinality to be greater than or equal to \a m
-        ModEvent cardMin(Space& home, unsigned int m);
+        ModEvent card_min(Space& home, unsigned int m);
         /// Restrict cardinality to be less than or equal to \a m
-        ModEvent cardMax(Space& home, unsigned int m);
+        ModEvent card_max(Space& home, unsigned int m);
         /**
          * \brief Update greatest lower bound to include all elements
          * between and including \a i and \a j
@@ -1027,13 +1027,13 @@ namespace Gecode { namespace Set {
 
         /// Remove range sequence described by \a i from least upper bound
         template <class I>
-        ModEvent excludeI(Space& home, I& i);
+        ModEvent exclude_i(Space& home, I& i);
         /// Include range sequence described by \a i in greatest lower bound
         template <class I>
-        ModEvent includeI(Space& home, I& i);
+        ModEvent include_i(Space& home, I& i);
         /// Intersect least upper bound with range sequence described by \a i
         template <class I>
-        ModEvent intersectI(Space& home, I& iter);
+        ModEvent intersect_i(Space& home, I& iter);
         //@}
 
         /// \name View-dependent propagator support
@@ -1067,33 +1067,33 @@ namespace Gecode { namespace Set {
         /// \name Delta information for advisors
         //@{
         /// Return modification event
-        static ModEvent modevent(const Delta& d);
+        static ModEvent modification_event(const Delta& d);
         /// Return minimum value just pruned from glb
-        int glbMin(const Delta& d) const;
+        int glb_min(const Delta& d) const;
         /// Return maximum value just pruned from glb
-        int glbMax(const Delta& d) const;
+        int glb_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from glb
-        bool glbAny(const Delta& d) const;
+        bool glb_any(const Delta& d) const;
         /// Return minimum value just pruned from lub
-        int lubMin(const Delta& d) const;
+        int lub_min(const Delta& d) const;
         /// Return maximum value just pruned from lub
-        int lubMax(const Delta& d) const;
+        int lub_max(const Delta& d) const;
         /// Test whether arbitrary values got pruned from lub
-        bool lubAny(const Delta& d) const;
+        bool lub_any(const Delta& d) const;
         //@}
 
         /// \name Domain cache operations
         //@{
         /// Initialize cache to bounds \a glb and \a lub
-        void initCache(Space& home, const IntSet& glb, const IntSet& lub);
+        void init_cache(Space& home, const IntSet& glb, const IntSet& lub);
         /// Update greatest lower bound cache to current domain
-        void cacheGlb(Space& home);
+        void cache_glb(Space& home);
         /// Update least upper bound cache to current domain
-        void cacheLub(Space& home);
+        void cache_lub(Space& home);
         /// Check whether greatest lower bound cache differs from current domain
-        bool glbModified(void) const;
+        bool glb_modified(void) const;
         /// Check whether least upper bound cache differs from current domain
-        bool lubModified(void) const;
+        bool lub_modified(void) const;
         //@}
 
         /// \name Cloning

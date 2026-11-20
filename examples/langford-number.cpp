@@ -60,13 +60,13 @@ public:
         k = atoi(argv[2]);
     }
     /// Print help message
-    virtual void
-    help(void) {
+    void
+    help(void) override {
         Options::help();
-        std::cerr << "\t(unsigned int) default: " << n << std::endl
-                  << "\t\tparameter n" << std::endl
-                  << "\t(unsigned int) default: " << k << std::endl
-                  << "\t\tparameter k" << std::endl;
+        std::cerr << "\t(unsigned int) default: " << n << '\n'
+                  << "\t\tparameter n" << '\n'
+                  << "\t(unsigned int) default: " << k << '\n'
+                  << "\t\tparameter k" << '\n';
     }
 };
 
@@ -150,16 +150,16 @@ public:
         }
 
         // Symmetry breaking
-        rel(*this, y[0], IRT_LE, y[n * k - 1]);
+        rel(*this, y[0], IRT_LT, y[n * k - 1]);
 
         // Branching
         branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_MAX());
     }
 
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "\t" << y << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "\t" << y << '\n';
     }
 
     /// Constructor for cloning \a l
@@ -167,8 +167,8 @@ public:
         y.update(*this, l.y);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new LangfordNumber(*this);
     }
 };
@@ -186,11 +186,11 @@ main(int argc, char* argv[]) {
     opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL, "extensional-channel");
     opt.parse(argc, argv);
     if (opt.k < 1) {
-        std::cerr << "k must be at least 1!" << std::endl;
+        std::cerr << "k must be at least 1!" << '\n';
         return 1;
     }
     if (opt.k > opt.n) {
-        std::cerr << "n must be at least k!" << std::endl;
+        std::cerr << "n must be at least k!" << '\n';
         return 1;
     }
     Script::run<LangfordNumber, DFS, LangfordNumberOptions>(opt);

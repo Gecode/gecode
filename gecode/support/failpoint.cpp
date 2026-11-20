@@ -44,7 +44,7 @@ namespace Gecode { namespace Support { namespace FailPoint {
 
     void
     reset(void) {
-        active_phase.store(static_cast<int>(Phase::Disabled), std::memory_order_release);
+        active_phase.store(static_cast<int>(Phase::DISABLED), std::memory_order_release);
         fail_after_count.store(0, std::memory_order_release);
         seen_count.store(0, std::memory_order_release);
     }

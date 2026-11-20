@@ -198,7 +198,7 @@ public:
             switch (opt.branching()) {
             case BRANCH_CBS_MAX_SD:
 #ifdef GECODE_HAS_CBS
-                cbsbranch(*this, e);
+                cbs_branch(*this, e);
 #endif
             case BRANCH_SIZE:
                 branch(*this, e, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
@@ -210,8 +210,8 @@ public:
         }
     }
     /// Post a different branching for each asset of portfolio search
-    virtual void
-    spoke(SpokeContext& sc) {
+    void
+    spoke(SpokeContext& sc) override {
         if (sc.engine() == MetaEngine::Portfolio) {
             double tbf = opt.tbf();
             Rnd r(seeds[sc.asset() % n_seeds]);
@@ -221,14 +221,14 @@ public:
                     assert(w >= b);
                     return b + (w - b) * tbf;
                 };
-                branch(*this, e, tiebreak(INT_VAR_SIZE_MIN(tbl), INT_VAR_RND(r)), INT_VAL_MIN());
+                branch(*this, e, tie_break(INT_VAR_SIZE_MIN(tbl), INT_VAR_RND(r)), INT_VAL_MIN());
             } break;
             case BRANCH_AFC_SIZE: {
                 auto tbl = [tbf](const Space&, double w, double b) {
                     assert(b >= w);
                     return b - (b - w) * tbf;
                 };
-                branch(*this, e, tiebreak(INT_VAR_AFC_SIZE_MAX(opt.decay(), tbl), INT_VAR_RND(r)), INT_VAL_MIN());
+                branch(*this, e, tie_break(INT_VAR_AFC_SIZE_MAX(opt.decay(), tbl), INT_VAR_RND(r)), INT_VAL_MIN());
             } break;
             default:;
             }
@@ -239,13 +239,13 @@ public:
         e.update(*this, s.e);
     }
     /// Copy during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new QCP(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
+    void
+    print(std::ostream& os) const override {
         int n = spec.size();
         Matrix<IntVarArray> m(e, n);
 
@@ -256,7 +256,7 @@ public:
                     os.width(2);
                 os << m(i, j) << " ";
             }
-            os << std::endl;
+            os << '\n';
         }
     }
 };
@@ -285,7 +285,7 @@ main(int argc, char* argv[]) {
 
     opt.parse(argc, argv);
     if (!Spec(opt.instance()).valid()) {
-        std::cerr << "Error: unknown instance" << std::endl;
+        std::cerr << "Error: unknown instance" << '\n';
         return 1;
     }
     Script::run<QCP, DFS, QCPOptions>(opt);

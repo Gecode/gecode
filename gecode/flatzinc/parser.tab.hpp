@@ -108,19 +108,19 @@ extern int yydebug;
 union YYSTYPE
 {
 #line 644 "./gecode/flatzinc/parser.yxx"
- int iValue; char* sValue; bool bValue; double dValue;
-         std::vector<int>* setValue;
-         Gecode::FlatZinc::AST::SetLit* setLit;
-         std::vector<double>* floatSetValue;
-         std::vector<Gecode::FlatZinc::AST::SetLit>* setValueList;
-         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > oSet;
-         Gecode::FlatZinc::Option<std::pair<double,double>* > oPFloat;
-         Gecode::FlatZinc::VarSpec* varSpec;
-         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> oArg;
-         std::vector<Gecode::FlatZinc::VarSpec*>* varSpecVec;
-         Gecode::FlatZinc::Option<std::vector<Gecode::FlatZinc::VarSpec*>* > oVarSpecVec;
+ int int_value; char* string_value; bool bool_value; double float_value;
+         std::vector<int>* set_values;
+         Gecode::FlatZinc::AST::SetLit* set_literal;
+         std::vector<double>* float_values;
+         std::vector<Gecode::FlatZinc::AST::SetLit>* set_value_list;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > optional_set;
+         Gecode::FlatZinc::Option<std::pair<double,double>* > optional_float_bounds;
+         Gecode::FlatZinc::VarSpec* var_spec;
+         Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> optional_arg;
+         std::vector<Gecode::FlatZinc::VarSpec*>* var_specs;
+         Gecode::FlatZinc::Option<std::vector<Gecode::FlatZinc::VarSpec*>* > optional_var_specs;
          Gecode::FlatZinc::AST::Node* arg;
-         Gecode::FlatZinc::AST::Array* argVec;
+         Gecode::FlatZinc::AST::Array* arg_nodes;
 
 
 #line 127 "gecode/flatzinc/parser.tab.hpp"

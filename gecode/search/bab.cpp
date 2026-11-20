@@ -41,7 +41,7 @@
 namespace Gecode { namespace Search {
 
     Engine*
-    babengine(Space* s, const Options& o) {
+    make_bab_engine(Space* s, const Options& o) {
         Options to = o.expand();
 #ifdef GECODE_HAS_THREADS
         if (to.threads == 1.0) {

@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Rel {
         /// Sweep lower bounds forward and upper bounds backward from changed positions
         ExecStatus
         propagate_order(Space& home, int begin, int end, int size) {
-            const int offset = ((irt == IRT_LE) || (irt == IRT_GR)) ? 1 : 0;
+            const int offset = ((irt == IRT_LT) || (irt == IRT_GR)) ? 1 : 0;
             if constexpr ((irt == IRT_GQ) || (irt == IRT_GR)) {
                 const int old_begin = begin;
                 begin = size - 1 - end;
@@ -169,24 +169,24 @@ namespace Gecode { namespace Int { namespace Rel {
         }
 
     public:
-        virtual Actor*
-        copy(Space& home) {
+        Actor*
+        copy(Space& home) override {
             return new (home) Open(home, *this);
         }
 
-        virtual PropCost
-        cost(const Space&, const ModEventDelta&) const {
+        PropCost
+        cost(const Space&, const ModEventDelta&) const override {
             return PropCost::linear(PropCost::LO, list.known_length());
         }
 
-        virtual ExecStatus
-        advise(Space& home, Advisor& advisor, const Delta& delta) {
+        ExecStatus
+        advise(Space& home, Advisor& advisor, const Delta& delta) override {
             Position& a = static_cast<Position&>(advisor);
             View x(list[a.index]);
             if constexpr (irt == IRT_NQ) {
                 if (!x.assigned())
                     return ES_FIX;
-            } else if (((irt != IRT_EQ) || !domain) && (View::modevent(delta) == ME_INT_DOM)) {
+            } else if (((irt != IRT_EQ) || !domain) && (View::modification_event(delta) == ME_INT_DOM)) {
                 return ES_FIX;
             }
             changed(a.index);
@@ -195,8 +195,8 @@ namespace Gecode { namespace Int { namespace Rel {
             return ES_NOFIX;
         }
 
-        virtual ExecStatus
-        propagate(Space& home, const ModEventDelta&) {
+        ExecStatus
+        propagate(Space& home, const ModEventDelta&) override {
             const int size = list.known_length();
             if (processed < size) {
                 changed(std::max(0, processed - 1));
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int { namespace Rel {
             }
             for (int i = processed; i < size; i++) {
                 View x(list[i]);
-                if (((irt == IRT_NQ) || (irt == IRT_LE) || (irt == IRT_GR)) && (i > 0) && (x == list[i - 1]))
+                if (((irt == IRT_NQ) || (irt == IRT_LT) || (irt == IRT_GR)) && (i > 0) && (x == list[i - 1]))
                     return ES_FAILED;
                 if (!x.assigned())
                     x.subscribe(home, *new (home) Position(home, *this, council, i));
@@ -228,16 +228,16 @@ namespace Gecode { namespace Int { namespace Rel {
             return (closed() && ((size < 2) || council.empty())) ? home.ES_SUBSUMED(*this) : ES_FIX;
         }
 
-        virtual void
-        reschedule(Space& home) {
+        void
+        reschedule(Space& home) override {
             OpenListPropagator<View>::reschedule(home);
             first = 0;
             last = list.known_length() - 1;
             View::schedule(home, *this, ME_INT_DOM);
         }
 
-        virtual size_t
-        dispose(Space& home) {
+        size_t
+        dispose(Space& home) override {
             if (!home.failed())
                 for (Advisors<Position> a(council); a(); ++a)
                     list[a.advisor().index].cancel(home, a.advisor());

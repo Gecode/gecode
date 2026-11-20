@@ -156,7 +156,7 @@ public:
                 for (int i = 0; i < spec.items(); i++)
                     s[i] = spec.size(i, k);
 
-                binpacking(*this, l, bin, s);
+                bin_packing(*this, l, bin, s);
             }
         } break;
         case MODEL_MULTI: {
@@ -171,8 +171,8 @@ public:
                 for (int k = 0; k < spec.dimension(); k++)
                     s[i * spec.dimension() + k] = spec.size(i, k);
 
-            // Post multidimensional binpacking constraint
-            IntSet mc = binpacking(*this, spec.dimension(), load, bin, s, c);
+            // Post multidimensional bin_packing constraint
+            IntSet mc = bin_packing(*this, spec.dimension(), load, bin, s, c);
 
             // Symmetry breaking
             if (opt.symmetry() == SYMMETRY_MAX_CONFLICT) {
@@ -202,14 +202,14 @@ public:
         load.update(*this, s.load);
     }
     /// Perform copying during cloning
-    virtual Space*
-    copy(void) {
+    Space*
+    copy(void) override {
         return new MultiBinPacking(*this);
     }
     /// Print solution
-    virtual void
-    print(std::ostream& os) const {
-        os << "\tInstance: " << spec.iname() << std::endl;
+    void
+    print(std::ostream& os) const override {
+        os << "\tInstance: " << spec.iname() << '\n';
         if (bin.assigned()) {
             for (int j = 0; j < spec.bins(); j++) {
                 os << "\tbin[" << j << "]: ";
@@ -219,10 +219,10 @@ public:
                 os << "\n\t\tloads: ";
                 for (int k = 0; k < spec.dimension(); k++)
                     os << load[j * spec.dimension() + k] << " ";
-                os << std::endl;
+                os << '\n';
             }
         } else {
-            os << "\tbins: " << bin << std::endl << "\tload: " << load << std::endl;
+            os << "\tbins: " << bin << '\n' << "\tload: " << load << '\n';
         }
     }
 };
@@ -247,7 +247,7 @@ main(int argc, char* argv[]) {
     opt.solutions(1);
     opt.parse(argc, argv);
     if (!Spec(opt.instance()).valid()) {
-        std::cerr << "Error: unknown instance" << std::endl;
+        std::cerr << "Error: unknown instance" << '\n';
         return 1;
     }
     Script::run<MultiBinPacking, DFS, InstanceOptions>(opt);
