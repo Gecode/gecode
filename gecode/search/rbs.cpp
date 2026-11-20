@@ -41,16 +41,16 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   Engine*
-  rbsengine(Space* master, Stop* stop, Engine* slave,
+  rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt, bool best) {
-    return rbsengine(master,stop,slave,stat,opt,best,true);
+    return rbsengine(hub,stop,engine,stat,opt,best,true);
   }
 
   Engine*
-  rbsengine(Space* master, Stop* stop, Engine* slave,
+  rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt, bool best,
             bool complete) {
-    return new RBS(master,static_cast<RestartStop*>(stop), slave,
+    return new RBS(hub,static_cast<RestartStop*>(stop), engine,
                    stat,opt,best,complete);
   }
 

@@ -65,9 +65,9 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   NoGoods&
-  RBS::master_nogoods(void) {
-    // The no-goods of an incomplete slave search only hold in its restricted
-    // search space, not in the master.
+  RBS::hub_nogoods(void) {
+    // The no-goods of an incomplete spoke search only hold in its restricted
+    // search space, not in the hub.
     if (!nogoods_valid)
       return NoGoods::eng;
     NoGoods& ng = e->nogoods();
@@ -78,30 +78,30 @@ namespace Gecode { namespace Search { namespace Seq {
 
   Space*
   RBS::next(void) {
-    // A failed master proves that no further solution exists
-    if (master == nullptr)
+    // A failed hub proves that no further solution exists
+    if (hub == nullptr)
       return nullptr;
     m_stopped = false;
     if (restart) {
       restart = false;
       sslr++;
-      NoGoods& ng = master_nogoods();
+      NoGoods& ng = hub_nogoods();
       MetaInfo mi(stop->restarts(),MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
-      bool r = master->master(mi);
+      bool r = hub->hub(mi);
       stop->nogood(ng.ng());
-      if (stop->status(master) == SS_FAILED) {
+      if (stop->status(hub) == SS_FAILED) {
         stop->update(e->statistics());
-        delete master;
-        master = nullptr;
+        delete hub;
+        hub = nullptr;
         e->reset(nullptr);
         return nullptr;
       } else if (r) {
         stop->update(e->statistics());
-        Space* slave = master;
-        master = master->clone();
-        complete = slave->slave(mi);
+        Space* spoke = hub;
+        hub = hub->clone();
+        complete = spoke->spoke(mi);
         nogoods_valid = complete;
-        e->reset(slave);
+        e->reset(spoke);
         sslr = 0;
         stop->restart();
       }
@@ -121,7 +121,7 @@ namespace Gecode { namespace Search { namespace Seq {
         if (!complete && !e->stopped()) {
           /*
            * The engine might not have checked its stop object, for example
-           * when the slave failed at the root or a parallel engine had no
+           * when the spoke failed at the root or a parallel engine had no
            * work. Without this check, the restarts might never stop.
            */
           if (stop->meta_stop(e->statistics(),m_opt)) {
@@ -131,24 +131,24 @@ namespace Gecode { namespace Search { namespace Seq {
           stop->restart();
         }
         sslr = 0;
-        NoGoods& ng = master_nogoods();
+        NoGoods& ng = hub_nogoods();
         MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
-        (void) master->master(mi);
+        (void) hub->hub(mi);
         stop->nogood(ng.ng());
         unsigned long long int nl = ++(*co);
         stop->limit(e->statistics(),nl);
-        if (stop->status(master) == SS_FAILED) {
+        if (stop->status(hub) == SS_FAILED) {
           // The statistics of the engine have been added by limit()
-          delete master;
-          master = nullptr;
+          delete hub;
+          hub = nullptr;
           e->reset(nullptr);
           return nullptr;
         }
-        Space* slave = master;
-        master = master->clone();
-        complete = slave->slave(mi);
+        Space* spoke = hub;
+        hub = hub->clone();
+        complete = spoke->spoke(mi);
         nogoods_valid = complete;
-        e->reset(slave);
+        e->reset(spoke);
       } else {
         return nullptr;
       }
@@ -166,13 +166,13 @@ namespace Gecode { namespace Search { namespace Seq {
   RBS::constrain(const Space& b) {
     if (!best)
       throw NoBest("RBS::constrain");
-    if (master == nullptr)
+    if (hub == nullptr)
       return;
     if ((last != nullptr) && !Search::better(b,*last,"RBS::constrain"))
       return;
     delete last;
     last = b.clone();
-    master->constrain(b);
+    hub->constrain(b);
     e->constrain(b);
   }
 
@@ -185,15 +185,15 @@ namespace Gecode { namespace Search { namespace Seq {
      * invocation of next will do so and no restart will be
      * missed.
      *
-     * The engine may still report a stop when the master failed during a
-     * restart after a limit. A failed master is a proof, not a stop.
+     * The engine may still report a stop when the hub failed during a
+     * restart after a limit. A failed hub is a proof, not a stop.
      */
-    return (master != nullptr) && (m_stopped || e->stopped());
+    return (hub != nullptr) && (m_stopped || e->stopped());
   }
 
   RBS::~RBS(void) {
     delete e;
-    delete master;
+    delete hub;
     delete last;
     delete co;
     delete stop;

@@ -41,8 +41,8 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  Slave<Collect>::Completion::Completion(void) {
-    // A slave has not been submitted yet.  This initial signal lets the
+  Asset<Collect>::Completion::Completion(void) {
+    // An asset has not been submitted yet.  This initial signal lets the
     // first submission use the same consume-before-reuse handshake as all
     // subsequent submissions.
     done.signal();
@@ -50,13 +50,13 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline void
-  Slave<Collect>::Completion::terminated(void) {
+  Asset<Collect>::Completion::terminated(void) {
     done.signal();
   }
 
   template<class Collect>
   forceinline void
-  Slave<Collect>::Completion::wait(void) {
+  Asset<Collect>::Completion::wait(void) {
     done.wait();
   }
 
@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Par {
   CollectAll::CollectAll(void)
     : solutions(heap) {}
   forceinline bool
-  CollectAll::add(Space* s, Slave<CollectAll>*) {
+  CollectAll::add(Space* s, Asset<CollectAll>*) {
     solutions.push(s);
     return true;
   }
@@ -79,7 +79,7 @@ namespace Gecode { namespace Search { namespace Par {
     return solutions.empty();
   }
   forceinline Space*
-  CollectAll::get(Slave<CollectAll>*&) {
+  CollectAll::get(Asset<CollectAll>*&) {
     return solutions.pop();
   }
   forceinline
@@ -93,7 +93,7 @@ namespace Gecode { namespace Search { namespace Par {
   CollectBest::CollectBest(void)
     : b(nullptr), reporter(nullptr) {}
   forceinline bool
-  CollectBest::add(Space* s, Slave<CollectBest>* r) {
+  CollectBest::add(Space* s, Asset<CollectBest>* r) {
     if ((b != nullptr) &&
         !Search::better(*s,*b,"PBS::CollectBest::add")) {
       delete s;
@@ -119,7 +119,7 @@ namespace Gecode { namespace Search { namespace Par {
     return reporter == nullptr;
   }
   forceinline Space*
-  CollectBest::get(Slave<CollectBest>*& r) {
+  CollectBest::get(Asset<CollectBest>*& r) {
     assert(!empty());
     r = reporter;
     reporter = nullptr;
@@ -144,50 +144,50 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline
-  Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so)
-    : Support::Runnable(false), master(m), slave(s), stop(so) {}
+  Asset<Collect>::Asset(PBS<Collect>* p, Engine* e, Stop* so)
+    : Support::Runnable(false), portfolio(p), engine(e), stop(so) {}
   template<class Collect>
   forceinline Statistics
-  Slave<Collect>::statistics(void) const {
-    return slave->statistics();
+  Asset<Collect>::statistics(void) const {
+    return engine->statistics();
   }
   template<class Collect>
   forceinline bool
-  Slave<Collect>::stopped(void) const {
-    return slave->stopped();
+  Asset<Collect>::stopped(void) const {
+    return engine->stopped();
   }
   template<class Collect>
   forceinline bool
-  Slave<Collect>::limited(void) const {
+  Asset<Collect>::limited(void) const {
 #ifdef GECODE_HAS_EXPERIMENTAL
-    return slave->limited();
+    return engine->limited();
 #else
     return false;
 #endif
   }
   template<class Collect>
   forceinline Support::Terminator*
-  Slave<Collect>::terminator(void) const {
+  Asset<Collect>::terminator(void) const {
     return const_cast<Completion*>(&completion);
   }
   template<class Collect>
   forceinline void
-  Slave<Collect>::wait(void) {
+  Asset<Collect>::wait(void) {
     completion.wait();
   }
   template<class Collect>
   forceinline void
-  Slave<Collect>::wake(void) {
+  Asset<Collect>::wake(void) {
     static_cast<PortfolioStop*>(stop)->wake();
   }
   template<class Collect>
   forceinline void
-  Slave<Collect>::constrain(const Space& b) {
-    slave->constrain(b);
+  Asset<Collect>::constrain(const Space& b) {
+    engine->constrain(b);
   }
   template<class Collect>
-  Slave<Collect>::~Slave(void) {
-    delete slave;
+  Asset<Collect>::~Asset(void) {
+    delete engine;
     delete stop;
   }
 
@@ -197,12 +197,12 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline
   PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n,
                     const Statistics& stat0)
-    : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)),
-      n_slaves(n), n_active(n),
-      slave_stop(false), incomplete(false), tostop(false), n_busy(0) {
-    // Initialize slaves
-    for (unsigned int i=0U; i<n_slaves; i++) {
-      slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
+    : stat(stat0), assets(heap.alloc<Asset<Collect>*>(n)),
+      n_assets(n), n_active(n),
+      asset_stop(false), incomplete(false), tostop(false), n_busy(0) {
+    // Initialize assets
+    for (unsigned int i=0U; i<n_assets; i++) {
+      assets[i] = new Asset<Collect>(this,engines[i],stops[i]);
       static_cast<PortfolioStop*>(stops[i])->share(&tostop);
     }
   }
@@ -210,14 +210,14 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   forceinline bool
-  PBS<Collect>::report(Slave<Collect>* slave, Space* s) {
+  PBS<Collect>::report(Asset<Collect>* asset, Space* s) {
     // If b is false the report should be repeated (solution was worse)
     bool b = true;
     bool wake = false;
     m.acquire();
     if (s != nullptr) {
       try {
-        b = solutions.add(s,slave);
+        b = solutions.add(s,asset);
         if (b) {
           tostop.store(true, std::memory_order_release);
           wake = true;
@@ -229,29 +229,29 @@ namespace Gecode { namespace Search { namespace Par {
         tostop.store(true, std::memory_order_release);
         wake = true;
       }
-    } else if (slave->stopped() && !slave->limited()) {
+    } else if (asset->stopped() && !asset->limited()) {
       if (!tostop.load(std::memory_order_acquire)) {
-        slave_stop.store(true, std::memory_order_release);
+        asset_stop.store(true, std::memory_order_release);
         tostop.store(true, std::memory_order_release);
         wake = true;
       }
     } else {
-      // The slave is done or stopped at a local limit (then search is incomplete)
-      if (slave->limited())
+      // The asset is done or stopped at a local limit (then search is incomplete)
+      if (asset->limited())
         incomplete = true;
-      // Move slave to inactive
+      // Move asset to inactive
       unsigned int i=0;
-      while (slaves[i] != slave)
+      while (assets[i] != asset)
         i++;
       assert(i < n_active);
       assert(n_active > 0);
-      std::swap(slaves[i],slaves[--n_active]);
+      std::swap(assets[i],assets[--n_active]);
       tostop.store(true, std::memory_order_release);
       wake = true;
     }
     if (wake)
       for (unsigned int i=0U; i<n_active; i++)
-        slaves[i]->wake();
+        assets[i]->wake();
     if (b) {
       if (--n_busy == 0)
         idle.signal();
@@ -268,7 +268,7 @@ namespace Gecode { namespace Search { namespace Par {
       failure = std::current_exception();
     tostop.store(true, std::memory_order_release);
     for (unsigned int i=0U; i<n_active; i++)
-      slaves[i]->wake();
+      assets[i]->wake();
     if (--n_busy == 0)
       idle.signal();
     m.release();
@@ -276,14 +276,14 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   void
-  Slave<Collect>::run(void) {
+  Asset<Collect>::run(void) {
     try {
       Space* s;
       do {
-        s = slave->next();
-      } while (!master->report(this,s));
+        s = engine->next();
+      } while (!portfolio->report(this,s));
     } catch (...) {
-      master->fail();
+      portfolio->fail();
     }
   }
 
@@ -297,35 +297,35 @@ namespace Gecode { namespace Search { namespace Par {
       std::rethrow_exception(f);
     }
     if (solutions.empty())
-      slave_stop.store(false, std::memory_order_release);
+      asset_stop.store(false, std::memory_order_release);
     while (solutions.empty() && (n_active > 0) && (failure == nullptr) &&
-           !slave_stop.load(std::memory_order_acquire)) {
-      // Clear the internal stop used to interrupt sibling slaves
+           !asset_stop.load(std::memory_order_acquire)) {
+      // Clear the internal stop used to interrupt sibling assets
       tostop.store(false, std::memory_order_release);
 
-      // Invariant: all slaves are idle!
+      // Invariant: all assets are idle!
       assert(n_busy == 0);
       assert(!tostop.load(std::memory_order_acquire));
 
-      // Run all active slaves
+      // Run all active assets
       n_busy = n_active;
       for (unsigned int i=0U; i<n_active; i++) {
-        // Consume the previous completion before reusing this slave.  The
+        // Consume the previous completion before reusing this asset.  The
         // initial signal handles the first submission.
-        slaves[i]->wait();
-        Support::Thread::run(slaves[i]);
+        assets[i]->wait();
+        Support::Thread::run(assets[i]);
       }
       m.release();
-      // Wait for all slaves to become idle
+      // Wait for all assets to become idle
       idle.wait();
       m.acquire();
     }
 
-    // Invariant all slaves are idle!
+    // Invariant all assets are idle!
     assert(n_busy == 0);
 
     if (solutions.empty() && (n_active == 0) && incomplete)
-      slave_stop.store(true, std::memory_order_release);
+      asset_stop.store(true, std::memory_order_release);
 
     // Report a stored failure before broadcasting a solution, which could
     // call into the failed asset and replace the original exception.
@@ -341,13 +341,13 @@ namespace Gecode { namespace Search { namespace Par {
     if (solutions.empty()) {
       s = nullptr;
     } else {
-      Slave<Collect>* r;
+      Asset<Collect>* r;
       s = solutions.get(r);
       if (Collect::best) {
         try {
           for (unsigned int i=0U; i<n_active; i++)
-            if (slaves[i] != r)
-              slaves[i]->constrain(*s);
+            if (assets[i] != r)
+              assets[i]->constrain(*s);
         } catch (...) {
           delete s;
           failure = std::current_exception();
@@ -365,7 +365,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   bool
   PBS<Collect>::stopped(void) const {
-    return slave_stop.load(std::memory_order_acquire);
+    return asset_stop.load(std::memory_order_acquire);
   }
 
   template<class Collect>
@@ -373,8 +373,8 @@ namespace Gecode { namespace Search { namespace Par {
   PBS<Collect>::statistics(void) const {
     assert(n_busy == 0);
     Statistics s(stat);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      s += slaves[i]->statistics();
+    for (unsigned int i=0U; i<n_assets; i++)
+      s += assets[i]->statistics();
     return s;
   }
 
@@ -388,7 +388,7 @@ namespace Gecode { namespace Search { namespace Par {
       if (solutions.constrain(b)) {
         // The solution is better
         for (unsigned int i=0U; i<n_active; i++)
-          slaves[i]->constrain(b);
+          assets[i]->constrain(b);
       }
     } catch (...) {
       failure = std::current_exception();
@@ -398,15 +398,15 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   PBS<Collect>::~PBS(void) {
-    // A report can make n_busy zero before Slave::run and Thread::Run::exec
+    // A report can make n_busy zero before Asset::run and Thread::Run::exec
     // have returned.  Wait for the completion handshake before deleting the
-    // PBS-owned slaves.
-    for (unsigned int i=0U; i<n_slaves; i++)
-      slaves[i]->wait();
+    // PBS-owned assets.
+    for (unsigned int i=0U; i<n_assets; i++)
+      assets[i]->wait();
     assert(n_busy == 0);
-    for (unsigned int i=0U; i<n_slaves; i++)
-      delete slaves[i];
-    heap.free<Slave<Collect>*>(slaves,n_slaves);
+    for (unsigned int i=0U; i<n_assets; i++)
+      delete assets[i];
+    heap.free<Asset<Collect>*>(assets,n_assets);
   }
 
 }}}

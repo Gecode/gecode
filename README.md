@@ -22,6 +22,9 @@ The tutorial *Modeling and Programming with Gecode* explains how to model
 and solve problems with Gecode, and the reference documentation describes
 the complete API.
 
+For source-level breaking changes, see the
+[Gecode 7 migration notes](docs/gecode-7-migration.md).
+
 ## Download Gecode
 
 Gecode 6.5.0 is distributed as source code. Source archives can be downloaded from

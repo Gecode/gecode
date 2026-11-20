@@ -488,7 +488,7 @@ namespace Gecode { namespace Search { namespace Par {
     // Wait for reset cycle stopped
     e_reset_ack_stop.wait();
     // A worker can fail after next() returns. Report that failure before
-    // a restart engine invokes its master callback and resets this engine.
+    // a restart engine invokes its hub callback and resets this engine.
     Support::Lock lock(m_search);
     if (failure != nullptr)
       std::rethrow_exception(failure);

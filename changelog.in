@@ -80,6 +80,18 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
+Rename the meta-search Space hooks master() and slave() to hub() and spoke().
+[MORE]
+There are no compatibility aliases. Space declares master() and slave() as
+deleted, so an old override fails to compile with or without override. This
+includes the FlatZincSpace override of slave(). See
+docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
 Add Space::compare(), which ranks two solutions without modifying them.
 Best-solution search uses it to choose between solutions, for example in
 parallel BAB, portfolios, external incumbents, and the experimental A* and

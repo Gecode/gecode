@@ -72,7 +72,7 @@ namespace Gecode { namespace Search { namespace Seq {
     void restart(void);
     /// Add no-goods to meta statistics
     void nogood(unsigned long int n);
-    /// Test master status with meta statistics
+    /// Test hub status with meta statistics
     SpaceStatus status(Space* s);
     /// Set current limit for the engine to \a l fails
     void limit(const Statistics& s, unsigned long long int l);
@@ -89,8 +89,8 @@ namespace Gecode { namespace Search { namespace Seq {
   protected:
     /// The actual engine
     Engine* e;
-    /// The master space to restart from
-    Space* master;
+    /// The hub space to restart from
+    Space* hub;
     /// The last solution space (possibly nullptr)
     Space* last;
     /// The cutoff object
@@ -103,7 +103,7 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned long int sslr;
     /// Whether search for the next solution will be complete
     bool complete;
-    /// Whether the no-goods of the current slave search hold in the master
+    /// Whether the no-goods of the current spoke search hold in the hub
     bool nogoods_valid;
     /// Whether a restart must be performed when next is called
     bool restart;
@@ -111,13 +111,13 @@ namespace Gecode { namespace Search { namespace Seq {
     bool best;
     /// Whether the stop object for the meta engine stopped a restart
     bool m_stopped;
-    /// Return the no-goods of the last slave search, valid in the master
-    NoGoods& master_nogoods(void);
+    /// Return the no-goods of the last spoke search, valid in the hub
+    NoGoods& hub_nogoods(void);
   public:
     /**
      * \brief Constructor
      *
-     * The value \a complete is the result of the slave configuration of the
+     * The value \a complete is the result of the spoke configuration of the
      * space explored by the first engine \a e0, and is used as for the
      * searches after later restarts.
      */
