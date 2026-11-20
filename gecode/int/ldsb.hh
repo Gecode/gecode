@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Constructor for creation
         VariableSymmetryImp(Space& home, int* vs, unsigned int n);
         /// Copy constructor
-        VariableSymmetryImp(Space& home, const VariableSymmetryImp<View>& other);
+        VariableSymmetryImp(Space& home, const VariableSymmetryImp& other);
         /// Disposal
         size_t dispose(Space& home) override;
         /// Left-branch update
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// Constructor for creation
         VariableSequenceSymmetryImp(Space& home, int* _indices, unsigned int n, unsigned int seqsize);
         /// Copy constructor
-        VariableSequenceSymmetryImp(Space& home, const VariableSequenceSymmetryImp<View>& s);
+        VariableSequenceSymmetryImp(Space& home, const VariableSequenceSymmetryImp& s);
         /// Disposal
         size_t dispose(Space& home) override;
         /// Search left-branch update

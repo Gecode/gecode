@@ -47,8 +47,7 @@ namespace Gecode { namespace Set { namespace Element {
 
     template <class View, class View0, class View1>
     forceinline
-    ElementIntersection<View, View0, View1>::ElementIntersection(Space& home,
-                                                                 ElementIntersection<View, View0, View1>& p)
+    ElementIntersection<View, View0, View1>::ElementIntersection(Space& home, ElementIntersection& p)
         : Propagator(home, p), universe(p.universe) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);

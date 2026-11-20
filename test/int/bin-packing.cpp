@@ -361,21 +361,20 @@ namespace Test { namespace Int {
             }
         };
 
+        /// Space without variables
+        class Fixture : public Gecode::Space {
+        public:
+            Fixture(void) = default;
+            // NOLINTNEXTLINE(modernize-use-equals-default)
+            Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
+            Gecode::Space*
+            copy(void) override {
+                return new Fixture(*this);
+            }
+        };
+
         /// %Test that both bin-packing overloads post nothing for zero items
         class Empty : public Base {
-        private:
-            /// Space without variables
-            class Fixture : public Gecode::Space {
-            public:
-                Fixture(void) = default;
-                // NOLINTNEXTLINE(modernize-use-equals-default)
-                Fixture(Fixture& fixture) : Gecode::Space(fixture) {}
-                Gecode::Space*
-                copy(void) override {
-                    return new Fixture(*this);
-                }
-            };
-
         public:
             Empty(void) : Base("Int::BinPacking::Empty") {}
             bool
@@ -402,6 +401,49 @@ namespace Test { namespace Int {
         };
 
         Empty empty;
+
+        /// %Test that multi-dimensional bin packing needs at least one dimension
+        class NoDimension : public Base {
+        private:
+            /// Test whether posting with \a d dimensions throws Int::OutOfLimits
+            static bool
+            is_rejected(int d) {
+                using namespace Gecode;
+                Fixture home;
+                IntVarArgs l;
+                IntVarArgs b(home, 1, 0, 0);
+                IntArgs none;
+                try {
+                    bin_packing(home, d, l, b, none, none);
+                } catch (const Gecode::Int::OutOfLimits&) {
+                    return true;
+                }
+                return false;
+            }
+            /// Test whether shared variables are reported before the dimension
+            static bool
+            reports_same_first(void) {
+                using namespace Gecode;
+                Fixture home;
+                IntVarArgs x(home, 1, 0, 1);
+                IntArgs none;
+                try {
+                    bin_packing(home, 0, x, x, none, none);
+                } catch (const Gecode::Int::ArgumentSame&) {
+                    return true;
+                }
+                return false;
+            }
+
+        public:
+            NoDimension(void) : Base("Int::BinPacking::NoDimension") {}
+            bool
+            run(void) override {
+                return is_rejected(0) && is_rejected(-1) && reports_same_first();
+            }
+        };
+
+        NoDimension no_dimension;
 
         /// %Test for comparing bin-packing items
         class ItemCompare : public Base {

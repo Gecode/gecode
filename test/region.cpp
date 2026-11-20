@@ -99,6 +99,89 @@ namespace Test {
 
     SpaceReallocEmpty space_realloc_empty;
 
+    /// %Test for growing and shrinking a block of pointers in a space
+    class SpaceReallocPointers : public Test::Base {
+    public:
+        /// Initialize test
+        SpaceReallocPointers(void) : Test::Base("Space::Realloc::Pointers") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            EmptySpace home;
+            int values[2] = {0, 1};
+            int** p = home.alloc<int*>(2);
+            p[0] = &values[0];
+            p[1] = &values[1];
+            // Unsigned long sizes select the overload for pointers
+            p = home.realloc(p, 2UL, 4UL);
+            const bool grown = (p[0] == &values[0]) && (p[1] == &values[1]);
+            p = home.realloc(p, 4UL, 2UL);
+            const bool reused = (home.fl_alloc<2 * sizeof(int*)>() == p + 2);
+            return grown && reused && (p[1] == &values[1]);
+        }
+    };
+
+    SpaceReallocPointers space_realloc_pointers;
+
+    /// Object that counts its destructions
+    class CountedObject {
+    public:
+        /// Where to count destructions
+        int* destroyed = nullptr;
+        /// Count destruction
+        ~CountedObject(void) {
+            if (destroyed != nullptr)
+                (*destroyed)++;
+        }
+    };
+
+    /// Test whether shrinking in \a a destroys exactly the removed objects
+    template <class Allocator>
+    bool
+    shrink_destroys_tail(Allocator& a) {
+        int destroyed = 0;
+        CountedObject* b = a.template alloc<CountedObject>(4);
+        for (int i = 0; i < 4; i++)
+            b[i].destroyed = &destroyed;
+        b = a.template realloc<CountedObject>(b, 4, 1);
+        const bool shrunk = (destroyed == 3);
+        a.template free<CountedObject>(b, 1);
+        return shrunk && (destroyed == 4);
+    }
+
+    /// %Test for shrinking blocks in a space
+    class SpaceReallocShrink : public Test::Base {
+    public:
+        /// Initialize test
+        SpaceReallocShrink(void) : Test::Base("Space::Realloc::Shrink") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            EmptySpace home;
+            int* p = home.alloc<int>(8);
+            int* tail = p + 4;
+            p = home.realloc<int>(p, 8, 4);
+            return (home.fl_alloc<4 * sizeof(int)>() == tail) && shrink_destroys_tail(home);
+        }
+    };
+
+    SpaceReallocShrink space_realloc_shrink;
+
+    /// %Test for shrinking blocks in a region
+    class RegionReallocShrink : public Test::Base {
+    public:
+        /// Initialize test
+        RegionReallocShrink(void) : Test::Base("Region::Realloc::Shrink") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            Gecode::Region r;
+            return shrink_destroys_tail(r);
+        }
+    };
+
+    RegionReallocShrink region_realloc_shrink;
+
     /// %Test for comparing space and region allocators
     class AllocatorCompare : public Test::Base {
     public:

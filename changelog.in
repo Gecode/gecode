@@ -79,6 +79,146 @@ changes downstream code needs.
 [ENTRY]
 Module: kernel
 What:   change
+Rank:   minor
+[DESCRIPTION]
+The Rnd constructor taking a seed is explicit. Code that passes a number where
+a Rnd is expected, such as INT_VAR_RND(1U), must now write Rnd(1U). The implicit
+conversion also accepted floating-point values, which hid the bug in
+IntBoolVarBranch fixed in this release.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+IntBoolVarBranch keeps its decay factor, which was discarded so that AFC and
+action used a decay of 1. The default branchers follow the -decay option, which
+only search annotations honoured before.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Choices from set_search and set_default_search print the relations of their
+value selection. Before, set_search printed none, and set_default_search printed
+"in" and "not in" the wrong way round for outdomain_min and outdomain_max.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Searching for an extension to introduced variables follows the default search
+annotations after the space has been cloned, and no longer leaks the random
+number generator of a random selection.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The assign overloads for integer and Boolean variables with tie-breaking
+variable selection link. The Boolean overload now takes BoolBranchFilter and
+BoolVarValPrint arguments, as the overload without tie-breaking does.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning integer and Boolean variables follows the variable selection, which
+was ignored unless a tie-breaking selection was also in effect. Models that
+pass a selection to assign, such as the job-shop example, now assign variables
+in that order and can find different solutions first.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning set variables follows the variable selection, which was ignored
+unless a tie-breaking selection was also in effect.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assigning float variables follows the variable selection, which was ignored
+unless a tie-breaking selection was also in effect.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+values_reflect for the domain of an integer variable links.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The default constructors of SetVarGlbValues, SetVarLubValues, and
+SetVarUnknownValues link.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Constructing FloatValArgs from an initializer list links.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The declaration of the pbs engine builder takes the engine as a template
+argument, as its definition does. Calling it with only the space type failed
+to link and is now a compile error.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Multi-dimensional bin_packing throws Int::OutOfLimits for fewer than one
+dimension. It divided by zero for zero dimensions, and a negative number of
+dimensions now gives Int::OutOfLimits instead of Int::ArgumentSizeMismatch.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Two-dimensional element throws Int::TooFewArguments for an empty array, as
+one-dimensional element does, instead of Int::VariableEmptyDomain from an
+internal variable or Int::ArgumentSizeMismatch. It throws
+Int::ArgumentSizeMismatch for a width or height that is not positive and when
+the product overflows, where it could post a failing or wrong constraint.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Two-dimensional element throws Set::ArgumentSizeMismatch for a width or height
+that is not positive and when the product overflows, where it could post a
+failing or wrong constraint.
+
+[ENTRY]
+Module: set
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Document the exceptions that sequence and element with an integer index throw
+for an empty array and for sets outside the limits.
+
+[ENTRY]
+Module: kernel
+What:   change
 Rank:   major
 [DESCRIPTION]
 Make Home, the groups, Pos, Reify, LocalHandle, the variables, the variable
@@ -151,6 +291,16 @@ Support::BitSetData::operator== is now defaulted and takes its argument by
 const reference. Int::LDSB::Literal now also has ==, !=, <=, >, and >=.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix shrinking with Space::realloc and Region::realloc. The size of the removed
+tail was computed with the wrong sign, so shrinking destroyed objects past the
+block and handed memory outside it to the space. Space::realloc for pointers
+also used the size of the pointed-to type, which lost pointers on growing.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
@@ -171,7 +321,7 @@ GECODE_VERSION_NUMBER instead, or Gecode_VERSION from the CMake package.
 [MORE]
 CMake now generates config.hpp with configure_file. Feature macros that were
 defined as empty, such as GECODE_HAS_FLOAT_VARS, are now defined as 1; tests
-with #ifdef behave as before.
+of whether they are defined behave as before.
 
 [ENTRY]
 Module: support

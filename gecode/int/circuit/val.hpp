@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
     template <class View, class Offset>
     forceinline
-    Val<View, Offset>::Val(Space& home, Val<View, Offset>& p)
+    Val<View, Offset>::Val(Space& home, Val& p)
         : Base<View, Offset>(home, p) {}
 
     template <class View, class Offset>

@@ -58,7 +58,7 @@ namespace Gecode { namespace Float { namespace Rel {
 
     template <class View>
     forceinline
-    Lq<View>::Lq(Space& home, Lq<View>& p)
+    Lq<View>::Lq(Space& home, Lq& p)
         : BinaryPropagator<View, PC_FLOAT_BND>(home, p) {}
 
     template <class View>
@@ -101,7 +101,7 @@ namespace Gecode { namespace Float { namespace Rel {
 
     template <class View>
     forceinline
-    Le<View>::Le(Space& home, Le<View>& p)
+    Le<View>::Le(Space& home, Le& p)
         : BinaryPropagator<View, PC_FLOAT_BND>(home, p) {}
 
     template <class View>

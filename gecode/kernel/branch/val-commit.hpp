@@ -119,7 +119,7 @@ namespace Gecode {
     }
     template <class View>
     forceinline
-    ValCommitFunction<View>::ValCommitFunction(Space& home, ValCommitFunction<View>& vc)
+    ValCommitFunction<View>::ValCommitFunction(Space& home, ValCommitFunction& vc)
         : ValCommit<View, Val>(home, vc), c(vc.c) {}
     template <class View>
     forceinline ModEvent
@@ -127,7 +127,7 @@ namespace Gecode {
         typename View::VarType y(x.varimp());
         GECODE_VALID_FUNCTION(c());
         c()(home, a, y, i, n);
-        return home.failed() ? ES_FAILED : ES_OK;
+        return home.failed() ? ME_GEN_FAILED : ME_GEN_NONE;
     }
     template <class View>
     forceinline NGL*
