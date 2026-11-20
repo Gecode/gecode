@@ -50,7 +50,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Diff(void);
+        Diff(void) = default;
         /// Initialize with iterator \a i and \a j
         Diff(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -103,10 +103,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         }
         finish();
     }
-
-    template <class I, class J>
-    forceinline
-    Diff<I, J>::Diff(void) {}
 
     template <class I, class J>
     forceinline

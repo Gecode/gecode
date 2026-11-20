@@ -613,6 +613,7 @@ namespace Test { namespace Int {
                         }
                         Gecode::cumulative(*this, 3, starts, processing, demand, mandatory, level);
                     }
+                    // NOLINTNEXTLINE(modernize-use-equals-default)
                     OptionalSubsetFixture(OptionalSubsetFixture& fixture) : Gecode::Space(fixture) {}
                     Gecode::Space*
                     copy(void) override {

@@ -43,15 +43,11 @@ namespace Gecode {
 
     const Action Action::def;
 
-    Action::Action(const Action& a) : SharedHandle(a) {}
-
     Action&
     Action::operator=(const Action& a) {
         (void)SharedHandle::operator=(a);
         return *this;
     }
-
-    Action::~Action(void) {}
 
     void
     Action::decay(Space&, double d) {

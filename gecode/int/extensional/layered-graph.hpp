@@ -118,9 +118,6 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     template <class View, class Val, class Degree, class StateIdx>
     forceinline
-    LayeredGraph<View, Val, Degree, StateIdx>::LayerValues::LayerValues(void) {}
-    template <class View, class Val, class Degree, class StateIdx>
-    forceinline
     LayeredGraph<View, Val, Degree, StateIdx>::LayerValues ::LayerValues(const Layer& l)
         : s1(l.support), s2(l.support + l.size) {}
     template <class View, class Val, class Degree, class StateIdx>

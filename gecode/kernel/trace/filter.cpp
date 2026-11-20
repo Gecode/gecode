@@ -146,6 +146,7 @@ namespace Gecode {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     TraceFilter::TFO::StackFrame::StackFrame(void) {}
     forceinline
     TraceFilter::TFO::StackFrame::StackFrame(TFE::Node* n0, bool neg0)
@@ -190,8 +191,6 @@ namespace Gecode {
     TraceFilter::TraceFilter(PropagatorGroup g) : SharedHandle(new TFO(g)) {}
 
     TraceFilter::TraceFilter(BrancherGroup g) : SharedHandle(new TFO(g)) {}
-
-    TraceFilter::TraceFilter(const TraceFilter& tf) : SharedHandle(tf) {}
 
     TraceFilter&
     TraceFilter::operator=(const TraceFilter& tf) {

@@ -225,7 +225,7 @@ namespace Gecode { namespace Driver {
     class ScriptGetInfo : public CPProfilerSearchTracer::GetInfo {
     public:
         /// Initialize
-        ScriptGetInfo(void);
+        ScriptGetInfo(void) = default;
         /// Return info for a space (which must be a script)
         std::string get_info(const Space& home) const override;
     };
@@ -266,9 +266,6 @@ namespace Gecode { namespace Driver {
     }
 
 #ifdef GECODE_HAS_CPPROFILER
-
-    template <class BaseSpace>
-    ScriptGetInfo<BaseSpace>::ScriptGetInfo(void) {}
 
     template <class BaseSpace>
     std::string

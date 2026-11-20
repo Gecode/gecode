@@ -40,10 +40,6 @@ namespace Gecode { namespace Int { namespace Distinct {
      */
 
     template <class View>
-    forceinline
-    DomCtrl<View>::DomCtrl(void) {}
-
-    template <class View>
     forceinline bool
     DomCtrl<View>::available(void) {
         return g;

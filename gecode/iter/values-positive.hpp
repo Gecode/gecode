@@ -48,7 +48,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Positive(void);
+        Positive(void) = default;
         /// Initialize with values from \a i
         Positive(I& i);
         /// Initialize with values from \a i
@@ -69,10 +69,6 @@ namespace Gecode { namespace Iter { namespace Values {
         int val(void) const;
         //@}
     };
-
-    template <class I, bool strict>
-    forceinline
-    Positive<I, strict>::Positive(void) {}
 
     template <class I, bool strict>
     forceinline void

@@ -40,10 +40,6 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline
-    ComplementView<View>::ComplementView(void) {}
-
-    template <class View>
-    forceinline
     ComplementView<View>::ComplementView(View& y)
         : DerivedView<View>(y) {}
 
@@ -351,7 +347,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) {}
+        LubRanges(void) = default;
         /// Initialize with ranges for view \a x
         LubRanges(const ComplementView<View>& x);
         /// Initialize with ranges for view \a x
@@ -433,7 +429,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) {}
+        LubRanges(void) = default;
         /// Initialize with ranges for view \a x
         LubRanges(const ComplementView<ComplementView<View>>& x);
         /// Initialize with ranges for view \a x
@@ -466,7 +462,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) {}
+        GlbRanges(void) = default;
         /// Initialize with ranges for view \a x
         GlbRanges(const ComplementView<View>& x);
         /// Initialize with ranges for view \a x
@@ -548,7 +544,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) {}
+        GlbRanges(void) = default;
         /// Initialize with ranges for view \a x
         GlbRanges(const ComplementView<ComplementView<View>>& x);
         /// Initialize with ranges for view \a x
@@ -581,12 +577,6 @@ namespace Gecode { namespace Set {
     forceinline bool
     operator==(const ComplementView<View>& x, const ComplementView<View>& y) {
         return x.base() == y.base();
-    }
-
-    template <class View>
-    forceinline bool
-    operator!=(const ComplementView<View>& x, const ComplementView<View>& y) {
-        return x.base() != y.base();
     }
 
 }} // namespace Gecode::Set

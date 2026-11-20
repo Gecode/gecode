@@ -35,6 +35,8 @@
 
 #include <gecode/int.hh>
 
+#include <compare>
+
 /**
  * \namespace Gecode::Int::LDSB
  * \brief Symmetry breaking for integer variables
@@ -57,9 +59,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// one of the possible elements of the set.
         int _value;
 
-        /// Less than.  The ordering is the lexicographical order
-        /// on the (variable,value) pair.
-        bool operator<(const Literal& rhs) const;
+        /// Order lexicographically by variable index, then by value
+        auto operator<=>(const Literal&) const = default;
     };
 
     /**
@@ -285,10 +286,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         /// position.  (Both are zero-based.)
         int get_val(unsigned int sequence, unsigned int position) const;
 
-    private:
-        ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&);
-
     public:
+        ValueSequenceSymmetryImp(const ValueSequenceSymmetryImp<View>&) = delete;
         /// Constructor for creation
         ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n, unsigned int seqsize);
         /// Copy constructor

@@ -1093,7 +1093,7 @@ namespace Test { namespace Int { namespace OpenList {
         public:
             Gecode::Int::GrowableIntSet values;
 
-            SetSpace(void) {}
+            SetSpace(void) = default;
 
             SetSpace(SetSpace& s) : Gecode::Space(s) {
                 values.update(*this, s.values);

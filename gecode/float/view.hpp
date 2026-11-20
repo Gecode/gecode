@@ -56,7 +56,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        FloatView(void);
+        FloatView(void) = default;
         /// Initialize from float variable \a y
         FloatView(const FloatVar& y);
         /// Initialize from float variable \a y
@@ -158,7 +158,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinusView(void);
+        MinusView(void) = default;
         /// Initialize with float view \a y
         explicit MinusView(const FloatView& y);
         //@}
@@ -248,9 +248,6 @@ namespace Gecode { namespace Float {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Float::MinusView
     bool operator==(const MinusView& x, const MinusView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Float::MinusView
-    bool operator!=(const MinusView& x, const MinusView& y);
     //@}
 
     /**
@@ -271,7 +268,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OffsetView(void);
+        OffsetView(void) = default;
         /// Initialize with float view \a y and an offset c
         explicit OffsetView(const FloatView& y, FloatNum c);
         //@}
@@ -376,9 +373,6 @@ namespace Gecode { namespace Float {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Float::OffsetView
     bool operator==(const OffsetView& x, const OffsetView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Float::OffsetView
-    bool operator!=(const OffsetView& x, const OffsetView& y);
     //@}
 
     /**
@@ -400,7 +394,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ScaleView(void);
+        ScaleView(void) = default;
         /// Initialize as \f$b\cdot y\f$
         ScaleView(const FloatVal& b, const FloatView& y);
         //@}
@@ -504,9 +498,6 @@ namespace Gecode { namespace Float {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Float::ScaleView
     bool operator==(const ScaleView& x, const ScaleView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Float::ScaleView
-    bool operator!=(const ScaleView& x, const ScaleView& y);
     //@}
 
 }} // namespace Gecode::Float

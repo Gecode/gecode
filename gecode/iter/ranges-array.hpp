@@ -63,7 +63,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Array(void);
+        Array(void) = default;
         /// Initialize with \a n ranges from \a r
         Array(Range* r, unsigned int n);
         /// Initialize with \a n ranges from \a r
@@ -94,9 +94,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         unsigned int width(void) const;
         //@}
     };
-
-    forceinline
-    Array::Array(void) {}
 
     forceinline
     Array::Array(Range* r0, unsigned int n0)

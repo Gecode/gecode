@@ -153,9 +153,6 @@ namespace Gecode { namespace Gist {
     }
 
     forceinline
-    Options::Options(void) {}
-
-    forceinline
     Options::I_::I_(void)
         : _click(heap, 1), n_click(0), _solution(heap, 1), n_solution(0), _move(heap, 1), n_move(0), _compare(heap, 1),
           n_compare(0) {}

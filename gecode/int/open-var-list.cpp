@@ -34,8 +34,6 @@
 
 namespace Gecode {
 
-    OpenIntVarList::OpenIntVarList(void) {}
-
     OpenIntVarList::Factory
     OpenIntVarList::factory(Domain d) {
         if (!d)
@@ -57,8 +55,6 @@ namespace Gecode {
 
     OpenIntVarList::OpenIntVarList(Space& home, Domain d, Transition t, int max)
         : OpenVarList<IntVar>(home, factory(std::move(d)), std::move(t), max) {}
-
-    OpenBoolVarList::OpenBoolVarList(void) {}
 
     OpenBoolVarList::OpenBoolVarList(Space& home, int max)
         : OpenVarList<BoolVar>(home, [](Space& home, int) { return BoolVar(home, 0, 1); }, max) {}

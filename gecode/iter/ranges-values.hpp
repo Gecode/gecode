@@ -53,7 +53,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ToValues(void);
+        ToValues(void) = default;
         /// Initialize with values from range iterator \a i
         ToValues(I& i);
         /// Initialize with values from range iterator \a i
@@ -74,10 +74,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         int val(void) const;
         //@}
     };
-
-    template <class I>
-    forceinline
-    ToValues<I>::ToValues(void) {}
 
     template <class I>
     forceinline void

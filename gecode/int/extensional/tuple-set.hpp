@@ -153,9 +153,6 @@ namespace Gecode {
         return *this;
     }
 
-    forceinline
-    TupleSet::TupleSet(void) {}
-
     forceinline TupleSet::
     operator bool(void) const {
         return object() != nullptr;

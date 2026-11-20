@@ -49,7 +49,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        RangeList(void);
+        RangeList(void) = default;
         /// Initialize with range list \a s
         RangeList(const Gecode::RangeList* s);
         /// Initialize with range list \a s
@@ -74,9 +74,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         unsigned int width(void) const;
         //@}
     };
-
-    forceinline
-    RangeList::RangeList(void) {}
 
     forceinline
     RangeList::RangeList(const Gecode::RangeList* s)

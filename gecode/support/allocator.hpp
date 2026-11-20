@@ -62,7 +62,7 @@ namespace Gecode { namespace Support {
     class Allocator {
     public:
         /// Default constructor
-        Allocator(void);
+        Allocator(void) = default;
         /// Allocate memory block of size \a n
 #ifdef GECODE_MIMALLOC
         GECODE_SUPPORT_EXPORT
@@ -82,8 +82,6 @@ namespace Gecode { namespace Support {
         void* memcpy(void* d, const void* s, size_t n);
     };
 
-    forceinline
-    Allocator::Allocator(void) {}
 #ifndef GECODE_MIMALLOC
     forceinline void*
     Allocator::alloc(size_t n) {

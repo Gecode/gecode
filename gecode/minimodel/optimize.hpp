@@ -33,28 +33,19 @@
 namespace Gecode {
 
     forceinline
-    IntMinimizeSpace::IntMinimizeSpace(void) {}
-
-    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     IntMinimizeSpace::IntMinimizeSpace(IntMinimizeSpace& s)
         : Space(s) {}
 
     forceinline
-    IntMaximizeSpace::IntMaximizeSpace(void) {}
-
-    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     IntMaximizeSpace::IntMaximizeSpace(IntMaximizeSpace& s)
         : Space(s) {}
 
     forceinline
-    IntLexMinimizeSpace::IntLexMinimizeSpace(void) {}
-
-    forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     IntLexMinimizeSpace::IntLexMinimizeSpace(IntLexMinimizeSpace& s)
         : Space(s) {}
-
-    forceinline
-    IntLexMaximizeSpace::IntLexMaximizeSpace(void) {}
 
     forceinline
     IntLexMaximizeSpace::IntLexMaximizeSpace(IntLexMaximizeSpace& s)
@@ -67,6 +58,7 @@ namespace Gecode {
         : step(s) {}
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     FloatMinimizeSpace::FloatMinimizeSpace(FloatMinimizeSpace& s)
         : Space(s), step(s.step) {}
 

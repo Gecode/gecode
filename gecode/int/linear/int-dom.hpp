@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     public:
         /// Default constructor
-        SupportSet(void);
+        SupportSet(void) = default;
         /// Initialize support set with cardinality \a n
         void init(Region& r, unsigned int n);
         /// Record that there is support at position \a i
@@ -160,8 +160,6 @@ namespace Gecode { namespace Int { namespace Linear {
      * Support set
      *
      */
-    forceinline
-    SupportSet::SupportSet(void) {}
     forceinline void
     SupportSet::init(Region& r, unsigned int n) {
         bs.init(r, n);

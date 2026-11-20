@@ -60,7 +60,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SetView(void);
+        SetView(void) = default;
         /// Initialize from set variable \a y
         SetView(const SetVar& y);
         /// Initialize from set variable implementation \a y
@@ -173,7 +173,6 @@ namespace Gecode { namespace Set {
     // Forward declarations for friends
     class ConstSetView;
     bool operator==(const ConstSetView&, const ConstSetView&);
-    bool operator!=(const ConstSetView&, const ConstSetView&);
 
     /**
      * \brief Constant view
@@ -186,7 +185,6 @@ namespace Gecode { namespace Set {
         friend class LubRanges<ConstSetView>;
         friend class GlbRanges<ConstSetView>;
         friend bool Gecode::Set::operator==(const Gecode::Set::ConstSetView&, const Gecode::Set::ConstSetView&);
-        friend bool Gecode::Set::operator!=(const Gecode::Set::ConstSetView&, const Gecode::Set::ConstSetView&);
 
     private:
         int* ranges;
@@ -319,9 +317,6 @@ namespace Gecode { namespace Set {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Set::ConstSetView
     bool operator==(const ConstSetView& x, const ConstSetView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Set::ConstSetView
-    bool operator!=(const ConstSetView& x, const ConstSetView& y);
     //@}
 
     /**
@@ -337,7 +332,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        EmptyView(void);
+        EmptyView(void) = default;
         //@}
 
         /// \name Value access
@@ -445,9 +440,6 @@ namespace Gecode { namespace Set {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Set::EmptyView
     bool operator==(const EmptyView& x, const EmptyView& y);
-    /// Test whether views \a x and \a y are the same
-    /// \relates Gecode::Set::EmptyView
-    bool operator!=(const EmptyView& x, const EmptyView& y);
     //@}
 
     /**
@@ -463,7 +455,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        UniverseView(void);
+        UniverseView(void) = default;
         //@}
 
         /// \name Value access
@@ -572,9 +564,6 @@ namespace Gecode { namespace Set {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Set::UniverseView
     bool operator==(const UniverseView& x, const UniverseView& y);
-    /// Test whether views \a x and \a y are the not same
-    /// \relates Gecode::Set::UniverseView
-    bool operator!=(const UniverseView& x, const UniverseView& y);
     //@}
 
     /**
@@ -600,7 +589,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SingletonView(void);
+        SingletonView(void) = default;
         /// Initialize with integer view \a y
         SingletonView(Gecode::Int::IntView& y);
         /// Initialize with integer variable \a y
@@ -745,9 +734,6 @@ namespace Gecode { namespace Set {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Set::SingletonView
     bool operator==(const SingletonView& x, const SingletonView& y);
-    /// Test whether views \a x and \a y are the not same
-    /// \relates Gecode::Set::SingletonView
-    bool operator!=(const SingletonView& x, const SingletonView& y);
     //@}
 
     /**
@@ -773,7 +759,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ComplementView(void);
+        ComplementView(void) = default;
         /// Initialize with set view \a y
         explicit ComplementView(View& y);
         //@}
@@ -915,10 +901,6 @@ namespace Gecode { namespace Set {
     /// \relates Gecode::Set::ComplementView
     template <class View>
     bool operator==(const ComplementView<View>& x, const ComplementView<View>& y);
-    /// Test whether views \a x and \a y are the not same
-    /// \relates Gecode::Set::ComplementView
-    template <class View>
-    bool operator!=(const ComplementView<View>& x, const ComplementView<View>& y);
     //@}
 
     template <class View>
@@ -954,7 +936,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        CachedView(void);
+        CachedView(void) = default;
         /// Initialize with set view \a y
         explicit CachedView(const View& y);
         //@}
@@ -1116,10 +1098,6 @@ namespace Gecode { namespace Set {
     /// \relates Gecode::Set::CachedView
     template <class View>
     bool operator==(const CachedView<View>& x, const CachedView<View>& y);
-    /// Test whether views \a x and \a y are the not same
-    /// \relates Gecode::Set::CachedView
-    template <class View>
-    bool operator!=(const CachedView<View>& x, const CachedView<View>& y);
     //@}
 
     /**

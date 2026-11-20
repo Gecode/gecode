@@ -39,8 +39,6 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline
-    MinusView::MinusView(void) {}
-    forceinline
     MinusView::MinusView(const FloatView& y)
         : DerivedView<FloatView>(y) {}
 
@@ -159,10 +157,6 @@ namespace Gecode { namespace Float {
     forceinline bool
     operator==(const MinusView& x, const MinusView& y) {
         return x.base() == y.base();
-    }
-    forceinline bool
-    operator!=(const MinusView& x, const MinusView& y) {
-        return !(x == y);
     }
 
 }} // namespace Gecode::Float

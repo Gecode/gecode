@@ -39,6 +39,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ManFixPTask::ManFixPTask(void) {}
     forceinline
     ManFixPTask::ManFixPTask(IntVar s, int p, int c)
@@ -84,6 +85,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ManFixPSETask::ManFixPSETask(void) {}
     forceinline
     ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p, int c)
@@ -129,6 +131,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ManFlexTask::ManFlexTask(void) {}
     forceinline
     ManFlexTask::ManFlexTask(IntVar s, IntVar p, IntVar e, int c)
@@ -175,6 +178,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     OptFixPTask::OptFixPTask(void) {}
     forceinline
     OptFixPTask::OptFixPTask(IntVar s, int p, int c, BoolVar m) {
@@ -207,6 +211,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     OptFixPSETask::OptFixPSETask(void) {}
     forceinline
     OptFixPSETask::OptFixPSETask(TaskType t, IntVar s, int p, int c, BoolVar m) {
@@ -239,6 +244,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
      */
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     OptFlexTask::OptFlexTask(void) {}
     forceinline
     OptFlexTask::OptFlexTask(IntVar s, IntVar p, IntVar e, int c, BoolVar m) {

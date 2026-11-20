@@ -44,8 +44,6 @@ namespace Gecode { namespace Set {
      */
 
     forceinline
-    SetView::SetView(void) {}
-    forceinline
     SetView::SetView(const SetVar& y)
         : VarImpView<SetVar>(y.varimp()) {}
     forceinline
@@ -222,6 +220,7 @@ namespace Gecode { namespace Set {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     LubRanges<SetView>::LubRanges(void) {}
 
     forceinline
@@ -251,6 +250,7 @@ namespace Gecode { namespace Set {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     GlbRanges<SetView>::GlbRanges(void) {}
 
     forceinline

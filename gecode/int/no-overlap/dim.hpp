@@ -114,8 +114,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
      *
      */
     forceinline
-    FlexDim::FlexDim(void) {}
-    forceinline
     FlexDim::FlexDim(IntView c00, IntView s0, IntView c10)
         : c0(c00), s(s0), c1(c10) {}
 
