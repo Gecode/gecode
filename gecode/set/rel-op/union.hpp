@@ -232,6 +232,14 @@ namespace Gecode { namespace Set { namespace RelOp {
     template <class View0, class View1>
     ExecStatus
     UnionN<View0, View1>::post(Home home, ViewArray<View0>& x, const IntSet& z, View1 y) {
+        if (x.size() == 0) {
+            // With no operands, y equals z
+            IntSetRanges glb(z);
+            GECODE_ME_CHECK(y.include_i(home, glb));
+            IntSetRanges lub(z);
+            GECODE_ME_CHECK(y.intersect_i(home, lub));
+            return ES_OK;
+        }
         (void)new (home) UnionN<View0, View1>(home, x, z, y);
         return ES_OK;
     }

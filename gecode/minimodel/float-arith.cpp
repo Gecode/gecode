@@ -69,14 +69,18 @@ namespace Gecode { namespace MiniModel {
         int n;
         /// Integer argument (used in nroot for example)
         int a_int;
+        /// Allocate \a n expressions, or none if \a n is zero
+        static LinFloatExpr*
+        allocate(int n) {
+            return (n > 0) ? heap.alloc<LinFloatExpr>(n) : nullptr;
+        }
         /// Constructors
-        ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0)
-            : t(t0), a(heap.alloc<LinFloatExpr>(n0)), n(n0), a_int(-1) {}
-        ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0, int a0)
-            : t(t0), a(heap.alloc<LinFloatExpr>(n0)), n(n0), a_int(a0) {}
+        ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0) : t(t0), a(allocate(n0)), n(n0), a_int(-1) {}
+        ArithNonLinFloatExpr(ArithNonLinFloatExprType t0, int n0, int a0) : t(t0), a(allocate(n0)), n(n0), a_int(a0) {}
         /// Destructor
         ~ArithNonLinFloatExpr(void) override {
-            heap.free<LinFloatExpr>(a, n);
+            if (a != nullptr)
+                heap.free<LinFloatExpr>(a, n);
         }
         /// Post expression
         FloatVar

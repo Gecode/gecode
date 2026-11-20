@@ -155,6 +155,15 @@ namespace Gecode { namespace Int { namespace LDSB {
         ValueSequenceSymmetryObject(IntArgs vs, int ss);
     };
 
+    /**
+     * \brief Test whether the symmetry \a s describes neither variables nor
+     * values
+     *
+     * Such a symmetry maps nothing, so branching ignores it.  The test does
+     * not allocate.
+     */
+    GECODE_INT_EXPORT bool is_empty(const SymmetryHandle& s);
+
     /// Implementation of a single symmetry.
     template <class View>
     class SymmetryImp {
@@ -331,7 +340,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     class LDSBBrancher : public ViewValBrancher<View, n, Val, a, Filter, Print> {
     public:
         using typename ViewValBrancher<View, n, Val, a, Filter, Print>::Var;
-        /// Array of symmetry implementations
+        /// Array of symmetry implementations, nullptr when \a _nsyms is 0
         SymmetryImp<View>** _syms;
         /// Number of symmetry implementations
         int _nsyms;

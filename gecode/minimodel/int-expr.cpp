@@ -214,7 +214,8 @@ namespace Gecode {
                        n->l->t == NT_NONLIN && n->r->a == 1) {
                 (void)n->l->sum.ne->post(home, &n->r->x_int, ipls);
             } else {
-                Int::Linear::Term<Int::IntView>* its = r.alloc<Int::Linear::Term<Int::IntView>>(n->n_int);
+                Int::Linear::Term<Int::IntView>* its =
+                    (n->n_int > 0) ? r.alloc<Int::Linear::Term<Int::IntView>>(n->n_int) : nullptr;
                 int c = n->fill(home, ipls, its, nullptr);
                 Int::Linear::post(home, its, n->n_int, irt, -c, (n->n_int > 2) ? ipls.linear() : ipls.linear2());
             }
@@ -276,7 +277,8 @@ namespace Gecode {
                 }
                 n->r->sum.ne->post(home, irt, n->c, b, ipls);
             } else {
-                Int::Linear::Term<Int::IntView>* its = r.alloc<Int::Linear::Term<Int::IntView>>(n->n_int);
+                Int::Linear::Term<Int::IntView>* its =
+                    (n->n_int > 0) ? r.alloc<Int::Linear::Term<Int::IntView>>(n->n_int) : nullptr;
                 int c = n->fill(home, ipls, its, nullptr);
                 Int::Linear::post(home, its, n->n_int, irt, -c, b, (n->n_int > 2) ? ipls.linear() : ipls.linear2());
             }

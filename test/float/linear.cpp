@@ -189,6 +189,55 @@ namespace Test { namespace Float {
             }
         };
 
+        /// Space with a float and a Boolean variable for sums without terms
+        class EmptyFixture : public Gecode::Space {
+        public:
+            /// Right-hand side variable
+            Gecode::FloatVar y;
+            /// Reification variable
+            Gecode::BoolVar b;
+            /// Create fixture
+            EmptyFixture(void) : y(*this, -2, 2), b(*this, 0, 1) {}
+            /// Constructor for cloning \a fixture
+            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
+                y.update(*this, fixture.y);
+                b.update(*this, fixture.b);
+            }
+            /// Copy during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptyFixture(*this);
+            }
+            /// Test whether the space is solved with \a b equal to \a val
+            bool
+            is_solved_with_b(int val) {
+                return (status() == Gecode::SS_SOLVED) && b.assigned() && (b.val() == val);
+            }
+        };
+
+        /// %Test linear constraints over no variables
+        class Empty : public Base {
+        public:
+            /// Create and register test
+            Empty(void) : Base("Float::Linear::Empty") {}
+            /// Perform test
+            bool
+            run(void) override {
+                using namespace Gecode;
+                FloatVarArgs x;
+                FloatValArgs a;
+                EmptyFixture eq, lq, rhs, reified, pmi;
+                linear(eq, x, FRT_EQ, 0);
+                linear(lq, a, x, FRT_LQ, -1);
+                linear(rhs, x, FRT_EQ, rhs.y);
+                linear(reified, x, FRT_EQ, 1, Reify(reified.b));
+                linear(pmi, a, x, FRT_GQ, 0, Reify(pmi.b, RM_PMI));
+                return (eq.status() == SS_SOLVED) && (lq.status() == SS_FAILED) && (rhs.status() == SS_SOLVED) &&
+                       rhs.y.assigned() && (rhs.y.val() == 0) && reified.is_solved_with_b(0) && pmi.is_solved_with_b(1);
+            }
+        };
+        Empty empty;
+
         /// Help class to create and register tests
         class Create {
         public:

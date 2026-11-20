@@ -174,7 +174,7 @@ namespace Gecode {
                    n->r->a == 1) {
             (void)n->l->sum.ne->post(home, &n->r->x_float);
         } else {
-            Float::Linear::Term* fts = r.alloc<Float::Linear::Term>(n->n_float);
+            Float::Linear::Term* fts = (n->n_float > 0) ? r.alloc<Float::Linear::Term>(n->n_float) : nullptr;
             FloatVal c = n->fill(home, fts);
             Float::Linear::post(home, fts, n->n_float, frt, -c);
         }
@@ -206,7 +206,7 @@ namespace Gecode {
             }
             n->r->sum.ne->post(home, frt, n->c, b);
         } else {
-            Float::Linear::Term* fts = r.alloc<Float::Linear::Term>(n->n_float);
+            Float::Linear::Term* fts = (n->n_float > 0) ? r.alloc<Float::Linear::Term>(n->n_float) : nullptr;
             FloatVal c = n->fill(home, fts);
             Float::Linear::post(home, fts, n->n_float, frt, -c, b);
         }
