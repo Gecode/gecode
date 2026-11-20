@@ -73,7 +73,58 @@
 Version: 7.0.0
 Date: unreleased
 [DESCRIPTION]
-This is the development changelog for the next Gecode release.
+This release contains breaking changes. See the entries below for the
+changes downstream code needs.
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove the Autoconf leftovers PACKAGE_BUGREPORT, PACKAGE_NAME,
+PACKAGE_STRING, PACKAGE_TARNAME, PACKAGE_URL, and PACKAGE_VERSION from the
+installed gecode/support/config.hpp. Use GECODE_VERSION or
+GECODE_VERSION_NUMBER instead, or Gecode_VERSION from the CMake package.
+[MORE]
+CMake now generates config.hpp with configure_file. Feature macros that were
+defined as empty, such as GECODE_HAS_FLOAT_VARS, are now defined as 1; tests
+with #ifdef behave as before.
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove GECODE_HAS_BUILTIN_FFSLL and GECODE_HAS_BUILTIN_POPCOUNTLL from the
+installed gecode/support/config.hpp. Bitsets now use std::countr_zero and
+std::popcount.
+
+[ENTRY]
+Module: support
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove MSVC auto-linking, together with the header gecode/support/auto-link.hpp
+and the macros GECODE_NO_AUTOLINK, GECODE_LIBRARY_NAME, GECODE_DLL_USERPREFIX,
+GECODE_DLL_USERSUFFIX, and GECODE_LIBRARY_VERSION. CMake builds always
+disabled it. Consumers link through the Gecode:: CMake targets.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Define the GECODE_FREELIST32_SIZE_MAX and GECODE_FREELIST64_SIZE_MAX build
+options as numbers in config.hpp. A quoted value broke compilation.
+
+[ENTRY]
+Module: other
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Remove the Autoconf and maintained Makefile build systems. Build, install,
+and regenerate Gecode with CMake. Generated-source checks continue to cover
+variable headers and the FlatZinc parser and lexer.
 
 [ENTRY]
 Module: search

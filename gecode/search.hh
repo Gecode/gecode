@@ -77,12 +77,6 @@
 
 #endif
 
-// Configure auto-linking
-#ifndef GECODE_BUILD_SEARCH
-#define GECODE_LIBRARY_NAME "Search"
-#include <gecode/support/auto-link.hpp>
-#endif
-
 
 namespace Gecode { namespace Search {
 

@@ -125,14 +125,12 @@ find_library(GECODE_SUPPORT_LIBRARY
   NO_DEFAULT_PATH
   REQUIRED)
 add_executable(manual_consumer main.cpp)
+target_compile_features(manual_consumer PRIVATE cxx_std_23)
 target_include_directories(manual_consumer PRIVATE "${GECODE_INCLUDE_DIR}")
 target_link_libraries(manual_consumer PRIVATE "${GECODE_SUPPORT_LIBRARY}")
 '@ | Set-Content -Encoding utf8 (Join-Path $work "manual\CMakeLists.txt")
 @'
 #include <gecode/support.hh>
-#ifndef GECODE_NO_AUTOLINK
-#error "CMake-installed headers must disable legacy MSVC auto-linking"
-#endif
 int main(void) {
   (void) Gecode::Support::hwrnd();
   return 0;
