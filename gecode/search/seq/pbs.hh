@@ -35,19 +35,28 @@
 #define GECODE_SEARCH_SEQ_PBS_HH
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 
 namespace Gecode { namespace Search { namespace Seq {
 
   /// Shared stop information
   class SharedStopInfo {
   public:
-    /// Whether search stopped because the slice is done
-    bool done;
+    /// Which stop object stopped the running asset
+    PortfolioStopCause cause;
     /// The current failure limit, incremented for each slice
     unsigned long long int l;
+    /// Statistics of the portfolio except for the running asset
+    Statistics others;
   };
 
-  /// Stop object used for controlling assets in a portfolio
+  /**
+   * \brief Stop object used for controlling assets in a portfolio
+   *
+   * The stop object of the asset is checked with the statistics of the
+   * asset, the stop object of the portfolio with the statistics of the
+   * whole portfolio.
+   */
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
     /// The stop object for the assets
@@ -72,6 +81,10 @@ namespace Gecode { namespace Search { namespace Seq {
     Engine* engine;
     /// Stop object
     Stop* stop;
+    /// Coverage of the spoke of the asset
+    SpokeCoverage _coverage;
+    /// Whether the stop object of the asset stopped it during the current call to next()
+    bool _parked;
   public:
     /// Default constructor
     Asset(void);
@@ -79,20 +92,24 @@ namespace Gecode { namespace Search { namespace Seq {
     Asset(const Asset& s) = default;
     /// Assignment operator
     Asset& operator =(const Asset& s) = default;
-    /// Initialize with engine \a e and its stop object \a so
-    void init(Engine* e, Stop* so);
+    /// Initialize with engine \a e, its stop object \a so, and the coverage \a c of its spoke
+    void init(Engine* e, Stop* so, SpokeCoverage c);
+    /// Return the coverage of the spoke of the asset
+    SpokeCoverage coverage(void) const;
     /// Return next solution
     Space* next(void);
     /// Return statistics of asset
     Statistics statistics(void) const;
-    /// Check whether asset has been stopped
-    bool stopped(void) const;
-    /// Check whether asset stopped at a local limit
-    bool limited(void) const;
+    /// Return why the last call to next() of the asset returned no solution
+    EndReason end_reason(void) const;
     /// Constrain with better solution \a b
     void constrain(const Space& b);
-    /// Perform one run
-    void run(void);
+    /// Park the asset after its stop object stopped it
+    void park(void);
+    /// Resume a parked asset
+    void resume(void);
+    /// Whether the asset is parked
+    bool parked(void) const;
     /// Delete asset
     ~Asset(void);
   };
@@ -113,20 +130,18 @@ namespace Gecode { namespace Search { namespace Seq {
     unsigned int n_assets;
     /// Current asset to run
     unsigned int cur;
-    /// Whether an asset has been stopped
-    bool asset_stop;
-    /// Whether an asset stopped at a local limit
-    bool incomplete;
+    /// Why the last call to next() returned no solution
+    EndReason end;
   public:
-    /// Initialize
-    PBS(Engine** assets, Stop** stops, unsigned int n,
-        const Statistics& stat, const Search::Options& opt);
+    /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
+    PBS(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+        unsigned int n, const Statistics& stat, const Search::Options& opt);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Constrain future solutions to be better than \a b
     virtual void constrain(const Space& b);
     /// Destructor

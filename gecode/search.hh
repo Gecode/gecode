@@ -487,6 +487,15 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const = 0;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void) = 0;
+    /**
+     * \brief Return a copy of this generator in its current state
+     *
+     * The copy continues the sequence independently of this generator,
+     * except that a copy of a random generator draws its own sequence
+     * (see CutoffRandom::copy()). A portfolio of restart-based engines
+     * gives each asset its own copy.
+     */
+    virtual Cutoff* copy(void) const = 0;
     /// Destructor
     virtual ~Cutoff(void);
     //@}
@@ -542,6 +551,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -561,6 +572,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -588,6 +601,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -609,6 +624,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -627,6 +644,8 @@ namespace Gecode { namespace Search {
     unsigned long long int step;
     /// Current value
     unsigned long long int cur;
+    /// Number of copies made of this generator
+    mutable unsigned int copies;
   public:
     /// Constructor
     CutoffRandom(unsigned int seed,
@@ -636,6 +655,17 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /**
+     * \brief Return a copy of this generator with its own random sequence
+     *
+     * The copy draws its values, starting with its current one, from a
+     * seed that depends on the state of this generator and on how many
+     * copies of it have been made before. Copies made one after the
+     * other thus have different sequences, so that the assets of a
+     * portfolio restart at different times, and the same program
+     * creates the same sequences.
+     */
+    virtual Cutoff* copy(void) const;
   };
 
   /**
@@ -657,6 +687,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
     /// Destructor
     virtual ~CutoffAppend(void);
   };
@@ -678,6 +710,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
     /// Destructor
     virtual ~CutoffMerge(void);
   };
@@ -703,6 +737,8 @@ namespace Gecode { namespace Search {
     virtual unsigned long long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long long int operator ++(void);
+    /// Return a copy of this generator in its current state
+    virtual Cutoff* copy(void) const;
     /// Destructor
     virtual ~CutoffRepeat(void);
   };
@@ -1058,6 +1094,38 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search {
 
   /**
+   * \brief Why the last call to next() of a search engine returned no solution
+   *
+   * A search engine reports the reason with end_reason(). Only
+   * Exhausted is a proof: the space that the engine was given has no
+   * further solutions (no better ones for best solution search). Any
+   * other reason after next() returned nullptr means that the engine
+   * ended without such a proof.
+   *
+   * A meta engine (restart-based or portfolio search) reports Limit
+   * for a stop object installed above it, not for its own cutoffs or
+   * slices. A portfolio also reports Limit when the stop objects of
+   * its assets have parked every asset that remains (see PBS), and
+   * calling next() again resumes them.
+   *
+   * \ingroup TaskModelSearch
+   */
+  enum class EndReason : unsigned char {
+    /// next() has not been called, or the last call returned a solution
+    NotEnded,
+    /// The search space is exhausted, calling next() again finds nothing
+    Exhausted,
+    /**
+     * Search finished without exhausting its search space, for example
+     * at the discrepancy limit of LDS or the width limit of CABS. There
+     * may be further solutions, but calling next() again finds none.
+     */
+    Incomplete,
+    /// A stop object stopped search, calling next() again resumes it
+    Limit,
+  };
+
+  /**
    * \brief %Search engine implementation interface
    */
   class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
@@ -1073,12 +1141,8 @@ namespace Gecode { namespace Search {
     virtual Space* next(void) = 0;
     /// Return statistics
     virtual Statistics statistics(void) const = 0;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const = 0;
-#ifdef GECODE_HAS_EXPERIMENTAL
-    /// Whether the engine stopped at a local limit (such as a CABS width limit) and cannot continue
-    virtual bool limited(void) const;
-#endif
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const = 0;
     /// Constrain future solutions to be better than \a b (raises exception)
     virtual void constrain(const Space& b);
     /// Reset engine to restart at space \a s (does nothing)
@@ -1112,8 +1176,8 @@ namespace Gecode { namespace Search {
     virtual T* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Destructor
     virtual ~Base(void);
   private:
@@ -1410,12 +1474,9 @@ namespace Gecode {
    * Search::Options::d_l discrepancies, allowing more discrepancies in each
    * iteration, starting from none.
    *
-   * When next() returns nullptr and stopped() returns false, either the
-   * search tree has been explored completely, or the discrepancy limit has
-   * been reached while parts of the tree are still unexplored. The engine
-   * does not report which: a search that finds no (further) solution only
-   * proves that none exists if no path of the tree has more discrepancies
-   * than the limit.
+   * When the search tree has choices that need more discrepancies than
+   * the limit in Search::Options::d_l, end_reason() returns
+   * Search::EndReason::Incomplete once the search ends.
    *
    * \ingroup TaskModelSearch
    */
@@ -1455,14 +1516,16 @@ namespace Gecode {
    * The engine uses the Cutoff sequence supplied in the options \a o to
    * periodically restart the search of engine \a E.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() on its hub after solutions and at restarts,
-   * and spoke() on each spoke it clones from the hub. See Space::hub()
-   * and Space::spoke() for details.
+   * The engine calls hub() on its hub when search starts and after each
+   * episode, and spoke() on each spoke it clones from the hub. When \a E
+   * is a best solution engine, the engine constrains the hub by each
+   * solution before it calls hub(). See Space::hub() and Space::spoke()
+   * for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1470,7 +1533,12 @@ namespace Gecode {
   class RBS : public Search::Base<T> {
     using Search::Base<T>::e;
   public:
-    /// Initialize engine for space \a s and options \a o
+    /**
+     * \brief Initialize engine for space \a s and options \a o
+     *
+     * The engine takes ownership of the cutoff in \a o. If the
+     * constructor throws an exception, the caller keeps the cutoff.
+     */
     RBS(T* s, const Search::Options& o);
     /// Whether engine does best solution search
     static const bool best = E<T>::best;
@@ -1482,14 +1550,16 @@ namespace Gecode {
    * The engine uses the Cutoff sequence supplied in the options \a o to
    * periodically restart the search of engine \a E.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() on its hub after solutions and at restarts,
-   * and spoke() on each spoke it clones from the hub. See Space::hub()
-   * and Space::spoke() for details.
+   * The engine calls hub() on its hub when search starts and after each
+   * episode, and spoke() on each spoke it clones from the hub. When \a E
+   * is a best solution engine, the engine constrains the hub by each
+   * solution before it calls hub(). See Space::hub() and Space::spoke()
+   * for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1536,8 +1606,19 @@ namespace Gecode {
    * \brief Meta engine using a portfolio of search engines
    *
    * The engine will run a portfolio with a number of assets as defined
-   * by the options \a o. The engine supports parallel execution of
-   * assets by using the number of threads as defined by the options.
+   * by the options \a o. With more than one thread in \a o, every asset
+   * runs in its own thread, also when there are more assets than threads,
+   * and the threads are divided evenly among the assets, with at least
+   * one thread for each asset. With one thread, the assets take turns in
+   * slices of failures (see Search::Options::slice).
+   *
+   * The stop object in \a o is checked with the statistics of the whole
+   * portfolio, that is, the sum of the statistics of all assets. With
+   * parallel assets, these are the statistics that the workers pass to
+   * their stop objects. When the stop object stops search, end_reason()
+   * returns Search::EndReason::Limit and calling next() again resumes all
+   * assets.
+   *
    * For best-solution assets, a solution replaces the incumbent only if
    * Space::compare reports SpaceComparison::Better.
    * An external worker control in \a o is supported only for a single
@@ -1546,17 +1627,30 @@ namespace Gecode {
    * PBS does not allocate workers or adjust those controls.
    *
    * When the assets are restart-based engines, the portfolio takes
-   * ownership of the cutoff in \a o and the assets share its sequence:
-   * each restart of an asset takes the next value of the sequence.
+   * ownership of the cutoff in \a o and gives each asset its own copy
+   * (see Cutoff::copy()). If the constructor throws an exception, the
+   * caller keeps the cutoff.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The spoke of each asset declares its coverage in Space::spoke() (see
+   * SpokeCoverage). When an asset whose spoke has SpokeCoverage::Full or
+   * SpokeCoverage::Reduced exhausts its search space, the portfolio ends
+   * and end_reason() returns Search::EndReason::Exhausted. An asset that
+   * ends without a proof is dropped while the other assets continue: an
+   * asset whose spoke has SpokeCoverage::Partial and exhausts its search
+   * space, or an engine such as LDS at its discrepancy limit. When every
+   * asset has been dropped, end_reason() returns
+   * Search::EndReason::Incomplete.
+   *
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() once on its hub and then spoke() on the
-   * spoke of each asset. See Space::hub() and Space::spoke() for
-   * details.
+   * The engine calls hub() once on its hub with MetaEvent::Start, then
+   * Space::status() on the hub, and then spoke() on the spoke of each
+   * asset. When the hub had branchers before hub() but a spoke has none
+   * after spoke(), the engine throws Search::SpokeNoBrancher. See
+   * Space::hub() and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1572,13 +1666,19 @@ namespace Gecode {
     /**
      * Initialize with engine builders \a sebs
      *
-     * The stop object of \a o is checked for each builder's engine with the
-     * statistics of that engine, as is the stop object of the builder.
+     * The stop object of \a o is checked with the statistics of the whole
+     * portfolio, the stop object of a builder with the statistics of the
+     * engine it builds. When the stop object of a builder stops its
+     * engine, that asset is parked while the other assets continue. When
+     * only parked assets remain, end_reason() returns
+     * Search::EndReason::Limit, and the parked assets resume with the
+     * next call to next().
      *
      * The outer options must not contain a worker control. Each builder can
      * instead supply a distinct control for its underlying engine.
-     * In parallel PBS, the outer thread count limits how many builders run,
-     * in array order; each builder's options set its own engine's thread count.
+     * In parallel PBS, the engine of every builder runs in its own thread,
+     * also when there are more builders than outer threads; each builder's
+     * options set its own engine's thread count.
      *
      * With experimental search, AStar and CABS builders can be used
      * together with BAB builders.
@@ -1594,19 +1694,21 @@ namespace Gecode {
    * \brief Run a portfolio of search engines
    *
    * The engine will run a portfolio with a number of assets as defined
-   * by the options \a o. The engine supports parallel execution of
-   * assets by using the number of threads as defined by the options.
+   * by the options \a o. See PBS for how the assets use the threads in
+   * \a o.
    * An external worker control is supported only when \a o selects one
    * asset. PBS does not implement worker-allocation policy.
    *
-   * The class \a T can implement member functions
-   * \code virtual bool hub(const MetaInfo& mi) \endcode
+   * The class \a T can override the member functions
+   * \code virtual void hub(HubContext& hc) \endcode
    * and
-   * \code virtual bool spoke(const MetaInfo& mi) \endcode
+   * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() once on its hub and then spoke() on the
-   * spoke of each asset. See Space::hub() and Space::spoke() for
-   * details.
+   * The engine calls hub() once on its hub with MetaEvent::Start, then
+   * Space::status() on the hub, and then spoke() on the spoke of each
+   * asset. When the hub had branchers before hub() but a spoke has none
+   * after spoke(), the engine throws Search::SpokeNoBrancher. See
+   * Space::hub() and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */

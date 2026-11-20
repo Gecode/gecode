@@ -43,7 +43,7 @@ namespace Gecode { namespace Search { namespace Seq {
   GECODE_SEARCH_EXPORT Stop*
   rbsstop(Stop* so);
 
-  /// Create restart engine whose first spoke search yields valid no-goods
+  /// Create restart engine whose first spoke has SpokeCoverage::Full
   GECODE_SEARCH_EXPORT Engine*
   rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt,
@@ -52,14 +52,13 @@ namespace Gecode { namespace Search { namespace Seq {
   /**
    * \brief Create restart engine
    *
-   * The value \a complete is the result of the spoke configuration of the
-   * space explored by the first \a engine. It only determines whether
-   * the no-goods of that search hold in the hub.
+   * The value \a coverage is the coverage that the spoke hook declared for
+   * the space explored by the first \a engine.
    */
   GECODE_SEARCH_EXPORT Engine*
   rbsengine(Space* hub, Stop* stop, Engine* engine,
             const Search::Statistics& stat, const Options& opt,
-            bool best, bool complete);
+            bool best, SpokeCoverage coverage);
 
 }}}
 
@@ -108,18 +107,37 @@ namespace Gecode {
       stat.fail++;
       if (!m_opt.clone)
         delete s;
-      e = Search::Seq::dead(e_opt, stat);
+      e = Search::Seq::dead(e_opt,stat,Search::EndReason::Exhausted);
       // The engine owns the cutoff, but a dead engine does not take it
       delete m_opt.cutoff;
     } else {
       std::unique_ptr<Space> hub(m_opt.clone ? s->clone() : s);
+      Search::Statistics start;
+      HubContext hc = Search::MetaContextAccess::hub(
+        MetaEngine::Restart,MetaEvent::Start,MetaDecision::Restart,0UL,0U,1U,
+        nullptr,start,NoGoods::eng);
+      hub->hub(hc);
+      if ((hub->status(stat) == SS_FAILED) ||
+          (hc.decision() == MetaDecision::Finish)) {
+        // A failed hub is a proof, finishing is not
+        Search::EndReason r = hub->failed() ?
+          Search::EndReason::Exhausted : Search::EndReason::Incomplete;
+        if (r == Search::EndReason::Exhausted)
+          stat.fail++;
+        e = Search::Seq::dead(e_opt,stat,r);
+        delete m_opt.cutoff;
+        return;
+      }
       std::unique_ptr<Space> spoke(hub->clone());
-      MetaInfo mi(0,MetaInfo::RR_INIT,0,0,nullptr,NoGoods::eng);
-      bool complete = spoke->spoke(mi);
+      SpokeContext sc = Search::MetaContextAccess::spoke(
+        MetaEngine::Restart,MetaEvent::Start,0UL,0U,1U,nullptr,start,
+        NoGoods::eng);
+      spoke->spoke(sc);
+      hub->reserve_brancher_ids(*spoke);
       std::unique_ptr<Search::Engine> leaf(
         Search::build<T,E>(spoke.get(),e_opt));
       e = Search::Seq::rbsengine(hub.get(),stop.get(),leaf.get(),
-                                stat,m_opt,E<T>::best,complete);
+                                stat,m_opt,E<T>::best,sc.coverage());
       hub.release();
       stop.release();
       leaf.release();

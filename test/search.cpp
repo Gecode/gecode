@@ -50,8 +50,10 @@
 #include <future>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <thread>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 static_assert(std::is_copy_constructible<Gecode::NoGoods>::value,
@@ -88,6 +90,8 @@ namespace Test {
 
     using namespace Gecode;
     using namespace Gecode::Int;
+
+    using Gecode::Search::EndReason;
 
 #ifdef GECODE_HAS_EXPERIMENTAL
     /// Explicit finite tree with prefix costs, admissible bounds, and ranks
@@ -150,7 +154,7 @@ namespace Test {
         : Space(s), graph(s.graph), maximize(s.maximize), vertex(s.vertex),
           ceiling(s.ceiling) {}
       Space* copy(void) override { return new TreeSpace(*this); }
-      bool hub(const MetaInfo&) override { return true; }
+      void hub(HubContext&) override {}
       const Node& node(void) const { return (*graph)[vertex]; }
       void constrain(const Space& s) override {
         ceiling = static_cast<const TreeSpace&>(s).node().cost;
@@ -255,7 +259,7 @@ namespace Test {
           break;
         }
       }
-      return e.stopped() || (last == (*root.graph)[0].best);
+      return (e.end_reason() != EndReason::Exhausted) || (last == (*root.graph)[0].best);
     }
 
     /// Heuristic search engines on random trees
@@ -287,7 +291,7 @@ namespace Test {
                   E<TreeSpace> e(&root,o);
                   if (!improving(e,root,step > 0U ? &stop : nullptr))
                     return false;
-                  if ((o.max_width == 0UL) && e.stopped())
+                  if ((o.max_width == 0UL) && (e.end_reason() != EndReason::Exhausted))
                     return false;
                 }
         return true;
@@ -362,7 +366,7 @@ namespace Test {
           last = s->node().cost;
           delete s;
         }
-        return (last == 1) && e.stopped();
+        return (last == 1) && (e.end_reason() == EndReason::Exhausted);
       }
     } heuristic_portfolio;
 #endif
@@ -403,14 +407,13 @@ namespace Test {
       virtual int solutions(void) const = 0;
       /// Verify that this is best solution
       virtual bool best(void) const = 0;
-      /// Hub configuration function that does not restart
-      virtual bool hub(const MetaInfo& mi) {
-        if (mi.type() == MetaInfo::RESTART) {
-          if (mi.last() != nullptr)
-            constrain(*mi.last());
-          return false;
-        } else {
-          return false;
+      /// Hub hook that does not restart after a solution and keeps the branchers of a portfolio
+      virtual void hub(HubContext& hc) {
+        if (hc.engine() == MetaEngine::Restart) {
+          if (hc.last() != nullptr)
+            constrain(*hc.last());
+          if (hc.event() == MetaEvent::Solution)
+            hc.decision(MetaDecision::Continue);
         }
       }
     };
@@ -649,43 +652,40 @@ namespace Test {
         return "Sol";
       }
       /// Rule out that solution is found more than once during restarts
-      virtual bool hub(const MetaInfo& mi) {
-        switch (mi.type()) {
-        case MetaInfo::RESTART:
-          // With an objective, restart from a bound improving on the last solution
-          if (htc != HTC_NONE)
-            return Space::hub(mi);
-          if (mi.last() != nullptr) {
-            const HasSolutions* s
-              = static_cast<const HasSolutions*>(mi.last());
-            BoolVarArgs b;
-            for (int i=0; i<x.size(); i++)
-              b << expr(*this, x[i] == s->x[i]);
-            rel(*this, BOT_AND, b, 0);
-          }
-          break;
-        case MetaInfo::PORTFOLIO:
-          // Do not kill the brancher!
-          break;
-        default:
-          break;
+      virtual void hub(HubContext& hc) {
+        // For portfolio search, keep the branchers
+        if (hc.engine() != MetaEngine::Restart)
+          return;
+        // With an objective, restart from a bound improving on the last solution
+        if (htc != HTC_NONE) {
+          Space::hub(hc);
+          return;
         }
-        return false;
+        if (hc.last() != nullptr) {
+          const HasSolutions* s
+            = static_cast<const HasSolutions*>(hc.last());
+          BoolVarArgs b;
+          for (int i=0; i<x.size(); i++)
+            b << expr(*this, x[i] == s->x[i]);
+          rel(*this, BOT_AND, b, 0);
+        }
+        if (hc.event() == MetaEvent::Solution)
+          hc.decision(MetaDecision::Continue);
       }
     };
 
-    /// Return a bit for restart reason \a r
+    /// Return a bit for meta event \a e
     static unsigned int
-    reason_bit(MetaInfo::RestartReason r) {
-      return 1U << static_cast<unsigned int>(r);
+    event_bit(MetaEvent e) {
+      return 1U << static_cast<unsigned int>(e);
     }
 
     /// Observations shared by meta-search dispatch test spaces
     struct MetaDispatchState {
       std::atomic<unsigned int> hub_calls{0};
       std::atomic<unsigned int> spoke_calls{0};
-      std::atomic<unsigned int> hub_reasons{0};
-      std::atomic<unsigned int> spoke_reasons{0};
+      std::atomic<unsigned int> hub_events{0};
+      std::atomic<unsigned int> spoke_events{0};
       std::atomic<unsigned int> assets{0};
       std::atomic<unsigned int> live_spaces{0};
       std::atomic<unsigned int> copies{0};
@@ -696,10 +696,14 @@ namespace Test {
       std::atomic<unsigned int> constrain_hub_asset_mask{0};
       std::atomic<unsigned int> constrain_spoke_asset_mask{0};
       std::atomic<unsigned int> nogood_handoffs{0};
-      bool restart_after_solution = true;
-      bool solution_spoke_complete = true;
+      /// Decision of hub() after a solution
+      MetaDecision solution_decision = MetaDecision::Restart;
+      /// Coverage that spoke() declares after a solution
+      SpokeCoverage solution_spoke_coverage = SpokeCoverage::Full;
       bool fail_solution_spoke = false;
       bool nogood_model = false;
+      /// Whether the model posts a branching on x
+      bool model_branching = true;
       /// Whether a PBS spoke() posts the branching for its asset
       bool spoke_branching = true;
       /// Whether the first RBS spoke reaches the cutoff without a solution
@@ -725,43 +729,45 @@ namespace Test {
       int portfolio_asset;
 
       /// Record and implement a Hub callback
-      bool
-      observe_hub(const MetaInfo& mi) {
+      void
+      observe_hub(HubContext& hc) {
         state->hub_calls.fetch_add(1, std::memory_order_relaxed);
-        if (mi.type() == MetaInfo::PORTFOLIO)
-          // PBS must ignore the callback result.
-          return false;
+        // Keep the branchers of a portfolio hub
+        if (hc.engine() == MetaEngine::Portfolio)
+          return;
         restart_role = RestartRole::Hub;
-        state->hub_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
-        bool default_result = Space::hub(mi);
-        if ((mi.type() == MetaInfo::RESTART) && (mi.nogoods().ng() > 0))
+        state->hub_events.fetch_or(event_bit(hc.event()), std::memory_order_relaxed);
+        Space::hub(hc);
+        if (hc.nogoods().ng() > 0)
           state->nogood_handoffs.fetch_add(1, std::memory_order_relaxed);
-        return (mi.reason() == MetaInfo::RR_SOL) ? state->restart_after_solution : default_result;
+        if (hc.event() == MetaEvent::Solution)
+          hc.decision(state->solution_decision);
       }
       /// Record and implement a Spoke callback
-      bool
-      observe_spoke(const MetaInfo& mi) {
+      void
+      observe_spoke(SpokeContext& sc) {
         state->spoke_calls.fetch_add(1, std::memory_order_relaxed);
-        if (mi.type() == MetaInfo::PORTFOLIO) {
-          portfolio_asset = static_cast<int>(mi.asset());
-          state->assets.fetch_or(1U << mi.asset(), std::memory_order_relaxed);
+        if (sc.engine() == MetaEngine::Portfolio) {
+          portfolio_asset = static_cast<int>(sc.asset());
+          state->assets.fetch_or(1U << sc.asset(), std::memory_order_relaxed);
           // The default hub() removes the model's branching. A hub()
           // override keeps it, and then this branching is redundant.
           if (state->spoke_branching)
             Gecode::branch(*this, x, INT_VAL_MIN());
-          // PBS must ignore the callback result.
-          return false;
+          return;
         }
-        state->spoke_reasons.fetch_or(reason_bit(mi.reason()), std::memory_order_relaxed);
+        state->spoke_events.fetch_or(event_bit(sc.event()), std::memory_order_relaxed);
         restart_role = RestartRole::Spoke;
-        if ((mi.reason() == MetaInfo::RR_INIT) && state->limit_first_spoke) {
+        if ((sc.event() == MetaEvent::Start) && state->limit_first_spoke) {
           // Four distinct values from three fail only during search.
           distinct(*this, y, IPL_VAL);
           Gecode::branch(*this, y, INT_VAR_NONE(), INT_VAL_MIN());
         }
-        if ((mi.reason() == MetaInfo::RR_SOL) && state->fail_solution_spoke)
-          fail();
-        return (mi.reason() == MetaInfo::RR_SOL) ? state->solution_spoke_complete : true;
+        if (sc.event() == MetaEvent::Solution) {
+          if (state->fail_solution_spoke)
+            fail();
+          sc.coverage(state->solution_spoke_coverage);
+        }
       }
 
     public:
@@ -776,7 +782,8 @@ namespace Test {
           distinct(*this, q, IPL_VAL);
           Gecode::branch(*this, q, INT_VAR_NONE(), INT_VAL_MIN());
         }
-        Gecode::branch(*this, x, INT_VAL_MIN());
+        if (state->model_branching)
+          Gecode::branch(*this, x, INT_VAL_MIN());
       }
       /// Clone \a s
       MetaDispatchSpace(MetaDispatchSpace& s)
@@ -839,9 +846,9 @@ namespace Test {
         return new HubDispatchSpace(*this);
       }
       /// Observe Hub dispatch
-      bool
-      hub(const MetaInfo& mi) override {
-        return observe_hub(mi);
+      void
+      hub(HubContext& hc) override {
+        observe_hub(hc);
       }
     };
 
@@ -858,9 +865,9 @@ namespace Test {
         return new SpokeDispatchSpace(*this);
       }
       /// Observe Spoke dispatch
-      bool
-      spoke(const MetaInfo& mi) override {
-        return observe_spoke(mi);
+      void
+      spoke(SpokeContext& sc) override {
+        observe_spoke(sc);
       }
     };
 
@@ -877,14 +884,14 @@ namespace Test {
         return new HubSpokeDispatchSpace(*this);
       }
       /// Observe Hub dispatch
-      bool
-      hub(const MetaInfo& mi) override {
-        return observe_hub(mi);
+      void
+      hub(HubContext& hc) override {
+        observe_hub(hc);
       }
       /// Observe Spoke dispatch
-      bool
-      spoke(const MetaInfo& mi) override {
-        return observe_spoke(mi);
+      void
+      spoke(SpokeContext& sc) override {
+        observe_spoke(sc);
       }
     };
 
@@ -897,8 +904,9 @@ namespace Test {
         RbsSpokeOnly,
         RbsHubContinue,
         RbsHubRestart,
-        RbsSpokeComplete,
-        RbsSpokeIncomplete,
+        RbsSpokeFull,
+        RbsSpokeReduced,
+        RbsSpokePartial,
         RbsLimit,
         PbsHubOnly,
         PbsSpokeOnly,
@@ -910,7 +918,8 @@ namespace Test {
         PbsParallelSpokeOnly,
         PbsParallel,
         PbsParallelThreadLimit,
-        PbsDefaultHubRemovesBranchers,
+        PbsSpokeWithoutBrancher,
+        PbsNoBrancher,
         RbsNoGoodsResetOwnership,
         MetaStopOwnership,
         BabIncumbent
@@ -947,11 +956,12 @@ namespace Test {
       }
       /// Run one RBS dispatch scenario
       static bool
-      rbs(bool restart_after_solution, bool fail_solution_spoke, bool solution_spoke_complete) {
+      rbs(MetaDecision solution_decision, bool fail_solution_spoke,
+          SpokeCoverage solution_spoke_coverage) {
         MetaDispatchState state;
-        state.restart_after_solution = restart_after_solution;
+        state.solution_decision = solution_decision;
         state.fail_solution_spoke = fail_solution_spoke;
-        state.solution_spoke_complete = solution_spoke_complete;
+        state.solution_spoke_coverage = solution_spoke_coverage;
 
         HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
         Gecode::Search::Options o;
@@ -964,22 +974,27 @@ namespace Test {
         bool ok = first != nullptr;
         delete first;
 
+        const unsigned int start = event_bit(MetaEvent::Start);
+        const unsigned int solution = event_bit(MetaEvent::Solution);
+        const unsigned int exhausted = event_bit(MetaEvent::Exhausted);
         HubSpokeDispatchSpace* second = search.next();
         if (!fail_solution_spoke) {
-          ok = ok && (second != nullptr) && holds(state.hub_calls, 1U) &&
-               holds(state.spoke_calls, restart_after_solution ? 2U : 1U) &&
-               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL)) &&
-               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) |
-                                              (restart_after_solution ? reason_bit(MetaInfo::RR_SOL) : 0U));
-        } else if (solution_spoke_complete) {
-          ok = ok && (second == nullptr) && holds(state.hub_calls, 1U) && holds(state.spoke_calls, 2U) &&
-               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL)) &&
-               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_SOL));
+          const bool restart = solution_decision == MetaDecision::Restart;
+          ok = ok && (second != nullptr) && holds(state.hub_calls, 2U) &&
+               holds(state.spoke_calls, restart ? 2U : 1U) &&
+               holds(state.hub_events, start | solution) &&
+               holds(state.spoke_events, start | (restart ? solution : 0U));
+        } else if (solution_spoke_coverage != SpokeCoverage::Partial) {
+          // Exhausting a spoke that is not partial is a proof
+          ok = ok && (second == nullptr) &&
+               (search.end_reason() == EndReason::Exhausted) &&
+               holds(state.hub_calls, 2U) && holds(state.spoke_calls, 2U) &&
+               holds(state.hub_events, start | solution) &&
+               holds(state.spoke_events, start | solution);
         } else {
-          ok = ok && (second != nullptr) && holds(state.hub_calls, 2U) && holds(state.spoke_calls, 3U) &&
-               holds(state.hub_reasons, reason_bit(MetaInfo::RR_SOL) | reason_bit(MetaInfo::RR_CMPL)) &&
-               holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_SOL) |
-                                              reason_bit(MetaInfo::RR_CMPL));
+          ok = ok && (second != nullptr) && holds(state.hub_calls, 3U) && holds(state.spoke_calls, 3U) &&
+               holds(state.hub_events, start | solution | exhausted) &&
+               holds(state.spoke_events, start | solution | exhausted);
         }
         delete second;
         return ok;
@@ -1003,23 +1018,29 @@ namespace Test {
         delete solution;
         return ok;
       }
-      /// Check that the default PBS hub() removes the model's branching
+      /// Check that PBS rejects a spoke without branching when the hub had one
       static bool
-      pbs_default_hub_removes_branchers(void) {
+      pbs_spoke_without_brancher(bool model_branching) {
         MetaDispatchState state;
         state.spoke_branching = false;
+        state.model_branching = model_branching;
         SpokeDispatchSpace* m = new SpokeDispatchSpace(state);
         Gecode::Search::Options o;
         o.assets = 3;
         o.threads = 1;
-        Gecode::PBS<SpokeDispatchSpace, Gecode::DFS> search(m, o);
-        delete m;
-
-        // A spoke without branching is a solution as soon as it is stable.
-        SpokeDispatchSpace* solution = search.next();
-        bool ok = (solution != nullptr) && !solution->assigned() && holds(state.spoke_calls, 3U);
-        delete solution;
-        return ok;
+        try {
+          Gecode::PBS<SpokeDispatchSpace, Gecode::DFS> search(m, o);
+          delete m;
+          // A spoke without branching is a solution as soon as it is stable.
+          SpokeDispatchSpace* solution = search.next();
+          bool ok = !model_branching && (solution != nullptr) && !solution->assigned() &&
+                    holds(state.spoke_calls, 3U);
+          delete solution;
+          return ok;
+        } catch (const Gecode::Search::SpokeNoBrancher&) {
+          delete m;
+          return model_branching && holds(state.live_spaces, 0U);
+        }
       }
       /// Check RBS dispatch when the first spoke reaches the cutoff
       static bool
@@ -1036,9 +1057,10 @@ namespace Test {
         delete m;
 
         HubSpokeDispatchSpace* solution = search.next();
-        bool ok = (solution != nullptr) && solution->assigned() && holds(state.hub_calls, 1U) &&
-                  holds(state.spoke_calls, 2U) && holds(state.hub_reasons, reason_bit(MetaInfo::RR_LIM)) &&
-                  holds(state.spoke_reasons, reason_bit(MetaInfo::RR_INIT) | reason_bit(MetaInfo::RR_LIM));
+        const unsigned int events = event_bit(MetaEvent::Start) | event_bit(MetaEvent::Limit);
+        bool ok = (solution != nullptr) && solution->assigned() && holds(state.hub_calls, 2U) &&
+                  holds(state.spoke_calls, 2U) && holds(state.hub_events, events) &&
+                  holds(state.spoke_events, events);
         delete solution;
         return ok;
       }
@@ -1054,7 +1076,8 @@ namespace Test {
           o.threads = 1;
           o.nogoods_limit = 16;
           o.cutoff = Gecode::Search::Cutoff::constant(1);
-          Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
+          // The engine constrains the hub by each solution
+          Gecode::RBS<HubSpokeDispatchSpace, Gecode::BAB> search(m, o);
           delete m;
 
           unsigned int solutions = 0;
@@ -1073,7 +1096,7 @@ namespace Test {
       meta_stop_ownership(void) {
         MetaDispatchState rbs_state;
         // Continue after a solution, so that the spoke engine prunes with it
-        rbs_state.restart_after_solution = false;
+        rbs_state.solution_decision = MetaDecision::Continue;
         bool ok = true;
         {
           Gecode::Search::NodeStop stop(0);
@@ -1085,7 +1108,7 @@ namespace Test {
           Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
           delete m;
           HubSpokeDispatchSpace* solution = search.next();
-          ok = (solution == nullptr) && search.stopped();
+          ok = (solution == nullptr) && (search.end_reason() == EndReason::Limit);
           delete solution;
         }
         ok = ok && holds(rbs_state.live_spaces, 0U);
@@ -1105,7 +1128,7 @@ namespace Test {
           Gecode::PBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
           delete m;
           HubSpokeDispatchSpace* solution = search.next();
-          ok = ok && (solution == nullptr) && search.stopped();
+          ok = ok && (solution == nullptr) && (search.end_reason() == EndReason::Limit);
           delete solution;
         }
         return ok && holds(pbs_state.live_spaces, 0U);
@@ -1115,7 +1138,7 @@ namespace Test {
       bab_incumbent(void) {
         MetaDispatchState rbs_state;
         // Continue after a solution, so that the spoke engine prunes with it
-        rbs_state.restart_after_solution = false;
+        rbs_state.solution_decision = MetaDecision::Continue;
         bool ok = true;
         {
           HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(rbs_state);
@@ -1159,7 +1182,7 @@ namespace Test {
         ok = ok && holds(pbs_state.live_spaces, 0U);
 
         MetaDispatchState nested_state;
-        nested_state.restart_after_solution = false;
+        nested_state.solution_decision = MetaDecision::Continue;
         {
           HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(nested_state);
           Gecode::Search::Options outer;
@@ -1196,17 +1219,19 @@ namespace Test {
       run(void) override {
         switch (scenario) {
         case Scenario::RbsHubOnly:
-          return rbs_dispatch<HubDispatchSpace>(1, 0);
+          return rbs_dispatch<HubDispatchSpace>(2, 0);
         case Scenario::RbsSpokeOnly:
           return rbs_dispatch<SpokeDispatchSpace>(0, 2);
         case Scenario::RbsHubContinue:
-          return rbs(false, false, true);
+          return rbs(MetaDecision::Continue, false, SpokeCoverage::Full);
         case Scenario::RbsHubRestart:
-          return rbs(true, false, true);
-        case Scenario::RbsSpokeComplete:
-          return rbs(true, true, true);
-        case Scenario::RbsSpokeIncomplete:
-          return rbs(true, true, false);
+          return rbs(MetaDecision::Restart, false, SpokeCoverage::Full);
+        case Scenario::RbsSpokeFull:
+          return rbs(MetaDecision::Restart, true, SpokeCoverage::Full);
+        case Scenario::RbsSpokeReduced:
+          return rbs(MetaDecision::Restart, true, SpokeCoverage::Reduced);
+        case Scenario::RbsSpokePartial:
+          return rbs(MetaDecision::Restart, true, SpokeCoverage::Partial);
         case Scenario::RbsLimit:
           return rbs_limit();
         case Scenario::PbsHubOnly:
@@ -1228,10 +1253,12 @@ namespace Test {
         case Scenario::PbsParallel:
           return pbs<HubSpokeDispatchSpace>(3, 3, 1, 3, 7);
         case Scenario::PbsParallelThreadLimit:
-          // Parallel PBS runs only as many assets as it has threads.
-          return pbs<HubSpokeDispatchSpace>(3, 2, 1, 2, 3);
-        case Scenario::PbsDefaultHubRemovesBranchers:
-          return pbs_default_hub_removes_branchers();
+          // Parallel PBS runs all assets, also with fewer threads.
+          return pbs<HubSpokeDispatchSpace>(3, 2, 1, 3, 7);
+        case Scenario::PbsSpokeWithoutBrancher:
+          return pbs_spoke_without_brancher(true);
+        case Scenario::PbsNoBrancher:
+          return pbs_spoke_without_brancher(false);
         case Scenario::RbsNoGoodsResetOwnership:
           return rbs_nogoods_reset_ownership();
         case Scenario::MetaStopOwnership:
@@ -1460,7 +1487,7 @@ namespace Test {
         }
         bool complete = E<HasSolutions>::best ?
           (last && last->best()) : (solutions == root.solutions());
-        return ok && !engine.stopped() && complete;
+        return ok && (engine.end_reason() == EndReason::Exhausted) && complete;
       }
 #ifdef GECODE_HAS_EXPERIMENTAL
       template<template<class> class E>
@@ -1489,7 +1516,7 @@ namespace Test {
           std::future_status::timeout;
         control.request(threads);
         result.get();
-        return ok && !engine.stopped() && (last == (*root.graph)[0].best);
+        return ok && (engine.end_reason() == EndReason::Exhausted) && (last == (*root.graph)[0].best);
       }
 #endif
 
@@ -1550,7 +1577,7 @@ namespace Test {
           resizer.join();
         best = (last != nullptr) && last->best();
         delete last;
-        return !engine.stopped();
+        return engine.end_reason() == EndReason::Exhausted;
       }
     public:
       WorkerControlConcurrentResize(void)
@@ -1811,6 +1838,11 @@ namespace Test {
           constraints->fetch_add(1);
         IntMinimizeSpace::constrain(s);
       }
+      virtual void hub(HubContext& hc) {
+        // Keep the branchers for the assets of a portfolio
+        if (hc.engine() == MetaEngine::Restart)
+          Space::hub(hc);
+      }
     };
 
     /// Small objective whose solutions arrive from worst to best
@@ -1826,10 +1858,10 @@ namespace Test {
       }
       virtual Space* copy(void) { return new ParallelObjective(*this); }
       virtual IntVar cost(void) const { return x; }
-      virtual bool hub(const MetaInfo& mi) {
-        if (mi.type() == MetaInfo::PORTFOLIO)
-          return false;
-        return Space::hub(mi);
+      virtual void hub(HubContext& hc) {
+        // Keep the branchers for the assets of a portfolio
+        if (hc.engine() == MetaEngine::Restart)
+          Space::hub(hc);
       }
     };
 
@@ -1869,10 +1901,10 @@ namespace Test {
           throw ComparisonError();
         return SpaceComparison::Incomparable;
       }
-      virtual bool hub(const MetaInfo& mi) {
-        if (mi.type() == MetaInfo::PORTFOLIO)
-          return false;
-        return Space::hub(mi);
+      virtual void hub(HubContext& hc) {
+        // Keep the branchers for the assets of a portfolio
+        if (hc.engine() == MetaEngine::Restart)
+          Space::hub(hc);
       }
     };
 
@@ -2429,7 +2461,8 @@ namespace Test {
             (static_cast<ParallelFloatObjective*>(s)->x.val().max() < 8.5);
           delete s;
         }
-        substep = substep && (found == 1) && !bab->stopped();
+        substep = substep && (found == 1) &&
+          (bab->end_reason() == EndReason::Exhausted);
         if (!substep)
           return false;
 #endif
@@ -2572,11 +2605,11 @@ namespace Test {
           if (s != nullptr) {
             n--; delete s;
           }
-          if ((s == nullptr) && !dfs.stopped())
+          if ((s == nullptr) && (dfs.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
-        return n == 0;
+        return (n == 0) && (dfs.end_reason() == EndReason::Exhausted);
       }
     };
 
@@ -2609,11 +2642,11 @@ namespace Test {
           if (s != nullptr) {
             n--; delete s;
           }
-          if ((s == nullptr) && !lds.stopped())
+          if ((s == nullptr) && (lds.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
-        return n == 0;
+        return (n == 0) && (lds.end_reason() == EndReason::Exhausted);
       }
     };
 
@@ -2653,11 +2686,11 @@ namespace Test {
           if (s != nullptr) {
             delete b; b=s;
           }
-          if ((s == nullptr) && !bab.stopped())
+          if ((s == nullptr) && (bab.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
-        bool ok = (b == nullptr) || b->best();
+        bool ok = ((b == nullptr) || b->best()) && (bab.end_reason() == EndReason::Exhausted);
         delete b;
         return ok;
       }
@@ -2701,17 +2734,87 @@ namespace Test {
               delete b; b = s;
             }
           }
-          if ((s == nullptr) && !rbs.stopped())
+          if ((s == nullptr) && (rbs.end_reason() != EndReason::Limit))
             break;
           f.limit(f.limit()+2);
         }
         if (htc == HTC_NONE)
-          return n == 0;
+          return (n == 0) && (rbs.end_reason() == EndReason::Exhausted);
         bool ok = improving && (b != nullptr) && b->best();
         delete b;
         return ok;
       }
     };
+
+    /// Space whose spokes add constraints that keep some solution
+    class SatPreservingSpoke : public Gecode::Space {
+    public:
+      /// Coverage that spoke() declares
+      Gecode::SpokeCoverage coverage;
+      /// Variable with four values
+      Gecode::IntVar x;
+      /// Four variables with three values
+      Gecode::IntVarArray y;
+      /// Initialize with declared coverage \a c
+      SatPreservingSpoke(Gecode::SpokeCoverage c)
+        : coverage(c), x(*this,0,3), y(*this,4,0,2) {
+        Gecode::branch(*this,x,Gecode::INT_VAL_MIN());
+        Gecode::branch(*this,y,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
+      }
+      /// Clone \a s
+      SatPreservingSpoke(SatPreservingSpoke& s)
+        : Gecode::Space(s), coverage(s.coverage) {
+        x.update(*this,s.x);
+        y.update(*this,s.y);
+      }
+      Gecode::Space* copy(void) override {
+        return new SatPreservingSpoke(*this);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        // The y must be distinct, which is impossible, for x < 3 in the
+        // first episode and for x > 0 later: either keeps a solution
+        Gecode::BoolVar b = (sc.episode() == 0) ?
+          Gecode::expr(*this,x < 3) : Gecode::expr(*this,x > 0);
+        for (int i=0; i<y.size(); i++)
+          for (int j=i+1; j<y.size(); j++)
+            Gecode::rel(*this,y[i],Gecode::IRT_NQ,y[j],
+                        Gecode::Reify(b,Gecode::RM_IMP));
+        sc.coverage(coverage);
+      }
+    };
+
+    /// No-goods and proofs of spokes follow their declared coverage
+    class RBSSpokeCoverage : public Base {
+      /// Run RBS with spokes declaring \a c, return the solution or nullptr
+      static SatPreservingSpoke* solve(Gecode::SpokeCoverage c,
+                                       EndReason& r) {
+        SatPreservingSpoke* m = new SatPreservingSpoke(c);
+        Gecode::Search::FailStop stop(10000);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.nogoods_limit = 128;
+        o.stop = &stop;
+        o.cutoff = Gecode::Search::Cutoff::constant(8);
+        Gecode::RBS<SatPreservingSpoke,Gecode::DFS> rbs(m,o);
+        delete m;
+        SatPreservingSpoke* s = rbs.next();
+        r = rbs.end_reason();
+        return s;
+      }
+    public:
+      RBSSpokeCoverage(void) : Base("Search::RBS::SpokeCoverage") {}
+      bool run(void) override {
+        EndReason r;
+        // Declared Reduced: no-goods stay in their spoke, x = 0 remains.
+        // These spokes are not Full, declaring them so is undefined.
+        SatPreservingSpoke* s = solve(Gecode::SpokeCoverage::Reduced,r);
+        const bool reduced = (s != nullptr) && (s->x.val() == 0);
+        delete s;
+        return reduced;
+      }
+    };
+
+    RBSSpokeCoverage rbs_spoke_coverage;
 
     /// Space whose first spoke search is restricted to x2, x3 in {0,1}
     class RestrictedFirstSpoke : public Gecode::IntMinimizeSpace {
@@ -2732,21 +2835,20 @@ namespace Test {
       Gecode::IntVar cost(void) const override {
         return x[0];
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
-            (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Restart) &&
+            (sc.event() == Gecode::MetaEvent::Start)) {
           Gecode::dom(*this,x[2],0,1);
           Gecode::dom(*this,x[3],0,1);
-          return false;
+          sc.coverage(Gecode::SpokeCoverage::Partial);
         }
-        return true;
       }
     };
 
-    /// No-goods from an incomplete spoke search are not posted in the hub
-    class RBSIncompleteNoGoods : public Base {
+    /// No-goods from a partial spoke search are not posted in the hub
+    class RBSPartialNoGoods : public Base {
     public:
-      RBSIncompleteNoGoods(void) : Base("Search::RBS::IncompleteNoGoods") {}
+      RBSPartialNoGoods(void) : Base("Search::RBS::PartialNoGoods") {}
       bool run(void) override {
         RestrictedFirstSpoke* m = new RestrictedFirstSpoke;
         Gecode::Search::Options o;
@@ -2760,11 +2862,77 @@ namespace Test {
           best = s->x[0].val();
           delete s;
         }
-        return !rbs.stopped() && (best == 0);
+        return (rbs.end_reason() == EndReason::Exhausted) && (best == 0);
       }
     };
 
-    RBSIncompleteNoGoods rbs_incomplete_nogoods;
+    RBSPartialNoGoods rbs_partial_nogoods;
+
+    /// Space whose hub posts a brancher after a spoke posted one
+    class LateHubBrancher : public Gecode::Space {
+    public:
+      /// Variables branched on by the spokes
+      Gecode::IntVarArray y;
+      /// Variables branched on by the hub after the first episode
+      Gecode::IntVarArray z;
+      /// Whether the hub branches on z
+      bool z_branching;
+      LateHubBrancher(void)
+        : y(*this,5,0,2), z(*this,2,0,1), z_branching(false) {
+        // For y0 = 0 the other y must be distinct, which is impossible
+        Gecode::BoolVar b = Gecode::expr(*this,y[0] == 0);
+        for (int i=1; i<y.size(); i++)
+          for (int j=i+1; j<y.size(); j++)
+            Gecode::rel(*this,y[i],Gecode::IRT_NQ,y[j],
+                        Gecode::Reify(b,Gecode::RM_IMP));
+      }
+      LateHubBrancher(LateHubBrancher& s)
+        : Gecode::Space(s), z_branching(s.z_branching) {
+        y.update(*this,s.y);
+        z.update(*this,s.z);
+      }
+      Gecode::Space* copy(void) override {
+        return new LateHubBrancher(*this);
+      }
+      void hub(Gecode::HubContext& hc) override {
+        if ((hc.event() == Gecode::MetaEvent::Limit) && !z_branching) {
+          Gecode::branch(*this,z,Gecode::INT_VAR_NONE(),
+                         Gecode::INT_VAL_MIN());
+          z_branching = true;
+        }
+        // The no-goods refer to the brancher of the first spoke
+        Gecode::Space::hub(hc);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        // The first episode searches y0 = 0 first and reaches the cutoff
+        Gecode::branch(*this,y,Gecode::INT_VAR_NONE(),
+                       (sc.episode() == 0) ? Gecode::INT_VAL_MIN() :
+                       Gecode::INT_VAL_MAX());
+      }
+    };
+
+    /// A brancher posted by hub() does not take the identity of a spoke brancher
+    class RBSLateHubBrancher : public Base {
+    public:
+      RBSLateHubBrancher(void) : Base("Search::RBS::LateHubBrancher") {}
+      bool run(void) override {
+        LateHubBrancher* m = new LateHubBrancher;
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.nogoods_limit = 128U;
+        o.cutoff = Gecode::Search::Cutoff::constant(3);
+        Gecode::RBS<LateHubBrancher,Gecode::DFS> rbs(m,o);
+        delete m;
+        // A no-good taken for one on z would rule out z = (0,0)
+        LateHubBrancher* s = rbs.next();
+        const bool ok = (s != nullptr) &&
+          (s->z[0].val() == 0) && (s->z[1].val() == 0);
+        delete s;
+        return ok;
+      }
+    };
+
+    RBSLateHubBrancher rbs_late_hub_brancher;
 
     /// Space without solutions whose search tree has several failures
     class NoSolution : public Gecode::IntMinimizeSpace {
@@ -2786,11 +2954,10 @@ namespace Test {
       Gecode::IntVar cost(void) const override {
         return x[0];
       }
-      bool hub(const Gecode::MetaInfo& mi) override {
+      void hub(Gecode::HubContext& hc) override {
         // Keep the branchers for the assets of a portfolio
-        if (mi.type() == Gecode::MetaInfo::PORTFOLIO)
-          return true;
-        return Gecode::IntMinimizeSpace::hub(mi);
+        if (hc.engine() == Gecode::MetaEngine::Restart)
+          Gecode::IntMinimizeSpace::hub(hc);
       }
     };
 
@@ -2802,11 +2969,9 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingHub(*this);
       }
-      bool hub(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
-            (mi.reason() == Gecode::MetaInfo::RR_LIM))
+      void hub(Gecode::HubContext& hc) override {
+        if (hc.event() == Gecode::MetaEvent::Limit)
           fail();
-        return true;
       }
     };
 
@@ -2828,10 +2993,12 @@ namespace Test {
           }
           Gecode::Search::Statistics s = rbs.statistics();
           // The failures of the last spoke search are counted once
-          if (rbs.stopped() || (s.restart != 1U) || (s.fail < 2U) ||
+          if ((rbs.end_reason() != EndReason::Exhausted) ||
+              (s.restart != 0U) || (s.fail < 2U) ||
               ((t == 1U) && (s.fail != 2U)))
             return false;
-          if ((rbs.next() != nullptr) || rbs.stopped() ||
+          if ((rbs.next() != nullptr) ||
+              (rbs.end_reason() != EndReason::Exhausted) ||
               (rbs.statistics().fail != s.fail) ||
               (rbs.statistics().node != s.node))
             return false;
@@ -2850,12 +3017,12 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingSpoke(*this);
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) && (mi.restart() > 0)) {
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Restart) &&
+            (sc.episode() > 0)) {
           fail();
-          return false;
+          sc.coverage(Gecode::SpokeCoverage::Partial);
         }
-        return true;
       }
     };
 
@@ -2886,7 +3053,7 @@ namespace Test {
           delete s;
           return false;
         }
-        return rbs.stopped() && (f.checks <= 1000) &&
+        return (rbs.end_reason() == EndReason::Limit) && (f.checks <= 1000) &&
           (rbs.statistics().fail >= 5);
       }
     public:
@@ -2908,13 +3075,12 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingFirstSpoke(*this);
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::RESTART) &&
-            (mi.reason() == Gecode::MetaInfo::RR_INIT)) {
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Restart) &&
+            (sc.event() == Gecode::MetaEvent::Start)) {
           fail();
-          return false;
+          sc.coverage(Gecode::SpokeCoverage::Partial);
         }
-        return true;
       }
     };
 
@@ -2945,6 +3111,59 @@ namespace Test {
 
     RBSFailedFirstSpoke rbs_failed_first_spoke;
 
+    /// Space without solutions whose spoke() throws after the first episode
+    class ThrowingSpoke : public NoSolution {
+    public:
+      /// Number of spaces alive, shared with the workers of a parallel engine
+      std::atomic<int>* live;
+      ThrowingSpoke(std::atomic<int>& l) : live(&l) {
+        (*live)++;
+      }
+      ThrowingSpoke(ThrowingSpoke& s) : NoSolution(s), live(s.live) {
+        (*live)++;
+      }
+      ~ThrowingSpoke(void) override {
+        (*live)--;
+      }
+      Gecode::Space* copy(void) override {
+        return new ThrowingSpoke(*this);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        if (sc.episode() == 1)
+          throw std::runtime_error("spoke");
+      }
+    };
+
+    /// RBS deletes the spoke when spoke() throws at a restart
+    class RBSSpokeException : public Base {
+    public:
+      RBSSpokeException(void) : Base("Search::RBS::SpokeException") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U}) {
+          std::atomic<int> live{0};
+          bool thrown = false;
+          {
+            ThrowingSpoke root(live);
+            Gecode::Search::Options o;
+            o.threads = t;
+            o.cutoff = Gecode::Search::Cutoff::constant(1);
+            Gecode::RBS<ThrowingSpoke,Gecode::DFS> rbs(&root,o);
+            try {
+              if (ThrowingSpoke* s = rbs.next())
+                delete s;
+            } catch (const std::runtime_error&) {
+              thrown = true;
+            }
+          }
+          if (!thrown || (live != 0))
+            return false;
+        }
+        return true;
+      }
+    };
+
+    RBSSpokeException rbs_spoke_exception;
+
     /// Stop after a number of failures, or after many checks as a safeguard
     class FailureLimit : public Gecode::Search::Stop {
     public:
@@ -2959,7 +3178,7 @@ namespace Test {
       }
     };
 
-    /// A search exhausted when it reaches a failure limit is not stopped
+    /// A search exhausted when it reaches a failure limit is exhausted
     class ExhaustedAtLimit : public Base {
       template<template<class> class Engine>
       static bool test(void) {
@@ -2981,7 +3200,7 @@ namespace Test {
           Gecode::Search::Options o;
           o.stop = &l;
           Engine<NoSolution> e(&root,o);
-          if ((e.next() != nullptr) || e.stopped())
+          if ((e.next() != nullptr) || (e.end_reason() != EndReason::Exhausted))
             return false;
         }
         // Restarts at that limit post no no-goods and would repeat forever
@@ -2992,7 +3211,8 @@ namespace Test {
           o.nogoods_limit = 128U;
           o.cutoff = Gecode::Search::Cutoff::constant(f-1);
           Gecode::RBS<NoSolution,Engine> rbs(&root,o);
-          if ((rbs.next() != nullptr) || rbs.stopped())
+          if ((rbs.next() != nullptr) ||
+              (rbs.end_reason() != EndReason::Exhausted))
             return false;
         }
         return true;
@@ -3005,6 +3225,96 @@ namespace Test {
     };
 
     ExhaustedAtLimit exhausted_at_limit;
+
+    /// LDS reports an incomplete search at its discrepancy limit
+    class LDSIncomplete : public Base {
+      static EndReason end_reason(unsigned int d_l) {
+        NoSolution root;
+        Gecode::Search::Options o;
+        o.d_l = d_l;
+        Gecode::LDS<NoSolution> lds(&root,o);
+        if (NoSolution* s = lds.next()) {
+          delete s;
+          return EndReason::NotEnded;
+        }
+        return lds.end_reason();
+      }
+    public:
+      LDSIncomplete(void) : Base("Search::LDS::Incomplete") {}
+      bool run(void) override {
+        return (end_reason(0) == EndReason::Incomplete) &&
+          (end_reason(1) == EndReason::Incomplete) &&
+          (end_reason(100) == EndReason::Exhausted);
+      }
+    };
+
+    LDSIncomplete lds_incomplete;
+
+    /// Space without solutions recording the default decisions after incomplete episodes
+    class IncompleteEpisodes : public NoSolution {
+    public:
+      /// Coverage that spoke() declares
+      Gecode::SpokeCoverage coverage;
+      /// Default decisions of hub() after an incomplete episode
+      std::vector<Gecode::MetaDecision>* defaults;
+      IncompleteEpisodes(Gecode::SpokeCoverage c,
+                         std::vector<Gecode::MetaDecision>& d)
+        : coverage(c), defaults(&d) {}
+      IncompleteEpisodes(IncompleteEpisodes& s)
+        : NoSolution(s), coverage(s.coverage), defaults(s.defaults) {}
+      Gecode::Space* copy(void) override {
+        return new IncompleteEpisodes(*this);
+      }
+      void hub(Gecode::HubContext& hc) override {
+        if (hc.event() == Gecode::MetaEvent::Incomplete) {
+          defaults->push_back(hc.decision());
+          // Finish after the second incomplete episode at the latest
+          if (defaults->size() == 2U)
+            hc.decision(Gecode::MetaDecision::Finish);
+        }
+        NoSolution::hub(hc);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        sc.coverage(coverage);
+      }
+    };
+
+    /// RBS finishes after an incomplete episode unless its spoke is partial
+    class RBSIncompleteDefault : public Base {
+      /// Return the default decisions when spokes of coverage \a c end incomplete
+      static std::vector<Gecode::MetaDecision>
+      defaults(Gecode::SpokeCoverage c) {
+        std::vector<Gecode::MetaDecision> d;
+        IncompleteEpisodes root(c,d);
+        Gecode::Search::Options o;
+        o.d_l = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(1000);
+        Gecode::RBS<IncompleteEpisodes,Gecode::LDS> rbs(&root,o);
+        for (int i=0; i<2; i++)
+          if (IncompleteEpisodes* s = rbs.next()) {
+            delete s;
+            d.clear();
+          } else if (rbs.end_reason() != EndReason::Incomplete) {
+            d.clear();
+          }
+        return d;
+      }
+    public:
+      RBSIncompleteDefault(void) : Base("Search::RBS::IncompleteDefault") {}
+      bool run(void) override {
+        using Gecode::MetaDecision;
+        using Gecode::SpokeCoverage;
+        using Decisions = std::vector<MetaDecision>;
+        return (defaults(SpokeCoverage::Full) ==
+                Decisions{MetaDecision::Finish}) &&
+          (defaults(SpokeCoverage::Reduced) ==
+           Decisions{MetaDecision::Finish}) &&
+          (defaults(SpokeCoverage::Partial) ==
+           Decisions{MetaDecision::Restart,MetaDecision::Restart});
+      }
+    };
+
+    RBSIncompleteDefault rbs_incomplete_default;
 
     /// Space for relaxing
     class RelaxSpace : public Gecode::Space {
@@ -3066,7 +3376,7 @@ namespace Test {
             if (s != nullptr) {
               delete b; b=s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3074,14 +3384,14 @@ namespace Test {
           delete b;
           return ok;
         } else {
-          int n = ((t > 1) ? std::min(a,t) : a) * m->solutions();
+          int n = a * m->solutions();
           delete m;
           while (true) {
             Model* s = pbs.next();
             if (s != nullptr) {
               n--; delete s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3135,7 +3445,7 @@ namespace Test {
             if (s != nullptr) {
               delete b; b=s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3157,7 +3467,7 @@ namespace Test {
             if (s != nullptr) {
               n--; delete s;
             }
-            if ((s == nullptr) && !pbs.stopped())
+            if ((s == nullptr) && (pbs.end_reason() != EndReason::Limit))
               break;
             f.limit(f.limit()+2);
           }
@@ -3181,7 +3491,8 @@ namespace Test {
         sebs[0] = builder(Gecode::Search::Options::def);
         sebs[1] = builder(Gecode::Search::Options::def);
         Gecode::PBS<NoSolution,Engine> pbs(&root,sebs,o);
-        return (pbs.next() == nullptr) && pbs.stopped() && (l.checks <= 1000);
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Limit) && (l.checks <= 1000);
       }
     public:
       PBSBuilderStop(void) : Base("Search::PBS::SEB::Stop") {}
@@ -3196,7 +3507,285 @@ namespace Test {
 
     PBSBuilderStop pbs_builder_stop;
 
-    /// Restart-based assets of a portfolio share the cutoff sequence
+    /// An exhausted asset ends a portfolio whose other asset never ends
+    class PBSExhaustedAsset : public Base {
+      /// Stop after many checks, in case the portfolio does not end
+      class ManyChecks : public Gecode::Search::Stop {
+      public:
+        /// Number of checks
+        std::atomic<unsigned long int> checks{0UL};
+        bool stop(const Gecode::Search::Statistics&,
+                  const Gecode::Search::Options&) override {
+          return ++checks > 10000000UL;
+        }
+      };
+      static bool test(unsigned int threads) {
+        FailingSpoke root;
+        ManyChecks l;
+        Gecode::Search::Options a;
+        a.cutoff = Gecode::Search::Cutoff::constant(1);
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::rbs<FailingSpoke,Gecode::DFS>(a);
+        sebs[1] = Gecode::dfs<FailingSpoke>();
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.stop = &l;
+        Gecode::PBS<FailingSpoke,Gecode::DFS> pbs(&root,sebs,o);
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted) &&
+          (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted);
+      }
+    public:
+      PBSExhaustedAsset(void) : Base("Search::PBS::ExhaustedAsset") {}
+      bool run(void) override {
+        return test(1U) && test(2U);
+      }
+    };
+
+    PBSExhaustedAsset pbs_exhausted_asset;
+
+    /// The stop object of a portfolio sees the failures of all assets
+    class PBSPortfolioStop : public Base {
+      /// Whether restart-based assets stop at a portfolio-wide failure limit
+      static bool test(unsigned int threads, bool builders) {
+        FailingSpoke root;
+        const unsigned long long int limit = 40U;
+        Gecode::Search::FailStop f(limit);
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.stop = &f;
+        o.slice = 2;
+        Gecode::Search::Statistics s;
+        if (builders) {
+          // Each restart-based engine takes ownership of its cutoff
+          Gecode::Search::Options a, b;
+          a.cutoff = Gecode::Search::Cutoff::constant(1);
+          b.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::SEBs sebs(2);
+          sebs[0] = Gecode::rbs<FailingSpoke,Gecode::DFS>(a);
+          sebs[1] = Gecode::rbs<FailingSpoke,Gecode::DFS>(b);
+          Gecode::PBS<FailingSpoke,Gecode::DFS> pbs(&root,sebs,o);
+          if ((pbs.next() != nullptr) ||
+              (pbs.end_reason() != EndReason::Limit))
+            return false;
+          s = pbs.statistics();
+        } else {
+          o.assets = 2;
+          o.cutoff = Gecode::Search::Cutoff::constant(1);
+          Gecode::PBS<FailingSpoke,Gecode::RBS> pbs(&root,o);
+          if ((pbs.next() != nullptr) ||
+              (pbs.end_reason() != EndReason::Limit))
+            return false;
+          s = pbs.statistics();
+        }
+        // Checked for each asset, the limit would allow twice the failures
+        return (s.fail > limit) && (s.fail < limit + limit / 2U);
+      }
+    public:
+      PBSPortfolioStop(void) : Base("Search::PBS::PortfolioStop") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U})
+          for (bool builders : {false,true})
+            if (!test(t,builders))
+              return false;
+        return true;
+      }
+    };
+
+    PBSPortfolioStop pbs_portfolio_stop;
+
+    /// An asset stopped by its own stop object is parked while the others continue
+    class PBSParkedAsset : public Base {
+      /// Stop object that always stops
+      class AlwaysStop : public Gecode::Search::Stop {
+      public:
+        bool stop(const Gecode::Search::Statistics&,
+                  const Gecode::Search::Options&) override {
+          return true;
+        }
+      };
+      /// Whether the other asset continues and exhausts the search space
+      static bool others_continue(unsigned int threads) {
+        NoSolution root;
+        AlwaysStop always;
+        Gecode::Search::Options a;
+        a.stop = &always;
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::dfs<NoSolution>(a);
+        sebs[1] = Gecode::dfs<NoSolution>();
+        Gecode::Search::Options o;
+        o.threads = threads;
+        Gecode::PBS<NoSolution,Gecode::DFS> pbs(&root,sebs,o);
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted);
+      }
+      /// Whether parked assets resume with the next call
+      static bool resume(unsigned int threads) {
+        NoSolution root;
+        Gecode::Search::FailStop f0(0), f1(0);
+        Gecode::Search::Options a0, a1;
+        a0.stop = &f0;
+        a1.stop = &f1;
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::dfs<NoSolution>(a0);
+        sebs[1] = Gecode::lds<NoSolution>(a1);
+        Gecode::Search::Options o;
+        o.threads = threads;
+        Gecode::PBS<NoSolution,Gecode::DFS> pbs(&root,sebs,o);
+        unsigned int limits = 0;
+        while ((pbs.next() == nullptr) &&
+               (pbs.end_reason() == EndReason::Limit)) {
+          if (++limits > 1000)
+            return false;
+          f0.limit(f0.limit() + 1);
+          f1.limit(f1.limit() + 1);
+        }
+        return (limits > 0) && (pbs.end_reason() == EndReason::Exhausted);
+      }
+    public:
+      PBSParkedAsset(void) : Base("Search::PBS::ParkedAsset") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U})
+          if (!others_continue(t) || !resume(t))
+            return false;
+        return true;
+      }
+    };
+
+    PBSParkedAsset pbs_parked_asset;
+
+    /// Space without solutions whose hub continues after a partial spoke is exhausted, which is illegal
+    class IllegalContinue : public NoSolution {
+    public:
+      IllegalContinue(void) = default;
+      IllegalContinue(IllegalContinue& s) : NoSolution(s) {}
+      Gecode::Space* copy(void) override {
+        return new IllegalContinue(*this);
+      }
+      void hub(Gecode::HubContext& hc) override {
+        if (hc.event() == Gecode::MetaEvent::Exhausted)
+          hc.decision(Gecode::MetaDecision::Continue);
+        NoSolution::hub(hc);
+      }
+      void spoke(Gecode::SpokeContext& sc) override {
+        if (sc.engine() == Gecode::MetaEngine::Restart)
+          sc.coverage(Gecode::SpokeCoverage::Partial);
+      }
+    };
+
+    /// An exception thrown in an asset of a portfolio is rethrown by next()
+    class PBSAssetException : public Base {
+    public:
+      PBSAssetException(void) : Base("Search::PBS::AssetException") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U,4U}) {
+          IllegalContinue root;
+          Gecode::Search::Options o;
+          o.assets = 2;
+          o.threads = t;
+          o.cutoff = Gecode::Search::Cutoff::constant(1000);
+          Gecode::PBS<IllegalContinue,Gecode::RBS> pbs(&root,o);
+          bool thrown = false;
+          try {
+            if (IllegalContinue* s = pbs.next())
+              delete s;
+          } catch (const Gecode::IllegalMetaDecision&) {
+            thrown = true;
+          }
+          if (!thrown)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    PBSAssetException pbs_asset_exception;
+
+    /// A copy of a cutoff generator continues its sequence independently
+    class CutoffCopy : public Base {
+      /// Check that a copy of \a c continues as \a c, then delete \a c
+      static bool same(Gecode::Search::Cutoff* c) {
+        std::unique_ptr<Gecode::Search::Cutoff> o(c);
+        for (int i=0; i<5; i++)
+          (void) ++(*o);
+        std::unique_ptr<Gecode::Search::Cutoff> d(o->copy());
+        if ((*d)() != (*o)())
+          return false;
+        for (int i=0; i<20; i++)
+          if (++(*d) != ++(*o))
+            return false;
+        return true;
+      }
+    public:
+      CutoffCopy(void) : Base("Search::Cutoff::Copy") {}
+      bool run(void) override {
+        using Gecode::Search::Cutoff;
+        return same(Cutoff::constant(3)) && same(Cutoff::linear(2)) &&
+          same(Cutoff::geometric(2,1.5)) && same(Cutoff::luby(2)) &&
+          same(Cutoff::append(Cutoff::linear(1),8,Cutoff::luby(3))) &&
+          same(Cutoff::merge(Cutoff::linear(1),Cutoff::geometric(1,2.0))) &&
+          same(Cutoff::repeat(Cutoff::linear(4),3));
+      }
+    };
+
+    CutoffCopy cutoff_copy;
+
+    /// Copies of a random cutoff generator draw distinct, reproducible sequences
+    class CutoffRandomCopy : public Base {
+      /// Return the first values of \a c, which is deleted
+      static std::vector<unsigned long long int>
+      values(Gecode::Search::Cutoff* c) {
+        std::unique_ptr<Gecode::Search::Cutoff> d(c);
+        std::vector<unsigned long long int> v{(*d)()};
+        for (int i=0; i<20; i++) {
+          v.push_back(++(*d));
+          if ((v.back() < 1U) || (v.back() > 1000U))
+            return {};
+        }
+        return v;
+      }
+      /// Return the values of two copies of a generator with seed \a seed
+      static std::vector<std::vector<unsigned long long int> >
+      copies(unsigned int seed) {
+        std::unique_ptr<Gecode::Search::Cutoff>
+          o(Gecode::Search::Cutoff::rnd(seed,1,1000,1000));
+        (void) ++(*o);
+        std::vector<std::vector<unsigned long long int> > v;
+        v.push_back(values(o->copy()));
+        v.push_back(values(o->copy()));
+        v.push_back(values(o.release()));
+        return v;
+      }
+    public:
+      CutoffRandomCopy(void) : Base("Search::Cutoff::RandomCopy") {}
+      bool run(void) override {
+        std::vector<std::vector<unsigned long long int> > v = copies(7);
+        return !v[0].empty() && !v[1].empty() && !v[2].empty() &&
+          (v[0] != v[1]) && (v[0] != v[2]) && (v[1] != v[2]) &&
+          (copies(7) == v);
+      }
+    };
+
+    CutoffRandomCopy cutoff_random_copy;
+
+    /// A repeating cutoff generator advances the generator it repeats
+    class CutoffRepeat : public Base {
+    public:
+      CutoffRepeat(void) : Base("Search::Cutoff::Repeat") {}
+      bool run(void) override {
+        std::unique_ptr<Gecode::Search::Cutoff> c
+          (Gecode::Search::Cutoff::repeat(Gecode::Search::Cutoff::linear(4),3));
+        std::vector<unsigned long long int> v{(*c)()};
+        for (int i=0; i<6; i++)
+          v.push_back(++(*c));
+        return v == std::vector<unsigned long long int>{4,4,4,8,8,8,12};
+      }
+    };
+
+    CutoffRepeat cutoff_repeat;
+
+    /// Each restart-based asset of a portfolio owns a copy of the cutoff
     class PBSRestartCutoff : public Base {
       template<template<class> class Engine>
       static bool test(unsigned int threads) {
@@ -3206,7 +3795,8 @@ namespace Test {
         o.threads = threads;
         o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
         Gecode::PBS<NoSolution,Engine> pbs(&root,o);
-        return (pbs.next() == nullptr) && !pbs.stopped();
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted);
       }
     public:
       PBSRestartCutoff(void) : Base("Search::PBS::RBS::Cutoff") {}
@@ -3219,6 +3809,454 @@ namespace Test {
     };
 
     PBSRestartCutoff pbs_restart_cutoff;
+
+    /// Hook behaviour of ProtocolSpace
+    enum class Protocol {
+      Default,         ///< Default hooks
+      ContinueAtStart, ///< hub() continues at Start, which is illegal
+      FinishAtStart,   ///< hub() finishes at Start
+      FinishAtLimit,   ///< hub() finishes at Limit
+      FailAtStart,     ///< hub() fails at Start
+      FailAtSolution,  ///< hub() fails at Solution
+      ContinueAtLimit, ///< hub() continues at Limit
+      EmptyHub,        ///< hub() does nothing
+      BoundInHub,      ///< hub() posts c <= 1 at Start and keeps the branchers
+      Alternate,       ///< Episodes alternate between a solution and the cutoff
+    };
+
+    /// Calls of the hooks of ProtocolSpace
+    struct ProtocolLog {
+      /// Event and episode of each hub() call
+      std::vector<std::pair<MetaEvent,unsigned long int> > hub;
+      /// Event and episode of each spoke() call
+      std::vector<std::pair<MetaEvent,unsigned long int> > spoke;
+      /// Number of spaces alive
+      std::atomic<int> live{0};
+    };
+
+    /// Space whose hooks follow a Protocol
+    class ProtocolSpace : public IntMinimizeSpace {
+    public:
+      /// Hook behaviour
+      Protocol protocol;
+      /// Log of hook calls
+      ProtocolLog* log;
+      /// Cost
+      IntVar c;
+      /// Whether the y must be distinct, which is impossible
+      BoolVar p;
+      /// Four variables with three values
+      IntVarArray y;
+      /// Initialize with hook behaviour \a pr and log \a l
+      ProtocolSpace(Protocol pr, ProtocolLog& l)
+        : protocol(pr), log(&l), c(*this,0,3), p(*this,0,1), y(*this,4,0,2) {
+        log->live++;
+        for (int i=0; i<y.size(); i++)
+          for (int j=i+1; j<y.size(); j++)
+            rel(*this,y[i],IRT_NQ,y[j],Reify(p,RM_IMP));
+        // Search fails six times for p = 1, then finds c = 3, 2, 1, 0
+        Gecode::branch(*this,p,BOOL_VAL_MAX());
+        Gecode::branch(*this,y,INT_VAR_NONE(),INT_VAL_MIN());
+        Gecode::branch(*this,c,INT_VAL_MAX());
+      }
+      /// Clone \a s
+      ProtocolSpace(ProtocolSpace& s)
+        : IntMinimizeSpace(s), protocol(s.protocol), log(s.log) {
+        log->live++;
+        c.update(*this,s.c);
+        p.update(*this,s.p);
+        y.update(*this,s.y);
+      }
+      /// Record destruction
+      ~ProtocolSpace(void) override {
+        log->live--;
+      }
+      Space* copy(void) override {
+        return new ProtocolSpace(*this);
+      }
+      IntVar cost(void) const override {
+        return c;
+      }
+      void hub(HubContext& hc) override {
+        log->hub.emplace_back(hc.event(),hc.episode());
+        switch (protocol) {
+        case Protocol::ContinueAtStart:
+          if (hc.event() == MetaEvent::Start)
+            hc.decision(MetaDecision::Continue);
+          break;
+        case Protocol::FinishAtStart:
+          if (hc.event() == MetaEvent::Start) {
+            hc.decision(MetaDecision::Finish);
+            return;
+          }
+          break;
+        case Protocol::FinishAtLimit:
+          if (hc.event() == MetaEvent::Limit)
+            hc.decision(MetaDecision::Finish);
+          break;
+        case Protocol::FailAtStart:
+          if (hc.event() == MetaEvent::Start) {
+            fail();
+            return;
+          }
+          break;
+        case Protocol::FailAtSolution:
+          if (hc.event() == MetaEvent::Solution) {
+            fail();
+            return;
+          }
+          break;
+        case Protocol::ContinueAtLimit:
+          if (hc.event() == MetaEvent::Limit)
+            hc.decision(MetaDecision::Continue);
+          break;
+        case Protocol::EmptyHub:
+          return;
+        case Protocol::BoundInHub:
+          if (hc.event() == MetaEvent::Start) {
+            rel(*this,c,IRT_LQ,1);
+            return;
+          }
+          break;
+        case Protocol::Default:
+        case Protocol::Alternate:
+          break;
+        }
+        IntMinimizeSpace::hub(hc);
+      }
+      void spoke(SpokeContext& sc) override {
+        log->spoke.emplace_back(sc.event(),sc.episode());
+        if ((protocol == Protocol::Alternate) &&
+            (sc.engine() == MetaEngine::Restart)) {
+          // Odd episodes search only the part without solutions
+          rel(*this,p,IRT_EQ,((sc.episode() % 2U) == 1U) ? 1 : 0);
+          sc.coverage(SpokeCoverage::Partial);
+        }
+      }
+    };
+
+    /// Decisions, events, and ends of the meta search protocol
+    class MetaProtocol : public Base {
+    public:
+      /// Scenario
+      enum class Scenario {
+        DecisionLegality,
+        IllegalDecisionInEngine,
+        FinishAtStart,
+        FinishAtLimit,
+        FailAtStart,
+        FailAtSolution,
+        ContinueAtLimit,
+        EngineConstrainsHub,
+        PortfolioHubConstraint,
+        Episodes,
+      };
+    protected:
+      /// Scenario under test
+      Scenario scenario;
+      /// Return options for RBS with constant cutoff \a c
+      static Gecode::Search::Options rbs_options(unsigned long int c) {
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.cutoff = Gecode::Search::Cutoff::constant(c);
+        return o;
+      }
+      /// Return whether engine \a e has no further solution and ends with \a r
+      template<class Engine>
+      static bool ends(Engine& e, EndReason r) {
+        for (int i=0; i<2; i++) {
+          if (ProtocolSpace* s = e.next()) {
+            delete s;
+            return false;
+          }
+          if (e.end_reason() != r)
+            return false;
+        }
+        return true;
+      }
+      /// Return whether \a d is legal after event \a e
+      static bool legal(MetaEvent e, MetaDecision d) {
+        return (d != MetaDecision::Continue) ||
+          (e == MetaEvent::Solution) || (e == MetaEvent::Limit);
+      }
+      /// Check the legality of each decision for each event
+      static bool decision_legality(void) {
+        const Gecode::Search::Statistics stat;
+        for (MetaEvent e : {MetaEvent::Start,MetaEvent::Solution,
+                            MetaEvent::Exhausted,MetaEvent::Incomplete,
+                            MetaEvent::Limit})
+          for (MetaDecision d : {MetaDecision::Restart,MetaDecision::Continue,
+                                 MetaDecision::Finish}) {
+            HubContext hc = Gecode::Search::MetaContextAccess::hub
+              (MetaEngine::Restart,e,MetaDecision::Restart,0,0,1,nullptr,
+               stat,NoGoods::eng);
+            if (hc.decision() != MetaDecision::Restart)
+              return false;
+            bool thrown = false;
+            try {
+              hc.decision(d);
+            } catch (const IllegalMetaDecision&) {
+              thrown = true;
+            }
+            if ((thrown == legal(e,d)) ||
+                (hc.decision() != (thrown ? MetaDecision::Restart : d)))
+              return false;
+          }
+        // The engine sets the default decision
+        HubContext fc = Gecode::Search::MetaContextAccess::hub
+          (MetaEngine::Restart,MetaEvent::Incomplete,MetaDecision::Finish,
+           0,0,1,nullptr,stat,NoGoods::eng);
+        if (fc.decision() != MetaDecision::Finish)
+          return false;
+        SpokeContext sc = Gecode::Search::MetaContextAccess::spoke
+          (MetaEngine::Restart,MetaEvent::Start,0,0,1,nullptr,stat,
+           NoGoods::eng);
+        if (sc.coverage() != SpokeCoverage::Full)
+          return false;
+        sc.coverage(SpokeCoverage::Partial);
+        sc.coverage(SpokeCoverage::Reduced);
+        return sc.coverage() == SpokeCoverage::Reduced;
+      }
+      /// Check that an illegal decision throws from the engine
+      static bool illegal_decision_in_engine(void) {
+        ProtocolLog log;
+        ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtStart,log);
+        Gecode::Search::Options o = rbs_options(10);
+        bool thrown = false;
+        try {
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,o);
+        } catch (const IllegalMetaDecision&) {
+          // The engine owns the cutoff only once it is constructed
+          delete o.cutoff;
+          thrown = true;
+        }
+        delete m;
+        return thrown && log.spoke.empty() && (log.live == 0);
+      }
+      /// Check that RBS and PBS end with \a r when hub() at Start follows \a pr
+      static bool ends_at_start(Protocol pr, EndReason r) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(pr,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(10));
+          delete m;
+          if (!ends(rbs,r))
+            return false;
+        }
+        for (unsigned int t : {1U,2U}) {
+          ProtocolSpace* m = new ProtocolSpace(pr,log);
+          Gecode::Search::Options o;
+          o.assets = 2;
+          o.threads = t;
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,o);
+          delete m;
+          if (!ends(pbs,r))
+            return false;
+        }
+        {
+          ProtocolSpace* m = new ProtocolSpace(pr,log);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          SEBs assets(2);
+          for (int i=0; i<2; i++)
+            assets[i] = Gecode::dfs<ProtocolSpace>(o);
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,assets,o);
+          delete m;
+          if (!ends(pbs,r))
+            return false;
+        }
+        return log.spoke.empty() && (log.hub.size() == 4U) && (log.live == 0);
+      }
+      /// Check that Finish at Limit ends RBS without a proof
+      static bool finish_at_limit(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::FinishAtLimit,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(1));
+          delete m;
+          if (!ends(rbs,EndReason::Incomplete) ||
+              (rbs.statistics().restart != 0U))
+            return false;
+        }
+        using Call = std::pair<MetaEvent,unsigned long int>;
+        return (log.hub == std::vector<Call>{{MetaEvent::Start,0},
+                                             {MetaEvent::Limit,0}}) &&
+          (log.spoke == std::vector<Call>{{MetaEvent::Start,0}}) &&
+          (log.live == 0);
+      }
+      /// Check that a hub failing after a solution proves exhaustion
+      static bool fail_at_solution(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::FailAtSolution,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(100));
+          delete m;
+          ProtocolSpace* s = rbs.next();
+          if (s == nullptr)
+            return false;
+          delete s;
+          if (!ends(rbs,EndReason::Exhausted))
+            return false;
+        }
+        return (log.spoke.size() == 1U) && (log.live == 0);
+      }
+      /// Check that Continue at Limit resumes the same spoke
+      static bool continue_at_limit(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtLimit,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(1));
+          delete m;
+          ProtocolSpace* s = rbs.next();
+          if (s == nullptr)
+            return false;
+          const bool assigned = s->p.assigned() && (s->p.val() == 0);
+          delete s;
+          if (!assigned || (rbs.statistics().restart != 0U))
+            return false;
+        }
+        if ((log.spoke.size() != 1U) || (log.hub.size() < 3U))
+          return false;
+        for (std::size_t i=1; i<log.hub.size(); i++)
+          if (log.hub[i] != std::make_pair(MetaEvent::Limit,0UL))
+            return false;
+        return log.live == 0;
+      }
+      /// Check that RBS<BAB> constrains the hub when hub() does nothing
+      static bool engine_constrains_hub(void) {
+        ProtocolLog log;
+        std::vector<int> costs;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::EmptyHub,log);
+          Gecode::RBS<ProtocolSpace,Gecode::BAB> rbs(m,rbs_options(100));
+          delete m;
+          // Without the bound, every spoke finds c = 3 again
+          while (ProtocolSpace* s = rbs.next()) {
+            costs.push_back(s->c.val());
+            delete s;
+            if (costs.size() > 10U)
+              return false;
+          }
+          if (rbs.end_reason() != EndReason::Exhausted)
+            return false;
+        }
+        return (costs == std::vector<int>{3,2,1,0}) && (log.live == 0);
+      }
+      /// Check that a constraint posted by hub() under PBS takes effect
+      static bool portfolio_hub_constraint(void) {
+        ProtocolLog log;
+        for (unsigned int t : {1U,2U}) {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::BoundInHub,log);
+          Gecode::Search::Options o;
+          o.assets = 2;
+          o.threads = t;
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,o);
+          delete m;
+          ProtocolSpace* s = pbs.next();
+          const bool ok = (s != nullptr) && (s->c.val() == 1);
+          delete s;
+          if (!ok)
+            return false;
+        }
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::BoundInHub,log);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          SEBs assets(2);
+          for (int i=0; i<2; i++)
+            assets[i] = Gecode::dfs<ProtocolSpace>(o);
+          Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,assets,o);
+          delete m;
+          ProtocolSpace* s = pbs.next();
+          const bool ok = (s != nullptr) && (s->c.val() == 1);
+          delete s;
+          if (!ok)
+            return false;
+        }
+        return log.live == 0;
+      }
+      /// Check episode numbering across solution and limit restarts
+      static bool episodes(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::Alternate,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(2));
+          delete m;
+          for (int i=0; i<3; i++) {
+            ProtocolSpace* s = rbs.next();
+            if (s == nullptr)
+              return false;
+            delete s;
+          }
+          if (rbs.statistics().restart != 4U)
+            return false;
+        }
+        using Call = std::pair<MetaEvent,unsigned long int>;
+        const std::vector<Call> hub{{MetaEvent::Start,0},
+                                    {MetaEvent::Solution,0},
+                                    {MetaEvent::Limit,1},
+                                    {MetaEvent::Solution,2},
+                                    {MetaEvent::Limit,3}};
+        const std::vector<Call> spoke{{MetaEvent::Start,0},
+                                      {MetaEvent::Solution,1},
+                                      {MetaEvent::Limit,2},
+                                      {MetaEvent::Solution,3},
+                                      {MetaEvent::Limit,4}};
+        return (log.hub == hub) && (log.spoke == spoke) && (log.live == 0);
+      }
+    public:
+      /// Initialize scenario \a s with name \a n
+      MetaProtocol(const std::string& n, Scenario s)
+        : Base("Search::Meta::"+n), scenario(s) {}
+      bool run(void) override {
+        switch (scenario) {
+        case Scenario::DecisionLegality:
+          return decision_legality();
+        case Scenario::IllegalDecisionInEngine:
+          return illegal_decision_in_engine();
+        case Scenario::FinishAtStart:
+          return ends_at_start(Protocol::FinishAtStart,EndReason::Incomplete);
+        case Scenario::FinishAtLimit:
+          return finish_at_limit();
+        case Scenario::FailAtStart:
+          return ends_at_start(Protocol::FailAtStart,EndReason::Exhausted);
+        case Scenario::FailAtSolution:
+          return fail_at_solution();
+        case Scenario::ContinueAtLimit:
+          return continue_at_limit();
+        case Scenario::EngineConstrainsHub:
+          return engine_constrains_hub();
+        case Scenario::PortfolioHubConstraint:
+          return portfolio_hub_constraint();
+        case Scenario::Episodes:
+          return episodes();
+        default:
+          GECODE_NEVER;
+        }
+        return false;
+      }
+    };
+
+    MetaProtocol meta_decision_legality
+    ("DecisionLegality",MetaProtocol::Scenario::DecisionLegality);
+    MetaProtocol meta_illegal_decision_in_engine
+    ("IllegalDecisionInEngine",
+     MetaProtocol::Scenario::IllegalDecisionInEngine);
+    MetaProtocol meta_finish_at_start
+    ("FinishAtStart",MetaProtocol::Scenario::FinishAtStart);
+    MetaProtocol meta_finish_at_limit
+    ("FinishAtLimit",MetaProtocol::Scenario::FinishAtLimit);
+    MetaProtocol meta_fail_at_start
+    ("FailAtStart",MetaProtocol::Scenario::FailAtStart);
+    MetaProtocol meta_fail_at_solution
+    ("FailAtSolution",MetaProtocol::Scenario::FailAtSolution);
+    MetaProtocol meta_continue_at_limit
+    ("ContinueAtLimit",MetaProtocol::Scenario::ContinueAtLimit);
+    MetaProtocol meta_engine_constrains_hub
+    ("EngineConstrainsHub",MetaProtocol::Scenario::EngineConstrainsHub);
+    MetaProtocol meta_portfolio_hub_constraint
+    ("PortfolioHubConstraint",MetaProtocol::Scenario::PortfolioHubConstraint);
+    MetaProtocol meta_episodes("Episodes",MetaProtocol::Scenario::Episodes);
 
     /**
      * \brief Constant cutoff counting its deletions
@@ -3246,10 +4284,10 @@ namespace Test {
       Gecode::Space* copy(void) override {
         return new FailingAsset(*this);
       }
-      bool spoke(const Gecode::MetaInfo& mi) override {
-        if ((mi.type() == Gecode::MetaInfo::PORTFOLIO) && (mi.asset() == 0U))
+      void spoke(Gecode::SpokeContext& sc) override {
+        if ((sc.engine() == Gecode::MetaEngine::Portfolio) &&
+            (sc.asset() == 0U))
           fail();
-        return true;
       }
     };
 
@@ -3268,7 +4306,7 @@ namespace Test {
             delete s;
             return false;
           }
-          if (pbs.stopped())
+          if (pbs.end_reason() != EndReason::Exhausted)
             return false;
         }
         return deleted == 1U;
@@ -3425,8 +4463,9 @@ namespace Test {
         (void)new MetaDispatch("RBS::SpokeOnly", MetaDispatch::Scenario::RbsSpokeOnly);
         (void)new MetaDispatch("RBS::HubContinue", MetaDispatch::Scenario::RbsHubContinue);
         (void)new MetaDispatch("RBS::HubRestart", MetaDispatch::Scenario::RbsHubRestart);
-        (void)new MetaDispatch("RBS::SpokeComplete", MetaDispatch::Scenario::RbsSpokeComplete);
-        (void)new MetaDispatch("RBS::SpokeIncomplete", MetaDispatch::Scenario::RbsSpokeIncomplete);
+        (void)new MetaDispatch("RBS::SpokeFull", MetaDispatch::Scenario::RbsSpokeFull);
+        (void)new MetaDispatch("RBS::SpokeReduced", MetaDispatch::Scenario::RbsSpokeReduced);
+        (void)new MetaDispatch("RBS::SpokePartial", MetaDispatch::Scenario::RbsSpokePartial);
         (void)new MetaDispatch("RBS::Limit", MetaDispatch::Scenario::RbsLimit);
         (void)new MetaDispatch("RBS::NoGoodsResetOwnership",
                                MetaDispatch::Scenario::RbsNoGoodsResetOwnership);
@@ -3450,8 +4489,8 @@ namespace Test {
         (void)new MetaDispatch("PBS::SequentialHubOnly", MetaDispatch::Scenario::PbsSequentialHubOnly);
         (void)new MetaDispatch("PBS::SequentialSpokeOnly", MetaDispatch::Scenario::PbsSequentialSpokeOnly);
         (void)new MetaDispatch("PBS::Sequential", MetaDispatch::Scenario::PbsSequential);
-        (void)new MetaDispatch("PBS::DefaultHubRemovesBranchers",
-                               MetaDispatch::Scenario::PbsDefaultHubRemovesBranchers);
+        (void)new MetaDispatch("PBS::SpokeWithoutBrancher", MetaDispatch::Scenario::PbsSpokeWithoutBrancher);
+        (void)new MetaDispatch("PBS::NoBrancher", MetaDispatch::Scenario::PbsNoBrancher);
 #ifdef GECODE_HAS_THREADS
         (void)new MetaDispatch("PBS::ParallelHubOnly", MetaDispatch::Scenario::PbsParallelHubOnly);
         (void)new MetaDispatch("PBS::ParallelSpokeOnly", MetaDispatch::Scenario::PbsParallelSpokeOnly);

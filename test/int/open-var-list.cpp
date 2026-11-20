@@ -274,7 +274,7 @@ namespace Test { namespace Int {
         };
         while (Space* solution = engine->next())
           record(static_cast<SelectorSpace*>(solution));
-        if (!engine->stopped())
+        if (engine->end_reason() != Search::EndReason::Limit)
           return false;
         // Deeper choices refer to positions absent from the restart root.
         engine->nogoods().post(root);

@@ -64,16 +64,6 @@ namespace Gecode { namespace Search {
       throw WorkerControlInUse("PBS::PBS");
   }
 
-  /// Return the number of explicit builders admitted by this portfolio
-  forceinline int
-  pbsadmitted(const SEBs& sebs, const Options& opt) {
-#ifdef GECODE_HAS_THREADS
-    if (opt.threads > 1.0)
-      return std::min(static_cast<int>(opt.threads),sebs.size());
-#endif
-    return sebs.size();
-  }
-
   /// Validate worker-control placement for an explicit portfolio
   forceinline void
   pbscontrol(const SEBs& sebs, const Options& opt) {
@@ -84,8 +74,7 @@ namespace Gecode { namespace Search {
 #else
     const bool parallel = false;
 #endif
-    int admitted = pbsadmitted(sebs,opt);
-    for (int i=0; i<admitted; i++) {
+    for (int i=0; i<sebs.size(); i++) {
       const WorkerControl& x = sebs[i]->options().worker_control;
       if (!x.engaged())
         continue;
@@ -129,109 +118,81 @@ namespace Gecode { namespace Search {
   };
 
   /**
-   * \brief Cutoff sequence shared by the assets of a portfolio
+   * \brief Return the cutoff for the next asset of a portfolio
    *
-   * A cutoff cannot be copied, so the assets of a portfolio that each take
-   * ownership of a cutoff get a PbsCutoff each, drawing from one sequence.
-   * The sequence is disposed with the last PbsCutoff and the reference held
-   * while the portfolio is built. The original cutoff is disposed as well
-   * only if building has succeeded, otherwise it stays with the caller.
-   *
-   * \internal
-   */
-  class PbsCutoffs : public HeapAllocated {
-  public:
-    /// Mutex protecting the sequence, assets can run in parallel
-    Support::Mutex m;
-    /// The shared cutoff sequence
-    Cutoff* c;
-    /// Number of references
-    unsigned int n;
-    /// Whether the cutoff sequence is disposed with the last reference
-    bool owner;
-    /// Initialize for cutoff \a c0 with the reference held while building
-    PbsCutoffs(Cutoff* c0) : c(c0), n(1U), owner(false) {}
-    /// Release a reference
-    static void release(PbsCutoffs* s) {
-      bool last;
-      {
-        Support::Lock lock(s->m);
-        last = (--s->n == 0U);
-      }
-      if (last) {
-        if (s->owner)
-          delete s->c;
-        delete s;
-      }
-    }
-  };
-
-  /**
-   * \brief Cutoff of a portfolio asset, the assets share the sequence of values
-   * \internal
-   */
-  class PbsCutoff : public Cutoff {
-  protected:
-    /// The shared sequence
-    PbsCutoffs* s;
-    /// The current cutoff value of this asset
-    unsigned long long int v;
-  public:
-    /// Initialize as a new reference to \a s0
-    PbsCutoff(PbsCutoffs* s0) : s(s0) {
-      Support::Lock lock(s->m);
-      v = (*s->c)();
-      s->n++;
-    }
-    /// Return the current cutoff value
-    unsigned long long int operator ()(void) const override {
-      return v;
-    }
-    /// Take the next value of the shared sequence and return it
-    unsigned long long int operator ++(void) override {
-      Support::Lock lock(s->m);
-      v = ++(*s->c);
-      return v;
-    }
-    /// Release the reference to the shared sequence
-    ~PbsCutoff(void) override {
-      PbsCutoffs::release(s);
-    }
-  };
-
-  /**
-   * \brief Return the cutoffs shared by the assets of a portfolio
-   *
-   * Returns nullptr if the assets of engine \a E do not take ownership of
-   * the cutoff in \a opt, or if there are fewer than two assets.
+   * When the assets of engine \a E take ownership of the cutoff \a c,
+   * each asset gets its own copy of \a c, and the portfolio deletes \a c
+   * once it has been built. Otherwise the assets share \a c and the caller
+   * keeps it.
    *
    * \internal
    */
   template<class E>
-  forceinline PbsCutoffs*
-  make_pbs_cutoffs(const Options& opt, unsigned int n_assets) {
-    if (!PbsOwnsCutoff<E>::value || (opt.cutoff == nullptr) ||
-        (n_assets < 2U))
+  forceinline std::unique_ptr<Cutoff>
+  pbs_cutoff(const Cutoff* c) {
+    if (!PbsOwnsCutoff<E>::value || (c == nullptr))
       return nullptr;
-    return new PbsCutoffs(opt.cutoff);
+    return std::unique_ptr<Cutoff>(c->copy());
   }
 
   /**
-   * \brief Release the cutoffs \a cs held while building
-   *
-   * The flag \a built tells whether building has succeeded.
+   * \brief Delete the cutoff \a c of a built portfolio if its assets of
+   * engine \a E own copies
    *
    * \internal
    */
+  template<class E>
   forceinline void
-  release_pbs_cutoffs(PbsCutoffs* cs, bool built) {
-    if (cs == nullptr)
-      return;
-    {
-      Support::Lock lock(cs->m);
-      cs->owner = built;
+  pbs_release_cutoff(Cutoff* c) {
+    if (PbsOwnsCutoff<E>::value)
+      delete c;
+  }
+
+  /**
+   * \brief Run hub() with MetaEvent::Start on the hub \a hub of a portfolio
+   *        of \a n assets and propagate it
+   *
+   * Return EndReason::NotEnded if the portfolio must be built. Otherwise
+   * delete \a hub and return EndReason::Exhausted if the hub failed or
+   * EndReason::Incomplete if hub() decided to finish.
+   */
+  template<class T>
+  EndReason
+  pbs_start(T* hub, unsigned int n, Statistics& stat) {
+    std::unique_ptr<T> owned(hub);
+    Statistics start;
+    HubContext hc = MetaContextAccess::hub(MetaEngine::Portfolio,
+                                           MetaEvent::Start,
+                                           MetaDecision::Restart,0UL,0U,n,
+                                           nullptr,start,NoGoods::eng);
+    hub->hub(hc);
+    if (hub->status(stat) == SS_FAILED) {
+      stat.fail++;
+      return EndReason::Exhausted;
     }
-    PbsCutoffs::release(cs);
+    if (hc.decision() == MetaDecision::Finish)
+      return EndReason::Incomplete;
+    (void) owned.release();
+    return EndReason::NotEnded;
+  }
+
+  /**
+   * \brief Run spoke() on the spoke \a s of asset \a i of \a n and return
+   *        its coverage
+   *
+   * Throw SpokeNoBrancher if the hub had branchers (\a hub_branchers) and
+   * \a s has none, as the spoke would then be taken as a solution.
+   */
+  forceinline SpokeCoverage
+  pbs_spoke(Space& s, unsigned int i, unsigned int n, bool hub_branchers) {
+    Statistics start;
+    SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Portfolio,
+                                               MetaEvent::Start,0UL,i,n,
+                                               nullptr,start,NoGoods::eng);
+    s.spoke(sc);
+    if (hub_branchers && !s.failed() && (BrancherGroup::all.size(s) == 0U))
+      throw SpokeNoBrancher("PBS::PBS");
+    return sc.coverage();
   }
 
   /// A PBS engine builder
@@ -272,8 +233,9 @@ namespace Gecode { namespace Search { namespace Seq {
 
   /// Create sequential portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** assets, Stop** stops, unsigned int n_assets,
-            const Statistics& stat, const Search::Options& opt, bool best);
+  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+            unsigned int n_assets, const Statistics& stat,
+            const Search::Options& opt, bool best);
 
 }}}
 
@@ -289,8 +251,8 @@ namespace Gecode { namespace Search { namespace Par {
 
   /// Create parallel portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  pbsengine(Engine** assets, Stop** stops, unsigned int n_assets,
-            const Statistics& stat, bool best);
+  pbsengine(Engine** assets, Stop** stops, const SpokeCoverage* coverage,
+            unsigned int n_assets, const Statistics& stat, bool best);
 
 }}}
 
@@ -298,7 +260,8 @@ namespace Gecode { namespace Search {
 
   template<class T, template<class> class E>
   Engine*
-  pbsseq(T* hub, const Search::Statistics& stat, Options& opt) {
+  pbsseq(T* hub, const Search::Statistics& stat, Options& opt,
+         bool hub_branchers) {
     Stop* stop = opt.stop;
     // Retain each seed: a throwing nested builder may consume its own clone.
     opt.clone = true;
@@ -311,6 +274,7 @@ namespace Gecode { namespace Search {
     unsigned int n_assets = opt.assets;
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (unsigned int i=0U; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
@@ -319,32 +283,29 @@ namespace Gecode { namespace Search {
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS, n_assets);
 
+    Cutoff* cutoff = opt.cutoff;
     Space* unowned_hub = hub;
-    PbsCutoffs* cutoffs = make_pbs_cutoffs<E<T> >(opt,n_assets);
     try {
       for (unsigned int i=0U; i<n_assets; i++) {
-        opt.stop = stops[i] = Seq::pbsstop(stop);
+        opt.stop = stops[i] = Seq::pbsstop(nullptr,stop);
         std::unique_ptr<Space> spoke((i == n_assets-1) ?
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(i);
-        std::unique_ptr<Cutoff> cutoff;
-        if (cutoffs != nullptr) {
-          cutoff.reset(new PbsCutoff(cutoffs));
-          opt.cutoff = cutoff.get();
-        }
+        coverage[i] = pbs_spoke(*spoke,i,n_assets,hub_branchers);
+        std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
+        if (c != nullptr)
+          opt.cutoff = c.get();
         assets[i] = build<T,E>(spoke.get(),opt);
         // The asset owns its cutoff
-        (void) cutoff.release();
+        (void) c.release();
       }
       Engine* e = Seq::pbsengine(
-        assets,stops,n_assets,stat,opt,E<T>::best);
-      release_pbs_cutoffs(cutoffs,true);
+        assets,stops,coverage,n_assets,stat,opt,E<T>::best);
+      pbs_release_cutoff<E<T> >(cutoff);
       return e;
     } catch (...) {
       pbscleanup(assets,stops,n_assets,unowned_hub);
-      release_pbs_cutoffs(cutoffs,false);
       throw;
     }
   }
@@ -352,12 +313,14 @@ namespace Gecode { namespace Search {
   template<class T, template<class> class E>
   Engine*
   pbsseq(T* hub, SEBs& sebs,
-             const Search::Statistics& stat, Options& opt, bool best) {
+         const Search::Statistics& stat, Options& opt, bool best,
+         bool hub_branchers) {
     Region r;
 
     int n_assets = sebs.size();
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (int i=0; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
@@ -379,13 +342,16 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(static_cast<unsigned int>(i));
+        coverage[i] = pbs_spoke(*spoke,static_cast<unsigned int>(i),
+                                static_cast<unsigned int>(n_assets),
+                                hub_branchers);
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
       builders_owned = false;
       return Seq::pbsengine(
-        assets,stops,static_cast<unsigned int>(n_assets),stat,opt,best);
+        assets,stops,coverage,static_cast<unsigned int>(n_assets),stat,opt,
+        best);
     } catch (...) {
       if (builders_owned)
         pbscleanup(sebs);
@@ -399,53 +365,52 @@ namespace Gecode { namespace Search {
 
   template<class T, template<class> class E>
   Engine*
-  pbspar(T* hub, const Search::Statistics& stat, Options& opt) {
+  pbspar(T* hub, const Search::Statistics& stat, Options& opt,
+         bool hub_branchers) {
     Stop* stop = opt.stop;
     // Retain each seed: a throwing nested builder may consume its own clone.
     opt.clone = true;
     Region r;
 
-    // Limit the number of assets to the number of threads
-    unsigned int n_assets = std::min(static_cast<unsigned int>(opt.threads),
-                                       opt.assets);
+    // Run every asset in its own thread, even with fewer threads than assets
+    unsigned int n_assets = opt.assets;
     // Redistribute additional threads to assets
-    opt.threads = floor(opt.threads / static_cast<double>(n_assets));
+    opt.threads = std::max(floor(opt.threads / static_cast<double>(n_assets)), 1.0);
 
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS, n_assets);
 
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (unsigned int i=0U; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
     }
 
+    Cutoff* cutoff = opt.cutoff;
     Space* unowned_hub = hub;
-    PbsCutoffs* cutoffs = make_pbs_cutoffs<E<T> >(opt,n_assets);
     try {
       for (unsigned int i=0U; i<n_assets; i++) {
-        opt.stop = stops[i] = Par::pbsstop(stop,opt.worker_control);
+        opt.stop = stops[i] = Par::pbsstop(nullptr,stop,opt.worker_control);
         std::unique_ptr<Space> spoke((i == n_assets-1) ?
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(static_cast<unsigned int>(i));
-        std::unique_ptr<Cutoff> cutoff;
-        if (cutoffs != nullptr) {
-          cutoff.reset(new PbsCutoff(cutoffs));
-          opt.cutoff = cutoff.get();
-        }
+        coverage[i] = pbs_spoke(*spoke,i,n_assets,hub_branchers);
+        std::unique_ptr<Cutoff> c(pbs_cutoff<E<T> >(cutoff));
+        if (c != nullptr)
+          opt.cutoff = c.get();
         assets[i] = build<T,E>(spoke.get(),opt);
         // The asset owns its cutoff
-        (void) cutoff.release();
+        (void) c.release();
       }
-      Engine* e = Par::pbsengine(assets,stops,n_assets,stat,E<T>::best);
-      release_pbs_cutoffs(cutoffs,true);
+      Engine* e = Par::pbsengine(assets,stops,coverage,n_assets,stat,
+                                 E<T>::best);
+      pbs_release_cutoff<E<T> >(cutoff);
       return e;
     } catch (...) {
       pbscleanup(assets,stops,n_assets,unowned_hub);
-      release_pbs_cutoffs(cutoffs,false);
       throw;
     }
   }
@@ -453,12 +418,12 @@ namespace Gecode { namespace Search {
   template<class T, template<class> class E>
   Engine*
   pbspar(T* hub, SEBs& sebs,
-         const Search::Statistics& stat, Options& opt, bool best) {
+         const Search::Statistics& stat, Options& opt, bool best,
+         bool hub_branchers) {
     Region r;
 
-    // Limit the number of assets to the number of threads
-    int n_assets = std::min(static_cast<int>(opt.threads),
-                              sebs.size());
+    // Run every asset in its own thread, even with fewer threads than assets
+    int n_assets = sebs.size();
 
     WrapTraceRecorder::engine(opt.tracer,
                               SearchTracer::EngineType::PBS,
@@ -466,6 +431,7 @@ namespace Gecode { namespace Search {
 
     Engine** assets = r.alloc<Engine*>(n_assets);
     Stop** stops = r.alloc<Stop*>(n_assets);
+    SpokeCoverage* coverage = r.alloc<SpokeCoverage>(n_assets);
     for (int i=0; i<n_assets; i++) {
       assets[i] = nullptr;
       stops[i] = nullptr;
@@ -484,13 +450,15 @@ namespace Gecode { namespace Search {
                                      hub : hub->clone());
         if (spoke.get() == hub)
           unowned_hub = nullptr;
-        (void) spoke->spoke(static_cast<unsigned int>(i));
+        coverage[i] = pbs_spoke(*spoke,static_cast<unsigned int>(i),
+                                static_cast<unsigned int>(n_assets),
+                                hub_branchers);
         assets[i] = (*sebs[i])(spoke.get());
       }
       pbscleanup(sebs);
       builders_owned = false;
       return Par::pbsengine(
-        assets,stops,static_cast<unsigned int>(n_assets),stat,best);
+        assets,stops,coverage,static_cast<unsigned int>(n_assets),stat,best);
     } catch (...) {
       if (builders_owned)
         pbscleanup(sebs);
@@ -520,7 +488,7 @@ namespace Gecode {
       stat.fail++;
       if (!opt.clone)
         delete s;
-      e = Search::Seq::dead(opt,stat);
+      e = Search::Seq::dead(opt,stat,Search::EndReason::Exhausted);
       /*
        * The assets would own the cutoff, but a dead engine does not take
        * it. This includes the cutoff of an outer portfolio when this is
@@ -536,25 +504,49 @@ namespace Gecode {
       dynamic_cast<T*>(s->clone()) : s;
     opt.clone = false;
 
-    // Always execute hub function
-    (void) hub->hub(0);
+    bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;
+    Search::EndReason r = Search::pbs_start(hub,opt.assets,stat);
+    if (r != Search::EndReason::NotEnded) {
+      e = Search::Seq::dead(opt,stat,r);
+      Search::pbs_release_cutoff<E<T> >(opt.cutoff);
+      return;
+    }
 
     // No need to create a portfolio engine but must run spoke function
     if (o.assets == 1) {
       std::unique_ptr<T> seed(hub);
-      (void) hub->spoke(0);
+      SpokeCoverage c = Search::pbs_spoke(*hub,0U,1U,hub_branchers);
       // Retain the seed if a nested builder rejects its worker control.
       opt.clone = true;
-      e = Search::build<T,E>(seed.get(),opt);
+      if (c != SpokeCoverage::Partial) {
+        e = Search::build<T,E>(seed.get(),opt);
+        return;
+      }
+      // Only a portfolio engine reports an exhausted partial spoke as incomplete
+      std::unique_ptr<Search::Stop> stop(Search::Seq::pbsstop(nullptr,opt.stop));
+      opt.stop = stop.get();
+      // As for several assets, the asset owns a copy of the cutoff
+      Search::Cutoff* cutoff = opt.cutoff;
+      std::unique_ptr<Search::Cutoff> cc(Search::pbs_cutoff<E<T> >(cutoff));
+      if (cc != nullptr)
+        opt.cutoff = cc.get();
+      std::unique_ptr<Search::Engine> asset(Search::build<T,E>(seed.get(),opt));
+      (void) cc.release();
+      Search::Engine* a = asset.get();
+      Search::Stop* so = stop.get();
+      e = Search::Seq::pbsengine(&a,&so,&c,1U,stat,opt,E<T>::best);
+      (void) asset.release();
+      (void) stop.release();
+      Search::pbs_release_cutoff<E<T> >(cutoff);
       return;
     }
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(hub,stat,opt);
+      e = Search::pbspar<T,E>(hub,stat,opt,hub_branchers);
     else
 #endif
-      e = Search::pbsseq<T,E>(hub,stat,opt);
+      e = Search::pbsseq<T,E>(hub,stat,opt,hub_branchers);
   }
 
   template<class T, template<class> class E>
@@ -581,7 +573,7 @@ namespace Gecode {
       if (!opt.clone)
         delete s;
       Search::pbscleanup(sebs);
-      e = Search::Seq::dead(opt,stat);
+      e = Search::Seq::dead(opt,stat,Search::EndReason::Exhausted);
       return;
     }
 
@@ -590,15 +582,26 @@ namespace Gecode {
       dynamic_cast<T*>(s->clone()) : s;
     opt.clone = false;
 
-    // Always execute hub function
-    (void) hub->hub(0);
+    bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;
+    Search::EndReason r;
+    try {
+      r = Search::pbs_start(hub,static_cast<unsigned int>(sebs.size()),stat);
+    } catch (...) {
+      Search::pbscleanup(sebs);
+      throw;
+    }
+    if (r != Search::EndReason::NotEnded) {
+      Search::pbscleanup(sebs);
+      e = Search::Seq::dead(opt,stat,r);
+      return;
+    }
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::pbspar<T,E>(hub,sebs,stat,opt,best);
+      e = Search::pbspar<T,E>(hub,sebs,stat,opt,best,hub_branchers);
     else
 #endif
-      e = Search::pbsseq<T,E>(hub,sebs,stat,opt,best);
+      e = Search::pbsseq<T,E>(hub,sebs,stat,opt,best,hub_branchers);
   }
 
   template<class T, template<class> class E>

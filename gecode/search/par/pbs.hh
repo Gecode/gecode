@@ -39,12 +39,44 @@
 #define GECODE_SEARCH_PAR_PBS_HH
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
 #include <atomic>
 #include <exception>
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// Stop object used for controlling assets in a portfolio
+  /**
+   * \brief Statistics of the assets of a parallel portfolio
+   *
+   * Each asset records the statistics that its engine passes to its stop
+   * object. For an asset with a parallel engine, these are the statistics
+   * of the worker that checks the stop object.
+   */
+  class GECODE_SEARCH_EXPORT PortfolioStatistics {
+  private:
+    /// Mutex for access
+    Support::Mutex m;
+    /// Number of entries: propagating the model and one for each asset
+    unsigned int n;
+    /// Statistics of propagating the model followed by those of each asset
+    Statistics* stat;
+
+  public:
+    /// Initialize with statistics \a s of propagating the model for \a n assets
+    PortfolioStatistics(const Statistics& s, unsigned int n);
+    /// Record statistics \a s of asset \a i and return those of the portfolio
+    Statistics update(unsigned int i, const Statistics& s);
+    /// Delete
+    ~PortfolioStatistics(void);
+  };
+
+  /**
+   * \brief Stop object used for controlling assets in a portfolio
+   *
+   * The stop object of the asset is checked with the statistics of the
+   * asset, the stop object of the portfolio with the statistics of the
+   * whole portfolio.
+   */
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
     /// The stop object for the assets
@@ -55,15 +87,26 @@ namespace Gecode { namespace Search { namespace Par {
     WorkerControl worker_control;
     /// Whether search must be stopped
     std::atomic<bool>* tostop;
+    /// Statistics of the portfolio
+    PortfolioStatistics* ps;
+    /// Index of the asset
+    unsigned int asset;
+    /// Which stop object stopped the asset
+    std::atomic<PortfolioStopCause> _cause;
   public:
     /// Initialize with asset stop \a so, portfolio stop \a po, and \a control
     PortfolioStop(Stop* so, Stop* po, const WorkerControl& control);
-    /// Set pointer to shared \a tostop variable
-    void share(std::atomic<bool>* ts);
+    /// Share stop flag \a ts and statistics \a ps of the portfolio with asset \a i
+    void share(std::atomic<bool>* ts, PortfolioStatistics* ps,
+               unsigned int i);
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
     /// Wake workers so that a paused asset can observe the portfolio stop
     void wake(void);
+    /// Forget which stop object stopped the asset
+    void reset(void);
+    /// Return which stop object stopped the asset
+    PortfolioStopCause cause(void) const;
     /// Signal whether search must be stopped
     void stop(bool s);
     /// Whether search must be stopped
@@ -97,15 +140,19 @@ namespace Gecode { namespace Search { namespace Par {
     Engine* engine;
     /// Stop object
     Stop* stop;
+    /// Coverage of the spoke of the asset
+    SpokeCoverage _coverage;
+    /// Whether the stop object of the asset stopped it during the current call to next()
+    bool _parked;
   public:
-    /// Initialize with portfolio \a p, engine \a e, and its stop object \a so
-    Asset(PBS<Collect>* p, Engine* e, Stop* so);
+    /// Initialize with portfolio \a p, engine \a e, its stop object \a so, and the coverage \a c of its spoke
+    Asset(PBS<Collect>* p, Engine* e, Stop* so, SpokeCoverage c);
+    /// Return the coverage of the spoke of the asset
+    SpokeCoverage coverage(void) const;
     /// Return statistics of asset
     Statistics statistics(void) const;
-    /// Check whether asset has been stopped
-    bool stopped(void) const;
-    /// Check whether asset stopped at a local limit
-    bool limited(void) const;
+    /// Return why the last call to next() of the asset returned no solution
+    EndReason end_reason(void) const;
     /// Return the completion terminator
     virtual Support::Terminator* terminator(void) const;
     /// Wait for the asset to complete its current run
@@ -114,6 +161,12 @@ namespace Gecode { namespace Search { namespace Par {
     void wake(void);
     /// Constrain with better solution \a b
     void constrain(const Space& b);
+    /// Return which stop object stopped the asset
+    PortfolioStopCause cause(void) const;
+    /// Set whether the asset is parked
+    void parked(bool p);
+    /// Whether the asset is parked
+    bool parked(void) const;
     /// Perform one run
     virtual void run(void);
     /// Delete asset
@@ -173,16 +226,20 @@ namespace Gecode { namespace Search { namespace Par {
   protected:
     /// Statistics of propagating the model
     Statistics stat;
+    /// Statistics of the portfolio for its stop object
+    PortfolioStatistics portfolio_stat;
     /// Asset engines
     Asset<Collect>** assets;
     /// Number of asset engines
     unsigned int n_assets;
     /// Number of active asset engines
     unsigned int n_active;
-    /// Whether an asset has been stopped
-    std::atomic<bool> asset_stop;
-    /// Whether an asset stopped at a local limit
-    bool incomplete;
+    /// Whether the stop object of the portfolio has stopped an asset
+    std::atomic<bool> portfolio_stop;
+    /// Whether an asset has proven that no further solution exists
+    bool exhausted;
+    /// Why the last call to next() returned no solution
+    EndReason end;
     /// Shared stop flag
     std::atomic<bool> tostop;
     /// Collect solutions in this
@@ -204,18 +261,20 @@ namespace Gecode { namespace Search { namespace Par {
      *  - n_busy is always zero outside the next() function.
      *  - that entails, that locking is only needed inside next().
      *  - the assets 0..n_active-1 still might not have exhausted their
-     *    search space.
-     *  - the assets n_active..n_assets-1 have exhausted their search space.
+     *    search space, the parked ones among them are not run until the
+     *    next call to next().
+     *  - the assets n_active..n_assets-1 have ended without a proof.
      */
   public:
-    /// Initialize
-    PBS(Engine** s, Stop** so, unsigned int n, const Statistics& stat);
+    /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
+    PBS(Engine** s, Stop** so, const SpokeCoverage* c, unsigned int n,
+        const Statistics& stat);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Constrain future solutions to be better than \a b
     virtual void constrain(const Space& b);
     /// Destructor

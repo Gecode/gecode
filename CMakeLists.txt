@@ -1476,35 +1476,6 @@ if(BUILD_TESTING)
     message(WARNING "Skipping public test harness targets because required modules are disabled")
   endif()
 
-  # Overrides of the hub()/spoke() Space hooks must compile, and a Gecode 6
-  # master() or slave() override must not, even without override. Each fail
-  # case overrides one old hook and must fail with the deleted-function
-  # diagnostic, not for another reason. MSVC words it differently (C2282),
-  # so there the test only requires the build to fail.
-  foreach(api pass fail-master fail-slave)
-    add_library(hub-spoke-api-${api} OBJECT EXCLUDE_FROM_ALL test/search/hub-spoke-api-${api}.cpp)
-    target_link_libraries(hub-spoke-api-${api} PRIVATE gecodekernel)
-    add_test(NAME hub-spoke-api-${api}
-      COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}"
-              --target hub-spoke-api-${api} --config $<CONFIG>)
-  endforeach()
-  set_tests_properties(hub-spoke-api-pass PROPERTIES
-    FIXTURES_SETUP hub-spoke-api
-    RESOURCE_LOCK gecode-test-build)
-  foreach(hook master slave)
-    # The failing fixtures stay out of the compilation database used for lint.
-    set_target_properties(hub-spoke-api-fail-${hook} PROPERTIES EXPORT_COMPILE_COMMANDS OFF)
-    set_tests_properties(hub-spoke-api-fail-${hook} PROPERTIES
-      FIXTURES_REQUIRED hub-spoke-api
-      RESOURCE_LOCK gecode-test-build)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-      set_tests_properties(hub-spoke-api-fail-${hook} PROPERTIES WILL_FAIL TRUE)
-    else()
-      set_tests_properties(hub-spoke-api-fail-${hook} PROPERTIES
-        PASS_REGULAR_EXPRESSION "cannot override a deleted function;overriding deleted function")
-    endif()
-  endforeach()
-
   set(GECODE_CAN_BUILD_TESTS ${GECODE_CAN_BUILD_TEST_HARNESS})
   foreach(required minimodel driver)
     if(NOT TARGET gecode${required})

@@ -38,15 +38,28 @@
 
 #include <gecode/search/seq/rbs.hh>
 
+#include <memory>
+
 namespace Gecode { namespace Search { namespace Seq {
+
+  namespace {
+
+    /// Return the default decision of hub() for event \a ev after a spoke of coverage \a c
+    MetaDecision
+    default_decision(MetaEvent ev, SpokeCoverage c) {
+      // A new spoke would repeat an incomplete search of a spoke that is not partial
+      if ((ev == MetaEvent::Incomplete) && (c != SpokeCoverage::Partial))
+        return MetaDecision::Finish;
+      return MetaDecision::Restart;
+    }
+
+  }
 
   bool
   RestartStop::stop(const Statistics& s, const Options& o) {
     Support::Lock lock(m);
     // Stop if the fail limit for the engine says so
     if (s.fail > l) {
-      if (!e_stopped)
-        m_stat.restart++;
       e_stopped = true;
       return true;
     }
@@ -66,9 +79,8 @@ namespace Gecode { namespace Search { namespace Seq {
 
   NoGoods&
   RBS::hub_nogoods(void) {
-    // The no-goods of an incomplete spoke search only hold in its restricted
-    // search space, not in the hub.
-    if (!nogoods_valid)
+    // The no-goods hold in the hub only for a spoke of full coverage
+    if (coverage != SpokeCoverage::Full)
       return NoGoods::eng;
     NoGoods& ng = e->nogoods();
     // Reset number of no-goods found
@@ -76,82 +88,120 @@ namespace Gecode { namespace Search { namespace Seq {
     return ng;
   }
 
+  bool
+  RBS::hub_event(MetaEvent ev) {
+    // Constrain the hub with a new solution, whatever hub() does
+    if ((ev == MetaEvent::Solution) && best)
+      hub->constrain(*last);
+    Search::Statistics episode_stat = e->statistics();
+    NoGoods& ng = hub_nogoods();
+    HubContext hc = MetaContextAccess::hub(MetaEngine::Restart,ev,
+                                           default_decision(ev,coverage),
+                                           episode,0U,1U,last,episode_stat,
+                                           ng);
+    hub->hub(hc);
+    stop->nogood(ng.ng());
+    MetaDecision d = hc.decision();
+    if (stop->status(hub) == SS_FAILED) {
+      // A failed hub proves that no further solution exists
+      stop->update(e->statistics());
+      delete hub;
+      hub = nullptr;
+      e->reset(nullptr);
+      end = EndReason::Exhausted;
+      return false;
+    }
+    switch (d) {
+    case MetaDecision::Finish:
+      end = EndReason::Incomplete;
+      return false;
+    case MetaDecision::Continue:
+      // After a limit, the episode continues with the next cutoff as budget
+      if (ev == MetaEvent::Limit)
+        stop->extend(e->statistics().fail + ++(*co));
+      return true;
+    case MetaDecision::Restart:
+      break;
+    default:
+      GECODE_NEVER;
+    }
+    stop->restart();
+    // A restart after a solution keeps the cutoff
+    if (ev == MetaEvent::Solution)
+      stop->update(e->statistics());
+    else
+      stop->limit(e->statistics(),++(*co));
+    // The old hub becomes the spoke, which is deleted if spoke() throws
+    std::unique_ptr<Space> next_hub(hub->clone());
+    std::unique_ptr<Space> spoke(hub);
+    hub = next_hub.release();
+    episode++;
+    SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Restart,ev,episode,
+                                               0U,1U,last,episode_stat,ng);
+    spoke->spoke(sc);
+    hub->reserve_brancher_ids(*spoke);
+    coverage = sc.coverage();
+    e->reset(spoke.release());
+    return true;
+  }
+
   Space*
   RBS::next(void) {
-    // A failed hub proves that no further solution exists
-    if (hub == nullptr)
+    // A proof or a decision to finish ends the search
+    if ((end == EndReason::Exhausted) || (end == EndReason::Incomplete))
       return nullptr;
-    m_stopped = false;
-    if (restart) {
-      restart = false;
-      sslr++;
-      NoGoods& ng = hub_nogoods();
-      MetaInfo mi(stop->restarts(),MetaInfo::RR_SOL,sslr,e->statistics().fail,last,ng);
-      bool r = hub->hub(mi);
-      stop->nogood(ng.ng());
-      if (stop->status(hub) == SS_FAILED) {
-        stop->update(e->statistics());
-        delete hub;
-        hub = nullptr;
-        e->reset(nullptr);
+    if (solution) {
+      solution = false;
+      if (!hub_event(MetaEvent::Solution))
         return nullptr;
-      } else if (r) {
-        stop->update(e->statistics());
-        Space* spoke = hub;
-        hub = hub->clone();
-        complete = spoke->spoke(mi);
-        nogoods_valid = complete;
-        e->reset(spoke);
-        sslr = 0;
-        stop->restart();
-      }
     }
     while (true) {
       Space* n = e->next();
       if (n != nullptr) {
         // The engine found a solution
-        restart = true;
+        solution = true;
         delete last;
         last = n->clone();
+        end = EndReason::NotEnded;
         return n;
-      } else if ( (!complete && !e->stopped()) ||
-                  (e->stopped() && stop->enginestopped()) ) {
-        // The engine must perform a true restart
-        // The number of the restart has been incremented in the stop object
-        if (!complete && !e->stopped()) {
-          /*
-           * The engine might not have checked its stop object, for example
-           * when the spoke failed at the root or a parallel engine had no
-           * work. Without this check, the restarts might never stop.
-           */
-          if (stop->meta_stop(e->statistics(),m_opt)) {
-            m_stopped = true;
-            return nullptr;
-          }
-          stop->restart();
-        }
-        sslr = 0;
-        NoGoods& ng = hub_nogoods();
-        MetaInfo mi(stop->restarts(),e->stopped() ? MetaInfo::RR_LIM : MetaInfo::RR_CMPL,sslr,e->statistics().fail,last,ng);
-        (void) hub->hub(mi);
-        stop->nogood(ng.ng());
-        unsigned long long int nl = ++(*co);
-        stop->limit(e->statistics(),nl);
-        if (stop->status(hub) == SS_FAILED) {
-          // The statistics of the engine have been added by limit()
-          delete hub;
-          hub = nullptr;
-          e->reset(nullptr);
+      }
+      MetaEvent ev;
+      switch (e->end_reason()) {
+      case EndReason::Limit:
+        if (!stop->enginestopped()) {
+          // A stop from above
+          end = EndReason::Limit;
           return nullptr;
         }
-        Space* spoke = hub;
-        hub = hub->clone();
-        complete = spoke->spoke(mi);
-        nogoods_valid = complete;
-        e->reset(spoke);
-      } else {
+        ev = MetaEvent::Limit;
+        break;
+      case EndReason::Exhausted:
+        if (coverage != SpokeCoverage::Partial) {
+          // The spoke covers the hub, so this is a proof
+          end = EndReason::Exhausted;
+          return nullptr;
+        }
+        ev = MetaEvent::Exhausted;
+        break;
+      case EndReason::Incomplete:
+        ev = MetaEvent::Incomplete;
+        break;
+      default:
+        GECODE_NEVER;
         return nullptr;
       }
+      /*
+       * The engine might not have checked its stop object, for example
+       * when the spoke failed at the root or a parallel engine had no
+       * work. Without this check, the restarts might never stop.
+       */
+      if ((ev != MetaEvent::Limit) &&
+          stop->meta_stop(e->statistics(),m_opt)) {
+        end = EndReason::Limit;
+        return nullptr;
+      }
+      if (!hub_event(ev))
+        return nullptr;
     }
     GECODE_NEVER;
     return nullptr;
@@ -176,19 +226,16 @@ namespace Gecode { namespace Search { namespace Seq {
     e->constrain(b);
   }
 
-  bool
-  RBS::stopped(void) const {
+  EndReason
+  RBS::end_reason(void) const {
     /*
-     * What might happen during parallel search is that the
-     * engine has been stopped but the meta engine has not, so
-     * the meta engine does not perform a restart. However the
-     * invocation of next will do so and no restart will be
-     * missed.
-     *
-     * The engine may still report a stop when the hub failed during a
-     * restart after a limit. A failed hub is a proof, not a stop.
+     * What might happen during parallel search is that the engine has
+     * been stopped by the cutoff but the meta engine reports a limit,
+     * because the stop object of the meta engine also fired. The next
+     * invocation of next() then performs the restart, and no restart
+     * will be missed.
      */
-    return (hub != nullptr) && (m_stopped || e->stopped());
+    return end;
   }
 
   RBS::~RBS(void) {

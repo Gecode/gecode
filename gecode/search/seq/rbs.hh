@@ -66,16 +66,16 @@ namespace Gecode { namespace Search { namespace Seq {
     virtual bool stop(const Statistics& s, const Options& o);
     /// Return true if the stop object for the meta engine says so
     bool meta_stop(const Statistics& s, const Options& o);
-    /// Return current restart count
-    unsigned long int restarts(void) const;
     /// Increment current restart count
     void restart(void);
     /// Add no-goods to meta statistics
     void nogood(unsigned long int n);
     /// Test hub status with meta statistics
     SpaceStatus status(Space* s);
-    /// Set current limit for the engine to \a l fails
+    /// Add statistics \a s and set the limit for the engine to \a l fails
     void limit(const Statistics& s, unsigned long long int l);
+    /// Set the limit for the engine, which continues its search, to \a l fails
+    void extend(unsigned long long int l);
     /// Update statistics
     void update(const Search::Statistics& s);
     /// Return whether the engine has been stopped
@@ -99,37 +99,36 @@ namespace Gecode { namespace Search { namespace Seq {
     RestartStop* stop;
     /// The options for the stop object of the meta engine
     Options m_opt;
-    /// How many solutions since the last restart
-    unsigned long int sslr;
-    /// Whether search for the next solution will be complete
-    bool complete;
-    /// Whether the no-goods of the current spoke search hold in the hub
-    bool nogoods_valid;
-    /// Whether a restart must be performed when next is called
-    bool restart;
+    /// The current episode
+    unsigned long int episode;
+    /// The coverage of the spoke of the current episode
+    SpokeCoverage coverage;
+    /// Whether the last call to next() returned a solution that hub() has not seen
+    bool solution;
     /// Whether the engine performs best solution search
     bool best;
-    /// Whether the stop object for the meta engine stopped a restart
-    bool m_stopped;
+    /// Why the last call to next() returned no solution
+    EndReason end;
     /// Return the no-goods of the last spoke search, valid in the hub
     NoGoods& hub_nogoods(void);
+    /// Call hub() for event \a ev and act on its decision, return whether search continues
+    bool hub_event(MetaEvent ev);
   public:
     /**
      * \brief Constructor
      *
-     * The value \a complete is the result of the spoke configuration of the
-     * space explored by the first engine \a e0, and is used as for the
-     * searches after later restarts.
+     * The value \a coverage is the coverage that the spoke hook declared
+     * for the space explored by the first engine \a e0.
      */
     RBS(Space* s, RestartStop* stop0, Engine* e0,
         const Search::Statistics& stat, const Options& o, bool best,
-        bool complete);
+        SpokeCoverage coverage);
     /// Return next solution (nullptr, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
+    /// Return why the last call to next() returned no solution
+    virtual EndReason end_reason(void) const;
     /// Constrain future solutions to be better than \a b
     virtual void constrain(const Space& b);
     /// Destructor

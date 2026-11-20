@@ -89,6 +89,9 @@ namespace Gecode {
   MoreThanOneTracer::MoreThanOneTracer(const char* l)
     : Exception(l,"Attempt create more than one non-variable tracer") {}
 
+  IllegalMetaDecision::IllegalMetaDecision(const char* l)
+    : Exception(l,"Illegal decision for the event of a meta search hook") {}
+
 }
 
 // STATISTICS: kernel-other

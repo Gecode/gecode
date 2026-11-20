@@ -77,15 +77,154 @@ This is the development changelog for the next Gecode release.
 
 [ENTRY]
 Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Advance the generator that a cutoff generator from Cutoff::repeat()
+repeats.
+[MORE]
+It read the current value of that generator without advancing it, so after
+the first value it repeated the same value forever.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Delete the spoke of restart-based search when spoke() throws an exception at
+a restart.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Do not let a brancher that hub() posts take the identity of a brancher that
+spoke() posted earlier.
+[MORE]
+Restart-based search then posted the no-goods of that spoke for the wrong
+brancher, which could lose solutions.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Throw Search::SpokeNoBrancher when a spoke of portfolio search has no
+brancher but the hub had branchers.
+[MORE]
+The default hub() removes all branchers, so a spoke() that forgot to post
+the branching of its asset returned the unassigned spoke as a solution.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Propagate the hub of portfolio search after hub() and before cloning the
+spokes.
+[MORE]
+A hub() that posted a constraint made the portfolio throw SpaceNotStable.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Constrain the hub of restart-based branch-and-bound search with each
+solution in the engine itself.
+[MORE]
+The default hub() did it, so an override that did not call the default lost
+the bound and found the same solutions again.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Keep the other assets of a portfolio running when the stop object of an
+engine builder stops its engine.
+[MORE]
+The whole portfolio stopped instead. The stopped asset is now parked until
+the next call to next().
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Check the stop object of a portfolio with the statistics of the whole
+portfolio.
+[MORE]
+It was checked for each asset with the statistics of that asset. See
+docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Run every asset of a parallel portfolio, also when there are more assets
+than threads.
+[MORE]
+Parallel portfolio search ran only as many assets as it had threads and
+silently dropped the others.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+End a portfolio when an asset exhausts its search space.
+[MORE]
+The exhausted asset proves that no further solution exists, so the other
+assets no longer run until they are stopped. An asset whose spoke declares
+SpokeCoverage::Partial is still dropped.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Report limited discrepancy search at its discrepancy limit as incomplete.
+
+[ENTRY]
+Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
-Rename the meta-search Space hooks master() and slave() to hub() and spoke().
+Replace stopped() of search engines by end_reason().
 [MORE]
-There are no compatibility aliases. Space declares master() and slave() as
-deleted, so an old override fails to compile with or without override. This
-includes the FlatZincSpace override of slave(). See
+end_reason() tells why next() returned no solution: EndReason::Exhausted is a
+proof, EndReason::Incomplete is an end without one, and EndReason::Limit is a
+stop. stopped() and the experimental limited() are removed. FlatZinc reports
+optimality or unsatisfiability only for an exhausted search. See
 docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+Give each restart-based asset of a portfolio its own copy of the cutoff.
+[MORE]
+Cutoff has a new pure virtual function copy(), which custom cutoff generators
+must implement. Copies of a random cutoff draw different sequences, so the
+assets restart at different times. See docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+Replace the meta-search Space hooks master() and slave() and the class
+MetaInfo by hub(HubContext&) and spoke(SpokeContext&).
+[MORE]
+hub() sets a MetaDecision and spoke() declares a SpokeCoverage instead of
+returning a Boolean. Restart-based search also calls hub() when search
+starts and after an episode that ends without a proof. There are no
+compatibility aliases, also not for the FlatZincSpace override of slave().
+See docs/gecode-7-migration.md.
 
 [ENTRY]
 Module: search

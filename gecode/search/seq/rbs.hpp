@@ -42,12 +42,6 @@ namespace Gecode { namespace Search { namespace Seq {
   RestartStop::RestartStop(Stop* s)
     : l(0U), m_stop(s), e_stopped(false) {}
 
-  forceinline unsigned long int
-  RestartStop::restarts(void) const {
-    Support::Lock lock(m);
-    return m_stat.restart;
-  }
-
   forceinline void
   RestartStop::restart(void) {
     Support::Lock lock(m);
@@ -75,6 +69,13 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   forceinline void
+  RestartStop::extend(unsigned long long int l0) {
+    Support::Lock lock(m);
+    l = l0;
+    e_stopped = false;
+  }
+
+  forceinline void
   RestartStop::update(const Search::Statistics& s) {
     Support::Lock lock(m);
     m_stat += s;
@@ -96,11 +97,11 @@ namespace Gecode { namespace Search { namespace Seq {
   forceinline
   RBS::RBS(Space* s, RestartStop* stop0,
            Engine* e0, const Search::Statistics& stat, const Options& opt,
-           bool best0, bool complete0)
+           bool best0, SpokeCoverage coverage0)
     : e(e0), hub(s), last(nullptr), co(opt.cutoff), stop(stop0),
-      m_opt(opt.expand()), sslr(0),
-      complete(complete0), nogoods_valid(complete0), restart(false),
-      best(best0), m_stopped(false) {
+      m_opt(opt.expand()), episode(0UL), coverage(coverage0),
+      solution(false),
+      best(best0), end(EndReason::NotEnded) {
     stop->limit(stat,(*co)());
   }
 
