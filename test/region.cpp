@@ -64,6 +64,71 @@ namespace Test {
 
     Region r;
 
+    /// %Test for growing space memory from an empty block
+    class SpaceReallocEmpty : public Test::Base {
+    private:
+        /// Space without variables
+        class EmptySpace : public Gecode::Space {
+        public:
+            /// Initialize space
+            EmptySpace(void) {}
+            /// Constructor for cloning \a s
+            EmptySpace(EmptySpace& s) : Gecode::Space(s) {}
+            /// Copy space during cloning
+            Gecode::Space*
+            copy(void) override {
+                return new EmptySpace(*this);
+            }
+        };
+
+    public:
+        /// Initialize test
+        SpaceReallocEmpty(void) : Test::Base("Space::Realloc::Empty") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            EmptySpace home;
+            int* p = home.realloc<int>(static_cast<int*>(nullptr), 0, 4);
+            for (int i = 0; i < 4; i++)
+                p[i] = i;
+            const bool grown = (p[3] == 3);
+            home.free<int>(p, 4);
+            return grown;
+        }
+    };
+
+    SpaceReallocEmpty space_realloc_empty;
+
+    /// %Test for copying and assigning empty archives
+    class ArchiveEmpty : public Test::Base {
+    public:
+        /// Initialize test
+        ArchiveEmpty(void) : Test::Base("Archive::Empty") {}
+        /// Perform actual tests
+        bool
+        run(void) override {
+            Gecode::Archive empty;
+            Gecode::Archive copy(empty);
+            if (copy.size() != 0)
+                return false;
+            Gecode::Archive full;
+            full << 1U << 2U;
+            full = empty;
+            if (full.size() != 0)
+                return false;
+            Gecode::Archive assigned;
+            assigned = copy;
+            if (assigned.size() != 0)
+                return false;
+            // The copy and the assigned archive stay usable
+            copy << 3U;
+            assigned << 4U;
+            return (copy.size() == 1) && (copy[0] == 3U) && (assigned.size() == 1) && (assigned[0] == 4U);
+        }
+    };
+
+    ArchiveEmpty archive_empty;
+
 } // namespace Test
 
 // STATISTICS: test-core

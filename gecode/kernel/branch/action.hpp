@@ -51,7 +51,7 @@ namespace Gecode {
             int n;
             /// Inverse decay factor
             double invd;
-            /// Action values (more follow)
+            /// Action values, null when there are none
             double* a;
             /// Initialize action values
             template <class View>
@@ -95,6 +95,7 @@ namespace Gecode {
          * \brief Initialize for views \a x and decay factor \a d and action as defined by \a bm
          *
          * Count propagation if \a p is true, count failure if \a f is true.
+         * For empty \a x, store no values and post no recorder.
          */
         template <class View>
         Action(Home home, ViewArray<View>& x, double d, bool p, bool f,
@@ -103,6 +104,7 @@ namespace Gecode {
          * \brief Initialize for views \a x and decay factor \a d and action as defined by \a bm
          *
          * Count propagation if \a p is true, count failure if \a f is true.
+         * For empty \a x, store no values and post no recorder.
          */
         template <class View>
         void init(Home home, ViewArray<View>& x, double d, bool p, bool f,
@@ -271,7 +273,7 @@ namespace Gecode {
     forceinline
     Action::Storage::Storage(Home home, ViewArray<View>& x, double d,
                              const typename BranchTraits<typename View::VarType>::Merit& bm)
-        : n(x.size()), invd(1.0 / d), a(heap.alloc<double>(x.size())) {
+        : n(x.size()), invd(1.0 / d), a((n > 0) ? heap.alloc<double>(n) : nullptr) {
         if (bm)
             for (int i = 0; i < n; i++) {
                 typename View::VarType xi(x[i].varimp());
@@ -342,6 +344,8 @@ namespace Gecode {
         if (!p && !f)
             return;
         object(*new Storage(home, x, d, bm));
+        if (x.size() == 0)
+            return;
         if (p && f)
             (void)Recorder<View, true, true>::post(home, x, *this);
         else if (p && !f)
@@ -357,6 +361,8 @@ namespace Gecode {
         if (!p && !f)
             return;
         object(*new Storage(home, x, d, bm));
+        if (x.size() == 0)
+            return;
         if (p && f)
             (void)Recorder<View, true, true>::post(home, x, *this);
         else if (p && !f)

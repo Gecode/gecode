@@ -199,7 +199,8 @@ namespace Gecode {
 
     IntSet::IntSet(std::initializer_list<int> r) {
         int n = static_cast<int>(r.size());
-        assert(n > 0);
+        if (n == 0)
+            return;
         Region reg;
         Range* dr = reg.alloc<Range>(n);
         int j = 0;
@@ -212,7 +213,8 @@ namespace Gecode {
 
     IntSet::IntSet(std::initializer_list<std::pair<int, int>> r) {
         int n = static_cast<int>(r.size());
-        assert(n > 0);
+        if (n == 0)
+            return;
         Region reg;
         Range* dr = reg.alloc<Range>(n);
         int j = 0;
