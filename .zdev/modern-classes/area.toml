@@ -1,0 +1,7 @@
+schema_version = 1
+tag = "modern-classes"
+title = "Modern class definitions"
+objective = "Special members, comparisons, and const/non-const overloads use C++20/23 forms (= default, operator<=> and defaulted ==, deducing this) where they keep behaviour, guarded by clang-tidy where a check exists."
+branch = "feature/breaking-7"
+lifecycle = "open"
+base_commit = "0c81e65ae53173d616dbf2712baa00a29c8d33ba"
