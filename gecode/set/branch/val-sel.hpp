@@ -99,7 +99,8 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline int
   ValSelRnd::val(const Space&, SetView x, int) {
     UnknownRanges<SetView> u(x);
-    unsigned int p = r(Iter::Ranges::size(u));
+    Rnd t = r;
+    unsigned int p = t(Iter::Ranges::size(u));
     for (UnknownRanges<SetView> i(x); i(); ++i) {
       if (i.width() > p)
         return i.min() + static_cast<int>(p);
@@ -110,7 +111,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline bool
   ValSelRnd::notice(void) const {
-    return true;
+    return false;
   }
   forceinline void
   ValSelRnd::dispose(Space&) {
@@ -120,4 +121,3 @@ namespace Gecode { namespace Set { namespace Branch {
 }}}
 
 // STATISTICS: set-branch
-

@@ -78,7 +78,7 @@ namespace Test {
    */
   inline
   Options::Options(void)
-    : threads(1), seed(0), replay(false), iter(defiter), fixprob(deffixprob),
+    : threads(1), seed(0), iter(defiter), fixprob(deffixprob),
       stop(true), log(false), testpat(), testtags(),
       start_from(nullptr), list(false), list_tags(false), list_with_tags(false)
   {}

@@ -63,8 +63,16 @@ namespace Gecode { namespace Int { namespace Branch {
       : Brancher(home), list(list0), vsc(vsc0),
         filter(bf), printer(vvp), values_min(values_min0),
         select_first(select_first0), start(0) {
-      for (int i=0; i<n; i++)
+      // Key each selector by brancher and role, as for ViewValBrancher.
+      for (int i=0; i<n; i++) {
         vs[i] = vs0[i];
+        vs[i]->random_split(id());
+        vs[i]->random_split(1U+static_cast<unsigned int>(i));
+      }
+      if (vsc) {
+        vsc->random_split(id());
+        vsc->random_split(0U);
+      }
       home.notice(*this,AP_DISPOSE,true);
     }
 
@@ -168,8 +176,17 @@ namespace Gecode { namespace Int { namespace Branch {
       return new PosValuesChoice(*this,a,Pos(p),e);
     }
 
+    virtual void
+    random_split(unsigned int a) {
+      for (int i=0; i<n; i++)
+        vs[i]->random_split(a);
+      if (vsc)
+        vsc->random_split(a);
+    }
+
     virtual ExecStatus
     commit(Space& home, const Choice& c, unsigned int a) {
+      random_split(a);
       const int p = static_cast<const PosChoice&>(c).pos().pos;
       if (p >= 0) {
         // Recomputation can replay choices before propagation grows the prefix.

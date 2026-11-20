@@ -139,6 +139,7 @@ namespace Gecode { namespace Search { namespace Seq {
     SpokeContext sc = MetaContextAccess::spoke(MetaEngine::Restart,ev,episode,
                                                0U,1U,last,episode_stat,ng);
     spoke->spoke(sc);
+    spoke->random_split(sc);
     hub->reserve_brancher_ids(*spoke);
     coverage = sc.coverage();
     e->reset(spoke.release());
