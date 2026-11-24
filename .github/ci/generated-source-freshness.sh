@@ -245,7 +245,9 @@ normalize_generated_whitespace() {
       gecode/flatzinc/parser.tab.hpp; do
     normalize_generated_whitespace "$output"
   done
-  flex -ogecode/flatzinc/lexer.yy.cpp ./gecode/flatzinc/lexer.lxx
+  # Without #line directives, the output of upstream Flex 2.6.4 matches that
+  # of distribution builds that patch its line numbering.
+  flex -L -ogecode/flatzinc/lexer.yy.cpp ./gecode/flatzinc/lexer.lxx
 )
 
 generated_files=(
