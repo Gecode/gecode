@@ -824,6 +824,11 @@ namespace Test {
       assigned(void) const {
         return x.assigned();
       }
+      /// Assign the solution variable to \a v
+      void
+      assign_value(int v) {
+        rel(*this, x, IRT_EQ, v);
+      }
     };
 
     /// Dispatch test space overriding only Hub
@@ -1049,10 +1054,14 @@ namespace Test {
         state.nogood_model = true;
         bool ok = true;
         {
+          // Without no-goods on the hub, every round repeats the same failed
+          // prefix. The node limit turns that into a failure, not a hang.
+          Gecode::Search::NodeStop stop(10000);
           HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
           Gecode::Search::Options o;
           o.threads = 1;
           o.nogoods_limit = 16;
+          o.stop = &stop;
           o.cutoff = Gecode::Search::Cutoff::constant(1);
           Gecode::RBS<HubSpokeDispatchSpace, Gecode::DFS> search(m, o);
           delete m;
@@ -1062,7 +1071,7 @@ namespace Test {
             solutions++;
             delete solution;
           }
-          ok = (solutions == 2U) && (state.spoke_calls.load(std::memory_order_relaxed) >= 2U) &&
+          ok = !search.stopped() && (solutions == 2U) && (state.spoke_calls.load(std::memory_order_relaxed) >= 2U) &&
                (state.constrain_calls.load(std::memory_order_relaxed) >= 1U) &&
                (state.nogood_handoffs.load(std::memory_order_relaxed) >= 1U);
         }
@@ -1126,15 +1135,19 @@ namespace Test {
           Gecode::Search::Engine* search = (*builder)(m);
           delete builder;
           delete m;
-          HubSpokeDispatchSpace* best = nullptr;
-          while (HubSpokeDispatchSpace* solution = static_cast<HubSpokeDispatchSpace*>(search->next())) {
-            search->constrain(*solution);
-            delete best;
-            best = solution;
-          }
-          ok = (best != nullptr) && (best->value() == 1) &&
+          // Before the first solution, neither the default hub() nor BAB's
+          // own pruning has an incumbent. Only RBS::constrain() can then
+          // remove the solution x = 0.
+          HubSpokeDispatchSpace* incumbent = new HubSpokeDispatchSpace(rbs_state);
+          incumbent->assign_value(0);
+          ok = (incumbent->status() == SS_SOLVED) && holds(rbs_state.constrain_calls, 0U);
+          search->constrain(*incumbent);
+          delete incumbent;
+          HubSpokeDispatchSpace* best = static_cast<HubSpokeDispatchSpace*>(search->next());
+          ok = ok && (best != nullptr) && (best->value() == 1) &&
                (rbs_state.constrain_hub_calls.load(std::memory_order_relaxed) > 0U) &&
                (rbs_state.constrain_spoke_calls.load(std::memory_order_relaxed) > 0U);
+          ok = ok && (search->next() == nullptr);
           delete best;
           delete search;
         }
@@ -1190,7 +1203,8 @@ namespace Test {
 
     public:
       /// Initialize scenario \a s with name \a n
-      MetaDispatch(const std::string& n, Scenario s) : Base("Search::MetaDispatch::" + n), scenario(s) {}
+      MetaDispatch(const std::string& n, Scenario s)
+        : Base("Search::MetaDispatch::" + n, TestTags::check()), scenario(s) {}
       /// Run test
       bool
       run(void) override {
