@@ -384,6 +384,10 @@ namespace Gecode { namespace Search { namespace Par {
     assert(n_busy == 0);
     if (!Collect::best)
       throw NoBest("PBS::constrain");
+    // Report a stored failure before comparing, so that the original
+    // exception is not replaced by one from the comparison below.
+    if (failure != nullptr)
+      std::rethrow_exception(failure);
     try {
       if (solutions.constrain(b)) {
         // The solution is better

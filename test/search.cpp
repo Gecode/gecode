@@ -1698,6 +1698,35 @@ namespace Test {
         }
         return caught && (live == 0);
       }
+      /// Check that an external bound reports a stored worker failure
+      static bool preserved_failure(void) {
+        std::atomic<int> live(0);
+        bool reported = false;
+        bool preserved = false;
+        {
+          FailingParallelObjective* m =
+            new FailingParallelObjective(FailingParallelObjective::THROWN,live);
+          std::unique_ptr<Gecode::Search::Engine> pbs(
+            Gecode::Search::build<FailingParallelObjective,
+              Gecode::PBS<FailingParallelObjective,Gecode::BAB> >(m,options()));
+          delete m;
+          try {
+            while (Space* s = pbs->next()) delete s;
+          } catch (const ComparisonError&) {
+            reported = true;
+          }
+          // This incumbent cannot be compared, so a constrain that compares
+          // before reporting the stored failure throws SpaceNoComparison.
+          UnsupportedObjective incumbent;
+          try { pbs->constrain(incumbent); }
+          catch (const ComparisonError&) { preserved = true; }
+          catch (const SpaceNoComparison&) {}
+        }
+        if (!reported || !preserved)
+          olog << "Pending failure: next reported=" << reported
+               << ", constrain preserved=" << preserved << std::endl;
+        return reported && preserved && (live == 0);
+      }
     public:
       PortfolioComparison(void) : Base("Search::PortfolioComparison") {}
       virtual bool run(void) {
@@ -1763,7 +1792,8 @@ namespace Test {
           failure(FailingParallelObjective::MISSING,1) &&
           failure(FailingParallelObjective::MISSING) &&
           failure(FailingParallelObjective::THROWN) &&
-          failure(FailingParallelObjective::INCOMPARABLE);
+          failure(FailingParallelObjective::INCOMPARABLE) &&
+          preserved_failure();
       }
     };
 
