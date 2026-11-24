@@ -231,6 +231,8 @@ namespace Test {
         Model* m = new Model(vb,a,n);
         // Solution without no-goods
         Model* s_plain = dfs(m);
+        // Whether the search ended with a solution or exhausted
+        bool ended = true;
         // Stop and re-start for a while to collect no-goods
         {
           Search::NodeStop ns(Model::nodeinc());
@@ -241,9 +243,14 @@ namespace Test {
           Search::Engine* e = Search::dfsengine(m,o);
           while (true) {
             Model* s = static_cast<Model*>(e->next());
-            delete s;
-            if (e->end_reason() != Search::EndReason::Limit)
+            if (s != nullptr) {
+              delete s;
               break;
+            }
+            if (e->end_reason() != Search::EndReason::Limit) {
+              ended = e->end_reason() == Search::EndReason::Exhausted;
+              break;
+            }
             // Add no-goods
             e->nogoods().post(*m);
             ns.limit(ns.limit()+Model::nodeinc());
@@ -253,7 +260,7 @@ namespace Test {
         // Compare whether the a or the same solution is found with no-goods
         Model* s_nogoods = dfs(m);
 
-        bool ok = ((s_nogoods != nullptr) &&
+        bool ok = ended && ((s_nogoods != nullptr) &&
                    ((t != 1) || s_plain->same(*s_nogoods)));
 
         delete m;
