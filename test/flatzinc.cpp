@@ -114,6 +114,11 @@ namespace Test { namespace FlatZinc {
     };
 
     FloatCutExcludesIncumbent float_cut_excludes_incumbent;
+
+    /// A negative step would let the cut admit solutions that are not better
+    FlatZincErrorTest float_negative_step("FlatZinc::Float::NegativeStep",
+      "var 0.0..1.0: x :: output_var;\nsolve minimize x;\n",
+      {"-step","-1"}, "step must be nonnegative");
 #endif
 
     /// Verify integer objective comparison for FlatZinc spaces.

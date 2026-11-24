@@ -69,7 +69,10 @@ namespace Gecode {
 
   forceinline
   FloatMinimizeSpace::FloatMinimizeSpace(FloatNum s)
-    : step(s) {}
+    : step(s) {
+    if (!(s >= 0.0))
+      throw MiniModel::ArgumentOutOfRange("FloatMinimizeSpace::FloatMinimizeSpace");
+  }
 
   forceinline
   FloatMinimizeSpace::FloatMinimizeSpace(FloatMinimizeSpace& s)
@@ -78,7 +81,10 @@ namespace Gecode {
 
   forceinline
   FloatMaximizeSpace::FloatMaximizeSpace(FloatNum s)
-    : step(s) {}
+    : step(s) {
+    if (!(s >= 0.0))
+      throw MiniModel::ArgumentOutOfRange("FloatMaximizeSpace::FloatMaximizeSpace");
+  }
 
   forceinline
   FloatMaximizeSpace::FloatMaximizeSpace(FloatMaximizeSpace& s)

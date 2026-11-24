@@ -1871,10 +1871,27 @@ namespace Test {
         c.constrain(incumbent);
         return c.status() != SS_FAILED;
       }
+      /// Whether constructing \a Objective with step \a step is rejected
+      template<class Objective>
+      static bool rejects_step(FloatNum step) {
+        try {
+          Objective o(10.0,step);
+        } catch (const MiniModel::ArgumentOutOfRange&) {
+          return true;
+        }
+        return false;
+      }
     public:
       FloatObjectiveComparison(void)
         : Base("Search::FloatObjectiveComparison") {}
       virtual bool run(void) {
+        // A negative step would admit candidates that are not better
+        const FloatNum nan = std::numeric_limits<FloatNum>::quiet_NaN();
+        if (!rejects_step<FloatMinObjective>(-1.0) ||
+            !rejects_step<FloatMaxObjective>(-1.0) ||
+            !rejects_step<FloatMinObjective>(nan) ||
+            !rejects_step<FloatMaxObjective>(nan))
+          return false;
         const FloatNum next = std::nextafter(1.0,2.0);
         FloatMinObjective m9(9.5,1.0), m10(10.0,1.0),
           m10b(10.0,1.0), mzero(10.0), madj(FloatVal(1.0,next));

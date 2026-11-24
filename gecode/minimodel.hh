@@ -2539,7 +2539,11 @@ namespace Gecode {
     /// Step by which a next solution has to have lower cost
     FloatNum step;
   public:
-    /// Constructor with step \a s
+    /**
+     * \brief Constructor with step \a s
+     *
+     * Throws MiniModel::ArgumentOutOfRange if \a s is negative or NaN.
+     */
     FloatMinimizeSpace(FloatNum s=0.0);
     /// Constructor for cloning
     FloatMinimizeSpace(FloatMinimizeSpace& s);
@@ -2571,7 +2575,11 @@ namespace Gecode {
     /// Step by which a next solution has to have lower cost
     FloatNum step;
   public:
-    /// Constructor with step \a s
+    /**
+     * \brief Constructor with step \a s
+     *
+     * Throws MiniModel::ArgumentOutOfRange if \a s is negative or NaN.
+     */
     FloatMaximizeSpace(FloatNum s=0.0);
     /// Constructor for cloning
     FloatMaximizeSpace(FloatMaximizeSpace& s);

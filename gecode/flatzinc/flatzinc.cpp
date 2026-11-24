@@ -1877,6 +1877,10 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::runMeta(std::ostream& out, const Printer& p,
                          const FlatZincOptions& opt, Support::Timer& t_total) {
 #ifdef GECODE_HAS_FLOAT_VARS
+    // A negative step lets constrain admit solutions that compare as no
+    // better than the incumbent.
+    if (!(opt.step() >= 0.0))
+      throw FlatZinc::Error("FlatZinc","step must be nonnegative");
     step = opt.step();
 #endif
 #ifdef GECODE_HAS_GIST
