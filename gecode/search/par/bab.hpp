@@ -452,6 +452,7 @@ namespace Gecode { namespace Search { namespace Par {
       delete best;
       best = nullptr;
       n_busy = workers();
+      this->end = EndReason::NotEnded;
     }
     for (unsigned int i=1U; i<workers(); i++)
       worker(i)->reset(nullptr,0);

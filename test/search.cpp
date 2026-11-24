@@ -3416,6 +3416,36 @@ namespace Test {
 
     ExhaustedAtLimit exhausted_at_limit;
 
+    /// Resetting an engine forgets why its last search ended
+    class ResetEndReason : public Base {
+      static bool test(Gecode::Search::Engine* e) {
+        std::unique_ptr<Gecode::Search::Engine> owned(e);
+        if ((e->next() != nullptr) || (e->end_reason() != EndReason::Exhausted))
+          return false;
+        NoSolution root;
+        e->reset(root.clone());
+        return e->end_reason() == EndReason::NotEnded;
+      }
+    public:
+      ResetEndReason(void) : Base("Search::ResetEndReason") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U}) {
+#ifndef GECODE_HAS_THREADS
+          if (t > 1U) continue;
+#endif
+          NoSolution root;
+          Gecode::Search::Options o;
+          o.threads = t;
+          if (!test(Gecode::Search::dfsengine(&root,o)) ||
+              !test(Gecode::Search::babengine(&root,o)))
+            return false;
+        }
+        return true;
+      }
+    };
+
+    ResetEndReason reset_end_reason;
+
     /// LDS reports an incomplete search at its discrepancy limit
     class LDSIncomplete : public Base {
       static EndReason end_reason(unsigned int d_l) {

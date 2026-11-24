@@ -341,6 +341,7 @@ namespace Gecode { namespace Search { namespace Par {
     e_reset_ack_start.wait();
     // All workers are marked as busy again
     n_busy = workers();
+    this->end = EndReason::NotEnded;
     for (unsigned int i=1U; i<workers(); i++)
       worker(i)->reset(nullptr,0);
     worker(0U)->reset(s,opt().nogoods_limit);
