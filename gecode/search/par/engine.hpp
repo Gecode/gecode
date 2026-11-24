@@ -125,8 +125,8 @@ namespace Gecode { namespace Search { namespace Par {
       _opt(o), scheduler_enabled(false),
       scheduler_fast_admit(nullptr),
       scheduler_worker(nullptr), scheduler_requested(workers()),
-     scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U), _cmd(C_WAIT), solutions(heap),
-     end(EndReason::NotEnded) {
+      scheduler_leases(0U), scheduler_cursor(0U), scheduler_generation(0U),
+      _cmd(C_WAIT), solutions(heap), end(EndReason::NotEnded) {
     // Initialize termination information
     _n_term_not_ack = workers();
     _n_not_terminated = workers();
@@ -367,10 +367,10 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Tracer>
   forceinline void
   Engine<Tracer>::busy(void) {
-    m_search.acquire();
-    assert(n_busy > 0);
-    n_busy++;
-    m_search.release();
+    // Called with the path lock of a busy victim, so without m_search
+    unsigned int n = n_busy.fetch_add(1U);
+    assert(n > 0);
+    (void) n;
   }
 
   template<class Tracer>
@@ -499,10 +499,10 @@ namespace Gecode { namespace Search { namespace Par {
      */
     m.acquire();
     Space* s = path.steal() ? path.steal(*this,d,myt,ot) : nullptr;
-    m.release();
-    // Tell that there will be one more busy worker
+    // Count the thief before this worker can report that it is idle
     if (s != nullptr)
       engine().busy();
+    m.release();
     return s;
   }
 

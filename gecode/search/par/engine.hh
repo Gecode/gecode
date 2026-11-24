@@ -238,8 +238,14 @@ namespace Gecode { namespace Search { namespace Par {
     Support::Event e_search;
     /// Queue of solutions
     Support::DynamicQueue<Space*,Heap> solutions;
-    /// Number of busy workers
-    volatile unsigned int n_busy;
+    /**
+     * \brief Number of busy workers
+     *
+     * A worker that steals work counts itself while it holds the path lock
+     * of the victim, which is busy. So the count never reaches zero while a
+     * stolen subtree is still uncounted, and it stays zero once it is.
+     */
+    std::atomic<unsigned int> n_busy;
     /// Whether a worker had been stopped
     std::atomic<bool> has_stopped;
     /// Why the last call to next() returned no solution
