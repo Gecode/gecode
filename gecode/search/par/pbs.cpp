@@ -53,15 +53,15 @@ namespace Gecode { namespace Search { namespace Par {
   bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
     if (tostop->load(std::memory_order_acquire)) {
-      _cause.store(PortfolioStopCause::Interrupt, std::memory_order_relaxed);
+      pbs_record_cause(_cause,PortfolioStopCause::Interrupt);
       return true;
     }
     if ((po != nullptr) && po->stop(ps->update(asset,s),o)) {
-      _cause.store(PortfolioStopCause::Portfolio, std::memory_order_relaxed);
+      pbs_record_cause(_cause,PortfolioStopCause::Portfolio);
       return true;
     }
     if ((so != nullptr) && so->stop(s,o)) {
-      _cause.store(PortfolioStopCause::Asset, std::memory_order_relaxed);
+      pbs_record_cause(_cause,PortfolioStopCause::Asset);
       return true;
     }
     return false;

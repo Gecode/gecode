@@ -36,6 +36,8 @@
 
 #include <gecode/search.hh>
 
+#include <atomic>
+
 namespace Gecode { namespace Search {
 
   /// Whether incoming solution \a s should replace incumbent \a b
@@ -73,7 +75,13 @@ namespace Gecode { namespace Search {
     return (r == EndReason::Exhausted) && (c != SpokeCoverage::Partial);
   }
 
-  /// Which stop object stopped an asset of a portfolio
+  /**
+   * \brief Which stop object stopped an asset of a portfolio
+   *
+   * The causes are listed in increasing priority. When the workers of a
+   * parallel asset stop for different causes, the one of highest priority
+   * is kept (see pbs_record_cause()).
+   */
   enum class PortfolioStopCause : unsigned char {
     None,      ///< No stop object has stopped the asset
     Slice,     ///< The asset used up its slice of a sequential portfolio
@@ -81,6 +89,15 @@ namespace Gecode { namespace Search {
     Asset,     ///< The stop object of the asset
     Portfolio, ///< The stop object of the portfolio
   };
+
+  /// Record cause \a c in \a cause unless a cause of higher priority is recorded
+  forceinline void
+  pbs_record_cause(std::atomic<PortfolioStopCause>& cause,
+                   PortfolioStopCause c) {
+    PortfolioStopCause r = cause.load(std::memory_order_relaxed);
+    while ((r < c) &&
+           !cause.compare_exchange_weak(r,c,std::memory_order_relaxed)) {}
+  }
 
   /// Virtualize a worker to an engine
   template<class Worker>

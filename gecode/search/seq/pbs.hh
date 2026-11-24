@@ -42,8 +42,8 @@ namespace Gecode { namespace Search { namespace Seq {
   /// Shared stop information
   class SharedStopInfo {
   public:
-    /// Which stop object stopped the running asset
-    PortfolioStopCause cause;
+    /// Which stop object stopped the running asset, its workers can run in parallel
+    std::atomic<PortfolioStopCause> cause;
     /// The current failure limit, incremented for each slice
     unsigned long long int l;
     /// Statistics of the portfolio except for the running asset
