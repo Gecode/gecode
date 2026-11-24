@@ -661,8 +661,8 @@ namespace Gecode { namespace Search {
      * The copy draws its values, starting with its current one, from a
      * seed that depends on the state of this generator and on how many
      * copies of it have been made before. Copies made one after the
-     * other thus have different sequences, so that the assets of a
-     * portfolio restart at different times, and the same program
+     * other thus draw from different seeds, so that the assets of a
+     * portfolio usually restart at different times, and the same program
      * creates the same sequences.
      */
     virtual Cutoff* copy(void) const;
@@ -1521,11 +1521,16 @@ namespace Gecode {
    * and
    * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() on its hub when search starts and after each
-   * episode, and spoke() on each spoke it clones from the hub. When \a E
-   * is a best solution engine, the engine constrains the hub by each
-   * solution before it calls hub(). See Space::hub() and Space::spoke()
-   * for details.
+   * The engine calls hub() on its hub when search starts and when an
+   * episode ends while search continues: after a solution, at the
+   * cutoff, and when the search of a spoke ends without a proof. When a
+   * spoke with SpokeCoverage::Full or SpokeCoverage::Reduced exhausts its
+   * search space, search ends without a call to hub(). The engine calls
+   * hub() for a solution in the next call to next(). The engine calls
+   * spoke() on each spoke it clones from the hub. When \a E is a best
+   * solution engine, the engine constrains the hub by each solution
+   * before it calls hub(). See Space::hub() and Space::spoke() for
+   * details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1555,11 +1560,17 @@ namespace Gecode {
    * and
    * \code virtual void spoke(SpokeContext& sc) \endcode
    *
-   * The engine calls hub() on its hub when search starts and after each
-   * episode, and spoke() on each spoke it clones from the hub. When \a E
-   * is a best solution engine, the engine constrains the hub by each
-   * solution before it calls hub(). See Space::hub() and Space::spoke()
-   * for details.
+   * The engine calls hub() on its hub when search starts and when an
+   * episode ends while search continues: after a solution, at the
+   * cutoff, and when the search of a spoke ends without a proof. When a
+   * spoke with SpokeCoverage::Full or SpokeCoverage::Reduced exhausts its
+   * search space, search ends without a call to hub(). The engine calls
+   * hub() for a solution in the next call to next(). The engine calls
+   * spoke() on each spoke it clones from the hub. When \a E is a best
+   * solution engine, the engine constrains the hub by each solution
+   * before it calls hub(). As rbs() calls next() only once, hub() is not
+   * called for the solution it returns. See Space::hub() and
+   * Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
    */
@@ -1613,9 +1624,12 @@ namespace Gecode {
    * slices of failures (see Search::Options::slice).
    *
    * The stop object in \a o is checked with the statistics of the whole
-   * portfolio, that is, the sum of the statistics of all assets. With
-   * parallel assets, these are the statistics that the workers pass to
-   * their stop objects. When the stop object stops search, end_reason()
+   * portfolio, that is, the sum of the statistics of all assets. An asset
+   * contributes the statistics with which it last checked its stop
+   * object, or its final statistics once it has ended. A parallel asset
+   * checks its stop object with the statistics of one worker, as any
+   * parallel engine does, and so contributes those of the worker that
+   * checked last. When the stop object stops search, end_reason()
    * returns Search::EndReason::Limit and calling next() again resumes all
    * assets.
    *
@@ -1628,8 +1642,11 @@ namespace Gecode {
    *
    * When the assets are restart-based engines, the portfolio takes
    * ownership of the cutoff in \a o and gives each asset its own copy
-   * (see Cutoff::copy()). If the constructor throws an exception, the
-   * caller keeps the cutoff.
+   * (see Cutoff::copy()). The exception is a single asset whose spoke has
+   * SpokeCoverage::Full or SpokeCoverage::Reduced: it runs as the
+   * restart-based engine itself, which takes the cutoff in \a o and so
+   * also its random sequence. If the constructor throws an exception,
+   * the caller keeps the cutoff.
    *
    * The spoke of each asset declares its coverage in Space::spoke() (see
    * SpokeCoverage). When an asset whose spoke has SpokeCoverage::Full or
@@ -1648,8 +1665,9 @@ namespace Gecode {
    *
    * The engine calls hub() once on its hub with MetaEvent::Start, then
    * Space::status() on the hub, and then spoke() on the spoke of each
-   * asset. When the hub had branchers before hub() but a spoke has none
-   * after spoke(), the engine throws Search::SpokeNoBrancher. See
+   * asset. When the hub had branchers before hub() but a spoke that has
+   * not failed has none after spoke(), the engine throws
+   * Search::SpokeNoBrancher. See
    * Space::hub() and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
@@ -1706,8 +1724,9 @@ namespace Gecode {
    *
    * The engine calls hub() once on its hub with MetaEvent::Start, then
    * Space::status() on the hub, and then spoke() on the spoke of each
-   * asset. When the hub had branchers before hub() but a spoke has none
-   * after spoke(), the engine throws Search::SpokeNoBrancher. See
+   * asset. When the hub had branchers before hub() but a spoke that has
+   * not failed has none after spoke(), the engine throws
+   * Search::SpokeNoBrancher. See
    * Space::hub() and Space::spoke() for details.
    *
    * \ingroup TaskModelSearch
