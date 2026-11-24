@@ -175,6 +175,9 @@ namespace Gecode { namespace Support {
   }
   inline void
   Thread::run(Runnable* r) {
+#ifdef GECODE_HAS_FAULT_INJECTION
+    FailPoint::check(FailPoint::Phase::ThreadLaunch);
+#endif
     m()->acquire();
     if (idle != nullptr) {
       Run* i = idle;
