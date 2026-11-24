@@ -60,6 +60,7 @@ namespace Gecode { namespace Search { namespace Par {
       guidance(*o.guidance), best(guidance.sense), order(0),
       pending(heap), n_pending(0), runners(nullptr), active(0),
       running(false), shutdown(false), _stopped(false), _limited(false),
+      _exhausted(false),
       end(EndReason::NotEnded),
       batch(1), keyed(false) {}
 
@@ -213,8 +214,10 @@ namespace Gecode { namespace Search { namespace Par {
             return;
           }
           while (running && enabled && (task == nullptr)) {
-            if ((n_pending == 0) && !open() && (active == 0) && !advance())
+            if ((n_pending == 0) && !open() && (active == 0) && !advance()) {
               running = false;
+              _exhausted = !_limited;
+            }
             if (!running || ((n_pending == 0) && !open()))
               break;
             if (n_pending > 0) {
@@ -339,6 +342,12 @@ namespace Gecode { namespace Search { namespace Par {
         end = EndReason::Incomplete;
         return nullptr;
       }
+      // An exhausted search is complete, even when a limit has been reached
+      if (_exhausted) {
+        _stopped = false;
+        end = EndReason::Exhausted;
+        return nullptr;
+      }
       _stopped = false;
       running = true;
     }
@@ -355,6 +364,8 @@ namespace Gecode { namespace Search { namespace Par {
         end = EndReason::NotEnded;
       else if (_limited)
         end = EndReason::Incomplete;
+      else if (_exhausted)
+        end = EndReason::Exhausted;
       else
         end = _stopped ? EndReason::Limit : EndReason::Exhausted;
       return s;
@@ -394,7 +405,7 @@ namespace Gecode { namespace Search { namespace Par {
     best.reset();
     solution.reset();
     order = 0;
-    _stopped = _limited = false;
+    _stopped = _limited = _exhausted = false;
     end = EndReason::NotEnded;
     error = nullptr;
     stat.reset();

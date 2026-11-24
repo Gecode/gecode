@@ -154,11 +154,12 @@ namespace Gecode { namespace Search { namespace Seq {
   AStar::next(void) {
     start();
     while (true) {
+      // An exhausted search is complete, even when a limit has been reached
+      if (!expansion && queue.empty())
+        return nullptr;
       if (stop_seq(opt))
         return nullptr;
       if (!expansion) {
-        if (queue.empty())
-          return nullptr;
         Entry e = queue.pop();
         std::unique_ptr<Space> s(e.space);
         if (!best.improves(e.bound)) {

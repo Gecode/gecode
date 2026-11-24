@@ -150,7 +150,7 @@ namespace Gecode { namespace Search { namespace Seq {
       priority{guidance.sense,static_cast<bool>(guidance.rank)},
       candidates(priority,guidance.dominates && guidance.dominance_key),
       order(0), status(SS_FAILED), depth(0), revision(0), counted(false),
-      best(guidance.sense), _limited(false) {
+      best(guidance.sense), _limited(false), _exhausted(false) {
     initialize(s,o.clone);
   }
 
@@ -236,12 +236,17 @@ namespace Gecode { namespace Search { namespace Seq {
       return nullptr;
     }
     start();
+    // An exhausted search is complete, even when a limit has been reached
+    if (_exhausted)
+      return nullptr;
     while (true) {
       if (stop_seq(opt))
         return nullptr;
       if (!expansion) {
-        if (layer.empty() && !advance())
+        if (layer.empty() && !advance()) {
+          _exhausted = !_limited;
           return nullptr;
+        }
         if (!expansion) {
           Entry e = layer.pop();
           std::unique_ptr<Space> s(e.space);
@@ -324,7 +329,7 @@ namespace Gecode { namespace Search { namespace Seq {
     order = 0;
     revision = 0;
     depth = 0;
-    counted = _limited = false;
+    counted = _limited = _exhausted = false;
     Worker::reset();
     initialize(s,false);
     // The root is owned by the engine after initialize returns
