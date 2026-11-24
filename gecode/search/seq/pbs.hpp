@@ -101,7 +101,8 @@ namespace Gecode { namespace Search { namespace Seq {
       assets(heap.alloc<Asset>(n)), n_assets(n), cur(0),
       end(EndReason::NotEnded) {
     ssi.cause = PortfolioStopCause::None;
-    ssi.l = opt.slice;
+    // A single asset needs no slices, and a slice of zero would never end
+    ssi.l = (n == 1U) ? ULLONG_MAX : opt.slice;
 
     for (unsigned int i=0U; i<n; i++) {
       assets[i].init(e[i],static_cast<PortfolioStop*>(s[i]),c[i]);
@@ -171,7 +172,7 @@ namespace Gecode { namespace Search { namespace Seq {
         assets[cur] = assets[--n_assets];
         if (n_assets == 1)
           // Disable stopping by setting a high limit
-          ssi.l = ULONG_MAX;
+          ssi.l = ULLONG_MAX;
       }
       if (cur == n_assets)
         cur = 0;
