@@ -433,7 +433,7 @@ namespace Test::Int::Arithmetic {
                 if (home.status() == SS_FAILED)
                     return arithmetic_failed("initial propagation: home.x, home.c, home.y, home.m",
                                              Gecode::IntVarArgs() << home.x << home.c << home.y << home.m);
-                std::unique_ptr<TestSpace> clone(static_cast<TestSpace*>(home.clone()));
+                std::unique_ptr<TestSpace> clone(home.clone());
                 PropagatorGroup::all.disable(*clone);
                 rel(*clone, clone->b, IRT_EQ, 1);
                 PropagatorGroup::all.enable(*clone);
@@ -441,7 +441,7 @@ namespace Test::Int::Arithmetic {
                     return arithmetic_failed("activation after cloning, kind " + str(kind) + ": x, c, y, m",
                                              Gecode::IntVarArgs() << clone->x << clone->c << clone->y << clone->m);
                 // Clone the activated actor before fixing a variable modulus.
-                std::unique_ptr<TestSpace> child(static_cast<TestSpace*>(clone->clone()));
+                std::unique_ptr<TestSpace> child(clone->clone());
                 rel(*child, child->m, IRT_EQ, kind == 4 ? 5 : 13);
                 if ((child->status() == SS_FAILED) || !child->x.assigned() || (child->x.val() != (kind == 4 ? 3 : 6)) ||
                     home.b.assigned() || (home.x.size() != 4) || clone->m.assigned())
@@ -914,7 +914,7 @@ namespace Test::Int::Arithmetic {
                 if (home.status() == SS_FAILED)
                     return arithmetic_failed("initial clone state: home.x, home.q, home.y",
                                              Gecode::IntVarArgs() << home.x << home.q << home.y);
-                CloneSpace* clone = static_cast<CloneSpace*>(home.clone());
+                CloneSpace* clone = home.clone();
                 PropagatorGroup::all.disable(*clone);
                 rel(home, home.x, IRT_NQ, 0);
                 rel(*clone, clone->x, IRT_NQ, 0);

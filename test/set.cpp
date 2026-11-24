@@ -359,7 +359,7 @@ namespace Test::Set {
     SetTestSpace::check_fixpoint() {
         if (failed())
             return true;
-        SetTestSpace* c = static_cast<SetTestSpace*>(clone());
+        SetTestSpace* c = clone();
         if (opt.log)
             olog << ind(3) << "Testing fixpoint on copy" << '\n';
         c->post();
@@ -752,7 +752,7 @@ namespace Test::Set {
                     if (opt.log)
                         olog << ind(3) << "Copy" << '\n';
                     if (s->status() != Gecode::SS_FAILED) {
-                        sc = static_cast<SetTestSpace*>(s->clone());
+                        sc = s->clone();
                     } else {
                         sc = s;
                         s = nullptr;

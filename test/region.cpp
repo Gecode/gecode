@@ -33,6 +33,9 @@
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
 
+#include <memory>
+#include <type_traits>
+
 #include "test/test.hh"
 
 namespace Test {
@@ -78,6 +81,85 @@ namespace Test {
             return new EmptySpace(*this);
         }
     };
+
+    /// Space class that reaches Space through a virtual base
+    class VirtualBase : public virtual Gecode::Space {
+    public:
+        /// Initialize space
+        VirtualBase() = default;
+        /// Constructor for cloning \a s
+        // NOLINTNEXTLINE(modernize-use-equals-default)
+        VirtualBase(VirtualBase& s) : Gecode::Space(s) {}
+    };
+
+    /// Space derived from Space through a virtual base
+    class VirtualSpace : public VirtualBase {
+    public:
+        /// A value to check that cloning copies the space
+        int value = 0;
+        /// Initialize space
+        VirtualSpace() = default;
+        /// Constructor for cloning \a s
+        VirtualSpace(VirtualSpace& s) : Gecode::Space(s), VirtualBase(s), value(s.value) {}
+        /// Copy space during cloning
+        Gecode::Space*
+        copy() override {
+            return new VirtualSpace(*this);
+        }
+    };
+
+    /// Polymorphic base class without a usable address-of operator
+    class NoAddressBase {
+    public:
+        /// Destructor
+        virtual ~NoAddressBase() = default;
+        /// Unusable address-of operator
+        void operator&() const = delete;
+    };
+
+    /// Class derived from a base class without address-of operator
+    class NoAddressDerived : public NoAddressBase {
+    public:
+        /// A value to check the cast
+        int value = 3;
+    };
+
+    /// %Test that cloning returns the static type of the cloned space
+    class SpaceCloneTyped : public Test::Base {
+    public:
+        /// Initialize test
+        SpaceCloneTyped() : Test::Base("Space::Clone::Typed") {}
+        /// Cast a reference whose type has no usable address-of operator
+        static bool
+        no_address_cast() {
+            NoAddressDerived derived;
+            const NoAddressBase& base = derived;
+            return Gecode::down_cast<const NoAddressDerived&>(base).value == 3;
+        }
+        /// Perform actual tests
+        bool
+        run() override {
+            using namespace Gecode;
+            EmptySpace home;
+            const Space& erased_home = home;
+            static_assert(std::is_same_v<decltype(home.clone()), EmptySpace*>);
+            static_assert(std::is_same_v<decltype(erased_home.clone()), Space*>);
+            const std::unique_ptr<EmptySpace> typed(home.clone());
+            const std::unique_ptr<Space> erased(erased_home.clone());
+
+            VirtualSpace virtual_home;
+            virtual_home.value = 7;
+            const Space& erased_virtual = virtual_home;
+            const std::unique_ptr<VirtualSpace> virtual_typed(virtual_home.clone());
+            const std::unique_ptr<Space> virtual_erased(erased_virtual.clone());
+
+            return (dynamic_cast<EmptySpace*>(erased.get()) != nullptr) && (virtual_typed->value == 7) &&
+                   (down_cast<const VirtualSpace&>(*virtual_erased).value == 7) &&
+                   (down_cast<EmptySpace*>(static_cast<Space*>(nullptr)) == nullptr) && no_address_cast();
+        }
+    };
+
+    SpaceCloneTyped space_clone_typed;
 
     /// %Test for growing space memory from an empty block
     class SpaceReallocEmpty : public Test::Base {

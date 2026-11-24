@@ -131,7 +131,7 @@ public:
     void
     spoke(SpokeContext& sc) override {
         if ((sc.engine() == MetaEngine::Restart) && (sc.last() != nullptr) && (p > 0.0)) {
-            const Photo& l = static_cast<const Photo&>(*sc.last());
+            const Photo& l = down_cast<const Photo&>(*sc.last());
             relax(*this, pos, l.pos, rnd.split(sc), p);
             sc.coverage(SpokeCoverage::Partial);
         }

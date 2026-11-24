@@ -132,7 +132,7 @@ public:
     /// Inspect space \a s
     void
     inspect(const Space& s) override {
-        const Queens& q = static_cast<const Queens&>(s);
+        const Queens& q = down_cast<const Queens&>(s);
         const int inset = unit / 4;
         const int diameter = unit / 2;
 

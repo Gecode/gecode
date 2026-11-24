@@ -1246,6 +1246,9 @@ namespace Gecode {
          * static or member functions of views as the actual delta
          * information is both domain and view dependent.
          *
+         * The kernel passes only advisors that belong to this propagator, so
+         * an override converts \a a to its own advisor class with down_cast.
+         *
          */
         GECODE_KERNEL_EXPORT
         virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
@@ -1566,6 +1569,11 @@ namespace Gecode {
          *
          * The current brancher in the space \a home performs a commit from
          * the information provided by the choice \a c and the alternative \a a.
+         *
+         * The kernel passes only choices created by choice() of this brancher
+         * or of a brancher it was cloned from, so an override converts \a c
+         * to its own choice class with down_cast. The same holds for ngl()
+         * and print().
          */
         virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a) = 0;
         /**
@@ -1887,7 +1895,9 @@ namespace Gecode {
          * This is the most recent solution of the engine, or a better one that
          * constrain() passed to the engine since, for example from another
          * asset of a portfolio. The engine owns the solution, and the pointer is valid only while
-         * the hook runs: clone the solution to keep it.
+         * the hook runs: clone the solution to keep it. The solution is a
+         * clone of the same root space as the space the hook runs on, so it
+         * has the same dynamic type: convert it with down_cast.
          */
         const Space* last() const;
         /**
@@ -2399,7 +2409,11 @@ namespace Gecode {
         /**
          * \brief Copying member function
          *
-         * Must create a new object using the constructor for cloning.
+         * Must create a new object of the same class as this space using the
+         * constructor for cloning, so every class derived from Space that can
+         * be cloned overrides copy(). The kernel and the search engines rely
+         * on clones having the same dynamic type as the original (see
+         * down_cast).
          *
          * Should not be used directly, use Space::clone to create a clone
          * of a Space.
@@ -2413,6 +2427,10 @@ namespace Gecode {
          * Must constrain this space to be better than the so far best
          * solution \a best.
          *
+         * Search only passes a \a best that is a clone of the same root
+         * space as this space, so it has the same dynamic type. An override
+         * converts it with down_cast and needs no check of its own.
+         *
          * The default function does nothing.
          *
          * \ingroup TaskModelScript
@@ -2425,6 +2443,10 @@ namespace Gecode {
          * worse than, or incomparable with solution \a other, without modifying
          * either. The result must agree with constrain: solutions admitted by
          * constrain(b) are better than b, and a better b admits no more solutions.
+         *
+         * Search only passes an \a other that is a clone of the same root
+         * space as this space, so it has the same dynamic type. An override
+         * converts it with down_cast and needs no check of its own.
          *
          * The default function throws SpaceNoComparison, so a space overriding
          * constrain must also override compare.
@@ -2582,18 +2604,23 @@ namespace Gecode {
          * failed, an exception of type SpaceFailed is thrown. If the space
          * is not stable, an exception of SpaceNotStable is thrown.
          *
-         * Otherwise, a clone of the space is returned and the statistics
-         * information \a stat is updated.
+         * Otherwise, a clone of the space is returned. The clone has the same
+         * dynamic type as this space (see copy()). The result has the static
+         * type of the object clone() is called on: for a \c Model \c m,
+         * \c m.clone() returns a \c Model*, and cloning through a \c Space*
+         * returns a \c Space*. Convert the latter with down_cast when the
+         * model type is known.
          *
          * Throws an exception of type SpaceNotCloned when the copy constructor
          * of the Space class is not invoked during cloning.
          *
          * \ingroup TaskSearch
          */
-        /// Clone space without collecting statistics
-        Space* clone() const;
-        /// Clone space
-        Space* clone(CloneStatistics& stat) const;
+        template <class Self>
+        Self* clone(this const Self& self);
+        /// Clone space and update the statistics \a stat, see clone()
+        template <class Self>
+        Self* clone(this const Self& self, CloneStatistics& stat);
 
         /**
          * \brief Commit choice \a c for alternative \a a
@@ -3740,18 +3767,21 @@ namespace Gecode {
             pc.p.bid_sc = (n << sc_bits) | (pc.p.bid_sc & ((1U << sc_bits) - 1U));
     }
 
-    forceinline Space*
-    Space::clone() const {
+    template <class Self>
+    forceinline Self*
+    Space::clone(this const Self& self) {
         CloneStatistics stat;
-        return clone(stat);
+        return self.Space::clone(stat);
     }
 
-    forceinline Space*
-    Space::clone(CloneStatistics&) const {
+    template <class Self>
+    forceinline Self*
+    Space::clone(this const Self& self, CloneStatistics&) {
         // Clone is only const for search engines. During cloning, several data
         // structures are updated (e.g. forwarding pointers), so we have to
-        // cast away the constness.
-        return const_cast<Space*>(this)->_clone();
+        // cast away the constness. Cloning preserves the dynamic type.
+        auto& home = const_cast<Space&>(static_cast<const Space&>(self));
+        return down_cast<Self*>(home._clone());
     }
 
     forceinline void

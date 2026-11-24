@@ -368,11 +368,11 @@ main(int argc, char* argv[]) {
     case TSPTW::SEARCH_ASTAR:
     case TSPTW::SEARCH_CABS: {
         Search::HeuristicGuidance g(
-            Sense::Minimize, [](const Space& s) -> std::int64_t { return static_cast<const TSPTW&>(s).cost().min(); });
+            Sense::Minimize, [](const Space& s) -> std::int64_t { return down_cast<const TSPTW&>(s).cost().min(); });
         g.dominates = [](const Space& a, const Space& b) {
-            return static_cast<const TSPTW&>(a).dominates(static_cast<const TSPTW&>(b));
+            return down_cast<const TSPTW&>(a).dominates(down_cast<const TSPTW&>(b));
         };
-        g.dominance_key = [](const Space& s) { return static_cast<const TSPTW&>(s).key(); };
+        g.dominance_key = [](const Space& s) { return down_cast<const TSPTW&>(s).key(); };
         opt.guidance(&g);
         if (opt.search() == TSPTW::SEARCH_ASTAR)
             IntMinimizeScript::run<TSPTW, AStar, InstanceOptions>(opt);

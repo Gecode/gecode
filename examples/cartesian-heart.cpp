@@ -88,7 +88,7 @@ public:
     /// Add constraints to current model to get next solution (not too close)
     void
     constrain(const Space& _b) override {
-        const CartesianHeart& b = static_cast<const CartesianHeart&>(_b);
+        const CartesianHeart& b = down_cast<const CartesianHeart&>(_b);
         rel(*this,
             (f[0] >= (b.f[0].max() + step)) || (f[1] >= (b.f[1].max() + step)) || (f[1] <= (b.f[1].min() - step)));
     }
@@ -103,7 +103,7 @@ public:
      */
     SpaceComparison
     compare(const Space& _other) const override {
-        const CartesianHeart& b = static_cast<const CartesianHeart&>(_other);
+        const CartesianHeart& b = down_cast<const CartesianHeart&>(_other);
         bool apart = (f[0].min() >= (b.f[0].max() + step)) || (f[1].min() >= (b.f[1].max() + step)) ||
                      (f[1].max() <= (b.f[1].min() - step));
         return apart ? SpaceComparison::Better : SpaceComparison::Worse;

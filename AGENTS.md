@@ -48,6 +48,17 @@ when that is clearer. Gecode builds as C++23.
 Add abstractions only when they solve a concrete maintenance or correctness
 problem.
 
+Some downcasts cannot fail because a Gecode protocol fixes the dynamic type:
+the space passed to `Space::constrain` and `Space::compare`, the choice passed
+to `Brancher::commit`, and the advisor passed to `Propagator::advise`, among
+others listed in the documentation of `down_cast` (`gecode/support/cast.hpp`).
+Write such casts with `down_cast`, which asserts the type in debug builds.
+Existing `static_cast`s at these sites are correct as well. Do not replace
+either with `dynamic_cast` and an error path, and do not report them as
+unchecked casts. Use `dynamic_cast` only where the type is genuinely unknown.
+`Space::clone()` returns the static type of the cloned space, so cloning a
+model needs no cast.
+
 ## Implementing propagators, branchers, and engines
 
 Propagators:

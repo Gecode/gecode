@@ -334,13 +334,13 @@ namespace Test::Random {
     archive_replay(Model& root) {
         using namespace Gecode;
         while (root.status() == SS_BRANCH) {
-            std::unique_ptr<Model> before(static_cast<Model*>(root.clone()));
+            std::unique_ptr<Model> before(root.clone());
             std::unique_ptr<const Choice> choice(root.choice());
             if (!owners_agree(root, *before))
                 return false;
             for (unsigned int a = choice->alternatives(); a--;) {
-                std::unique_ptr<Model> direct(static_cast<Model*>(root.clone()));
-                std::unique_ptr<Model> replay(static_cast<Model*>(before->clone()));
+                std::unique_ptr<Model> direct(root.clone());
+                std::unique_ptr<Model> replay(before->clone());
                 Archive archive;
                 choice->archive(archive);
                 std::unique_ptr<const Choice> restored(replay->choice(archive));
@@ -613,9 +613,9 @@ namespace Test::Random {
         Permutation root(Rnd(3));
         if (root.status() != SS_BRANCH)
             return false;
-        std::unique_ptr<Permutation> asset(static_cast<Permutation*>(root.clone()));
+        std::unique_ptr<Permutation> asset(root.clone());
         asset->random_split(spoke_context(MetaEngine::Portfolio, 0, 1));
-        std::unique_ptr<Permutation> restart(static_cast<Permutation*>(root.clone()));
+        std::unique_ptr<Permutation> restart(root.clone());
         restart->random_split(spoke_context(MetaEngine::Restart, 1, 0));
         return first_solutions(*asset, 1) != first_solutions(*restart, 1);
     }
@@ -627,10 +627,10 @@ namespace Test::Random {
         Permutation root(Rnd(3));
         if (root.status() != SS_BRANCH)
             return false;
-        std::unique_ptr<Permutation> first(static_cast<Permutation*>(root.clone()));
+        std::unique_ptr<Permutation> first(root.clone());
         first->random_split(spoke_context(MetaEngine::Portfolio, 0, 0));
         first->random_split(spoke_context(MetaEngine::Portfolio, 0, 1));
-        std::unique_ptr<Permutation> second(static_cast<Permutation*>(root.clone()));
+        std::unique_ptr<Permutation> second(root.clone());
         second->random_split(spoke_context(MetaEngine::Portfolio, 0, 1));
         second->random_split(spoke_context(MetaEngine::Portfolio, 0, 0));
         return first_solutions(*first, 1) != first_solutions(*second, 1);

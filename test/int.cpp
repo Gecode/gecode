@@ -336,7 +336,7 @@ namespace Test::Int {
         if (Base::fixpoint(rand)) {
             if (failed() || !test_fixpoint)
                 return true;
-            TestSpace* c = static_cast<TestSpace*>(clone());
+            TestSpace* c = clone();
             if (opt.log)
                 olog << ind(3) << "Testing fixpoint on copy" << '\n';
             c->post();
@@ -516,7 +516,7 @@ namespace Test::Int {
                     if (opt.log)
                         olog << ind(3) << "Copy" << '\n';
                     if (s->status() != SS_FAILED) {
-                        sc = static_cast<TestSpace*>(s->clone());
+                        sc = s->clone();
                     } else {
                         sc = s;
                         s = nullptr;
@@ -632,7 +632,7 @@ namespace Test::Int {
             START_TEST("Prune (disable)");
             {
                 TestSpace* s = new TestSpace(arity, dom, this);
-                TestSpace* c = static_cast<TestSpace*>(s->clone());
+                TestSpace* c = s->clone();
                 s->post();
                 c->post();
                 while (!s->failed() && !s->assigned())
@@ -761,7 +761,7 @@ namespace Test::Int {
                     {
                         START_TEST("Prune reified, <=>, disable");
                         TestSpace* s = new TestSpace(arity, dom, this, RM_EQV);
-                        TestSpace* c = static_cast<TestSpace*>(s->clone());
+                        TestSpace* c = s->clone();
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || !s->r.var().assigned()))
@@ -903,7 +903,7 @@ namespace Test::Int {
                     {
                         START_TEST("Prune reified, =>, disable");
                         TestSpace* s = new TestSpace(arity, dom, this, RM_IMP);
-                        TestSpace* c = static_cast<TestSpace*>(s->clone());
+                        TestSpace* c = s->clone();
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || (!sol && !s->r.var().assigned())))
@@ -1045,7 +1045,7 @@ namespace Test::Int {
                     {
                         START_TEST("Prune reified, <=, disable");
                         TestSpace* s = new TestSpace(arity, dom, this, RM_RIMP);
-                        TestSpace* c = static_cast<TestSpace*>(s->clone());
+                        TestSpace* c = s->clone();
                         s->post();
                         c->post();
                         while (!s->failed() && (!s->assigned() || (sol && !s->r.var().assigned())))
@@ -1288,7 +1288,7 @@ namespace Test::Int {
                         IntArgs sizes(arity);
                         for (int i = 0; i < arity; i++)
                             sizes[i] = static_cast<int>(s.x[i].size());
-                        std::unique_ptr<OpenTestSpace> c(static_cast<OpenTestSpace*>(s.clone()));
+                        std::unique_ptr<OpenTestSpace> c(s.clone());
                         if (!complete(*c))
                             return false;
                         if ((s.list.known_length() != before) || (s.list.length().min() != length_min) ||

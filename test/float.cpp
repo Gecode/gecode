@@ -375,7 +375,7 @@ namespace Test::Float {
         if (Base::fixpoint(rand)) {
             if (failed() || !test_fixpoint)
                 return true;
-            TestSpace* c = static_cast<TestSpace*>(clone());
+            TestSpace* c = clone();
             if (opt.log)
                 olog << ind(3) << "Testing fixpoint on copy" << '\n';
             c->post();
@@ -519,7 +519,7 @@ namespace Test::Float {
                     if (opt.log)
                         olog << ind(3) << "Copy" << '\n';
                     if (s->status() != SS_FAILED) {
-                        sc = static_cast<TestSpace*>(s->clone());
+                        sc = s->clone();
                     } else {
                         sc = s;
                         s = nullptr;
@@ -852,7 +852,7 @@ namespace Test::Float {
                 if (sol == MT_TRUE) {
                     START_TEST("Search");
                     if (!search_s->failed()) {
-                        TestSpace* ss = static_cast<TestSpace*>(search_s->clone());
+                        TestSpace* ss = search_s->clone();
                         ss->drop_until(a);
                         delete e_s;
                         e_s = new DFS<TestSpace>(ss, search_o);
@@ -875,7 +875,7 @@ namespace Test::Float {
         if (test_search) {
             test = "Search";
             if (!search_s->failed()) {
-                TestSpace* ss = static_cast<TestSpace*>(search_s->clone());
+                TestSpace* ss = search_s->clone();
                 ss->drop_until(a);
                 delete e_s;
                 e_s = new DFS<TestSpace>(ss, search_o);

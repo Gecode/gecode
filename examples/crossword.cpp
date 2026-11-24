@@ -243,7 +243,7 @@ public:
     /// Print brancher information when branching on letters
     static void
     print_letters(const Space& home, const Brancher&, unsigned int a, IntVar, int i, const int& n, std::ostream& os) {
-        const Crossword& c = static_cast<const Crossword&>(home);
+        const Crossword& c = down_cast<const Crossword&>(home);
         int x = i % c.w, y = i / c.w;
         os << "letters[" << x << "," << y << "] " << ((a == 0) ? "=" : "!=") << " " << static_cast<char>(n);
     }

@@ -394,7 +394,7 @@ public:
         /// Check status of brancher, return true if alternatives left.
         bool
         status(const Space& home) const override {
-            const SteelMill& sm = static_cast<const SteelMill&>(home);
+            const SteelMill& sm = down_cast<const SteelMill&>(home);
             for (unsigned int i = start; i < sm.norders; ++i)
                 if (!sm.slab[i].assigned()) {
                     start = i;
@@ -406,7 +406,7 @@ public:
         /// Return choice
         Gecode::Choice*
         choice(Space& home) override {
-            SteelMill& sm = static_cast<SteelMill&>(home);
+            SteelMill& sm = down_cast<SteelMill&>(home);
             assert(!sm.slab[start].assigned());
             // Find order with a) minimum size, b) largest weight
             unsigned int size = sm.norders;
@@ -442,8 +442,8 @@ public:
         /// Perform commit for choice \a _c and alternative \a a
         ExecStatus
         commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
-            SteelMill& sm = static_cast<SteelMill&>(home);
-            const Choice& c = static_cast<const Choice&>(_c);
+            SteelMill& sm = down_cast<SteelMill&>(home);
+            const Choice& c = down_cast<const Choice&>(_c);
             if (a)
                 return me_failed(Int::IntView(sm.slab[c.pos]).nq(home, c.val)) ? ES_FAILED : ES_OK;
             return me_failed(Int::IntView(sm.slab[c.pos]).eq(home, c.val)) ? ES_FAILED : ES_OK;
@@ -451,7 +451,7 @@ public:
         /// Print explanation
         void
         print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
-            const Choice& c = static_cast<const Choice&>(_c);
+            const Choice& c = down_cast<const Choice&>(_c);
             o << "slab[" << c.pos << "] " << ((a == 0) ? "=" : "!=") << " " << c.val;
         }
         /// Copy brancher

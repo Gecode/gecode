@@ -175,7 +175,7 @@ public:
     /// Value selection function for load branching
     static int
     load(const Space& home, IntVar x, int) {
-        const BACP& b = static_cast<const BACP&>(home);
+        const BACP& b = down_cast<const BACP&>(home);
         IntVarValues values(x);
         int val = -1;
         int best = Int::Limits::max + 1;
@@ -192,7 +192,7 @@ public:
     /// Value selection function for reverse load branching
     static int
     load_rev(const Space& home, IntVar x, int) {
-        const BACP& b = static_cast<const BACP&>(home);
+        const BACP& b = down_cast<const BACP&>(home);
         IntVarValues values(x);
         int val = -1;
         int best = Int::Limits::min - 1;

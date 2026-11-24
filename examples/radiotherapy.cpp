@@ -231,7 +231,7 @@ public:
         };
         /// Construct brancher
         NestedSearch(Space& home) : Brancher(home), done(false) {
-            Radiotherapy& rt = static_cast<Radiotherapy&>(home);
+            Radiotherapy& rt = down_cast<Radiotherapy&>(home);
             // Set up ordering of rows.  As a heuristic, pre-order the rows
             // with the potentially cheapest ones first.
             index.init(rt.rd.m + 1);
@@ -271,7 +271,7 @@ public:
         Gecode::Choice*
         choice(Space& home) override {
             done = true;
-            Radiotherapy& rt = static_cast<Radiotherapy&>(home);
+            Radiotherapy& rt = down_cast<Radiotherapy&>(home);
 
             std::cout << "*";
 
@@ -279,7 +279,7 @@ public:
             bool fail = false;
             for (int i = 0; i < rt.rd.m; i++) {
                 // Create fresh clone for row i
-                Radiotherapy* row = static_cast<Radiotherapy*>(rt.clone());
+                Radiotherapy* row = rt.clone();
 
                 // Branch over row i
                 branch(*row, get_row(row, index[i].idx), INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
@@ -311,12 +311,12 @@ public:
         /// Perform commit for choice \a _c and alternative \a a
         ExecStatus
         commit(Space&, const Gecode::Choice& _c, unsigned int) override {
-            return static_cast<const Choice&>(_c).fail ? ES_FAILED : ES_OK;
+            return down_cast<const Choice&>(_c).fail ? ES_FAILED : ES_OK;
         }
         /// Print explanation
         void
         print(const Space&, const Gecode::Choice& _c, unsigned int, std::ostream& o) const override {
-            const Choice& c = static_cast<const Choice&>(_c);
+            const Choice& c = down_cast<const Choice&>(_c);
             o << (c.fail ? "fail" : "ok");
         }
         /// Copy brancher

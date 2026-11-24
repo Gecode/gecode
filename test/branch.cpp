@@ -386,7 +386,7 @@ namespace Test::Branch {
                         break;
                     }
 
-                    IntTestSpace* c = static_cast<IntTestSpace*>(root->clone());
+                    IntTestSpace* c = root->clone();
 
                     if ((vara == 0) && (val < 11)) {
                         for (int i = 0; i < c->x.size(); i++)
@@ -685,7 +685,7 @@ namespace Test::Branch {
                         break;
                     }
 
-                    BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone());
+                    BoolTestSpace* c = root->clone();
 
                     if (vara == 0) {
                         for (int i = 0; i < c->x.size(); i++)
@@ -896,7 +896,7 @@ namespace Test::Branch {
                         break;
                     }
 
-                    SetTestSpace* c = static_cast<SetTestSpace*>(root->clone());
+                    SetTestSpace* c = root->clone();
 
                     if (vara == 0) {
                         for (int i = 0; i < c->x.size(); i++)
@@ -1172,7 +1172,7 @@ namespace Test::Branch {
                         break;
                     }
 
-                    FloatTestSpace* c = static_cast<FloatTestSpace*>(root->clone());
+                    FloatTestSpace* c = root->clone();
                     if (vara == 0) {
                         for (int i = 0; i < c->x.size(); i++)
                             branch(*c, c->x[i], fvb);

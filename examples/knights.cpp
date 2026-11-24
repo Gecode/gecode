@@ -125,7 +125,7 @@ public:
     /// Perform commit for choice \a _c and alternative \a a
     ExecStatus
     commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
-        const Choice& c = static_cast<const Choice&>(_c);
+        const Choice& c = down_cast<const Choice&>(_c);
         if (a == 0)
             return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
         return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
@@ -133,7 +133,7 @@ public:
     /// Print explanation
     void
     print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
-        const Choice& c = static_cast<const Choice&>(_c);
+        const Choice& c = down_cast<const Choice&>(_c);
         o << "x[" << c.pos << "] " << ((a == 0) ? "=" : "!=") << " " << c.val;
     }
     /// Copy brancher
@@ -345,7 +345,7 @@ public:
     /// Inspect space \a s
     void
     inspect(const Space& s) override {
-        const Knights& k = static_cast<const Knights&>(s);
+        const Knights& k = down_cast<const Knights&>(s);
         const int half_unit = unit / 2;
 
         if (!scene)

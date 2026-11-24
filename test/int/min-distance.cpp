@@ -142,7 +142,7 @@ namespace Test::Int::MinDistance {
                     rel(forward, forward.x[0], IRT_EQ, 0);
                     if ((forward.status() == SS_FAILED) || (forward.x[1].min() != 2) || (forward.z.max() != 3))
                         return false;
-                    std::unique_ptr<Model> clone(static_cast<Model*>(forward.clone()));
+                    std::unique_ptr<Model> clone(forward.clone());
                     rel(*clone, clone->x[1], IRT_EQ, 2);
                     if ((clone->status() == SS_FAILED) || !clone->z.assigned() || (clone->z.val() != 2) ||
                         forward.z.assigned())
@@ -173,7 +173,7 @@ namespace Test::Int::MinDistance {
                 dom(original, original.x, 0, 2);
                 if (original.status() == SS_FAILED)
                     return false;
-                clone.reset(static_cast<Model*>(original.clone()));
+                clone.reset(original.clone());
             }
             if (lifetime.expired() || (clone->status() == SS_FAILED))
                 return false;

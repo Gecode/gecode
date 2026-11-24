@@ -459,8 +459,8 @@ namespace Gecode {
             return;
         }
 
-        // Check whether a clone must be used
-        T* hub = opt.clone ? dynamic_cast<T*>(s->clone()) : s;
+        // Check whether a clone must be used (qualified, as T may hide clone)
+        T* hub = opt.clone ? s->Space::clone() : s;
         opt.clone = false;
 
         bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;
@@ -536,8 +536,8 @@ namespace Gecode {
             return;
         }
 
-        // Check whether a clone must be used
-        T* hub = opt.clone ? dynamic_cast<T*>(s->clone()) : s;
+        // Check whether a clone must be used (qualified, as T may hide clone)
+        T* hub = opt.clone ? s->Space::clone() : s;
         opt.clone = false;
 
         bool hub_branchers = BrancherGroup::all.size(*hub) > 0U;

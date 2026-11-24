@@ -118,7 +118,7 @@ namespace Test {
                         }
                         int j = space(s);
                         (void)s[j]->status();
-                        s[i] = static_cast<TestSpace*>(s[j]->clone());
+                        s[i] = s[j]->clone();
                         n_s++;
                     }
                     break;
@@ -229,7 +229,7 @@ namespace Test {
                 if (s.post().afc() != 0.0)
                     return false;
                 (void)s.status();
-                std::unique_ptr<TestSpace> c(static_cast<TestSpace*>(s.clone()));
+                std::unique_ptr<TestSpace> c(s.clone());
                 if (c->post().afc() != 1.0)
                     return false;
             }
@@ -258,7 +258,7 @@ namespace Test {
             }
             a.disable(*s);
             (void)s->status();
-            std::unique_ptr<TestSpace> c(static_cast<TestSpace*>(s->clone()));
+            std::unique_ptr<TestSpace> c(s->clone());
             // The first call marks the shared pool; the second really unshares.
             s->afc_unshare();
             c->afc_unshare();
@@ -289,7 +289,7 @@ namespace Test {
                 p = &s.post();
             }
             (void)s.status();
-            std::unique_ptr<TestSpace> c(static_cast<TestSpace*>(s.clone()));
+            std::unique_ptr<TestSpace> c(s.clone());
             // Force rescaling on failure for the ordinary propagator.
             IntAFC afc(*c, IntVarArgs() << c->x << c->y, 1.0e-300, false);
             c->afc_unshare();
