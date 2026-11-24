@@ -863,9 +863,11 @@ namespace Test {
         o.threads = threads;
         o.worker_control = control;
         o.stop = &pause;
-        // Best-solution search needs an objective; it then ends with the best
+        // Best-solution search needs an objective. With min-value branching,
+        // each solution found in search order is lexicographically greater
+        // than the previous one, so BAB still returns several solutions.
         HasSolutions root(HTB_BINARY,HTB_BINARY,HTB_BINARY,
-                          E<HasSolutions>::best ? HTC_LEX_LE : HTC_NONE);
+                          E<HasSolutions>::best ? HTC_LEX_GR : HTC_NONE);
         E<HasSolutions> engine(&root,o);
         auto result = std::async(std::launch::async,[&] { return engine.next(); });
         auto reached = pause.reached.get_future();
@@ -887,8 +889,12 @@ namespace Test {
           ++solutions;
           last.reset(solution);
         }
+        // Resuming from before the first node runs a single worker, which
+        // finds the lexicographically smallest solution first. BAB then
+        // resizes at least once more before the search is exhausted.
         bool complete = E<HasSolutions>::best ?
-          (last && last->best()) : (solutions == root.solutions());
+          (last && last->best() && ((node != 0U) || (solutions >= 2))) :
+          (solutions == root.solutions());
         return ok && !engine.stopped() && complete;
       }
 #ifdef GECODE_HAS_EXPERIMENTAL
