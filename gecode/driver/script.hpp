@@ -427,9 +427,9 @@ namespace Gecode { namespace Driver {
               CombinedStop::installCtrlHandler(false);
             Search::Statistics stat = e.statistics();
             s_out << endl;
-          if (e.end_reason() == Search::EndReason::Incomplete) {
-            l_out << "Search engine finished without exhausting the search space" << '\n' << '\n';
-          } else if (e.end_reason() == Search::EndReason::Limit) {
+            if (e.end_reason() == Search::EndReason::Incomplete) {
+              l_out << "Search engine finished without exhausting the search space" << '\n' << '\n';
+            } else if (e.end_reason() == Search::EndReason::Limit) {
               l_out << "Search engine stopped..." << endl
                     << "\treason: ";
               int r = static_cast<CombinedStop*>(so.stop)->reason(stat,so);
@@ -543,6 +543,7 @@ namespace Gecode { namespace Driver {
           Support::Timer t;
           double* ts = new double[o.samples()];
           bool stopped = false;
+          bool incomplete = false;
           for (unsigned int ns = o.samples(); !stopped && ns--; ) {
             unsigned long long int s_l =
               (o.solutions() == 0) ? ULLONG_MAX : o.solutions();
@@ -576,6 +577,8 @@ namespace Gecode { namespace Driver {
                 } while (s_n < s_l);
                 if (e.end_reason() == Search::EndReason::Limit)
                   stopped = true;
+                else if (e.end_reason() == Search::EndReason::Incomplete)
+                  incomplete = true;
               }
               delete sok.stop;
             }
@@ -592,6 +595,8 @@ namespace Gecode { namespace Driver {
                  << setprecision(6) << m << "ms"
                  << setprecision(2) << " (" << d << "% deviation)"
                  << endl;
+            if (incomplete)
+              l_out << "\tsearch finished without exhausting the search space" << endl;
           }
           delete [] ts;
         }
