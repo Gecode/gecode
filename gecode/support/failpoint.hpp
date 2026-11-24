@@ -56,7 +56,8 @@ namespace Gecode { namespace Support { namespace FailPoint {
     LocalObjectCopy,
     SpaceDisposeNoticeArray,
     SpaceDisposalArray,
-    MiniModel
+    MiniModel,
+    ThreadLaunch
   };
 
   /// Reset all failpoint state

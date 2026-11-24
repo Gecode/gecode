@@ -886,6 +886,59 @@ namespace Test { namespace Fault {
     }
   }
 
+#ifdef GECODE_HAS_THREADS
+  /// Space with two solutions whose portfolio hub keeps its branchers
+  class PortfolioSpace : public Space {
+  public:
+    IntVar x;
+    PortfolioSpace(void) : x(*this,0,1) {
+      branch(*this,x,INT_VAL_MIN());
+    }
+    PortfolioSpace(PortfolioSpace& s) : Space(s) {
+      x.update(*this,s.x);
+    }
+    virtual Space* copy(void) {
+      return new PortfolioSpace(*this);
+    }
+    virtual void hub(HubContext&) {}
+  };
+
+  /// A parallel portfolio reports an asset it cannot start and stays usable
+  bool portfolio_launch_failure(void) {
+    FaultScope scope;
+    PortfolioSpace root;
+    Search::Options o;
+    o.assets = 3;
+    o.threads = 3;
+    PBS<PortfolioSpace,DFS> pbs(&root,o);
+    // The first asset starts, the second does not
+    Support::FailPoint::fail_after(Phase::ThreadLaunch,1);
+    try {
+      delete pbs.next();
+      return false;
+    } catch (const MemoryExhausted&) {}
+    Support::FailPoint::reset();
+    // The portfolio reports the failure again, its destructor then waits
+    // only for the asset that started
+    try {
+      delete pbs.next();
+      return false;
+    } catch (const MemoryExhausted&) {}
+    return true;
+  }
+
+  class PortfolioLaunchFailure : public Base {
+  public:
+    PortfolioLaunchFailure(void)
+      : Base("Fault::Search::PortfolioLaunchFailure") {}
+    virtual bool run(void) {
+      return portfolio_launch_failure();
+    }
+  };
+
+  PortfolioLaunchFailure portfolio_launch_failure_test;
+#endif
+
   class FaultBoolMisc : public BoolExpr::Misc {
   public:
     static int disposed;

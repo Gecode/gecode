@@ -101,6 +101,8 @@ namespace Gecode { namespace Search { namespace Par {
                unsigned int i);
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
+    /// Record the final statistics \a s of the asset with the portfolio
+    void record(const Statistics& s);
     /// Wake workers so that a paused asset can observe the portfolio stop
     void wake(void);
     /// Forget which stop object stopped the asset
@@ -157,6 +159,10 @@ namespace Gecode { namespace Search { namespace Par {
     virtual Support::Terminator* terminator(void) const;
     /// Wait for the asset to complete its current run
     void wait(void);
+    /// Restore the completion of a run that could not be started
+    void restore(void);
+    /// Record the final statistics of the asset with the portfolio
+    void record(void);
     /// Wake a paused asset so that it can observe the portfolio stop
     void wake(void);
     /// Constrain with better solution \a b
@@ -256,6 +262,15 @@ namespace Gecode { namespace Search { namespace Par {
     bool report(Asset<Collect>* asset, Space* s);
     /// Process failure from asset
     void fail(void);
+    /**
+     * \brief Handle that asset \a i could not be started
+     *
+     * Of the \a n assets that the current round did not start, the first
+     * is \a i. Must be called with the mutex held, from the handler of the
+     * exception, and returns with the mutex released once the started
+     * assets are idle.
+     */
+    void launch_failed(unsigned int i, unsigned int n);
     /**
      * The key invariant of the engine is as follows:
      *  - n_busy is always zero outside the next() function.

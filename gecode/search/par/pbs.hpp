@@ -159,6 +159,11 @@ namespace Gecode { namespace Search { namespace Par {
   }
 
   forceinline void
+  PortfolioStop::record(const Statistics& s) {
+    (void) ps->update(asset,s);
+  }
+
+  forceinline void
   PortfolioStop::share(std::atomic<bool>* ts, PortfolioStatistics* ps0, unsigned int i) {
     tostop = ts;
     ps = ps0;
@@ -195,6 +200,16 @@ namespace Gecode { namespace Search { namespace Par {
   forceinline void
   Asset<Collect>::wait(void) {
     completion.wait();
+  }
+  template<class Collect>
+  forceinline void
+  Asset<Collect>::restore(void) {
+    completion.terminated();
+  }
+  template<class Collect>
+  forceinline void
+  Asset<Collect>::record(void) {
+    static_cast<PortfolioStop*>(stop)->record(engine->statistics());
   }
   template<class Collect>
   forceinline void
@@ -288,6 +303,8 @@ namespace Gecode { namespace Search { namespace Par {
       wake = true;
     } else {
       // The asset ended without a proof, move it to inactive
+      // Its last stop check might not include its final work
+      asset->record();
       unsigned int i=0;
       while (assets[i] != asset)
         i++;
@@ -324,6 +341,24 @@ namespace Gecode { namespace Search { namespace Par {
 
   template<class Collect>
   void
+  PBS<Collect>::launch_failed(unsigned int i, unsigned int n) {
+    // The asset did not start and so will not signal its completion
+    assets[i]->restore();
+    if (failure == nullptr)
+      failure = std::current_exception();
+    // Stop the assets that started and wait until they are idle
+    tostop.store(true, std::memory_order_release);
+    for (unsigned int j=0U; j<n_active; j++)
+      assets[j]->wake();
+    n_busy -= n;
+    bool started = n_busy > 0;
+    m.release();
+    if (started)
+      idle.wait();
+  }
+
+  template<class Collect>
+  void
   Asset<Collect>::run(void) {
     try {
       Space* s;
@@ -346,7 +381,14 @@ namespace Gecode { namespace Search { namespace Par {
       std::rethrow_exception(f);
     }
     if (solutions.empty()) {
-      portfolio_stop.store(false, std::memory_order_release);
+      if (!exhausted && portfolio_stop.load(std::memory_order_acquire)) {
+        // Report a portfolio stop that arrived with the solutions returned
+        // since, the next call resumes the assets
+        portfolio_stop.store(false, std::memory_order_release);
+        end = EndReason::Limit;
+        m.release();
+        return nullptr;
+      }
       // Resume the assets that their own stop objects stopped
       for (unsigned int i=0U; i<n_active; i++)
         assets[i]->parked(false);
@@ -369,12 +411,19 @@ namespace Gecode { namespace Search { namespace Par {
 
       // Run all active assets that are not parked
       n_busy = n_run;
+      unsigned int n_started = 0;
       for (unsigned int i=0U; i<n_active; i++)
         if (!assets[i]->parked()) {
           // Consume the previous completion before reusing this asset.  The
           // initial signal handles the first submission.
           assets[i]->wait();
-          Support::Thread::run(assets[i]);
+          try {
+            Support::Thread::run(assets[i]);
+          } catch (...) {
+            launch_failed(i,n_run-n_started);
+            throw;
+          }
+          n_started++;
         }
       m.release();
       // Wait for all assets to become idle
