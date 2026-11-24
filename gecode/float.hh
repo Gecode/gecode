@@ -105,6 +105,15 @@ namespace Gecode {
    */
   typedef double FloatNum;
 
+  /// Compare objective value \a x with \a y for direction \a s
+  forceinline SpaceComparison
+  compare_float(FloatNum x, FloatNum y, Sense s) {
+    if (x == y)
+      return SpaceComparison::Equivalent;
+    return ((x < y) == (s == Sense::Minimize)) ?
+      SpaceComparison::Better : SpaceComparison::Worse;
+  }
+
   /// Return lower bound of \f$\pi/2\f$
   FloatNum pi_half_lower(void);
   /// Return upper bound of \f$\pi/2\f$

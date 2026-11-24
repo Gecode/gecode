@@ -47,6 +47,12 @@ namespace Gecode {
   SpaceNoBrancher::SpaceNoBrancher(const char* l)
     : Exception(l,"Attempt to commit with no brancher") {}
 
+  SpaceNoComparison::SpaceNoComparison(const char* l)
+    : Exception(l,"Space does not support comparison") {}
+
+  SpaceIncompatibleObjectives::SpaceIncompatibleObjectives(const char* l)
+    : Exception(l,"Spaces with incompatible objectives cannot be compared") {}
+
   SpaceIllegalAlternative::SpaceIllegalAlternative(const char* l)
     : Exception(l,"Attempt to commit with illegal alternative") {}
 

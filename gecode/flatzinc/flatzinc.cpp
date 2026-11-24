@@ -1877,6 +1877,10 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::runMeta(std::ostream& out, const Printer& p,
                          const FlatZincOptions& opt, Support::Timer& t_total) {
 #ifdef GECODE_HAS_FLOAT_VARS
+    // A negative step lets constrain admit solutions that compare as no
+    // better than the incumbent.
+    if (!(opt.step() >= 0.0))
+      throw FlatZinc::Error("FlatZinc","step must be nonnegative");
     step = opt.step();
 #endif
 #ifdef GECODE_HAS_GIST
@@ -2064,16 +2068,16 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::constrain(const Space& s) {
+    // Read the objective of the incumbent at its own index, as compare does
+    const FlatZincSpace& b = static_cast<const FlatZincSpace&>(s);
     if (_optVarIsInt) {
       if (_method == MIN)
-        rel(*this, iv[_optVar], IRT_LE,
-                   static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
+        rel(*this, iv[_optVar], IRT_LE, b.iv[b._optVar].val());
       else if (_method == MAX)
-        rel(*this, iv[_optVar], IRT_GR,
-                   static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
+        rel(*this, iv[_optVar], IRT_GR, b.iv[b._optVar].val());
     } else {
 #ifdef GECODE_HAS_FLOAT_VARS
-      FloatVal best = static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val();
+      FloatVal best = b.fv[b._optVar].val();
       // When minimizing, an assigned objective is below best - step
       // exactly when its upper bound is below the lower bound of that
       // interval (symmetrically when maximizing). Posting this strict
@@ -2096,6 +2100,34 @@ namespace Gecode { namespace FlatZinc {
       }
 #endif
     }
+  }
+
+  SpaceComparison
+  FlatZincSpace::compare(const Space& s) const {
+    const FlatZincSpace* other = dynamic_cast<const FlatZincSpace*>(&s);
+    if (other == nullptr)
+      throw DynamicCastFailed("FlatZincSpace::compare");
+    if ((_method != MIN) && (_method != MAX))
+      throw SpaceNoComparison("FlatZincSpace::compare");
+    if ((_optVarIsInt != other->_optVarIsInt) ||
+        (_method != other->_method))
+      throw SpaceIncompatibleObjectives("FlatZincSpace::compare");
+    Sense sense = (_method == MIN) ? Sense::Minimize : Sense::Maximize;
+    if (_optVarIsInt)
+      return compare_int(iv[_optVar].val(),other->iv[other->_optVar].val(),
+                         sense);
+#ifdef GECODE_HAS_FLOAT_VARS
+    if (step != other->step)
+      throw SpaceIncompatibleObjectives("FlatZincSpace::compare");
+    FloatVal a=fv[_optVar].val();
+    FloatVal b=other->fv[other->_optVar].val();
+    FloatNum ak=(_method == MIN) ? a.min() : a.max();
+    FloatNum bk=(_method == MIN) ? b.min() : b.max();
+    return compare_float(ak,bk,sense);
+#else
+    GECODE_NEVER;
+    return SpaceComparison::Incomparable;
+#endif
   }
 
   bool

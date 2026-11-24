@@ -210,9 +210,9 @@ namespace Gecode { namespace Search { namespace Seq {
   CABS::publish(std::unique_ptr<Space> s) {
     // Delete exhausted branchers before cloning the solution
     (void) s->choice();
-    std::int64_t b = guidance.bound(*s);
-    if (!best.improves(b))
+    if (!best.replaced_by(*s,"CABS::next"))
       return nullptr;
+    std::int64_t b = guidance.bound(*s);
     Space* copy = s->clone();
     best.update(s.release(),b);
     return copy;
@@ -316,9 +316,12 @@ namespace Gecode { namespace Search { namespace Seq {
 
   void
   CABS::constrain(const Space& s) {
-    std::int64_t b = guidance.bound(s);
-    if (best.improves(b))
+    if (best.replaced_by(s,"CABS::constrain")) {
+      // Compute the bound before cloning, so that a throwing bound
+      // callback cannot leak the clone.
+      std::int64_t b = guidance.bound(s);
       best.update(s.clone(),b);
+    }
   }
 
   void
