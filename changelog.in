@@ -80,6 +80,16 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
+Rename the meta-search Space hooks master() and slave() to hub() and spoke().
+[MORE]
+There are no compatibility aliases. An old override marked override fails to
+compile; one without it is never called. See docs/gecode-7-migration.md.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
 Add Space::compare(), which ranks two solutions without modifying them.
 Best-solution search uses it to choose between solutions, while constrain()
 still prunes the search. Optimization models with a custom constrain() must now

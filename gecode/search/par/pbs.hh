@@ -44,10 +44,10 @@
 
 namespace Gecode { namespace Search { namespace Par {
 
-  /// Stop object used for controlling slaves in a portfolio
+  /// Stop object used for controlling assets in a portfolio
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
-    /// The stop object for the slaves
+    /// The stop object for the assets
     Stop* so;
     /// The stop object for the portfolio (possibly nullptr)
     Stop* po;
@@ -56,7 +56,7 @@ namespace Gecode { namespace Search { namespace Par {
     /// Whether search must be stopped
     std::atomic<bool>* tostop;
   public:
-    /// Initialize with slave stop \a so, portfolio stop \a po, and \a control
+    /// Initialize with asset stop \a so, portfolio stop \a po, and \a control
     PortfolioStop(Stop* so, Stop* po, const WorkerControl& control);
     /// Set pointer to shared \a tostop variable
     void share(std::atomic<bool>* ts);
@@ -74,9 +74,9 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   class PBS;
 
-  /// Runnable slave of a portfolio master
+  /// Runnable asset in a portfolio
   template<class Collect>
-  class GECODE_SEARCH_EXPORT Slave : public Support::Runnable {
+  class GECODE_SEARCH_EXPORT Asset : public Support::Runnable {
   protected:
     /// Completion event for the current run
     class Completion : public Support::Terminator {
@@ -91,33 +91,33 @@ namespace Gecode { namespace Search { namespace Par {
       /// Wait for completion and consume the signal
       void wait(void);
     } completion;
-    /// The master engine
-    PBS<Collect>* master;
-    /// The slave engine
-    Engine* slave;
+    /// The portfolio engine
+    PBS<Collect>* portfolio;
+    /// The wrapped search engine
+    Engine* engine;
     /// Stop object
     Stop* stop;
   public:
-    /// Initialize with master \a m, slave \a s, and its stop object \a so
-    Slave(PBS<Collect>* m, Engine* s, Stop* so);
-    /// Return statistics of slave
+    /// Initialize with portfolio \a p, engine \a e, and its stop object \a so
+    Asset(PBS<Collect>* p, Engine* e, Stop* so);
+    /// Return statistics of asset
     Statistics statistics(void) const;
-    /// Check whether slave has been stopped
+    /// Check whether asset has been stopped
     bool stopped(void) const;
-    /// Check whether slave stopped at a local limit
+    /// Check whether asset stopped at a local limit
     bool limited(void) const;
     /// Return the completion terminator
     virtual Support::Terminator* terminator(void) const;
-    /// Wait for the slave to complete its current run
+    /// Wait for the asset to complete its current run
     void wait(void);
-    /// Wake a paused slave so that it can observe the portfolio stop
+    /// Wake a paused asset so that it can observe the portfolio stop
     void wake(void);
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Perform one run
     virtual void run(void);
-    /// Delete slave
-    virtual ~Slave(void);
+    /// Delete asset
+    virtual ~Asset(void);
   };
 
   /// Collect all solutions
@@ -131,13 +131,13 @@ namespace Gecode { namespace Search { namespace Par {
     /// Initialize
     CollectAll(void);
     /// Add a solution \a a reported by \a r and always return true
-    bool add(Space* s, Slave<CollectAll>* r);
+    bool add(Space* s, Asset<CollectAll>* r);
     /// Dummy function
     bool constrain(const Space& b);
     /// Check whether there is any solution left
     bool empty(void) const;
     /// Return solution reported by \a r
-    Space* get(Slave<CollectAll>*& r);
+    Space* get(Asset<CollectAll>*& r);
     /// Destructor
     ~CollectAll(void);
   };
@@ -148,20 +148,20 @@ namespace Gecode { namespace Search { namespace Par {
     /// Currently best solution
     Space* b;
     /// Who has reported the best solution (nullptr if solution has already been reported)
-    Slave<CollectBest>* reporter;
+    Asset<CollectBest>* reporter;
   public:
     /// Whether it collects best solutions
     static const bool best = true;
     /// Initialize
     CollectBest(void);
     /// Add a solution \a s by \a r and return whether is was better
-    bool add(Space* s, Slave<CollectBest>* r);
+    bool add(Space* s, Asset<CollectBest>* r);
     /// Check whether \a b better and update accordingly
     bool constrain(const Space& b);
     /// Check whether there is any solution left
     bool empty(void) const;
     /// Return solution reported by \a r (only if a better one was found)
-    Space* get(Slave<CollectBest>*& r);
+    Space* get(Asset<CollectBest>*& r);
     /// Destructor
     ~CollectBest(void);
   };
@@ -169,19 +169,19 @@ namespace Gecode { namespace Search { namespace Par {
   /// Parallel portfolio engine implementation
   template<class Collect>
   class GECODE_SEARCH_EXPORT PBS : public Engine {
-    friend class Slave<Collect>;
+    friend class Asset<Collect>;
   protected:
-    /// Master statistics
+    /// Statistics of propagating the model
     Statistics stat;
-    /// Slave engines
-    Slave<Collect>** slaves;
-    /// Number of slave engines
-    unsigned int n_slaves;
-    /// Number of active slave engines
+    /// Asset engines
+    Asset<Collect>** assets;
+    /// Number of asset engines
+    unsigned int n_assets;
+    /// Number of active asset engines
     unsigned int n_active;
-    /// Whether a slave has been stopped
-    std::atomic<bool> slave_stop;
-    /// Whether a slave stopped at a local limit
+    /// Whether an asset has been stopped
+    std::atomic<bool> asset_stop;
+    /// Whether an asset stopped at a local limit
     bool incomplete;
     /// Shared stop flag
     std::atomic<bool> tostop;
@@ -189,23 +189,23 @@ namespace Gecode { namespace Search { namespace Par {
     Collect solutions;
     /// Mutex for synchronization
     Support::Mutex m;
-    /// Number of busy slaves
+    /// Number of busy assets
     unsigned int n_busy;
-    /// Signal that number of busy slaves becomes zero
+    /// Signal that number of busy assets becomes zero
     Support::Event idle;
     /// Failure raised while running or updating a portfolio asset
     std::exception_ptr failure;
-    /// Process report from slave, return false if solution was ignored
-    bool report(Slave<Collect>* slave, Space* s);
-    /// Process failure from slave
+    /// Process report from asset, return false if solution was ignored
+    bool report(Asset<Collect>* asset, Space* s);
+    /// Process failure from asset
     void fail(void);
     /**
      * The key invariant of the engine is as follows:
      *  - n_busy is always zero outside the next() function.
      *  - that entails, that locking is only needed inside next().
-     *  - the slaves 0..n_active-1 still might not have exhausted their
+     *  - the assets 0..n_active-1 still might not have exhausted their
      *    search space.
-     *  - the slaves n_active..n_slaves-1 have exhausted their search space.
+     *  - the assets n_active..n_assets-1 have exhausted their search space.
      */
   public:
     /// Initialize

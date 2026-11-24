@@ -128,8 +128,8 @@ public:
       break;
     }
   }
-  /// Slave function for restarts
-  bool slave(const MetaInfo& mi) {
+  /// Spoke function for restarts
+  bool spoke(const MetaInfo& mi) {
     if ((mi.type() == MetaInfo::RESTART) &&
         (mi.restart() > 0) && (p > 0.0)) {
       const Photo& l = static_cast<const Photo&>(*mi.last());
