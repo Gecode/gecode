@@ -752,7 +752,10 @@ namespace Test {
       MetaDecision solution_decision = MetaDecision::Restart;
       /// Coverage that spoke() declares after a solution
       SpokeCoverage solution_spoke_coverage = SpokeCoverage::Full;
+      /// Whether spoke() fails after a solution
       bool fail_solution_spoke = false;
+      /// Whether hub() leaves no solution after a solution, without failing
+      bool empty_hub_after_solution = false;
       bool nogood_model = false;
       /// Whether the model posts a branching on x
       bool model_branching = true;
@@ -771,7 +774,7 @@ namespace Test {
       IntVar x;
       /// Optional queens model used to force restart no-good extraction
       IntVarArray q;
-      /// Optional variables without a solution, used to reach the cutoff
+      /// Optional variables without a solution, to reach the cutoff or empty the hub
       IntVarArray y;
       /// Shared hook observations and configuration
       MetaDispatchState* state;
@@ -792,8 +795,14 @@ namespace Test {
         Space::hub(hc);
         if (hc.nogoods().ng() > 0)
           state->nogood_handoffs.fetch_add(1, std::memory_order_relaxed);
-        if (hc.event() == MetaEvent::Solution)
+        if (hc.event() == MetaEvent::Solution) {
+          if (state->empty_hub_after_solution) {
+            // Four distinct values from three fail only during search.
+            distinct(*this, y, IPL_VAL);
+            Gecode::branch(*this, y, INT_VAR_NONE(), INT_VAL_MIN());
+          }
           hc.decision(state->solution_decision);
+        }
       }
       /// Record and implement a Spoke callback
       void
@@ -825,7 +834,7 @@ namespace Test {
     public:
       /// Initialize with shared observations \a s
       MetaDispatchSpace(MetaDispatchState& s)
-        : x(*this, 0, 1), q(*this, s.nogood_model ? 8 : 0, 0, 7), y(*this, s.limit_first_spoke ? 4 : 0, 0, 2),
+        : x(*this, 0, 1), q(*this, s.nogood_model ? 8 : 0, 0, 7), y(*this, (s.limit_first_spoke || s.empty_hub_after_solution) ? 4 : 0, 0, 2),
           state(&s), restart_role(RestartRole::Hub), portfolio_asset(-1) {
         state->live_spaces.fetch_add(1, std::memory_order_relaxed);
         if (state->nogood_model) {
@@ -1013,11 +1022,15 @@ namespace Test {
       }
       /// Run one RBS dispatch scenario
       static bool
-      rbs(MetaDecision solution_decision, bool fail_solution_spoke,
+      rbs(MetaDecision solution_decision, bool empty_after_solution,
           SpokeCoverage solution_spoke_coverage) {
         MetaDispatchState state;
         state.solution_decision = solution_decision;
-        state.fail_solution_spoke = fail_solution_spoke;
+        // A spoke that is not partial keeps the solutions of the hub, so
+        // only a partial spoke may remove them
+        const bool partial = solution_spoke_coverage == SpokeCoverage::Partial;
+        state.fail_solution_spoke = empty_after_solution && partial;
+        state.empty_hub_after_solution = empty_after_solution && !partial;
         state.solution_spoke_coverage = solution_spoke_coverage;
 
         HubSpokeDispatchSpace* m = new HubSpokeDispatchSpace(state);
@@ -1035,13 +1048,13 @@ namespace Test {
         const unsigned int solution = event_bit(MetaEvent::Solution);
         const unsigned int exhausted = event_bit(MetaEvent::Exhausted);
         HubSpokeDispatchSpace* second = search.next();
-        if (!fail_solution_spoke) {
+        if (!empty_after_solution) {
           const bool restart = solution_decision == MetaDecision::Restart;
           ok = ok && (second != nullptr) && holds(state.hub_calls, 2U) &&
                holds(state.spoke_calls, restart ? 2U : 1U) &&
                holds(state.hub_events, start | solution) &&
                holds(state.spoke_events, start | (restart ? solution : 0U));
-        } else if (solution_spoke_coverage != SpokeCoverage::Partial) {
+        } else if (!partial) {
           // Exhausting a spoke that is not partial is a proof
           ok = ok && (second == nullptr) &&
                (search.end_reason() == EndReason::Exhausted) &&
@@ -2930,7 +2943,8 @@ namespace Test {
         }
         if (htc == HTC_NONE)
           return (n == 0) && (rbs.end_reason() == EndReason::Exhausted);
-        bool ok = improving && (b != nullptr) && b->best();
+        bool ok = improving && (b != nullptr) && b->best() &&
+          (rbs.end_reason() == EndReason::Exhausted);
         delete b;
         return ok;
       }
