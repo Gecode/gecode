@@ -2064,16 +2064,16 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::constrain(const Space& s) {
+    // Read the objective of the incumbent at its own index, as compare does
+    const FlatZincSpace& b = static_cast<const FlatZincSpace&>(s);
     if (_optVarIsInt) {
       if (_method == MIN)
-        rel(*this, iv[_optVar], IRT_LE,
-                   static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
+        rel(*this, iv[_optVar], IRT_LE, b.iv[b._optVar].val());
       else if (_method == MAX)
-        rel(*this, iv[_optVar], IRT_GR,
-                   static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
+        rel(*this, iv[_optVar], IRT_GR, b.iv[b._optVar].val());
     } else {
 #ifdef GECODE_HAS_FLOAT_VARS
-      FloatVal best = static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val();
+      FloatVal best = b.fv[b._optVar].val();
       // When minimizing, an assigned objective is below best - step
       // exactly when its upper bound is below the lower bound of that
       // interval (symmetrically when maximizing). Posting this strict

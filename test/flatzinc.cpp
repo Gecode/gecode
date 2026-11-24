@@ -150,6 +150,18 @@ namespace Test { namespace FlatZinc {
           (void) one->compare(*high);
           return false;
         } catch (const SpaceIncompatibleObjectives&) {}
+        // The objectives sit at different indices: constrain must read the
+        // incumbent's own objective, as compare does.
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> late =
+          model("var 100..100: y; var 50..50: x; solve minimize x;\n");
+        std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> early =
+          model("var 9..9: x; var 100..100: y; solve minimize x;\n");
+        if (!late || !early || (late->optVar() == early->optVar()) ||
+            (late->compare(*early) != SpaceComparison::Worse))
+          return false;
+        late->constrain(*early);
+        if (late->status() != SS_FAILED)
+          return false;
         std::unique_ptr<Gecode::FlatZinc::FlatZincSpace> sat =
           model("var 1..1: x; solve satisfy;\n");
         if (!sat)
