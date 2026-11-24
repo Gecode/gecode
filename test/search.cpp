@@ -1416,6 +1416,64 @@ namespace Test {
 
     ExternalIncumbent external_incumbent;
 
+#ifdef GECODE_HAS_EXPERIMENTAL
+    /// Test that a throwing bound in an external update leaks no clone
+    class ThrowingBound : public Base {
+    private:
+      /// Objective that counts its live spaces
+      class CountedObjective : public IntMinimizeSpace {
+      public:
+        std::atomic<int>& live;
+        IntVar x;
+        CountedObjective(int v, std::atomic<int>& l) : live(l), x(*this,v,v) {
+          live++;
+        }
+        CountedObjective(CountedObjective& s)
+          : IntMinimizeSpace(s), live(s.live) {
+          live++;
+          x.update(*this,s.x);
+        }
+        virtual ~CountedObjective(void) { live--; }
+        virtual Space* copy(void) { return new CountedObjective(*this); }
+        virtual IntVar cost(void) const { return x; }
+      };
+      /// Whether a throwing bound in engine \a E's constrain leaks nothing
+      template<template<class> class E>
+      static bool check(void) {
+        std::atomic<int> live(0);
+        Gecode::Search::HeuristicGuidance g(Gecode::Sense::Minimize,
+          [](const Space& s) -> std::int64_t {
+            int v = static_cast<const CountedObjective&>(s).x.val();
+            if (v == 3)
+              throw Gecode::Exception("ThrowingBound","bound");
+            return v;
+          });
+        Gecode::Search::Options o;
+        o.guidance = &g;
+        bool thrown = false;
+        {
+          CountedObjective root(5,live);
+          std::unique_ptr<Gecode::Search::Engine> engine(
+            Gecode::Search::build<CountedObjective,E>(&root,o));
+          CountedObjective incumbent(3,live);
+          try {
+            engine->constrain(incumbent);
+          } catch (const Gecode::Exception&) {
+            thrown = true;
+          }
+        }
+        return thrown && (live == 0);
+      }
+    public:
+      ThrowingBound(void) : Base("Search::ThrowingBound") {}
+      virtual bool run(void) {
+        return check<Gecode::AStar>() && check<Gecode::CABS>();
+      }
+    };
+
+    ThrowingBound throwing_bound;
+#endif
+
 #ifdef GECODE_HAS_THREADS
     /// Test parallel BAB solution arbitration and failure delivery
     class ParallelBABComparison : public Base {

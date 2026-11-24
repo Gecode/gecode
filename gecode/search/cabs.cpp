@@ -316,8 +316,12 @@ namespace Gecode { namespace Search { namespace Seq {
 
   void
   CABS::constrain(const Space& s) {
-    if (best.replaced_by(s,"CABS::constrain"))
-      best.update(s.clone(),guidance.bound(s));
+    if (best.replaced_by(s,"CABS::constrain")) {
+      // Compute the bound before cloning, so that a throwing bound
+      // callback cannot leak the clone.
+      std::int64_t b = guidance.bound(s);
+      best.update(s.clone(),b);
+    }
   }
 
   void
