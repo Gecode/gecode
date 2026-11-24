@@ -3765,6 +3765,42 @@ namespace Test {
 
     PBSExhaustedAsset pbs_exhausted_asset;
 
+    /// A single asset of a sequential portfolio runs without slices
+    class PBSSingleAssetSlice : public Base {
+      /// Space without a solution whose portfolio spoke is partial
+      class PartialSpoke : public NoSolution {
+      public:
+        PartialSpoke(void) = default;
+        PartialSpoke(PartialSpoke& s) : NoSolution(s) {}
+        Gecode::Space* copy(void) override {
+          return new PartialSpoke(*this);
+        }
+        void spoke(Gecode::SpokeContext& sc) override {
+          sc.coverage(Gecode::SpokeCoverage::Partial);
+        }
+      };
+    public:
+      PBSSingleAssetSlice(void) : Base("Search::PBS::SingleAssetSlice") {}
+      bool run(void) override {
+        PartialSpoke root;
+        // Stops after 1000 checks in case the asset makes no progress
+        FailureLimit l(ULLONG_MAX);
+        Gecode::Search::Options o;
+        o.assets = 1;
+        o.threads = 1;
+        o.slice = 0;
+        o.stop = &l;
+        Gecode::PBS<PartialSpoke,Gecode::DFS> pbs(&root,o);
+        if (PartialSpoke* s = pbs.next()) {
+          delete s;
+          return false;
+        }
+        return pbs.end_reason() == EndReason::Incomplete;
+      }
+    };
+
+    PBSSingleAssetSlice pbs_single_asset_slice;
+
     /// The stop object of a portfolio sees the failures of all assets
     class PBSPortfolioStop : public Base {
       /// Whether restart-based assets stop at a portfolio-wide failure limit
