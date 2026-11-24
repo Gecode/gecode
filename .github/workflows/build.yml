@@ -255,7 +255,7 @@ jobs:
       shell: bash
       run: >
         ctest --test-dir "$GITHUB_WORKSPACE/build-ninja"
-        --output-on-failure -R '^(build-gecode-test|test|hub-spoke-api-.*)$'
+        --output-on-failure -R '^(build-gecode-test|test)$'
 
     - name: Configure CMake Debug audit smoke
       shell: bash

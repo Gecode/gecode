@@ -82,10 +82,8 @@ Rank:   major
 [DESCRIPTION]
 Rename the meta-search Space hooks master() and slave() to hub() and spoke().
 [MORE]
-There are no compatibility aliases. Space declares master() and slave() as
-deleted, so an old override fails to compile with or without override. This
-includes the FlatZincSpace override of slave(). See
-docs/gecode-7-migration.md.
+There are no compatibility aliases. An old override marked override fails to
+compile; one without it is never called. See docs/gecode-7-migration.md.
 
 [ENTRY]
 Module: search

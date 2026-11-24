@@ -14,9 +14,8 @@ bool hub(const Gecode::MetaInfo& mi) override;
 bool spoke(const Gecode::MetaInfo& mi) override;
 ```
 
-There are no compatibility aliases. `Space` declares `master()` and
-`slave()` as deleted, so an old override fails to compile whether or not it
-is marked `override`. Restart-based search (RBS) and portfolio-based search
+There are no compatibility aliases. An old override marked `override` fails
+to compile; one without it compiles but is never called. Restart-based search (RBS) and portfolio-based search
 (PBS) call the renamed hooks at the same points and with the same defaults
 as before.
 
