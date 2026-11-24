@@ -40,7 +40,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
   forceinline
   RestartStop::RestartStop(Stop* s)
-    : l(0U), m_stop(s), e_stopped(false) {}
+    : l(0U), c(0U), m_stop(s), e_stopped(false), e_fail(0U) {}
 
   forceinline void
   RestartStop::restart(void) {
@@ -61,18 +61,30 @@ namespace Gecode { namespace Search { namespace Seq {
   }
 
   forceinline void
-  RestartStop::limit(const Search::Statistics& s, unsigned long long int l0) {
+  RestartStop::limit(const Search::Statistics& s, unsigned long long int c0) {
     Support::Lock lock(m);
-    l = l0;
+    l = c = c0;
     m_stat += s;
     e_stopped = false;
+    e_fail = 0U;
   }
 
   forceinline void
-  RestartStop::extend(unsigned long long int l0) {
+  RestartStop::renew(const Search::Statistics& s) {
     Support::Lock lock(m);
-    l = l0;
+    l = c;
+    m_stat += s;
     e_stopped = false;
+    e_fail = 0U;
+  }
+
+  forceinline void
+  RestartStop::extend(unsigned long long int c0) {
+    Support::Lock lock(m);
+    c = c0;
+    l = (e_fail > ULLONG_MAX - c0) ? ULLONG_MAX : e_fail + c0;
+    e_stopped = false;
+    e_fail = 0U;
   }
 
   forceinline void

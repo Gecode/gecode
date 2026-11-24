@@ -44,8 +44,10 @@
 
 #include "test/test.hh"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <climits>
 #include <cmath>
 #include <future>
 #include <limits>
@@ -4056,8 +4058,10 @@ namespace Test {
           }
           break;
         case Protocol::ContinueAtLimit:
+          // Finish instead of repeating a limit that leaves no budget
           if (hc.event() == MetaEvent::Limit)
-            hc.decision(MetaDecision::Continue);
+            hc.decision((log->hub.size() > 100U) ? MetaDecision::Finish :
+                        MetaDecision::Continue);
           break;
         case Protocol::EmptyHub:
           return;
@@ -4096,6 +4100,8 @@ namespace Test {
         FailAtStart,
         FailAtSolution,
         ContinueAtLimit,
+        ContinueThenRestart,
+        ContinueWithLargestCutoff,
         EngineConstrainsHub,
         PortfolioHubConstraint,
         Episodes,
@@ -4271,6 +4277,66 @@ namespace Test {
             return false;
         return log.live == 0;
       }
+      /// Return how often hub() was called at Limit in episode \a e
+      static long int limits(const ProtocolLog& log, unsigned long int e) {
+        return static_cast<long int>(
+          std::count(log.hub.begin(),log.hub.end(),
+                     std::make_pair(MetaEvent::Limit,e)));
+      }
+      /// Check that a restart after a solution uses the cutoff, not the extended limit
+      static bool continue_then_restart(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtLimit,log);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,rbs_options(2));
+          delete m;
+          for (int i=0; i<2; i++) {
+            ProtocolSpace* s = rbs.next();
+            if (s == nullptr)
+              return false;
+            delete s;
+          }
+        }
+        // Each episode fails six times and so reaches the cutoff of two twice
+        return (limits(log,0UL) == 2L) && (limits(log,1UL) == 2L) &&
+          (log.live == 0);
+      }
+      /// Cutoff generator whose values after the first are the largest possible
+      class LargestCutoff : public Gecode::Search::Cutoff {
+      protected:
+        /// The current value
+        unsigned long long int c;
+      public:
+        /// Initialize with first value \a c0
+        explicit LargestCutoff(unsigned long long int c0) : c(c0) {}
+        unsigned long long int operator ()(void) const override {
+          return c;
+        }
+        unsigned long long int operator ++(void) override {
+          c = ULLONG_MAX;
+          return c;
+        }
+        Gecode::Search::Cutoff* copy(void) const override {
+          return new LargestCutoff(*this);
+        }
+      };
+      /// Check that Continue with the largest cutoff does not wrap the limit around
+      static bool continue_with_largest_cutoff(void) {
+        ProtocolLog log;
+        {
+          ProtocolSpace* m = new ProtocolSpace(Protocol::ContinueAtLimit,log);
+          Gecode::Search::Options o;
+          o.threads = 1;
+          o.cutoff = new LargestCutoff(2);
+          Gecode::RBS<ProtocolSpace,Gecode::DFS> rbs(m,o);
+          delete m;
+          ProtocolSpace* s = rbs.next();
+          if (s == nullptr)
+            return false;
+          delete s;
+        }
+        return (limits(log,0UL) == 1L) && (log.live == 0);
+      }
       /// Check that RBS<BAB> constrains the hub when hub() does nothing
       static bool engine_constrains_hub(void) {
         ProtocolLog log;
@@ -4373,6 +4439,10 @@ namespace Test {
           return fail_at_solution();
         case Scenario::ContinueAtLimit:
           return continue_at_limit();
+        case Scenario::ContinueThenRestart:
+          return continue_then_restart();
+        case Scenario::ContinueWithLargestCutoff:
+          return continue_with_largest_cutoff();
         case Scenario::EngineConstrainsHub:
           return engine_constrains_hub();
         case Scenario::PortfolioHubConstraint:
@@ -4401,6 +4471,11 @@ namespace Test {
     ("FailAtSolution",MetaProtocol::Scenario::FailAtSolution);
     MetaProtocol meta_continue_at_limit
     ("ContinueAtLimit",MetaProtocol::Scenario::ContinueAtLimit);
+    MetaProtocol meta_continue_then_restart
+    ("ContinueThenRestart",MetaProtocol::Scenario::ContinueThenRestart);
+    MetaProtocol meta_continue_with_largest_cutoff
+    ("ContinueWithLargestCutoff",
+     MetaProtocol::Scenario::ContinueWithLargestCutoff);
     MetaProtocol meta_engine_constrains_hub
     ("EngineConstrainsHub",MetaProtocol::Scenario::EngineConstrainsHub);
     MetaProtocol meta_portfolio_hub_constraint

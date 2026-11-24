@@ -38,6 +38,7 @@
 
 #include <gecode/search/seq/rbs.hh>
 
+#include <algorithm>
 #include <memory>
 
 namespace Gecode { namespace Search { namespace Seq {
@@ -61,6 +62,7 @@ namespace Gecode { namespace Search { namespace Seq {
     // Stop if the fail limit for the engine says so
     if (s.fail > l) {
       e_stopped = true;
+      e_fail = std::max(e_fail,s.fail);
       return true;
     }
     // Stop if the stop object for the meta engine says so
@@ -118,7 +120,7 @@ namespace Gecode { namespace Search { namespace Seq {
     case MetaDecision::Continue:
       // After a limit, the episode continues with the next cutoff as budget
       if (ev == MetaEvent::Limit)
-        stop->extend(e->statistics().fail + ++(*co));
+        stop->extend(++(*co));
       return true;
     case MetaDecision::Restart:
       break;
@@ -126,9 +128,9 @@ namespace Gecode { namespace Search { namespace Seq {
       GECODE_NEVER;
     }
     stop->restart();
-    // A restart after a solution keeps the cutoff
+    // A restart after a solution keeps the cutoff, not an extended limit
     if (ev == MetaEvent::Solution)
-      stop->update(e->statistics());
+      stop->renew(e->statistics());
     else
       stop->limit(e->statistics(),++(*co));
     // The old hub becomes the spoke, which is deleted if spoke() throws

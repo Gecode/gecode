@@ -40,6 +40,8 @@
 
 #include <gecode/search.hh>
 
+#include <climits>
+
 namespace Gecode { namespace Search { namespace Seq {
 
   class RBS;
@@ -53,10 +55,14 @@ namespace Gecode { namespace Search { namespace Seq {
     mutable Support::Mutex m;
     /// The failure limit for the engine
     unsigned long long int l;
+    /// The last cutoff, the failure budget of the current episode
+    unsigned long long int c;
     /// The stop object for the meta engine
     Stop* m_stop;
     /// Whether the engine was stopped
     bool e_stopped;
+    /// The largest failure count of a worker that the limit stopped
+    unsigned long long int e_fail;
     /// Accumulated statistics for the meta engine
     Statistics m_stat;
   public:
@@ -72,10 +78,18 @@ namespace Gecode { namespace Search { namespace Seq {
     void nogood(unsigned long int n);
     /// Test hub status with meta statistics
     SpaceStatus status(Space* s);
-    /// Add statistics \a s and set the limit for the engine to \a l fails
-    void limit(const Statistics& s, unsigned long long int l);
-    /// Set the limit for the engine, which continues its search, to \a l fails
-    void extend(unsigned long long int l);
+    /// Add statistics \a s and start an episode with cutoff \a c
+    void limit(const Statistics& s, unsigned long long int c);
+    /// Add statistics \a s and start an episode with the last cutoff
+    void renew(const Statistics& s);
+    /**
+     * \brief Give the engine, which continues its search, a budget of \a c fails
+     *
+     * The budget counts from the failures of the worker that the limit
+     * stopped, as stop() compares the failures of each worker with the
+     * limit. The limit saturates instead of wrapping around.
+     */
+    void extend(unsigned long long int c);
     /// Update statistics
     void update(const Search::Statistics& s);
     /// Return whether the engine has been stopped
