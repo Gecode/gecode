@@ -1561,23 +1561,25 @@ namespace Test {
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
-        FailingParallelObjective* m =
-          new FailingParallelObjective(FailingParallelObjective::MISSING,live);
-        Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
-        delete m;
-        bool repeated = false;
-        try {
-          while (Space* s = e->next()) delete s;
-        } catch (const SpaceNoComparison&) {
-          try { (void) e->next(); }
-          catch (const SpaceNoComparison&) { repeated = true; }
+        bool recovered = false;
+        {
+          // Declared after stop and live, so the engine is deleted first
+          FailingParallelObjective* m =
+            new FailingParallelObjective(FailingParallelObjective::MISSING,live);
+          std::unique_ptr<Gecode::Search::Engine>
+            e(Gecode::Search::babengine(m,o));
+          delete m;
+          bool repeated = false;
+          try {
+            while (Space* s = e->next()) delete s;
+          } catch (const SpaceNoComparison&) {
+            try { (void) e->next(); }
+            catch (const SpaceNoComparison&) { repeated = true; }
+          }
+          if (!repeated)
+            return false;
+          recovered = resetSearch(e.get());
         }
-        if (!repeated) {
-          delete e;
-          return false;
-        }
-        bool recovered = resetSearch(e);
-        delete e;
         return recovered && (live == 0);
       }
       static bool thrownFailure(void) {
@@ -1585,38 +1587,42 @@ namespace Test {
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
-        FailingParallelObjective* m =
-          new FailingParallelObjective(FailingParallelObjective::THROWN,live);
-        Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
-        delete m;
-        try {
-          while (Space* s = e->next()) delete s;
-        } catch (const ComparisonError&) {
-          bool recovered = resetSearch(e);
-          delete e;
-          return recovered && (live == 0);
+        bool recovered = false;
+        {
+          // Declared after stop and live, so the engine is deleted first
+          FailingParallelObjective* m =
+            new FailingParallelObjective(FailingParallelObjective::THROWN,live);
+          std::unique_ptr<Gecode::Search::Engine>
+            e(Gecode::Search::babengine(m,o));
+          delete m;
+          try {
+            while (Space* s = e->next()) delete s;
+            return false;
+          } catch (const ComparisonError&) {}
+          recovered = resetSearch(e.get());
         }
-        delete e;
-        return false;
+        return recovered && (live == 0);
       }
       static bool incomparableFailure(void) {
         std::atomic<int> live(0);
         Gecode::Search::TimeStop stop(5000);
         Gecode::Search::Options o = options();
         o.stop = &stop;
-        FailingParallelObjective* m = new FailingParallelObjective(
-          FailingParallelObjective::INCOMPARABLE,live);
-        Gecode::Search::Engine* e = Gecode::Search::babengine(m,o);
-        delete m;
-        try {
-          while (Space* s = e->next()) delete s;
-        } catch (const Gecode::Search::Incomparable&) {
-          bool recovered = resetSearch(e);
-          delete e;
-          return recovered && (live == 0);
+        bool recovered = false;
+        {
+          // Declared after stop and live, so the engine is deleted first
+          FailingParallelObjective* m = new FailingParallelObjective(
+            FailingParallelObjective::INCOMPARABLE,live);
+          std::unique_ptr<Gecode::Search::Engine>
+            e(Gecode::Search::babengine(m,o));
+          delete m;
+          try {
+            while (Space* s = e->next()) delete s;
+            return false;
+          } catch (const Gecode::Search::Incomparable&) {}
+          recovered = resetSearch(e.get());
         }
-        delete e;
-        return false;
+        return recovered && (live == 0);
       }
     public:
       ParallelBABComparison(void) : Base("Search::ParallelBABComparison") {}
@@ -1645,11 +1651,17 @@ namespace Test {
         if (previous != 0)
           return false;
 
+        // A fresh deadline, so that a stop cannot pass for exhaustion
+        Gecode::Search::TimeStop bounded_stop(5000);
+        o.stop = &bounded_stop;
         m = new ParallelObjective;
-        Gecode::Search::Engine* bounded = Gecode::Search::babengine(m,o);
+        std::unique_ptr<Gecode::Search::Engine>
+          bounded(Gecode::Search::babengine(m,o));
         delete m;
-        if (Space* first = bounded->next())
-          delete first;
+        Space* first = bounded->next();
+        if (first == nullptr)
+          return false;
+        delete first;
         // This is stronger than every solution in the model, so it also
         // supersedes any results queued while the first result was returned.
         ParallelObjective bound(-1);
@@ -1658,12 +1670,12 @@ namespace Test {
                nullptr) {
           int value = s->x.val();
           delete s;
-          if (value >= -1) {
-            delete bounded;
+          if (value >= -1)
             return false;
-          }
         }
-        delete bounded;
+        if (bounded->stopped())
+          return false;
+        bounded.reset();
         return missingFailure() && thrownFailure() && incomparableFailure();
       }
     };
