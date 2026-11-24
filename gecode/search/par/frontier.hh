@@ -110,6 +110,8 @@ namespace Gecode { namespace Search { namespace Par {
     unsigned int active;
     /// Whether search is running, being shut down, stopped, or limited
     bool running, shutdown, _stopped, _limited;
+    /// Whether search has exhausted its search space
+    bool _exhausted;
     /// Why the last call to next() returned no solution
     EndReason end;
     /// First exception thrown by a worker

@@ -73,6 +73,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Incumbent best;
     /// Whether search stopped at the width or frontier limit
     bool _limited;
+    /// Whether search has exhausted its search space
+    bool _exhausted;
     /// Offer node \a s at depth \a d to the next layer, false if no room
     bool admit(std::unique_ptr<Space> s, unsigned long int d);
     /// Make \a s the incumbent and return a copy, if it improves

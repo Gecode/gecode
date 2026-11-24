@@ -303,6 +303,56 @@ namespace Test {
     Heuristic<Gecode::AStar> astar_test("AStar");
     Heuristic<Gecode::CABS> cabs_test("CABS");
 
+    /// Stop object that stops once it is switched on
+    class Switch : public Gecode::Search::Stop {
+    public:
+      /// Whether search must stop
+      std::atomic<bool> on{false};
+      bool stop(const Gecode::Search::Statistics&,
+                const Gecode::Search::Options&) override {
+        return on.load();
+      }
+    };
+
+    /// A heuristic search stays exhausted when its stop object fires later
+    template<template<class> class E>
+    class HeuristicExhausted : public Base {
+    public:
+      HeuristicExhausted(const std::string& name)
+        : Base("Search::"+name+"::Exhausted") {}
+      bool run(void) override {
+        for (unsigned int threads : {1U,2U}) {
+#ifndef GECODE_HAS_THREADS
+          if (threads > 1U) continue;
+#endif
+          TreeSpace root(TreeSpace::random(_rand),false);
+          Gecode::Search::HeuristicGuidance g =
+            TreeSpace::guidance(false,false,false,false);
+          Switch stop;
+          Gecode::Search::Options o;
+          o.threads = threads;
+          o.guidance = &g;
+          o.stop = &stop;
+          E<TreeSpace> e(&root,o);
+          while (TreeSpace* s = e.next())
+            delete s;
+          if (e.end_reason() != EndReason::Exhausted)
+            return false;
+          stop.on = true;
+          if (TreeSpace* s = e.next()) {
+            delete s;
+            return false;
+          }
+          if (e.end_reason() != EndReason::Exhausted)
+            return false;
+        }
+        return true;
+      }
+    };
+
+    HeuristicExhausted<Gecode::AStar> astar_exhausted("AStar");
+    HeuristicExhausted<Gecode::CABS> cabs_exhausted("CABS");
+
     /// Portfolio of BAB, A*, and CABS assets
     class HeuristicPortfolio : public Base {
       /// Stop object that never stops but takes some time
