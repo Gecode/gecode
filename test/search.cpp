@@ -353,6 +353,55 @@ namespace Test {
     HeuristicExhausted<Gecode::AStar> astar_exhausted("AStar");
     HeuristicExhausted<Gecode::CABS> cabs_exhausted("CABS");
 
+    /// A heuristic search that has no work left after its last solution is
+    /// exhausted when its stop object fires before the next call
+    template<template<class> class E>
+    class HeuristicExhaustedAfterSolution : public Base {
+    public:
+      HeuristicExhaustedAfterSolution(const std::string& name)
+        : Base("Search::"+name+"::ExhaustedAfterSolution") {}
+      bool run(void) override {
+        // A solved root, and a root whose only child is a solution
+        const std::vector<TreeSpace::Graph> graphs = {
+          {{0,0,0,0,{}}},
+          {{0,0,0,1,{1}}, {1,1,0,1,{}}}
+        };
+        for (const TreeSpace::Graph& graph : graphs)
+          for (unsigned int threads : {1U,2U}) {
+#ifndef GECODE_HAS_THREADS
+            if (threads > 1U) continue;
+#endif
+            TreeSpace root(std::make_shared<const TreeSpace::Graph>(graph),
+                           false);
+            Gecode::Search::HeuristicGuidance g =
+              TreeSpace::guidance(false,false,false,false);
+            Switch stop;
+            Gecode::Search::Options o;
+            o.threads = threads;
+            o.guidance = &g;
+            o.stop = &stop;
+            E<TreeSpace> e(&root,o);
+            TreeSpace* s = e.next();
+            if (s == nullptr)
+              return false;
+            delete s;
+            stop.on = true;
+            if (TreeSpace* t = e.next()) {
+              delete t;
+              return false;
+            }
+            if (e.end_reason() != EndReason::Exhausted)
+              return false;
+          }
+        return true;
+      }
+    };
+
+    HeuristicExhaustedAfterSolution<Gecode::AStar>
+      astar_exhausted_after_solution("AStar");
+    HeuristicExhaustedAfterSolution<Gecode::CABS>
+      cabs_exhausted_after_solution("CABS");
+
     /// Portfolio of BAB, A*, and CABS assets
     class HeuristicPortfolio : public Base {
       /// Stop object that never stops but takes some time
