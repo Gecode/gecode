@@ -169,7 +169,9 @@ namespace Gecode { namespace Search { namespace Seq {
         // The asset ended without a proof, kill it after saving the statistics
         stat += assets[cur].statistics();
         assets[cur].~Asset();
-        assets[cur] = assets[--n_assets];
+        // Move the last asset into the free slot, it is not destroyed later
+        if (cur != --n_assets)
+          new (&assets[cur]) Asset(assets[n_assets]);
         if (n_assets == 1)
           // Disable stopping by setting a high limit
           ssi.l = ULLONG_MAX;
@@ -183,8 +185,9 @@ namespace Gecode { namespace Search { namespace Seq {
       }
       if (n_sliced + n_parked == n_assets) {
         n_sliced = 0;
-        // Increment by one slice
-        ssi.l += slice;
+        // Increment by one slice, a single asset has no limit to increment
+        if (n_assets > 1)
+          ssi.l += slice;
       }
     }
     // All assets ended without a proof
