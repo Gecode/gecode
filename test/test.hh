@@ -135,9 +135,9 @@ namespace Test {
     /// Number of threads to use
     unsigned int threads;
     /// The random seed to be used
-    unsigned int seed;
-    /// Replay one named test from its reported random state
-    bool replay;
+    uint64_t seed;
+    /// Complete random state for replaying one named test (empty if none)
+    std::string replay;
     /// Number of iterations for each test
     unsigned int iter;
     /// Default number of iterations

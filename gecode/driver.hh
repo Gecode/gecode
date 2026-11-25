@@ -147,6 +147,35 @@ namespace Gecode {
     };
 
     /**
+     * \brief Checked seed or complete state of an Rnd generator
+     *
+     * Option \a o takes a seed, \c time, or \c hw, and the state option of
+     * the instance takes a complete state. Each may be given once, and not
+     * together, so the replay state printed for \c time and \c hw is the
+     * state that rnd() returns. Several instances need distinct state
+     * option names.
+     */
+    class GECODE_DRIVER_EXPORT RandomOption : public BaseOption {
+      Rnd initial;
+      const char* sopt;  ///< State option name, without hyphen
+      const char* siopt; ///< State option name, with hyphen
+      bool seed_given = false;
+      bool state_given = false;
+    public:
+      /// Initialize seed option \a o with explanation \a e, seed \a v, and state option \a s
+      RandomOption(const char* o, const char* e, uint64_t v,
+                   const char* s="state");
+      /// Seed the initial generator with \a v
+      void value(uint64_t v);
+      /// Construct an independent generator at the configured initial state.
+      Rnd rnd(void) const;
+      virtual int parse(int argc, char* argv[]);
+      virtual void help(void);
+      /// Destructor
+      virtual ~RandomOption(void);
+    };
+
+    /**
      * \brief String-valued option
      *
      */
@@ -454,7 +483,7 @@ namespace Gecode {
     Driver::IplOption         _ipl;         ///< Integer propagation level
     Driver::StringOption      _branching;   ///< Branching options
     Driver::DoubleOption      _decay;       ///< Decay option
-    Driver::UnsignedIntOption _seed;        ///< Seed option
+    Driver::RandomOption      _seed;        ///< Seed or complete random state
     Driver::DoubleOption      _step;        ///< Step option
     //@}
 
@@ -550,9 +579,9 @@ namespace Gecode {
     double decay(void) const;
 
     /// Set default seed value
-    void seed(unsigned int s);
-    /// Return seed value
-    unsigned int seed(void) const;
+    void seed(uint64_t s);
+    /// Independent generator initialized from the seed or full-state option
+    Rnd rnd(void) const;
 
     /// Set default step value
     void step(double s);

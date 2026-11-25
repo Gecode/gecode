@@ -43,6 +43,10 @@ namespace Gecode {
   template<class View_, class Val_>
   class ValSel {
   public:
+    /// \copydoc Gecode::ViewSel::random_split
+    void random_split(unsigned int a) { (void) a; }
+    /// \copydoc Gecode::ViewSel::random
+    bool random(void) const { return false; }
     /// View type
     typedef View_ View;
     /// Corresponding variable type

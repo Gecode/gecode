@@ -289,6 +289,8 @@ namespace Gecode { namespace FlatZinc {
     virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a b
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+    /// Split the state of both value selectors for \a b
+    virtual void random_split(unsigned int b);
     /// Create no-good literal for choice \a c and alternative \a b
     virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
     /// Print branch for choice \a c and alternative \a b

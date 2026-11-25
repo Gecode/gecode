@@ -259,6 +259,8 @@ namespace Gecode { namespace Float { namespace Branch {
     /// The used random number generator
     Rnd r;
   public:
+    void random_split(unsigned int a) { r = r.split(a); }
+    bool random(void) const { return true; }
     /// Constructor for initialization
     ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning

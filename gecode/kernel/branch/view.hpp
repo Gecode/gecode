@@ -85,6 +85,8 @@ namespace Gecode {
     mutable int start;
     /// View selection objects
     ViewSel<View>* vs[n];
+    /// Whether a selector has random state, which commit() must split
+    bool random_state;
     /// Filter function
     Filter f;
     /// Return position information
@@ -99,6 +101,8 @@ namespace Gecode {
   public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
+    /// Split the state of every view selector for \a a
+    virtual void random_split(unsigned int a);
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
   };
@@ -137,9 +141,14 @@ namespace Gecode {
   ViewBrancher<View,Filter,n>::ViewBrancher(Home home, ViewArray<View>& x0,
                                             ViewSel<View>* vs0[n],
                                             BranchFilter<Var> bf)
-    : Brancher(home), x(x0), start(0), f(bf) {
-    for (int i=0; i<n; i++)
+    : Brancher(home), x(x0), start(0), random_state(false), f(bf) {
+    for (int i=0; i<n; i++) {
       vs[i] = vs0[i];
+      // Key each selector by brancher and role; value selectors use role 0.
+      vs[i]->random_split(id());
+      vs[i]->random_split(1U+static_cast<unsigned int>(i));
+      random_state = random_state || vs[i]->random();
+    }
     for (int i=0; i<n; i++)
       if (f.notice() || vs[i]->notice()) {
         home.notice(*this,AP_DISPOSE,true);
@@ -151,10 +160,19 @@ namespace Gecode {
   forceinline
   ViewBrancher<View,Filter,n>::ViewBrancher(Space& home,
                                             ViewBrancher<View,Filter,n>& vb)
-    : Brancher(home,vb), start(vb.start), f(vb.f) {
+    : Brancher(home,vb), start(vb.start), random_state(vb.random_state),
+      f(vb.f) {
     x.update(home,vb.x);
-    for (int i=0; i<n; i++)
-      vs[i] = vb.vs[i]->copy(home);
+    int copied = 0;
+    try {
+      for (; copied<n; copied++)
+        vs[copied] = vb.vs[copied]->copy(home);
+    } catch (...) {
+      // A failed clone cannot dispose a brancher that was never constructed.
+      for (int i=0; i<copied; i++)
+        vs[i]->dispose(home);
+      throw;
+    }
   }
 
   template<class View, class Filter, int n>
@@ -166,6 +184,13 @@ namespace Gecode {
         return true;
       }
     return false;
+  }
+
+  template<class View, class Filter, int n>
+  void
+  ViewBrancher<View,Filter,n>::random_split(unsigned int a) {
+    for (int i=0; i<n; i++)
+      vs[i]->random_split(a);
   }
 
   template<class View, class Filter, int n>

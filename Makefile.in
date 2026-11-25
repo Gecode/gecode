@@ -201,7 +201,6 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core exception gpi \
-	data/rnd \
 	branch/action branch/afc branch/chb branch/function \
 	memory/manager memory/region \
 	trace/recorder trace/filter trace/tracer trace/general \
@@ -1294,6 +1293,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/queen_cp2.cpp \
   test/flatzinc/queen_ip.cpp \
   test/flatzinc/radiation.cpp \
+  test/flatzinc/random_branching.cpp \
   test/flatzinc/shared_array_element.cpp \
   test/flatzinc/simple_sat.cpp \
   test/flatzinc/singHoist2.cpp \
@@ -1378,7 +1378,7 @@ TESTAUXOBJ = $(TESTMAINOBJ) $(TESTPUBLICRUNNERSMOKEOBJ) \
 	$(TESTPUBLICINTSMOKEOBJ) $(TESTPUBLICSETSMOKEOBJ) \
 	$(TESTPUBLICFLOATSMOKEOBJ)
 
-TESTSRC0 = $(TESTCORESRC) test/afc.cpp test/ldsb.cpp test/region.cpp \
+TESTSRC0 = $(TESTCORESRC) test/afc.cpp test/ldsb.cpp test/region.cpp test/random.cpp \
 	test/groups.cpp
 # FailPoint is CMake-only; keep the Autoconf test executable fault-free.
 

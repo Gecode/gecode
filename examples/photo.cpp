@@ -99,7 +99,7 @@ public:
     spec(opt.size()),
     pos(*this,spec.people(), 0, spec.people()-1),
     violations(*this,0,spec.preferences()),
-    rnd(opt.seed()), p(opt.relax())
+    rnd(opt.rnd()), p(opt.relax())
   {
     // Map preferences to violation
     BoolVarArgs viol(spec.preferences());
@@ -133,7 +133,7 @@ public:
     if ((sc.engine() == MetaEngine::Restart) &&
         (sc.last() != nullptr) && (p > 0.0)) {
       const Photo& l = static_cast<const Photo&>(*sc.last());
-      relax(*this, pos, l.pos, rnd, p);
+      relax(*this, pos, l.pos, rnd.split(sc), p);
       sc.coverage(SpokeCoverage::Partial);
     }
   }
