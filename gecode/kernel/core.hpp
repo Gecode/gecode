@@ -1830,9 +1830,11 @@ namespace Gecode {
     /// Return the number of assets of a portfolio (one for RBS)
     unsigned int assets(void) const;
     /**
-     * \brief Return the most recent solution, or nullptr if none
+     * \brief Return the best solution the engine knows, or nullptr if none
      *
-     * The engine owns the solution, and the pointer is valid only while
+     * This is the most recent solution of the engine, or a better one that
+     * constrain() passed to the engine since, for example from another
+     * asset of a portfolio. The engine owns the solution, and the pointer is valid only while
      * the hook runs: clone the solution to keep it.
      */
     const Space* last(void) const;
