@@ -120,10 +120,13 @@ virtual Gecode::Search::Cutoff* copy(void) const;
 ```
 
 It returns a copy of the generator in its current state that continues the
-sequence on its own. A copy of `Cutoff::rnd()` draws its own random
-sequence, so that the assets restart at different times. A portfolio of
-restart-based engines, `PBS<T, RBS>`, gives each asset its own copy of the
-cutoff in its options and deletes the original once the portfolio is built.
+sequence on its own. A copy of `Cutoff::rnd()` uses a different seed, so
+the assets can restart at different times (unless every value of the range
+is the same). A portfolio of restart-based engines, `PBS<T, RBS>`, gives
+each asset its own copy of the cutoff in its options and deletes the
+original once the portfolio is built. A portfolio of a single asset whose
+spoke does not declare `SpokeCoverage::Partial` needs no portfolio engine
+and passes the cutoff itself to that asset.
 In Gecode 6.6, the assets drew their values from one shared cutoff sequence.
 
 A custom cutoff generator must implement `copy()`. For a generator whose
@@ -168,7 +171,10 @@ engine, and calling `next()` again continues the search.
 
 Code that used `!stopped()` as a proof, such as reporting optimality, should
 test for `EndReason::Exhausted`. Code that resumes a search after a limit
-should test for `EndReason::Limit`.
+should test for `EndReason::Limit`, and first lift the limit: a stop object
+that still fires, such as an expired `TimeStop`, stops the search again
+right away. Reset the `TimeStop` or raise the limit of a `NodeStop` or
+`FailStop` before calling `next()` again.
 
 ## Portfolio stop objects see the whole portfolio
 

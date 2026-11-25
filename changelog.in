@@ -111,7 +111,7 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 Throw Search::SpokeNoBrancher when a spoke of portfolio search has no
-brancher but the hub had branchers.
+brancher but the hub had branchers, unless the spoke failed.
 [MORE]
 The default hub() removes all branchers, so a spoke() that forgot to post
 the branching of its asset returned the unassigned spoke as a solution.
@@ -209,8 +209,10 @@ Rank:   major
 Give each restart-based asset of a portfolio its own copy of the cutoff.
 [MORE]
 Cutoff has a new pure virtual function copy(), which custom cutoff generators
-must implement. Copies of a random cutoff draw different sequences, so the
-assets restart at different times. See docs/gecode-7-migration.md.
+must implement. Copies of a random cutoff use different seeds, so the assets
+can restart at different times. A portfolio with a single asset that does not
+declare SpokeCoverage::Partial uses the cutoff itself. See
+docs/gecode-7-migration.md.
 
 [ENTRY]
 Module: search

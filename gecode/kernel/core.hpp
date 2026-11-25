@@ -1730,7 +1730,14 @@ namespace Gecode {
     /**
      * Continue the current episode: after \c Solution, search the same
      * spoke for the next solution; after \c Limit, resume the same spoke
-     * with the next cutoff as a fresh budget
+     * with the next cutoff as a fresh budget.
+     *
+     * The spoke is not rebuilt, so constraints that hub() posts reach only
+     * the spokes of later episodes, and exhausting the spoke proves that
+     * the hub had no further solution when the spoke was created. In best
+     * solution search the engine still constrains the spoke with each new
+     * solution. A hook that restricts the hub in a way that the current
+     * spoke must respect selects \c Restart instead.
      */
     Continue,
     /// End the engine: next() returns nullptr with EndReason::Incomplete
@@ -2380,7 +2387,8 @@ namespace Gecode {
      *
      * The hook may post constraints in the hub and sets what the engine
      * does next with \a hc.decision() (see MetaDecision for the legal
-     * decisions and the default). If the hub fails, the engine ends
+     * decisions and the default). The constraints reach the current spoke
+     * only with MetaDecision::Restart, which searches a new spoke. If the hub fails, the engine ends
      * with Search::EndReason::Exhausted whatever the decision: failing
      * the hub is how a hook declares that no further solution exists.
      *
