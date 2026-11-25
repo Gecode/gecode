@@ -39,13 +39,21 @@
 
 namespace Gecode { namespace Search { namespace Seq {
 
-  /// Shared stop information
+  /**
+   * \brief Shared stop information
+   *
+   * A worker of a parallel asset can check its stop object after next()
+   * of the asset has returned, while the portfolio already prepares the
+   * next asset.
+   */
   class SharedStopInfo {
   public:
     /// Which stop object stopped the running asset, its workers can run in parallel
     std::atomic<PortfolioStopCause> cause;
     /// The current failure limit, incremented for each slice
-    unsigned long long int l;
+    std::atomic<unsigned long long int> l;
+    /// Mutex protecting others
+    Support::Mutex m;
     /// Statistics of the portfolio except for the running asset
     Statistics others;
   };

@@ -37,9 +37,16 @@ namespace Gecode { namespace Search { namespace Seq {
 
   bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
-    if ((po != nullptr) && po->stop(ssi->others + s,o)) {
-      pbs_record_cause(ssi->cause,PortfolioStopCause::Portfolio);
-      return true;
+    if (po != nullptr) {
+      Statistics others;
+      {
+        Support::Lock lock(ssi->m);
+        others = ssi->others;
+      }
+      if (po->stop(others + s,o)) {
+        pbs_record_cause(ssi->cause,PortfolioStopCause::Portfolio);
+        return true;
+      }
     }
     if ((so != nullptr) && so->stop(s,o)) {
       pbs_record_cause(ssi->cause,PortfolioStopCause::Asset);

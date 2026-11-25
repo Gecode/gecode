@@ -139,10 +139,12 @@ namespace Gecode { namespace Search { namespace Seq {
       ssi.cause = PortfolioStopCause::None;
       // Only the stop object of the portfolio uses the other assets
       if (assets[cur].portfolio_stop()) {
-        ssi.others = stat;
+        Statistics others(stat);
         for (unsigned int i=0U; i<n_assets; i++)
           if (i != cur)
-            ssi.others += assets[i].statistics();
+            others += assets[i].statistics();
+        Support::Lock lock(ssi.m);
+        ssi.others = others;
       }
       if (Space* s = assets[cur].next()) {
         // Constrain other assets

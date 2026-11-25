@@ -3895,6 +3895,55 @@ namespace Test {
 
     PBSPortfolioStopResume pbs_portfolio_stop_resume;
 
+    /// Space whose all-different variables give many failures and solutions
+    class Distinct : public Gecode::Space {
+    public:
+      Gecode::IntVarArray x;
+      Distinct(void) : x(*this,6,0,5) {
+        for (int i=0; i<x.size(); i++)
+          for (int j=i+1; j<x.size(); j++)
+            Gecode::rel(*this,x[i],Gecode::IRT_NQ,x[j]);
+        Gecode::branch(*this,x,Gecode::INT_VAR_NONE(),Gecode::INT_VAL_MIN());
+      }
+      Distinct(Distinct& s) : Gecode::Space(s) {
+        x.update(*this,s.x);
+      }
+      Gecode::Space* copy(void) override {
+        return new Distinct(*this);
+      }
+      void hub(Gecode::HubContext&) override {}
+    };
+
+    /// Parallel assets of a sequential portfolio take turns with a portfolio stop object
+    class PBSParallelAssets : public Base {
+    public:
+      PBSParallelAssets(void) : Base("Search::PBS::ParallelAssets") {}
+      bool run(void) override {
+        Distinct root;
+        Gecode::Search::NodeStop n(ULLONG_MAX);
+        Gecode::Search::Options a;
+        a.threads = 2;
+        Gecode::SEBs sebs(2);
+        sebs[0] = Gecode::dfs<Distinct>(a);
+        sebs[1] = Gecode::dfs<Distinct>(a);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        o.slice = 1;
+        o.stop = &n;
+        Gecode::PBS<Distinct,Gecode::DFS> pbs(&root,sebs,o);
+        // Each asset finds each of the 720 solutions
+        unsigned int solutions = 0;
+        while (Distinct* s = pbs.next()) {
+          delete s;
+          solutions++;
+        }
+        return (pbs.end_reason() == EndReason::Exhausted) &&
+          (solutions >= 720U) && (solutions <= 2U * 720U);
+      }
+    };
+
+    PBSParallelAssets pbs_parallel_assets;
+
     /// An asset stopped by its own stop object is parked while the others continue
     class PBSParkedAsset : public Base {
       /// Stop object that always stops
