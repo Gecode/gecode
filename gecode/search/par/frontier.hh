@@ -127,6 +127,8 @@ namespace Gecode { namespace Search { namespace Par {
     virtual void submit(const Entry& e, bool leased) = 0;
     /// Called when all work is done, return whether there is new work
     virtual bool advance(void) = 0;
+    /// Whether advance() would find new work, without changing anything
+    virtual bool can_advance(void) const = 0;
     /// Delete all open nodes
     virtual void clear(void) = 0;
     /// Called with the root \a r when search starts
@@ -157,6 +159,8 @@ namespace Gecode { namespace Search { namespace Par {
     bool enabled(unsigned int id);
     /// Run worker \a id
     void work(unsigned int id);
+    /// Whether no work is left (called with the mutex held)
+    bool drained(void) const;
   public:
     /// Destructor
     ~Frontier(void) override;

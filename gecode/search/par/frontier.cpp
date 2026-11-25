@@ -165,6 +165,11 @@ namespace Gecode { namespace Search { namespace Par {
     running = false;
   }
 
+  bool
+  Frontier::drained(void) const {
+    return (n_pending == 0) && !open() && (active == 0) && !can_advance();
+  }
+
   void
   Frontier::work(unsigned int id) {
     // The leased task and the incumbent used for constraining its children
@@ -343,6 +348,8 @@ namespace Gecode { namespace Search { namespace Par {
         return nullptr;
       }
       // An exhausted search is complete, even when a limit has been reached
+      if (drained())
+        _exhausted = true;
       if (_exhausted) {
         _stopped = false;
         end = EndReason::Exhausted;
@@ -364,7 +371,7 @@ namespace Gecode { namespace Search { namespace Par {
         end = EndReason::NotEnded;
       else if (_limited)
         end = EndReason::Incomplete;
-      else if (_exhausted)
+      else if (_exhausted || drained())
         end = EndReason::Exhausted;
       else
         end = _stopped ? EndReason::Limit : EndReason::Exhausted;

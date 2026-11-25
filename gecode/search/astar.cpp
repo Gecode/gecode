@@ -66,6 +66,9 @@ namespace Gecode { namespace Search { namespace Par {
     bool advance(void) override {
       return false;
     }
+    bool can_advance(void) const override {
+      return false;
+    }
     void clear(void) override {
       queue.clear();
     }

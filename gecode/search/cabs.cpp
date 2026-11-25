@@ -103,6 +103,9 @@ namespace Gecode { namespace Search { namespace Par {
     void started(const Space& r) override {
       root.reset(r.clone());
     }
+    bool can_advance(void) const override {
+      return !candidates.empty() || candidates.improving(best);
+    }
   public:
     /// Initialize for space \a s with options \a o
     CABS(Space* s, const Options& o)
@@ -240,6 +243,12 @@ namespace Gecode { namespace Search { namespace Seq {
     if (_exhausted)
       return nullptr;
     while (true) {
+      // An exhausted search is complete, even when a limit has been reached
+      if (!expansion && layer.empty() && candidates.empty() &&
+          !candidates.improving(best)) {
+        _exhausted = true;
+        return nullptr;
+      }
       if (stop_seq(opt))
         return nullptr;
       if (!expansion) {
