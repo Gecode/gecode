@@ -1,7 +1,0 @@
-schema_version = 1
-tag = "value-params"
-title = "Parameter passing audit"
-objective = "Parameters that own data or atomic reference counts are passed without needless copies, and performance-unnecessary-value-param guards the policy."
-branch = "feature/breaking-7"
-lifecycle = "open"
-base_commit = "0c81e65ae53173d616dbf2712baa00a29c8d33ba"

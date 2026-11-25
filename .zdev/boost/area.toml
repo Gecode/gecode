@@ -1,7 +1,0 @@
-schema_version = 1
-tag = "boost"
-title = "Rethink Boost interval handling"
-objective = "Decide and implement how Gecode 7 provides interval arithmetic and directed rounding for float variables, replacing the 2012 vendored Boost snapshot."
-branch = "feature/breaking-7"
-lifecycle = "open"
-base_commit = "0c81e65ae53173d616dbf2712baa00a29c8d33ba"
