@@ -4002,6 +4002,64 @@ namespace Test {
 
     PBSAssetException pbs_asset_exception;
 
+    /// Exception thrown by the statistics of NoStatistics
+    class StatisticsFailure {};
+
+    /// Engine without solutions that cannot report its statistics
+    class NoStatistics : public Gecode::Search::Engine {
+    protected:
+      /// Why next() returns no solution
+      EndReason r;
+    public:
+      NoStatistics(EndReason r0) : r(r0) {}
+      Gecode::Space* next(void) override {
+        return nullptr;
+      }
+      Gecode::Search::Statistics statistics(void) const override {
+        throw StatisticsFailure();
+      }
+      EndReason end_reason(void) const override {
+        return r;
+      }
+    };
+
+    /// Builder for NoStatistics
+    class NoStatisticsBuilder : public Gecode::Search::Builder {
+    protected:
+      /// Why next() of the engine returns no solution
+      EndReason r;
+    public:
+      NoStatisticsBuilder(EndReason r0)
+        : Gecode::Search::Builder(Gecode::Search::Options::def,false), r(r0) {}
+      Gecode::Search::Engine* operator ()(Gecode::Space*) const override {
+        return new NoStatistics(r);
+      }
+    };
+
+    /// An exception from the statistics of an asset that ended is rethrown by next()
+    class PBSStatisticsException : public Base {
+    public:
+      PBSStatisticsException(void) : Base("Search::PBS::StatisticsException") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U}) {
+          NoSolution root;
+          Gecode::SEBs sebs(2);
+          sebs[0] = new NoStatisticsBuilder(EndReason::Incomplete);
+          sebs[1] = new NoStatisticsBuilder(EndReason::Incomplete);
+          Gecode::Search::Options o;
+          o.threads = t;
+          Gecode::PBS<NoSolution,Gecode::DFS> pbs(&root,sebs,o);
+          try {
+            delete pbs.next();
+            return false;
+          } catch (const StatisticsFailure&) {}
+        }
+        return true;
+      }
+    };
+
+    PBSStatisticsException pbs_statistics_exception;
+
     /// A copy of a cutoff generator continues its sequence independently
     class CutoffCopy : public Base {
       /// Check that a copy of \a c continues as \a c, then delete \a c
