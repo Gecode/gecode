@@ -67,6 +67,7 @@ namespace Gecode { namespace FlatZinc {
                               unsigned int b) {
     const PosIntChoice& c
       = static_cast<const PosIntChoice&>(_c);
+    random_split(b);
     int p=c.pos(); int n=c.val();
     if (p < x.size()) {
       return me_failed(xvsc->commit(home,b,x[p],p,n)) ?
@@ -76,6 +77,12 @@ namespace Gecode { namespace FlatZinc {
       return me_failed(yvsc->commit(home,b,y[p],p,n)) ?
         ES_FAILED : ES_OK;
     }
+  }
+
+  void
+  IntBoolBrancherBase::random_split(unsigned int b) {
+    xvsc->random_split(b);
+    yvsc->random_split(b);
   }
 
   NGL*

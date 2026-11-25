@@ -121,9 +121,9 @@ namespace Gecode { namespace Search {
   Cutoff*
   CutoffRandom::copy(void) const {
     CutoffRandom* c = new CutoffRandom(*this);
-    // Derive a distinct seed for each copy, the golden ratio spreads them
+    // Give each copy its own stream
     copies++;
-    c->rnd.seed(rnd.seed() + copies * 0x9e3779b9U);
+    c->rnd = rnd.split(copies);
     c->copies = 0U;
     (void) ++(*c);
     return c;

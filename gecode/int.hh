@@ -6645,7 +6645,9 @@ namespace Gecode {
    * if \f$p=0.1\f$ approximately 10% of the variables in \a x will be
    * assigned a value from \a sx.
    *
-   * The random numbers are generated from the generator \a r. At least
+   * The random numbers are generated from a copy of the generator \a r,
+   * so the caller's generator does not advance: successive relaxations
+   * need distinct generators, for example Rnd::split(). At least
    * one variable will not be assigned: in case the relaxation attempt
    * would suggest that all variables should be assigned, a single
    * variable will be selected randomly to remain unassigned.
@@ -6670,7 +6672,9 @@ namespace Gecode {
    * if \f$p=0.1\f$ approximately 10% of the variables in \a x will be
    * assigned a value from \a sx.
    *
-   * The random numbers are generated from the generator \a r. At least
+   * The random numbers are generated from a copy of the generator \a r,
+   * so the caller's generator does not advance: successive relaxations
+   * need distinct generators, for example Rnd::split(). At least
    * one variable will not be assigned: in case the relaxation attempt
    * would suggest that all variables should be assigned, a single
    * variable will be selected randomly to remain unassigned.

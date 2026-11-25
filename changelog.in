@@ -253,6 +253,37 @@ step, which would admit solutions that are not better. An exception thrown in
 an asset of a parallel portfolio, or by compare() in parallel BAB, is now
 rethrown by next() instead of terminating the program.
 
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Replaced the random number generator by splittable engines with complete
+state save/restore: SplitMix for Rnd, or any engine through RndGenerator.
+The randomized selectors of Gecode's branchers split their state on commit,
+so cloning and recomputation make the same random decisions at a node, and
+meta search gives the branchers of each spoke their own stream. Parallel
+scheduling and weakly monotonic propagation can still change the search.
+[MORE]
+Rnd is a value type with an explicit seed constructor: write
+INT_VAL_RND(Rnd(42)) instead of INT_VAL_RND(42). Use state() and
+state(text) instead of seed(), and opt.rnd() instead of Rnd(opt.seed()).
+Drivers accept -state with a complete state, and a seed or state option
+may be given only once. Seeded sequences change. A copy of an Rnd no
+longer advances the original, so relax() and other functions taking an Rnd
+by value draw the same numbers from the same generator: pass a distinct
+split to each call. A generator owned by the model is copied into every
+spoke: split it with rnd.split(sc) in spoke(), for example
+relax(*this, x, sx, rnd.split(sc), p).
+
+[ENTRY]
+Module: test
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The test option -replay takes the complete random state printed for a
+failed iteration.
+
 [RELEASE]
 Version: 6.6.0
 Date: 2026-11-16

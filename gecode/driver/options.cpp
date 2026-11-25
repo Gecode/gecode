@@ -112,6 +112,73 @@ namespace Gecode {
     }
 
 
+    RandomOption::RandomOption(const char* o, const char* e, uint64_t v,
+                               const char* s)
+      : BaseOption(o,e), sopt(strdup(s)), siopt(stredup(s)) {
+      value(v);
+    }
+    RandomOption::~RandomOption(void) {
+      strdel(sopt);
+      strdel(siopt);
+    }
+    void RandomOption::value(uint64_t v) {
+      initial.seed(v);
+      seed_given = state_given = false;
+    }
+    Rnd RandomOption::rnd(void) const {
+      return initial;
+    }
+    int RandomOption::parse(int argc, char* argv[]) {
+      bool full = false;
+      if ((argc >= 2) && (argv[1][0] == '-')) {
+        const char* name = argv[1] + ((argv[1][1] == '-') ? 2 : 1);
+        full = !strcmp(name,sopt);
+      }
+      const char* arg;
+      if (full) {
+        if (argc < 3) {
+          std::cerr << "Missing argument for option " << siopt << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        arg = argv[2];
+      } else {
+        arg = argument(argc,argv);
+        if (!arg)
+          return 0;
+      }
+      try {
+        if ((full && seed_given) || (!full && state_given))
+          throw std::invalid_argument("Seed and state options cannot be combined");
+        if (seed_given || state_given)
+          throw std::invalid_argument(std::string(full ? siopt : iopt) +
+                                      " given more than once");
+        if (full) {
+          initial.state(std::string(arg));
+          state_given = true;
+        } else {
+          if (!strcmp(arg,"time") || !strcmp(arg,"hw")) {
+            if (!strcmp(arg,"time")) initial.time(); else initial.hw();
+            std::cerr << "% Random state: " << siopt << " " << initial.state()
+                      << std::endl;
+          } else {
+            initial.seed(Support::random_seed(arg));
+          }
+          seed_given = true;
+        }
+      } catch (const std::exception& e) {
+        std::cerr << "Invalid random option: " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      return 2;
+    }
+    void RandomOption::help(void) {
+      std::cerr << "\t" << iopt << " (64-bit decimal/hex seed, time, hw)\n"
+                << "\t\t" << exp << "\n"
+                << "\t" << siopt << " (complete " << Rnd::name()
+                << " state; mutually exclusive with " << iopt << ")\n"
+                << "\t\tCurrent initial state: " << initial.state() << std::endl;
+    }
+
     StringValueOption::StringValueOption(const char* o, const char* e,
                                          const char* v)
       : BaseOption(o,e), cur(strdup(v)) {}
