@@ -95,6 +95,17 @@ namespace Test {
 
     using Gecode::Search::EndReason;
 
+    /// Stop object that stops once it is switched on
+    class Switch : public Gecode::Search::Stop {
+    public:
+      /// Whether search must stop
+      std::atomic<bool> on{false};
+      bool stop(const Gecode::Search::Statistics&,
+                const Gecode::Search::Options&) override {
+        return on.load();
+      }
+    };
+
 #ifdef GECODE_HAS_EXPERIMENTAL
     /// Explicit finite tree with prefix costs, admissible bounds, and ranks
     class TreeSpace : public Space {
@@ -302,17 +313,6 @@ namespace Test {
 
     Heuristic<Gecode::AStar> astar_test("AStar");
     Heuristic<Gecode::CABS> cabs_test("CABS");
-
-    /// Stop object that stops once it is switched on
-    class Switch : public Gecode::Search::Stop {
-    public:
-      /// Whether search must stop
-      std::atomic<bool> on{false};
-      bool stop(const Gecode::Search::Statistics&,
-                const Gecode::Search::Options&) override {
-        return on.load();
-      }
-    };
 
     /// A heuristic search stays exhausted when its stop object fires later
     template<template<class> class E>
