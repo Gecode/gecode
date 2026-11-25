@@ -1624,14 +1624,16 @@ namespace Gecode {
    * slices of failures (see Search::Options::slice).
    *
    * The stop object in \a o is checked with the statistics of the whole
-   * portfolio, that is, the sum of the statistics of all assets. An asset
-   * contributes the statistics with which it last checked its stop
-   * object, or its final statistics once it has ended. A parallel asset
-   * checks its stop object with the statistics of one worker, as any
-   * parallel engine does, and so contributes those of the worker that
-   * checked last. When the stop object stops search, end_reason()
-   * returns Search::EndReason::Limit and calling next() again resumes all
-   * assets.
+   * portfolio, that is, the sum of the statistics of all assets. The
+   * asset that checks contributes the statistics it checks with, which
+   * for a parallel asset are those of one worker, as for any parallel
+   * engine. With one thread, every other asset is paused and contributes
+   * its current statistics, for a parallel asset those of all its
+   * workers. With more threads, every other asset contributes the
+   * statistics with which it last checked its stop object, or its final
+   * statistics once it has ended. When the stop object stops search,
+   * end_reason() returns Search::EndReason::Limit and calling next()
+   * again resumes all assets.
    *
    * For best-solution assets, a solution replaces the incumbent only if
    * Space::compare reports SpaceComparison::Better.
