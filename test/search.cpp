@@ -3865,6 +3865,36 @@ namespace Test {
 
     PBSPortfolioStop pbs_portfolio_stop;
 
+    /// Portfolio search resumes with the next call after its stop object fired
+    class PBSPortfolioStopResume : public Base {
+      /// Whether the assets run again after a single limit
+      static bool test(unsigned int threads) {
+        NoSolution root;
+        Switch s;
+        s.on = true;
+        Gecode::Search::Options o;
+        o.threads = threads;
+        o.assets = 2;
+        o.stop = &s;
+        Gecode::PBS<NoSolution,Gecode::DFS> pbs(&root,o);
+        if ((pbs.next() != nullptr) || (pbs.end_reason() != EndReason::Limit))
+          return false;
+        s.on = false;
+        return (pbs.next() == nullptr) &&
+          (pbs.end_reason() == EndReason::Exhausted);
+      }
+    public:
+      PBSPortfolioStopResume(void) : Base("Search::PBS::PortfolioStopResume") {}
+      bool run(void) override {
+        for (unsigned int t : {1U,2U})
+          if (!test(t))
+            return false;
+        return true;
+      }
+    };
+
+    PBSPortfolioStopResume pbs_portfolio_stop_resume;
+
     /// An asset stopped by its own stop object is parked while the others continue
     class PBSParkedAsset : public Base {
       /// Stop object that always stops
