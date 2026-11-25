@@ -449,8 +449,10 @@ namespace Gecode { namespace Search { namespace Par {
       s = nullptr;
       if (exhausted)
         end = EndReason::Exhausted;
-      else if (portfolio_stop.load(std::memory_order_acquire) || (n_active > 0))
-        // Stopped by the portfolio stop object, or only parked assets remain
+      else if (portfolio_stop.exchange(false, std::memory_order_acq_rel) ||
+               (n_active > 0))
+        // Stopped by the portfolio stop object, or only parked assets remain,
+        // the next call resumes the assets
         end = EndReason::Limit;
       else
         // All assets ended without a proof
