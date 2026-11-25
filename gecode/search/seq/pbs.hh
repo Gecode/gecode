@@ -70,6 +70,8 @@ namespace Gecode { namespace Search { namespace Seq {
     PortfolioStop(Stop* so, Stop* po=nullptr);
     /// Initialize shared stop information
     void share(SharedStopInfo* ssi);
+    /// Whether the portfolio has a stop object
+    bool portfolio_stop(void) const;
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
   };
@@ -102,6 +104,8 @@ namespace Gecode { namespace Search { namespace Seq {
     Statistics statistics(void) const;
     /// Return why the last call to next() of the asset returned no solution
     EndReason end_reason(void) const;
+    /// Whether the portfolio has a stop object
+    bool portfolio_stop(void) const;
     /// Constrain with better solution \a b
     void constrain(const Space& b);
     /// Park the asset after its stop object stopped it
