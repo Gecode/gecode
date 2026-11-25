@@ -43,6 +43,10 @@ namespace Gecode { namespace Search { namespace Seq {
   PortfolioStop::share(SharedStopInfo* ssi0) {
     ssi = ssi0;
   }
+  forceinline bool
+  PortfolioStop::portfolio_stop(void) const {
+    return po != nullptr;
+  }
 
 
   forceinline
@@ -69,6 +73,10 @@ namespace Gecode { namespace Search { namespace Seq {
   forceinline EndReason
   Asset::end_reason(void) const {
     return engine->end_reason();
+  }
+  forceinline bool
+  Asset::portfolio_stop(void) const {
+    return static_cast<const PortfolioStop*>(stop)->portfolio_stop();
   }
   forceinline void
   Asset::constrain(const Space& b) {
@@ -129,10 +137,13 @@ namespace Gecode { namespace Search { namespace Seq {
         continue;
       }
       ssi.cause = PortfolioStopCause::None;
-      ssi.others = stat;
-      for (unsigned int i=0U; i<n_assets; i++)
-        if (i != cur)
-          ssi.others += assets[i].statistics();
+      // Only the stop object of the portfolio uses the other assets
+      if (assets[cur].portfolio_stop()) {
+        ssi.others = stat;
+        for (unsigned int i=0U; i<n_assets; i++)
+          if (i != cur)
+            ssi.others += assets[i].statistics();
+      }
       if (Space* s = assets[cur].next()) {
         // Constrain other assets
         if (best) {

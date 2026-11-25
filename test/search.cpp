@@ -4060,6 +4060,29 @@ namespace Test {
 
     PBSStatisticsException pbs_statistics_exception;
 
+    /// A sequential portfolio without a stop object needs no statistics of its assets
+    class PBSNoStopStatistics : public Base {
+    public:
+      PBSNoStopStatistics(void) : Base("Search::PBS::NoStopStatistics") {}
+      bool run(void) override {
+        NoSolution root;
+        Gecode::SEBs sebs(2);
+        sebs[0] = new NoStatisticsBuilder(EndReason::Limit);
+        sebs[1] = new NoStatisticsBuilder(EndReason::Limit);
+        Gecode::Search::Options o;
+        o.threads = 1;
+        Gecode::PBS<NoSolution,Gecode::DFS> pbs(&root,sebs,o);
+        try {
+          return (pbs.next() == nullptr) &&
+            (pbs.end_reason() == EndReason::Limit);
+        } catch (const StatisticsFailure&) {
+          return false;
+        }
+      }
+    };
+
+    PBSNoStopStatistics pbs_no_stop_statistics;
+
     /// A copy of a cutoff generator continues its sequence independently
     class CutoffCopy : public Base {
       /// Check that a copy of \a c continues as \a c, then delete \a c
