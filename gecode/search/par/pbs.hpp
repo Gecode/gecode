@@ -266,6 +266,12 @@ namespace Gecode { namespace Search { namespace Par {
     // If b is false the report should be repeated (solution was worse)
     bool b = true;
     bool wake = false;
+    if ((s == nullptr) && (asset->end_reason() != EndReason::Limit) &&
+        !pbs_asset_proof(asset->end_reason(),asset->coverage()))
+      // The asset ended without a proof, its last stop check might not
+      // include its final work.  Record it before taking the lock, as an
+      // exception from statistics() is reported by fail(), which takes it.
+      asset->record();
     m.acquire();
     if (s != nullptr) {
       try {
@@ -303,8 +309,6 @@ namespace Gecode { namespace Search { namespace Par {
       wake = true;
     } else {
       // The asset ended without a proof, move it to inactive
-      // Its last stop check might not include its final work
-      asset->record();
       unsigned int i=0;
       while (assets[i] != asset)
         i++;
