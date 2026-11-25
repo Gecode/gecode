@@ -4310,7 +4310,7 @@ namespace Test {
       FailAtSolution,  ///< hub() fails at Solution
       ContinueAtLimit, ///< hub() continues at Limit
       EmptyHub,        ///< hub() does nothing
-      BoundInHub,      ///< hub() posts c <= 1 at Start and keeps the branchers
+      BoundInHub,      ///< hub() leaves c <= 1 to propagation at Start, keeps the branchers
       Alternate,       ///< Episodes alternate between a solution and the cutoff
     };
 
@@ -4322,6 +4322,8 @@ namespace Test {
       std::vector<std::pair<MetaEvent,unsigned long int> > spoke;
       /// Number of spaces alive
       std::atomic<int> live{0};
+      /// Number of hub() calls that returned with the hub not stable
+      std::atomic<unsigned int> unstable{0U};
     };
 
     /// Space whose hooks follow a Protocol
@@ -4406,7 +4408,12 @@ namespace Test {
           return;
         case Protocol::BoundInHub:
           if (hc.event() == MetaEvent::Start) {
-            rel(*this,c,IRT_LQ,1);
+            // Only propagation enforces c <= 1, posting does not prune c
+            BoolVar b(*this,0,1);
+            rel(*this,c,IRT_LQ,1,Reify(b,RM_IMP));
+            rel(*this,b,IRT_EQ,1);
+            if (!stable())
+              log->unstable++;
             return;
           }
           break;
@@ -4704,10 +4711,12 @@ namespace Test {
           Gecode::Search::Options o;
           o.assets = 2;
           o.threads = t;
+          unsigned int unstable = log.unstable;
           Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,o);
           delete m;
           ProtocolSpace* s = pbs.next();
-          const bool ok = (s != nullptr) && (s->c.val() == 1);
+          const bool ok = (s != nullptr) && (s->c.val() == 1) &&
+            (log.unstable == unstable+1U);
           delete s;
           if (!ok)
             return false;
@@ -4719,10 +4728,12 @@ namespace Test {
           SEBs assets(2);
           for (int i=0; i<2; i++)
             assets[i] = Gecode::dfs<ProtocolSpace>(o);
+          unsigned int unstable = log.unstable;
           Gecode::PBS<ProtocolSpace,Gecode::DFS> pbs(m,assets,o);
           delete m;
           ProtocolSpace* s = pbs.next();
-          const bool ok = (s != nullptr) && (s->c.val() == 1);
+          const bool ok = (s != nullptr) && (s->c.val() == 1) &&
+            (log.unstable == unstable+1U);
           delete s;
           if (!ok)
             return false;
