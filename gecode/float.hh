@@ -180,6 +180,11 @@ namespace Gecode { namespace Float {
      * direction. int_down() and int_up() use `std::floor` and `std::ceil`,
      * which do not depend on the mode.
      *
+     * A RoundingBase sets no mode on construction. Without
+     * GECODE_FLOAT_DIRECTED_PER_OPERATION, its operations need the upward
+     * mode, so use a Rounding, which sets that mode and restores the
+     * caller's mode on destruction.
+     *
      * The test Float::Arithmetic::DirectedRounding checks the bounds with
      * literal and runtime operands under every caller mode.
      *
@@ -213,7 +218,7 @@ namespace Gecode { namespace Float {
     private:
         /// Return \a x unchanged, hidden from the optimizer (see the class comment)
         static FloatNum barrier(FloatNum x);
-        /// Return the midpoint of \a x and \a y, rounded to nearest
+        /// Return the midpoint of \a x and \a y, rounded to nearest and without overflow
         static FloatNum nearest_median(FloatNum x, FloatNum y);
 
     public:
