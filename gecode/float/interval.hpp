@@ -660,6 +660,7 @@ namespace Gecode { namespace Float {
         /**
          * \brief Return \a x divided by \a y
          *
+         * The result encloses the quotients over the nonzero members of \a y.
          * A divisor touching zero at one bound sends the quotient to infinity
          * on the side given by the dividend's sign, and a divisor with zero
          * inside gives the whole line. Over such divisors, a dividend of
@@ -679,7 +680,7 @@ namespace Gecode { namespace Float {
             case ZeroPosition::LOWER_BOUND:
                 if (x_zero)
                     return x;
-                if (xu < 0.0)
+                if (xu <= 0.0)
                     return Interval::unchecked(-inf, r.div_up(xu, y.upper()));
                 if (xl < 0.0)
                     return whole();
@@ -687,7 +688,7 @@ namespace Gecode { namespace Float {
             case ZeroPosition::UPPER_BOUND:
                 if (x_zero)
                     return x;
-                if (xu < 0.0)
+                if (xu <= 0.0)
                     return Interval::unchecked(r.div_down(xu, y.lower()), inf);
                 if (xl < 0.0)
                     return whole();

@@ -263,6 +263,25 @@ namespace Test { namespace Float {
             }
         } comparison;
 
+        /// A divisor with one zero bound gives a quotient with the dividend's sign
+        class ZeroBoundDivision : public Base {
+        public:
+            ZeroBoundDivision(void) : Base("Float::Interval::ZeroBoundDivision", TestTags::standard()) {}
+            bool
+            run(void) override {
+                const FloatNum inf = std::numeric_limits<FloatNum>::infinity();
+                const Interval nonpositive(-1.0, 0.0);
+                const Interval nonnegative(0.0, 1.0);
+                bool result = true;
+                result &= has_bounds("[-1,0]/[0,1]", nonpositive / nonnegative, -inf, 0.0);
+                result &= has_bounds("[-2,0]/[-1,0]", Interval(-2.0, 0.0) / nonpositive, 0.0, inf);
+                result &= has_bounds("[0,2]/[0,1]", Interval(0.0, 2.0) / nonnegative, 0.0, inf);
+                result &= has_bounds("[0,1]/[-1,0]", nonnegative / nonpositive, -inf, 0.0);
+                result &= has_bounds("[-1,1]/[0,1]", Interval(-1.0, 1.0) / nonnegative, -inf, inf);
+                return result;
+            }
+        } zero_bound_division;
+
         //@}
 
     } // namespace IntervalCore
