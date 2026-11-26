@@ -282,6 +282,35 @@ namespace Test { namespace Float {
             }
         } zero_bound_division;
 
+        /// A shift by whole periods stays an enclosure when the period count overflows
+        class PeriodOverflow : public Base {
+        private:
+            /// Test whether \a x contains -1, the shift by zero periods, and log otherwise
+            static bool
+            contains_minus_one(const char* name, const Interval& x) {
+                if ((x.lower() <= -1.0) && (x.upper() >= -1.0))
+                    return true;
+                olog << name << ": [" << x.lower() << ", " << x.upper() << "] does not contain -1\n";
+                return false;
+            }
+
+        public:
+            PeriodOverflow(void) : Base("Float::Interval::PeriodOverflow", TestTags::standard()) {}
+            bool
+            run(void) override {
+                // -1 divided by the period is below the most negative double
+                const FloatNum period = std::numeric_limits<FloatNum>::denorm_min();
+                bool result = true;
+                result &= contains_minus_one("fmod([-1,-1],p)", fmod(Interval(-1.0), period));
+                result &= contains_minus_one("fmod([-1,-1],[p,p])", fmod(Interval(-1.0), Interval(period)));
+                result &= contains_minus_one("fmod(-1,[p,p])", fmod(-1.0, Interval(period)));
+                // An infinite lower bound gives an infinite count for every period
+                const FloatNum inf = std::numeric_limits<FloatNum>::infinity();
+                result &= contains_minus_one("fmod([-inf,0],1)", fmod(Interval(-inf, 0.0), 1.0));
+                return result;
+            }
+        } period_overflow;
+
         //@}
 
     } // namespace IntervalCore

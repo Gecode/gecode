@@ -862,18 +862,23 @@ namespace Gecode { namespace Float {
          * \f$q\f$ is the rounded-down quotient of the lower bound of \a x and
          * the bound of \a y that makes it smallest for a positive \a y. The
          * result is \a x shifted by whole periods of \a y, not a tight
-         * remainder.
+         * remainder. If that quotient is not finite, \a x is returned
+         * unshifted (\f$q=0\f$).
          */
         forceinline Interval
         fmod(RoundingBase& r, const Interval& x, const Interval& y) {
             const FloatNum period = (x.lower() < 0.0) ? y.lower() : y.upper();
             const FloatNum q = r.int_down(r.div_down(x.lower(), period));
+            if (!std::isfinite(q))
+                return x;
             return sub(r, x, mul(r, q, y));
         }
         /// Return an enclosure of \f$x-qn\f$ for some integer \f$q\f$ (see fmod())
         forceinline Interval
         fmod(RoundingBase& r, const Interval& x, FloatNum n) {
             const FloatNum q = r.int_down(r.div_down(x.lower(), n));
+            if (!std::isfinite(q))
+                return x;
             return sub(r, x, mul(r, q, Interval(n)));
         }
         /// Return an enclosure of \f$n-qy\f$ for some integer \f$q\f$ (see fmod())
@@ -881,6 +886,8 @@ namespace Gecode { namespace Float {
         fmod(RoundingBase& r, FloatNum n, const Interval& y) {
             const FloatNum period = (n < 0.0) ? y.lower() : y.upper();
             const FloatNum q = r.int_down(r.div_down(n, period));
+            if (!std::isfinite(q))
+                return Interval(n);
             return sub(r, n, mul(r, q, y));
         }
 
