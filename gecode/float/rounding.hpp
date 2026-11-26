@@ -125,8 +125,14 @@ namespace Gecode { namespace Float {
 
     forceinline FloatNum
     RoundingBase::nearest_median(FloatNum x, FloatNum y) {
+        // Set the mode before halving: with _control87 it also masks exceptions
         to_nearest();
-        const FloatNum m = barrier((barrier(x) + barrier(y)) / 2.0);
+        const FloatNum h = std::numeric_limits<FloatNum>::max() / 2.0;
+        FloatNum m;
+        if ((y > h) || (x < -h))
+            m = std::ldexp(barrier((barrier(barrier(x) / 2.0) + barrier(barrier(y) / 2.0)) / 2.0), 1);
+        else
+            m = barrier((barrier(x) + barrier(y)) / 2.0);
 #ifndef GECODE_FLOAT_DIRECTED_PER_OPERATION
         upward();
 #endif
@@ -136,7 +142,6 @@ namespace Gecode { namespace Float {
     forceinline FloatNum
     RoundingBase::median(FloatNum l, FloatNum u) {
         const FloatNum inf = std::numeric_limits<FloatNum>::infinity();
-        const FloatNum max = std::numeric_limits<FloatNum>::max();
         if (l == -inf) {
             if (u == -inf)
                 return l;
@@ -145,10 +150,6 @@ namespace Gecode { namespace Float {
         }
         if (u == inf)
             return u;
-
-        const FloatNum h = max / 2.0;
-        if ((u > h) || (l < -h))
-            return std::ldexp(nearest_median(l / 2.0, u / 2.0), 1);
         return nearest_median(l, u);
     }
 
