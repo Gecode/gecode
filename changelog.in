@@ -243,12 +243,13 @@ result: optimizers folded constants in round-to-nearest, shared one square
 root or quotient between both bounds, and fused the negated multiplication,
 even in Clang Debug builds. Each operand and result now passes through an
 optimization barrier, so neither Gecode nor applications need floating-point
-compiler flags.
+compiler flags. x87 arithmetic is no longer supported: 32-bit x86 builds with
+GCC, which uses x87 by default, need -msse2 -mfpmath=sse.
 [MORE]
-The barrier is an empty volatile asm statement with GCC and Clang, and a
-volatile store and reload with other compilers. Integer rounding uses floor
-and ceil, which do not depend on the rounding mode. The even-root bounds of
-pow and nroot use the same rounding operations.
+The barrier is an empty volatile asm statement with GCC and Clang on AArch64
+and x86-64, and a volatile store and reload elsewhere. Integer rounding uses
+floor and ceil, which do not depend on the rounding mode. The even-root
+bounds of pow and nroot use the same rounding operations.
 
 [ENTRY]
 Module: float
@@ -259,11 +260,24 @@ Implement interval arithmetic in Gecode itself, as the new type
 Float::Interval with its free functions in namespace Gecode::Float. Gecode
 no longer contains, or installs, its renamed copy of the Boost interval
 library and Boost's LICENSE_1_0.txt, and it takes on no external dependency in
-their place. Bounds, comparison results, and search behave exactly as
-before. The empty-interval exception is still a std::runtime_error, but its
-message is now "Gecode::Float::Interval: empty interval".
+their place. Bounds, comparison results, and search behave as before, with
+two exceptions: dividing by an interval with one zero bound keeps the sign
+of a dividend that ends at zero, such as [-1,0]/[0,1], instead of giving the
+whole line, and fmod returns its argument unshifted, instead of a result
+such as [inf,inf], when the number of periods is not finite. The
+empty-interval exception is still a std::runtime_error, but its message is
+now "Gecode::Float::Interval: empty interval".
 [MORE]
 The interval code is Gecode code under Gecode's MIT license.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Keep every divisor in div when the dividend and the quotient can both be
+zero. With the dividend and the quotient in [0,1], div removed the negative
+divisors, although 0/x=0 holds for every nonzero x.
 
 [ENTRY]
 Module: float
