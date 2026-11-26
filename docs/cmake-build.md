@@ -249,8 +249,11 @@ On macOS, `std::thread` stacks are 512 KiB, while the main thread has 8 MiB, and
 the check targets run `gecode-test` on worker threads. In a Debug build with
 AddressSanitizer, forced inlining gives some propagators a frame of about
 400 KiB, so a test can overflow its worker stack. This is a limit of that build,
-not unbounded recursion. Use an optimized sanitizer build, or run
-`gecode-test -threads 1` on the main thread.
+not unbounded recursion. Use an optimized sanitizer build, or run the `check`
+selection on the main thread with
+`gecode-test -iter 2 -threads 1 -fixprob 1 -tag check`. The FlatZinc blackbox
+tests run only when the `GECODE_TEST_BLACKBOX_EXEC`, `_DLL`, and `_LOG`
+variables that `check` sets are present.
 
 ## Using Gecode From Other CMake Projects
 
