@@ -49,16 +49,10 @@
 namespace Gecode { namespace Gist {
 
     TreeCanvas::TreeCanvas(Space* root_space, bool bab, QWidget* parent, const Options& opt)
-        : QWidget(parent)
-#if QT_VERSION < 0x060000
-          ,
-          mutex(QMutex::Recursive), layout_mutex(QMutex::Recursive)
-#endif
-          ,
-          finished_flag(false), compare_nodes(false), compare_nodes_before_fp(false), auto_hide_failed(true),
-          auto_zoom(false), refresh(500), refresh_pause(0), smooth_scroll_and_zoom(false), move_during_search(false),
-          zoom_time_line(500), scroll_time_line(1000), target_x(0), source_x(0), target_y(0), source_y(0), target_w(0),
-          target_h(0), target_scale(0), layout_done_timer_id(0) {
+        : QWidget(parent), finished_flag(false), compare_nodes(false), compare_nodes_before_fp(false),
+          auto_hide_failed(true), auto_zoom(false), refresh(500), refresh_pause(0), smooth_scroll_and_zoom(false),
+          move_during_search(false), zoom_time_line(500), scroll_time_line(1000), target_x(0), source_x(0), target_y(0),
+          source_y(0), target_w(0), target_h(0), target_scale(0), layout_done_timer_id(0) {
         QMutexLocker locker(&mutex);
         cur_best = (bab ? new BestNode(nullptr) : nullptr);
         if (root_space->status() == SS_FAILED) {
@@ -94,11 +88,7 @@ namespace Gecode { namespace Gist {
         connect(&searcher, SIGNAL(search_finished(void)), this, SIGNAL(search_finished(void)));
 
         connect(&scroll_time_line, SIGNAL(frameChanged(int)), this, SLOT(scroll(int)));
-#if QT_VERSION >= 0x060000
         scroll_time_line.setEasingCurve(QEasingCurve::InOutSine);
-#else
-        scroll_time_line.setCurveShape(QTimeLine::EaseInOutCurve);
-#endif
 
         scale_bar = new QSlider(Qt::Vertical, this);
         scale_bar->setObjectName("scaleBar");
@@ -110,11 +100,7 @@ namespace Gecode { namespace Gist {
         connect(&searcher, SIGNAL(scale_changed(int)), scale_bar, SLOT(setValue(int)));
 
         connect(&zoom_time_line, SIGNAL(frameChanged(int)), scale_bar, SLOT(setValue(int)));
-#if QT_VERSION >= 0x060000
         zoom_time_line.setEasingCurve(QEasingCurve::InOutSine);
-#else
-        zoom_time_line.setCurveShape(QTimeLine::EaseInOutCurve);
-#endif
 
         qRegisterMetaType<Statistics>("Statistics");
         update();
@@ -962,7 +948,6 @@ namespace Gecode { namespace Gist {
 
     void
     TreeCanvas::export_node_pdf(VisualNode* n) {
-#if QT_VERSION >= 0x040400
         QString filename = QFileDialog::getSaveFileName(this, tr("Export tree as pdf"), "", tr("PDF (*.pdf)"));
         if (filename != "") {
             QPrinter printer(QPrinter::ScreenResolution);
@@ -970,24 +955,14 @@ namespace Gecode { namespace Gist {
 
             BoundingBox bb = n->get_bounding_box();
             printer.setFullPage(true);
-#if QT_VERSION >= 0x060000
             printer.setPageSize(QPageSize(
                 QSizeF(bb.right - bb.left + Layout::extent, n->get_shape()->depth() * Layout::dist_y + Layout::extent),
                 QPageSize::Point));
-#else
-            printer.setPaperSize(
-                QSizeF(bb.right - bb.left + Layout::extent, n->get_shape()->depth() * Layout::dist_y + Layout::extent),
-                QPrinter::Point);
-#endif
             printer.setOutputFileName(filename);
             QPainter painter(&printer);
 
             painter.setRenderHint(QPainter::Antialiasing);
-#if QT_VERSION >= 0x060000
             QRect page_rect = printer.pageLayout().paintRectPixels(printer.resolution());
-#else
-            QRect page_rect = printer.pageRect();
-#endif
             double new_x_scale = static_cast<double>(page_rect.width()) / (bb.right - bb.left + Layout::extent);
             double new_y_scale =
                 static_cast<double>(page_rect.height()) / (n->get_shape()->depth() * Layout::dist_y + Layout::extent);
@@ -1004,23 +979,16 @@ namespace Gecode { namespace Gist {
             PreorderNodeVisitor<DrawingCursor>(dc).run();
             current_node->set_marked(true);
         }
-#else
-        (void)n;
-#endif
     }
 
     void
     TreeCanvas::export_whole_tree_pdf(void) {
-#if QT_VERSION >= 0x040400
         export_node_pdf(root);
-#endif
     }
 
     void
     TreeCanvas::export_pdf(void) {
-#if QT_VERSION >= 0x040400
         export_node_pdf(current_node);
-#endif
     }
 
     void
@@ -1030,11 +998,7 @@ namespace Gecode { namespace Gist {
             QMutexLocker locker(&mutex);
 
             BoundingBox bb = root->get_bounding_box();
-#if QT_VERSION >= 0x060000
             QRect page_rect = printer.pageLayout().paintRectPixels(printer.resolution());
-#else
-            QRect page_rect = printer.pageRect();
-#endif
             double new_x_scale = static_cast<double>(page_rect.width()) / (bb.right - bb.left + Layout::extent);
             double new_y_scale = static_cast<double>(page_rect.height()) /
                                  (root->get_shape()->depth() * Layout::dist_y + 2 * Layout::extent);
@@ -1071,13 +1035,8 @@ namespace Gecode { namespace Gist {
         case QEvent::MouseButtonRelease:
         case QEvent::MouseMove: {
             QMouseEvent* me = static_cast<QMouseEvent*>(event);
-#if QT_VERSION >= 0x060000
             x = me->position().x();
             y = me->position().y();
-#else
-            x = me->x();
-            y = me->y();
-#endif
             break;
         }
         case QEvent::ContextMenu: {
@@ -1212,14 +1171,9 @@ namespace Gecode { namespace Gist {
     TreeCanvas::wheelEvent(QWheelEvent* event) {
         if (event->modifiers() & Qt::ShiftModifier) {
             event->accept();
-#if QT_VERSION >= 0x060000
             if (event->angleDelta().y() != 0 && !auto_zoom)
                 scale_tree(scale * 100 + ceil(static_cast<double>(event->angleDelta().y()) / 4.0),
                            event->position().x(), event->position().y());
-#else
-            if (event->orientation() == Qt::Vertical && !auto_zoom)
-                scale_tree(scale * 100 + ceil(static_cast<double>(event->delta()) / 4.0), event->x(), event->y());
-#endif
         } else {
             event->ignore();
         }

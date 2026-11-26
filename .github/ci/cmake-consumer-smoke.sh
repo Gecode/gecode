@@ -333,14 +333,12 @@ cmake -S "$work/c" -B "$work/c/build" -DCMAKE_PREFIX_PATH="$prefix"
 cmake -S "$work/f" -B "$work/f/build" \
   -DCMAKE_PREFIX_PATH="$prefix" \
   -DCMAKE_DISABLE_FIND_PACKAGE_MPFR=TRUE \
-  -DCMAKE_DISABLE_FIND_PACKAGE_Qt5=TRUE \
   -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=TRUE
 cmake --build "$work/f/build" -j4
 
 cmake -S "$work/g" -B "$work/g/build" \
   -DCMAKE_PREFIX_PATH="$prefix" \
   -DCMAKE_DISABLE_FIND_PACKAGE_MPFR=TRUE \
-  -DCMAKE_DISABLE_FIND_PACKAGE_Qt5=TRUE \
   -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=TRUE
 
 if cmake -S "$work/h" -B "$work/h/build" -DCMAKE_PREFIX_PATH="$prefix"; then
@@ -370,7 +368,6 @@ targets_file="$(find "$prefix" -name GecodeTargets.cmake -print -quit)"
 if grep -q 'add_library(Gecode::gecodegist ' "$targets_file"; then
   if cmake -S "$work/j" -B "$work/j/no-qt-build" \
       -DCMAKE_PREFIX_PATH="$prefix" \
-      -DCMAKE_DISABLE_FIND_PACKAGE_Qt5=TRUE \
       -DCMAKE_DISABLE_FIND_PACKAGE_Qt6=TRUE; then
     echo "Gist component unexpectedly succeeded without Qt" >&2
     exit 1

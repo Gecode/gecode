@@ -215,11 +215,6 @@ jobs:
       shell: bash
       run: bash .github/ci/gist-static-macro-smoke.sh
 
-    - name: Qt minimum version checks
-      if: matrix.os == 'ubuntu-24.04'
-      shell: bash
-      run: bash .github/ci/qt-minimum-version-checks.sh
-
   build-cmake-unix-ninja:
     runs-on: ubuntu-latest
 
@@ -443,54 +438,6 @@ jobs:
     - name: Qt/Gist consumer smoke test
       shell: bash
       run: bash .github/ci/qt-gist-consumer-smoke.sh "$GITHUB_WORKSPACE/install-qt-gist"
-
-  build-cmake-qt5-gist-smoke:
-    runs-on: ubuntu-24.04
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Install Qt 5 build deps
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y qtbase5-dev qtbase5-dev-tools libgl1-mesa-dev
-
-    - name: Configure CMake with Qt 5/Gist
-      shell: bash
-      run: |
-        set -euxo pipefail
-
-        qt5_config="$(dpkg-query -L qtbase5-dev | grep '/Qt5Config.cmake$')"
-        qt5_dir="${qt5_config%/*}"
-
-        cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build-qt5-gist" \
-          -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-          -DQt5_DIR="$qt5_dir" \
-          -DGECODE_ENABLE_QT=ON \
-          -DGECODE_ENABLE_GIST=ON \
-          -DGECODE_ENABLE_MPFR=OFF \
-          -DGECODE_ENABLE_EXAMPLES=OFF \
-          -DGECODE_ENABLE_FLATZINC=OFF
-
-        grep -Eq '^Qt5_DIR:[^=]*=.*/Qt5$' "$GITHUB_WORKSPACE/build-qt5-gist/CMakeCache.txt"
-        grep -q '^Qt5Core_DIR:PATH=' "$GITHUB_WORKSPACE/build-qt5-gist/CMakeCache.txt"
-
-    - name: Build and install Qt 5/Gist package
-      shell: bash
-      run: |
-        set -euxo pipefail
-        cmake --build "$GITHUB_WORKSPACE/build-qt5-gist" --config $BUILD_TYPE -j4
-        cmake --install "$GITHUB_WORKSPACE/build-qt5-gist" --config $BUILD_TYPE --prefix "$GITHUB_WORKSPACE/install-qt5-gist"
-
-    - name: Qt 5/Gist consumer smoke test
-      shell: bash
-      run: bash .github/ci/qt5-gist-consumer-smoke.sh "$GITHUB_WORKSPACE/install-qt5-gist"
 
   build-cmake-windows:
     runs-on: windows-2022

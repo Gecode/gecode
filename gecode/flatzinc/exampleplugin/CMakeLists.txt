@@ -11,7 +11,7 @@ endif()
 if(NOT TARGET ${gecode_plugin_library})
   message(FATAL_ERROR "The branch plugin example requires shared Gecode libraries")
 endif()
-if(NOT TARGET Qt6::Core AND NOT TARGET Qt5::Core)
+if(NOT TARGET Qt6::Core)
   message(FATAL_ERROR "The branch plugin example requires Gecode built with Qt")
 endif()
 
