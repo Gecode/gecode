@@ -95,43 +95,21 @@ namespace Test { namespace Set {
         };
         ChannelSorted _channel_sorted("Channel::Sorted");
 
-        /// Space with one set variable for tests without integer variables
-        class EmptyFixture : public Gecode::Space {
-        public:
-            /// Set variable to channel to
-            SetVar y;
-            /// Create fixture, where \a glb is the greatest lower bound of \a y
-            EmptyFixture(const IntSet& glb) : y(*this, glb, IntSet(0, 3)) {}
-            /// Constructor for cloning \a fixture
-            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
-                y.update(*this, fixture.y);
-            }
-            /// Copy during cloning
-            Gecode::Space*
-            copy(void) override {
-                return new EmptyFixture(*this);
-            }
-            /// Test whether the space is solved with \a y empty
-            bool
-            is_solved_empty(void) {
-                return (status() == SS_SOLVED) && (y.lub_size() == 0);
-            }
-        };
-
-        /// %Test sorted channeling without integer variables
-        class ChannelSortedEmpty : public Base {
+        /// %Test sorted channeling without integer variables, where the set is empty
+        class ChannelSortedEmpty : public SetTest {
         public:
             /// Create and register test
-            ChannelSortedEmpty(void) : Base("Set::Channel::Sorted::Empty") {}
-            /// Perform test
+            ChannelSortedEmpty(void) : SetTest("Channel::Sorted::Empty", 1, d_12) {}
+            /// %Test whether \a x is solution
             bool
-            run(void) override {
-                IntVarArgs x;
-                EmptyFixture empty(IntSet::empty);
-                channel_sorted(empty, x, empty.y);
-                EmptyFixture nonempty(IntSet(1, 1));
-                channel_sorted(nonempty, x, nonempty.y);
-                return empty.is_solved_empty() && (nonempty.status() == SS_FAILED);
+            solution(const SetAssignment& x) const override {
+                CountableSetRanges xr(x.lub, x[0]);
+                return !xr();
+            }
+            /// Post constraint on \a x
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
+                Gecode::channel_sorted(home, IntVarArgs(), x[0]);
             }
         };
         ChannelSortedEmpty _channel_sorted_empty;
@@ -222,20 +200,21 @@ namespace Test { namespace Set {
         ChannelBool _channelbool2(TestTags::sweep(), "Channel::Bool::2", d3, 3);
         ChannelBool _channelbool3(TestTags::sweep(), "Channel::Bool::3", d4, 5);
 
-        /// %Test Boolean channeling without Boolean variables
-        class ChannelBoolEmpty : public Base {
+        /// %Test Boolean channeling without Boolean variables, where the set is empty
+        class ChannelBoolEmpty : public SetTest {
         public:
             /// Create and register test
-            ChannelBoolEmpty(void) : Base("Set::Channel::Bool::Empty") {}
-            /// Perform test
+            ChannelBoolEmpty(void) : SetTest("Channel::Bool::Empty", 1, d_12) {}
+            /// %Test whether \a x is solution
             bool
-            run(void) override {
-                BoolVarArgs x;
-                EmptyFixture empty(IntSet::empty);
-                channel(empty, x, empty.y);
-                EmptyFixture nonempty(IntSet(1, 1));
-                channel(nonempty, x, nonempty.y);
-                return empty.is_solved_empty() && (nonempty.status() == SS_FAILED);
+            solution(const SetAssignment& x) const override {
+                CountableSetRanges xr(x.lub, x[0]);
+                return !xr();
+            }
+            /// Post constraint on \a x
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
+                Gecode::channel(home, BoolVarArgs(), x[0]);
             }
         };
         ChannelBoolEmpty _channel_bool_empty;

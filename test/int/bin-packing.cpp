@@ -360,7 +360,44 @@ namespace Test { namespace Int {
             }
         };
 
-        /// %Test that both bin-packing overloads post nothing for zero items
+        /// The bin-packing overloads
+        enum class Packing {
+            Single, ///< One size per item
+            Multi,  ///< Several sizes per item
+        };
+
+        /// %Test bin-packing without items, where every load is zero
+        class EmptyLoads : public Test {
+        protected:
+            /// Overload to post
+            Packing packing;
+
+        public:
+            /// Create and register test
+            EmptyLoads(const std::string& s, Packing packing0)
+                : Test("BinPacking::Empty::" + s, 2, -1, 2), packing(packing0) {}
+            /// %Test whether \a x is solution
+            bool
+            solution(const Assignment& x) const override {
+                return (x[0] == 0) && (x[1] == 0);
+            }
+            /// Post constraint on \a x
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+                using namespace Gecode;
+                IntVarArgs b;
+                IntArgs s;
+                if (packing == Packing::Single)
+                    bin_packing(home, x, b, s);
+                else
+                    (void)bin_packing(home, 2, x, b, s, IntArgs({1, 1}));
+            }
+        };
+
+        EmptyLoads empty_loads_single("Single", Packing::Single);
+        EmptyLoads empty_loads_multi("Multi", Packing::Multi);
+
+        /// %Test bin-packing without variables and the conflict cliques without items
         class Empty : public Base {
         private:
             /// Space without variables
@@ -381,21 +418,13 @@ namespace Test { namespace Int {
                 using namespace Gecode;
                 IntVarArgs e;
                 IntArgs s;
-                Fixture none, loads, loaded, multi_none, multi_loads, multi_loaded;
+                Fixture none, multi_none, multi_loads;
                 bin_packing(none, e, e, s);
-                IntVarArgs l(loads, 2, 0, 3);
-                bin_packing(loads, l, e, s);
-                bin_packing(loaded, IntVarArgs(loaded, 1, 1, 3), e, s);
                 IntSet clique_none = bin_packing(multi_none, 1, e, e, s, IntArgs({1}));
-                IntVarArgs ml(multi_loads, 2, 0, 3);
-                IntSet clique_loads = bin_packing(multi_loads, 2, ml, e, s, IntArgs({1, 1}));
-                bin_packing(multi_loaded, 1, IntVarArgs(multi_loaded, 1, 1, 3), e, s, IntArgs({3}));
-                return (none.status() == SS_SOLVED) && (loads.status() == SS_SOLVED) && l[0].assigned() &&
-                       (l[0].val() == 0) && l[1].assigned() && (l[1].val() == 0) && (loaded.status() == SS_FAILED) &&
-                       (multi_none.status() == SS_SOLVED) && (clique_none.size() == 0) &&
-                       (multi_loads.status() == SS_SOLVED) && ml[0].assigned() && (ml[0].val() == 0) &&
-                       ml[1].assigned() && (ml[1].val() == 0) && (clique_loads.size() == 0) &&
-                       (multi_loaded.status() == SS_FAILED);
+                IntSet clique_loads =
+                    bin_packing(multi_loads, 2, IntVarArgs(multi_loads, 2, 0, 3), e, s, IntArgs({1, 1}));
+                return (none.status() == SS_SOLVED) && (multi_none.status() == SS_SOLVED) &&
+                       (clique_none.size() == 0) && (clique_loads.size() == 0);
             }
         };
 

@@ -499,15 +499,35 @@ namespace Test { namespace Set {
         IntArgs w4(7, w4v);
         Weights _weights4("Int::Weights::4", el1, w4);
 
-        /// Space with a set and a weight variable for tests without elements
+        /// %Test weights without elements: the set is empty and weighs 0
+        class WeightsEmpty : public SetTest {
+        public:
+            /// Create and register test
+            WeightsEmpty(void) : SetTest("Int::Weights::Empty", 1, d2, false, 1) {}
+            /// %Test whether \a x is solution
+            bool
+            solution(const SetAssignment& x) const override {
+                CountableSetRanges xr(x.lub, x[0]);
+                return !xr() && (x.int_value() == 0);
+            }
+            /// Post constraint on \a x and \a y
+            void
+            post(Space& home, SetVarArray& x, IntVarArray& y) override {
+                IntArgs none;
+                Gecode::weights(home, none, none, x[0], y[0]);
+            }
+        };
+        WeightsEmpty _weights_empty;
+
+        /// Space with a set and a weight variable
         class WeightsFixture : public Gecode::Space {
         public:
             /// Weighted set
             SetVar x;
             /// Weight of \a x
             IntVar y;
-            /// Create fixture with greatest lower bound \a glb for \a x and minimal weight \a min
-            WeightsFixture(const IntSet& glb, int min) : x(*this, glb, ds_33), y(*this, min, 2) {}
+            /// Create fixture
+            WeightsFixture(void) : x(*this, IntSet::empty, ds_33), y(*this, -2, 2) {}
             /// Constructor for cloning \a fixture
             WeightsFixture(WeightsFixture& fixture) : Gecode::Space(fixture) {
                 x.update(*this, fixture.x);
@@ -520,35 +540,24 @@ namespace Test { namespace Set {
             }
         };
 
-        /// %Test weights without elements: the set is empty and weighs 0
-        class WeightsEmpty : public Base {
+        /// %Test that weights without elements and some weights throw at posting
+        class WeightsEmptyMismatch : public Base {
         public:
             /// Create and register test
-            WeightsEmpty(void) : Base("Set::Int::Weights::Empty") {}
+            WeightsEmptyMismatch(void) : Base("Set::Int::Weights::Empty::Mismatch") {}
             /// Perform test
             bool
             run(void) override {
-                IntArgs none;
-                WeightsFixture empty(IntSet::empty, -2);
-                weights(empty, none, none, empty.x, empty.y);
-                bool solved = (empty.status() == SS_SOLVED) && (empty.x.lub_size() == 0) && empty.y.assigned() &&
-                              (empty.y.val() == 0);
-
-                WeightsFixture nonempty(IntSet(0, 0), -2), heavy(IntSet::empty, 1);
-                weights(nonempty, none, none, nonempty.x, nonempty.y);
-                weights(heavy, none, none, heavy.x, heavy.y);
-                bool failed = (nonempty.status() == SS_FAILED) && (heavy.status() == SS_FAILED);
-
-                WeightsFixture mismatch(IntSet::empty, -2);
+                WeightsFixture home;
                 try {
-                    weights(mismatch, none, IntArgs({1}), mismatch.x, mismatch.y);
-                    return false;
+                    weights(home, IntArgs(), IntArgs({1}), home.x, home.y);
                 } catch (Gecode::Set::ArgumentSizeMismatch&) {
-                    return solved && failed;
+                    return true;
                 }
+                return false;
             }
         };
-        WeightsEmpty _weights_empty;
+        WeightsEmptyMismatch _weights_empty_mismatch;
 
     } // namespace Int
 }} // namespace Test::Set

@@ -189,18 +189,15 @@ namespace Test { namespace Float {
             }
         };
 
-        /// Space with a float and a Boolean variable for sums without terms
+        /// Space with a Boolean variable for sums without terms
         class EmptyFixture : public Gecode::Space {
         public:
-            /// Right-hand side variable
-            Gecode::FloatVar y;
             /// Reification variable
             Gecode::BoolVar b;
             /// Create fixture
-            EmptyFixture(void) : y(*this, -2, 2), b(*this, 0, 1) {}
+            EmptyFixture(void) : b(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
-                y.update(*this, fixture.y);
                 b.update(*this, fixture.b);
             }
             /// Copy during cloning
@@ -215,7 +212,12 @@ namespace Test { namespace Float {
             }
         };
 
-        /// %Test linear constraints over no variables
+        /**
+         * \brief %Test linear constraints over no variables with a constant
+         *
+         * The relation has no variables for the constraint fixture to
+         * enumerate, so the test checks the posting outcome directly.
+         */
         class Empty : public Base {
         public:
             /// Create and register test
@@ -226,14 +228,13 @@ namespace Test { namespace Float {
                 using namespace Gecode;
                 FloatVarArgs x;
                 FloatValArgs a;
-                EmptyFixture eq, lq, rhs, reified, pmi;
+                EmptyFixture eq, lq, reified, pmi;
                 linear(eq, x, FRT_EQ, 0);
                 linear(lq, a, x, FRT_LQ, -1);
-                linear(rhs, x, FRT_EQ, rhs.y);
                 linear(reified, x, FRT_EQ, 1, Reify(reified.b));
                 linear(pmi, a, x, FRT_GQ, 0, Reify(pmi.b, RM_PMI));
-                return (eq.status() == SS_SOLVED) && (lq.status() == SS_FAILED) && (rhs.status() == SS_SOLVED) &&
-                       rhs.y.assigned() && (rhs.y.val() == 0) && reified.is_solved_with_b(0) && pmi.is_solved_with_b(1);
+                return (eq.status() == SS_SOLVED) && (lq.status() == SS_FAILED) && reified.is_solved_with_b(0) &&
+                       pmi.is_solved_with_b(1);
             }
         };
         Empty empty;
@@ -257,6 +258,7 @@ namespace Test { namespace Float {
                         TestTags tags = frts.frt() == Gecode::FRT_EQ ? TestTags::standard() : TestTags::sweep();
                         (void)new FloatFloat(tags, "11", f1, a1, frts.frt(), 0.0, step);
                         (void)new FloatVar(tags, "11", f1, a1, frts.frt(), step);
+                        (void)new FloatVar(TestTags::standard(), "Empty", f1, FloatValArgs(), frts.frt(), step);
                         (void)new FloatFloat(TestTags::sweep(), "21", f2, a1, frts.frt(), 0.0, step);
                         (void)new FloatVar(TestTags::sweep(), "21", f2, a1, frts.frt(), step);
                         (void)new FloatFloat(TestTags::sweep(), "31", f3, a1, frts.frt(), 1.0, step);
