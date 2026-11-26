@@ -180,6 +180,56 @@ namespace Test { namespace Float {
             }
         } directed_rounding_regression;
 
+        /// Division keeps every divisor when dividend and quotient can be zero
+        class DivZeroQuotient : public Base {
+        protected:
+            /// Space posting \f$x_0/x_1=x_2\f$
+            class DivSpace : public Gecode::Space {
+            public:
+                /// Dividend, divisor, and quotient
+                Gecode::FloatVar x0, x1, x2;
+                /// Post the division with dividend in [l,u], divisor in [-2,2], quotient in [0,1]
+                DivSpace(Gecode::FloatNum l, Gecode::FloatNum u)
+                    : x0(*this, l, u), x1(*this, -2.0, 2.0), x2(*this, 0.0, 1.0) {
+                    Gecode::div(*this, x0, x1, x2);
+                }
+                /// Clone constructor
+                DivSpace(DivSpace& s) : Gecode::Space(s) {
+                    x0.update(*this, s.x0);
+                    x1.update(*this, s.x1);
+                    x2.update(*this, s.x2);
+                }
+                /// Copy space during cloning
+                Gecode::Space*
+                copy(void) override {
+                    return new DivSpace(*this);
+                }
+            };
+            /// Test that the divisor keeps its bounds for a dividend in [l,u]
+            static bool
+            keeps_divisor(Gecode::FloatNum l, Gecode::FloatNum u) {
+                DivSpace s(l, u);
+                if (s.status() == Gecode::SS_FAILED) {
+                    olog << "Div with x0 in [" << l << ", " << u << "] failed\n";
+                    return false;
+                }
+                // 0/x1=0 holds for every nonzero x1.
+                if ((s.x1.min() == -2.0) && (s.x1.max() == 2.0))
+                    return true;
+                olog << "Div with x0 in [" << l << ", " << u << "] pruned x1 to " << s.x1 << '\n';
+                return false;
+            }
+
+        public:
+            DivZeroQuotient(void) : Base("Float::Arithmetic::DivZeroQuotient", TestTags::standard()) {}
+            bool
+            run(void) override {
+                bool result = keeps_divisor(0.0, 1.0);
+                result &= keeps_divisor(-1.0, 0.0);
+                return result;
+            }
+        } div_zero_quotient;
+
         /// Directed rounding gives exact bounds for literal and runtime operands
         class DirectedRounding : public Base {
         private:
