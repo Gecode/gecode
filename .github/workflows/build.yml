@@ -335,7 +335,12 @@ jobs:
         test ! -f install-allocator/include/mimalloc.h
 
   build-32-bit-linkage:
-    runs-on: ubuntu-latest
+    # g++-multilib had no installation candidate on ubuntu-latest (Ubuntu
+    # 26.04) in November 2026, so this job stays on Ubuntu 24.04 and GCC 14.
+    runs-on: ubuntu-24.04
+    env:
+      CC: gcc-14
+      CXX: g++-14
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -344,7 +349,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++-multilib
+        sudo apt-get install -y g++-14-multilib
 
     - name: Build and link 32-bit stop consumer
       shell: bash
