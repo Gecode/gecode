@@ -303,7 +303,94 @@ namespace Test { namespace Int {
             }
         };
 
-        /// %Test every count overload with no variables or no values
+        /// Values counted by the cardinality variables
+        enum class CountedValues {
+            Implicit, ///< The values 0, 1, ...
+            Repeated, ///< The value 1 for every cardinality variable
+        };
+
+        /// %Test count over no variables, where every cardinality variable is zero
+        class EmptyCard : public Test {
+        protected:
+            /// Values to count
+            CountedValues values;
+
+        public:
+            /// Create and register test
+            EmptyCard(CountedValues values0, Gecode::IntPropLevel ipl)
+                : Test(std::string("GCC::Empty::Card::") + (values0 == CountedValues::Repeated ? "Repeated::" : "") +
+                           str(ipl),
+                       2, -1, 1, false, ipl),
+                  values(values0) {}
+            /// %Test whether \a x is solution
+            bool
+            solution(const Assignment& x) const override {
+                return (x[0] == 0) && (x[1] == 0);
+            }
+            /// Post constraint on \a x
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+                using namespace Gecode;
+                IntVarArgs none;
+                if (values == CountedValues::Repeated)
+                    count(home, none, x, IntArgs({1, 1}), ipl);
+                else
+                    count(home, none, x, ipl);
+            }
+        };
+
+        /// The count overloads that take cardinalities but no values
+        enum class NoValues {
+            Var,       ///< Cardinality variables for values 0, 1, ...
+            VarValues, ///< Cardinality variables for explicit values
+            Set,       ///< Cardinality sets for values 0, 1, ...
+            SetValues, ///< Cardinality sets for explicit values
+            SetConst,  ///< One cardinality set for explicit values
+        };
+
+        /// %Test count without values, where no variable can take a value
+        class EmptyValues : public Test {
+        protected:
+            /// Overload to post
+            NoValues overload;
+
+        public:
+            /// Create and register test
+            EmptyValues(const std::string& s, NoValues overload0)
+                : Test("GCC::Empty::Values::" + s, 1, 0, 2), overload(overload0) {}
+            /// %Test whether \a x is solution
+            bool
+            solution(const Assignment&) const override {
+                return false;
+            }
+            /// Post constraint on \a x
+            void
+            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+                using namespace Gecode;
+                IntVarArgs c;
+                IntSetArgs cs;
+                IntArgs v;
+                switch (overload) {
+                case NoValues::Var:
+                    count(home, x, c);
+                    break;
+                case NoValues::VarValues:
+                    count(home, x, c, v);
+                    break;
+                case NoValues::Set:
+                    count(home, x, cs);
+                    break;
+                case NoValues::SetValues:
+                    count(home, x, cs, v);
+                    break;
+                case NoValues::SetConst:
+                    count(home, x, IntSet(0, 1), v);
+                    break;
+                }
+            }
+        };
+
+        /// %Test the count overloads that have no variables at all
         class Empty : public Base {
         private:
             /// Space without variables
@@ -341,31 +428,23 @@ namespace Test { namespace Int {
                                     (set_v.status() == SS_SOLVED) && (set_c.status() == SS_SOLVED);
 
                 // Without variables, every value occurs zero times
-                Fixture card, card_zero, card_one, card_hole;
-                IntVarArgs y(card, 2, 0, 2);
-                count(card, x, y, IntArgs({1, 1}));
+                Fixture card_zero, card_one, card_hole;
                 count(card_zero, x, IntSetArgs({IntSet({0, 2})}), IntArgs({1}));
                 count(card_one, x, IntSetArgs({IntSet(1, 2)}), IntArgs({1}));
                 count(card_hole, x, IntSet({1, 3}), IntArgs({1}));
-                bool card_counted = (card.status() == SS_SOLVED) && y[0].assigned() && (y[0].val() == 0) &&
-                                    y[1].assigned() && (y[1].val() == 0) && (card_zero.status() == SS_SOLVED) &&
-                                    (card_one.status() == SS_FAILED) && (card_hole.status() == SS_FAILED);
-
-                // Without values, no variable can take a value
-                Fixture no_var, no_var_v, no_set, no_set_v, no_set_c;
-                count(no_var, IntVarArgs(no_var, 1, 0, 2), c);
-                count(no_var_v, IntVarArgs(no_var_v, 1, 0, 2), c, v);
-                count(no_set, IntVarArgs(no_set, 1, 0, 2), cs);
-                count(no_set_v, IntVarArgs(no_set_v, 1, 0, 2), cs, v);
-                count(no_set_c, IntVarArgs(no_set_c, 1, 0, 2), IntSet(0, 1), v);
-                bool no_value_failed = (no_var.status() == SS_FAILED) && (no_var_v.status() == SS_FAILED) &&
-                                       (no_set.status() == SS_FAILED) && (no_set_v.status() == SS_FAILED) &&
-                                       (no_set_c.status() == SS_FAILED);
-                return empty_solved && card_counted && no_value_failed;
+                bool card_counted = (card_zero.status() == SS_SOLVED) && (card_one.status() == SS_FAILED) &&
+                                    (card_hole.status() == SS_FAILED);
+                return empty_solved && card_counted;
             }
         };
 
         Empty empty;
+
+        EmptyValues empty_values_var("Var", NoValues::Var);
+        EmptyValues empty_values_var_values("VarValues", NoValues::VarValues);
+        EmptyValues empty_values_set("Set", NoValues::Set);
+        EmptyValues empty_values_set_values("SetValues", NoValues::SetValues);
+        EmptyValues empty_values_set_const("SetConst", NoValues::SetConst);
 
         /// Help class to create and register tests
         class Create {
@@ -381,6 +460,8 @@ namespace Test { namespace Int {
                     (void)new VarAll(ipls.ipl());
                     (void)new VarSome("Small", 2, -1, 3, ipls.ipl());
                     (void)new VarSome("Large", 3, -1, 4, ipls.ipl());
+                    (void)new EmptyCard(CountedValues::Implicit, ipls.ipl());
+                    (void)new EmptyCard(CountedValues::Repeated, ipls.ipl());
                 }
             }
         };

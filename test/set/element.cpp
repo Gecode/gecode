@@ -350,86 +350,76 @@ namespace Test { namespace Set {
         };
         ElementSetConst _elementsetconst("Element::SetConst");
 
-        /// Space with an index and a result set variable for tests without sets
-        class EmptyFixture : public Gecode::Space {
-        public:
-            /// Index set
-            SetVar y;
-            /// Result set
-            SetVar z;
-            /// Create fixture, where \a glb is the greatest lower bound of \a y
-            EmptyFixture(const IntSet& glb = IntSet::empty)
-                : y(*this, glb, IntSet(0, 3)), z(*this, IntSet::empty, IntSet(0, 3)) {}
-            /// Constructor for cloning \a fixture
-            EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
-                y.update(*this, fixture.y);
-                z.update(*this, fixture.z);
-            }
-            /// Copy during cloning
-            Gecode::Space*
-            copy(void) override {
-                return new EmptyFixture(*this);
-            }
-            /// Test whether the space is solved with \a y empty and \a z equal to \a result
-            bool
-            is_solved(const IntSet& result) {
-                if ((status() != SS_SOLVED) || (y.lub_size() != 0) || !z.assigned())
-                    return false;
-                SetVarGlbRanges zr(z);
-                IntSetRanges rr(result);
-                return Iter::Ranges::equal(zr, rr);
-            }
+        /// Universe for element with intersection over no sets
+        enum class Universe {
+            Given,   ///< Pass a universe that fits the result
+            Default, ///< Use the default universe, which does not fit the result
         };
 
         /**
-         * \brief Test element over an empty array of type \a Args
+         * \brief %Test element over an empty array of type \a Args
          *
-         * An empty union is empty and an empty intersection is the universe.
+         * No index can be selected. An empty union is empty and an empty
+         * intersection is the universe.
          */
         template <class Args>
-        bool
-        is_decided_empty(void) {
-            Args x;
-            IntSet universe(0, 3);
-            EmptyFixture union_x, dunion_x, inter_x;
-            element(union_x, SOT_UNION, x, union_x.y, union_x.z);
-            element(dunion_x, SOT_DUNION, x, dunion_x.y, dunion_x.z);
-            element(inter_x, SOT_INTER, x, inter_x.y, inter_x.z, universe);
-            bool decided =
-                union_x.is_solved(IntSet::empty) && dunion_x.is_solved(IntSet::empty) && inter_x.is_solved(universe);
+        class ElementEmpty : public SetTest {
+        protected:
+            /// Operation to combine the selected sets
+            SetOpType op;
+            /// Universe for intersection
+            Universe universe;
+            /// Universe passed for Universe::Given
+            IntSet given;
 
-            // No index can be selected, and the default universe does not fit into z
-            EmptyFixture selected(IntSet(0, 0)), inter_default;
-            element(selected, SOT_UNION, x, selected.y, selected.z);
-            element(inter_default, SOT_INTER, x, inter_default.y, inter_default.z);
-            return decided && (selected.status() == SS_FAILED) && (inter_default.status() == SS_FAILED);
-        }
-
-        /// %Test element over no constant sets
-        class ElementConstEmpty : public Base {
         public:
             /// Create and register test
-            ElementConstEmpty(void) : Base("Set::Element::Const::Empty") {}
-            /// Perform test
+            ElementEmpty(const std::string& args, SetOpType op0, Universe universe0 = Universe::Given)
+                : SetTest("Element::Empty::" + args + "::" + str(op0) +
+                              (universe0 == Universe::Default ? "::Default" : ""),
+                          2, ds_12, false),
+                  op(op0), universe(universe0), given(0, 1) {}
+            /// %Test whether \a x is solution
             bool
-            run(void) override {
-                return is_decided_empty<IntSetArgs>() && is_decided_empty<IntArgs>();
+            solution(const SetAssignment& x) const override {
+                CountableSetRanges y(x.lub, x[0]);
+                if (y())
+                    return false;
+                CountableSetRanges z(x.lub, x[1]);
+                if (op != SOT_INTER)
+                    return !z();
+                if (universe == Universe::Default)
+                    return false;
+                IntSetRanges u(given);
+                return Iter::Ranges::equal(z, u);
+            }
+            /// Post constraint on \a x
+            void
+            post(Space& home, SetVarArray& x, IntVarArray&) override {
+                Args xs;
+                if ((op == SOT_INTER) && (universe == Universe::Given))
+                    Gecode::element(home, op, xs, x[0], x[1], given);
+                else
+                    Gecode::element(home, op, xs, x[0], x[1]);
             }
         };
-        ElementConstEmpty _element_const_empty;
 
-        /// %Test element over no set or integer variables
-        class ElementVarEmpty : public Base {
-        public:
-            /// Create and register test
-            ElementVarEmpty(void) : Base("Set::Element::Var::Empty") {}
-            /// Perform test
-            bool
-            run(void) override {
-                return is_decided_empty<SetVarArgs>() && is_decided_empty<IntVarArgs>();
-            }
-        };
-        ElementVarEmpty _element_var_empty;
+        ElementEmpty<IntSetArgs> _element_empty_const_union("Const", SOT_UNION);
+        ElementEmpty<IntSetArgs> _element_empty_const_dunion("Const", SOT_DUNION);
+        ElementEmpty<IntSetArgs> _element_empty_const_inter("Const", SOT_INTER);
+        ElementEmpty<IntSetArgs> _element_empty_const_inter_default("Const", SOT_INTER, Universe::Default);
+        ElementEmpty<IntArgs> _element_empty_int_union("Int", SOT_UNION);
+        ElementEmpty<IntArgs> _element_empty_int_dunion("Int", SOT_DUNION);
+        ElementEmpty<IntArgs> _element_empty_int_inter("Int", SOT_INTER);
+        ElementEmpty<IntArgs> _element_empty_int_inter_default("Int", SOT_INTER, Universe::Default);
+        ElementEmpty<SetVarArgs> _element_empty_set_var_union("SetVar", SOT_UNION);
+        ElementEmpty<SetVarArgs> _element_empty_set_var_dunion("SetVar", SOT_DUNION);
+        ElementEmpty<SetVarArgs> _element_empty_set_var_inter("SetVar", SOT_INTER);
+        ElementEmpty<SetVarArgs> _element_empty_set_var_inter_default("SetVar", SOT_INTER, Universe::Default);
+        ElementEmpty<IntVarArgs> _element_empty_int_var_union("IntVar", SOT_UNION);
+        ElementEmpty<IntVarArgs> _element_empty_int_var_dunion("IntVar", SOT_DUNION);
+        ElementEmpty<IntVarArgs> _element_empty_int_var_inter("IntVar", SOT_INTER);
+        ElementEmpty<IntVarArgs> _element_empty_int_var_inter_default("IntVar", SOT_INTER, Universe::Default);
 
         /// %Test for matrix element with integer set array and set variable
         class MatrixIntSet : public SetTest {

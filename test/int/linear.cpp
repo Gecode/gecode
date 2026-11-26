@@ -214,8 +214,12 @@ namespace Test { namespace Int {
         public:
             /// Create and register test
             BoolVar(const std::string& s, int min, int max, const Gecode::IntArgs& a0, Gecode::IntRelType irt0)
-                : Test(TestTags::sweep(), "Linear::Bool::Var::" + str(irt0) + "::" + s, a0.size() + 1, min, max, true),
-                  a(a0), irt(irt0) {
+                : BoolVar(TestTags::sweep(), s, min, max, a0, irt0) {}
+            /// Create and register test with tags \a tags
+            BoolVar(TestTags tags, const std::string& s, int min, int max, const Gecode::IntArgs& a0,
+                    Gecode::IntRelType irt0)
+                : Test(tags, "Linear::Bool::Var::" + str(irt0) + "::" + s, a0.size() + 1, min, max, true), a(a0),
+                  irt(irt0) {
                 test_fixpoint = false;
             }
             /// %Test whether \a x is solution
@@ -264,18 +268,15 @@ namespace Test { namespace Int {
             }
         };
 
-        /// Space with an integer and a Boolean variable for sums without terms
+        /// Space with a Boolean variable for sums without terms
         class EmptyFixture : public Gecode::Space {
         public:
-            /// Right-hand side variable
-            Gecode::IntVar y;
             /// Reification variable
             Gecode::BoolVar b;
             /// Create fixture
-            EmptyFixture(void) : y(*this, -2, 2), b(*this, 0, 1) {}
+            EmptyFixture(void) : b(*this, 0, 1) {}
             /// Constructor for cloning \a fixture
             EmptyFixture(EmptyFixture& fixture) : Gecode::Space(fixture) {
-                y.update(*this, fixture.y);
                 b.update(*this, fixture.b);
             }
             /// Copy during cloning
@@ -290,7 +291,12 @@ namespace Test { namespace Int {
             }
         };
 
-        /// %Test linear constraints over no variables
+        /**
+         * \brief %Test linear constraints over no variables with a constant
+         *
+         * The relation has no variables for the constraint fixture to
+         * enumerate, so the test checks the posting outcome directly.
+         */
         class Empty : public Base {
         public:
             /// Create and register test
@@ -302,16 +308,14 @@ namespace Test { namespace Int {
                 IntVarArgs x;
                 BoolVarArgs bx;
                 IntArgs a;
-                EmptyFixture eq, nq, bool_lq, bool_y, reified, imp, pmi;
+                EmptyFixture eq, nq, bool_lq, reified, imp, pmi;
                 linear(eq, x, IRT_EQ, 0, IPL_DOM);
                 linear(nq, a, x, IRT_NQ, 0);
                 linear(bool_lq, a, bx, IRT_LQ, -1);
-                linear(bool_y, bx, IRT_EQ, bool_y.y);
                 linear(reified, x, IRT_EQ, 1, Reify(reified.b));
                 linear(imp, a, bx, IRT_GQ, 1, Reify(imp.b, RM_IMP));
                 linear(pmi, bx, IRT_LQ, 0, Reify(pmi.b, RM_PMI));
                 return (eq.status() == SS_SOLVED) && (nq.status() == SS_FAILED) && (bool_lq.status() == SS_FAILED) &&
-                       (bool_y.status() == SS_SOLVED) && bool_y.y.assigned() && (bool_y.y.val() == 0) &&
                        reified.is_solved_with_b(0) && imp.is_solved_with_b(0) && pmi.is_solved_with_b(1);
             }
         };
@@ -435,6 +439,7 @@ namespace Test { namespace Int {
                     IntArgs a9({-1, -2, 1, 2, -3, 3});
 
                     for (IntRelTypes irts; irts(); ++irts) {
+                        (void)new BoolVar(TestTags::standard(), "Empty", -2, 2, IntArgs(), irts.irt());
                         (void)new BoolVar("6", 0, 10, a6, irts.irt());
                         (void)new BoolVar("7", -10, 0, a7, irts.irt());
                         (void)new BoolVar("8", -3, 3, a8, irts.irt());
