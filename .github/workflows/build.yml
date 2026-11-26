@@ -39,6 +39,8 @@ jobs:
         curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o "$RUNNER_TEMP/llvm.asc"
         sudo install -m 644 "$RUNNER_TEMP/llvm.asc" /usr/share/keyrings/llvm.asc
         echo 'deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+        # The runner's packages.microsoft.com source has failed apt-get update with 403; no job needs it.
+        sudo find /etc/apt/sources.list.d -type f -exec grep -q packages.microsoft.com {} \; -delete
         sudo apt-get update
         sudo apt-get install -y clang-22 clang-format-22 clang-tidy-22 clang-tools-22 \
           ninja-build bison flex graphviz libgmp-dev libmpfr-dev \
@@ -48,7 +50,9 @@ jobs:
       shell: bash
       run: |
         archive="$RUNNER_TEMP/doxygen-1.18.0.linux.bin.tar.gz"
-        curl --fail --location --retry 3 https://www.doxygen.nl/files/doxygen-1.18.0.linux.bin.tar.gz -o "$archive"
+        # doxygen.nl has served runners a small HTML page instead of the archive.
+        curl --fail --location --retry 3 -o "$archive" \
+          https://github.com/doxygen/doxygen/releases/download/Release_1_18_0/doxygen-1.18.0.linux.bin.tar.gz
         printf '%s  %s\n' 14fa81bdc34171edb5f1f02b1d60e74802f0439b77fa44e592565d517d72df90 "$archive" | sha256sum --check
         mkdir -p "$RUNNER_TEMP/doxygen"
         tar -xzf "$archive" -C "$RUNNER_TEMP/doxygen" --strip-components=1
@@ -97,6 +101,8 @@ jobs:
     - name: Install build deps
       shell: bash
       run: |
+        # The runner's packages.microsoft.com source has failed apt-get update with 403; no job needs it.
+        sudo find /etc/apt/sources.list.d -type f -exec grep -q packages.microsoft.com {} \; -delete
         sudo apt-get update
         sudo apt-get install -y g++-14 g++-14-multilib libgmp-dev libmpfr-dev ninja-build
 
