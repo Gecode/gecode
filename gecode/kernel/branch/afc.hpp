@@ -52,10 +52,6 @@ namespace Gecode {
          *
          */
         AFC(void);
-        /// Copy constructor
-        AFC(const AFC& a);
-        /// Assignment operator
-        AFC& operator=(const AFC& a);
         /** \brief Initialize for variables \a x and decay factor \a d
          *
          * If several AFC objects are created for a space or its clones,
@@ -77,9 +73,6 @@ namespace Gecode {
         /// Default (empty) AFC information
         GECODE_KERNEL_EXPORT static const AFC def;
         //@}
-
-        /// Destructor
-        ~AFC(void);
 
         /// \name Information access
         //@{
@@ -142,16 +135,6 @@ namespace Gecode {
         if (!share)
             static_cast<Space&>(home).afc_unshare();
     }
-
-    forceinline
-    AFC::AFC(const AFC& a)
-        : n(a.n) {}
-    forceinline AFC&
-    AFC::operator=(const AFC& a) {
-        n = a.n;
-        return *this;
-    }
-    forceinline AFC::~AFC(void) {}
 
     forceinline void
     AFC::decay(Space& home, double d) {

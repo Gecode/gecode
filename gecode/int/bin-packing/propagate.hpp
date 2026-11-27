@@ -74,10 +74,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
     operator==(const Item& i, const Item& j) {
         return (i.bin() == j.bin()) && (i.size() == j.size());
     }
-    forceinline bool
-    operator!=(const Item& i, const Item& j) {
-        return !(i == j);
-    }
 
     /// For sorting according to size
     forceinline bool
@@ -89,8 +85,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
      * Size set
      *
      */
-    forceinline
-    SizeSet::SizeSet(void) {}
     forceinline
     SizeSet::SizeSet(Region& region, int n_max)
         : n(0), t(0), s(region.alloc<int>(n_max)) {}
@@ -113,6 +107,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     SizeSetMinusOne::SizeSetMinusOne(void) {}
     forceinline
     SizeSetMinusOne::SizeSetMinusOne(Region& region, int n_max)

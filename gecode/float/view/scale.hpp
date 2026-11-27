@@ -39,8 +39,6 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline
-    ScaleView::ScaleView(void) {}
-    forceinline
     ScaleView::ScaleView(const FloatVal& d, const FloatView& y)
         : DerivedView<FloatView>(y), a(d) {}
 
@@ -214,10 +212,6 @@ namespace Gecode { namespace Float {
     forceinline bool
     operator==(const ScaleView& x, const ScaleView& y) {
         return (x.base() == y.base()) && (x.scale() == y.scale());
-    }
-    forceinline bool
-    operator!=(const ScaleView& x, const ScaleView& y) {
-        return !(x == y);
     }
 
 }} // namespace Gecode::Float

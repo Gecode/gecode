@@ -33,10 +33,6 @@
 namespace Gecode { namespace Int {
 
     template <class ManTask>
-    forceinline
-    ManToOptTask<ManTask>::ManToOptTask(void) {}
-
-    template <class ManTask>
     forceinline bool
     ManToOptTask<ManTask>::mandatory(void) const {
         return _m.one();

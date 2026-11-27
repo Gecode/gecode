@@ -43,11 +43,6 @@ namespace Gecode {
     }
 
     forceinline
-    IntVar::IntVar(void) {}
-    forceinline
-    IntVar::IntVar(const IntVar& y)
-        : VarImpVar<Int::IntVarImp>(y.varimp()) {}
-    forceinline
     IntVar::IntVar(const Int::IntView& y)
         : VarImpVar<Int::IntVarImp>(y.varimp()) {}
 
@@ -101,6 +96,7 @@ namespace Gecode {
      *
      */
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     IntVarRanges::IntVarRanges(void) {}
 
     forceinline
@@ -116,9 +112,6 @@ namespace Gecode {
      * Value iterator
      *
      */
-
-    forceinline
-    IntVarValues::IntVarValues(void) {}
 
     forceinline
     IntVarValues::IntVarValues(const IntVar& x) {

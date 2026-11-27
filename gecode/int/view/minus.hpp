@@ -41,8 +41,6 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline
-    MinusView::MinusView(void) {}
-    forceinline
     MinusView::MinusView(const IntView& y)
         : DerivedView<IntView>(y) {}
 
@@ -265,6 +263,7 @@ namespace Gecode { namespace Int {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ViewRanges<MinusView>::ViewRanges(void) {}
 
     forceinline
@@ -308,10 +307,6 @@ namespace Gecode { namespace Int {
     forceinline bool
     operator==(const MinusView& x, const MinusView& y) {
         return x.base() == y.base();
-    }
-    forceinline bool
-    operator!=(const MinusView& x, const MinusView& y) {
-        return !(x == y);
     }
 
 }} // namespace Gecode::Int

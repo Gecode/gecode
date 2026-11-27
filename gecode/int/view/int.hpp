@@ -41,8 +41,6 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline
-    IntView::IntView(void) {}
-    forceinline
     IntView::IntView(const IntVar& y)
         : VarImpView<IntVar>(y.varimp()) {}
     forceinline
@@ -248,6 +246,7 @@ namespace Gecode { namespace Int {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     ViewRanges<IntView>::ViewRanges(void) {}
 
     forceinline

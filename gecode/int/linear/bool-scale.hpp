@@ -37,8 +37,6 @@ namespace Gecode { namespace Int { namespace Linear {
      *
      */
     forceinline
-    ScaleBoolArray::ScaleBoolArray(void) {}
-    forceinline
     ScaleBoolArray::ScaleBoolArray(Space& home, int n) {
         if (n > 0) {
             _fst = home.alloc<ScaleBool>(n);
@@ -115,8 +113,6 @@ namespace Gecode { namespace Int { namespace Linear {
      * Empty array of scale Boolean views
      *
      */
-    forceinline
-    EmptyScaleBoolArray::EmptyScaleBoolArray(void) {}
     forceinline
     EmptyScaleBoolArray::EmptyScaleBoolArray(Space&, int) {}
     forceinline void

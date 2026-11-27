@@ -39,7 +39,7 @@ namespace Gecode { namespace Support {
         /// Run a job with iterator index \a i
         virtual RetType run(int i) = 0;
         /// Destructor
-        virtual ~Job(void) {}
+        virtual ~Job(void) = default;
     };
 
     /// Class to throw an exception to stop new jobs from being started
@@ -177,7 +177,7 @@ namespace Gecode { namespace Support {
         : Runnable(true), job(j), master(m), idx(i) {}
 
     template <class Jobs, class RetType>
-    RunJobs<Jobs, RetType>::Worker::~Worker(void) {}
+    RunJobs<Jobs, RetType>::Worker::~Worker(void) = default;
 
     template <class Jobs, class RetType>
     inline int

@@ -78,6 +78,7 @@ protected:
         int m; //< Machine
         int p; //< Processing time
         /// Default constructor
+        // NOLINTNEXTLINE(modernize-use-equals-default)
         Task(void) {}
         /// Constructor
         Task(int j0, int m0, int p0) : j(j0), m(m0), p(p0) {}

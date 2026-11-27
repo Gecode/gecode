@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Union(void);
+        Union(void) = default;
         /// Initialize with iterator \a i and \a j
         Union(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -160,10 +160,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
             goto next;
         }
     }
-
-    template <class I, class J>
-    forceinline
-    Union<I, J>::Union(void) {}
 
     template <class I, class J>
     forceinline

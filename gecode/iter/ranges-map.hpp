@@ -91,7 +91,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Map(void);
+        Map(void) = default;
         /// Initialize with ranges from \a i
         Map(I& i);
         /// Initialize with ranges from \a i and map \a m
@@ -122,7 +122,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Map(void);
+        Map(void) = default;
         /// Initialize with ranges from \a i
         Map(I& i);
         /// Initialize with ranges from \a i and map \a m
@@ -151,10 +151,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         unsigned int width(void) const;
         //@}
     };
-
-    template <class I, class M>
-    forceinline
-    Map<I, M, false>::Map(void) {}
 
     template <class I, class M>
     forceinline void
@@ -204,10 +200,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
     Map<I, M, false>::operator++(void) {
         next();
     }
-
-    template <class I, class M>
-    forceinline
-    Map<I, M, true>::Map(void) {}
 
     template <class I, class M>
     forceinline void

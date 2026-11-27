@@ -37,9 +37,6 @@
 namespace Gecode { namespace Set {
 
     forceinline
-    SingletonView::SingletonView(void) {}
-
-    forceinline
     SingletonView::SingletonView(Gecode::Int::IntView& y)
         : DerivedView<Gecode::Int::IntView>(y) {}
 
@@ -322,11 +319,6 @@ namespace Gecode { namespace Set {
         return x.base() == y.base();
     }
 
-    forceinline bool
-    operator!=(const SingletonView& x, const SingletonView& y) {
-        return x.base() != y.base();
-    }
-
     /*
      * Iterators
      *
@@ -351,6 +343,7 @@ namespace Gecode { namespace Set {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     LubRanges<SingletonView>::LubRanges(void) {}
 
     forceinline
@@ -402,6 +395,7 @@ namespace Gecode { namespace Set {
     };
 
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     GlbRanges<SingletonView>::GlbRanges(void) {}
 
     forceinline void

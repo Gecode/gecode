@@ -95,7 +95,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewValues(void);
+        ViewValues(void) = default;
         /// Initialize with values for \a x
         ViewValues(const View& x);
         /// Initialize with values \a x
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        IntView(void);
+        IntView(void) = default;
         /// Initialize from integer variable \a y
         IntView(const IntVar& y);
         /// Initialize from integer variable \a y
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinusView(void);
+        MinusView(void) = default;
         /// Initialize with integer view \a y
         explicit MinusView(const IntView& y);
         //@}
@@ -425,9 +425,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::MinusView
     bool operator==(const MinusView& x, const MinusView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::MinusView
-    bool operator!=(const MinusView& x, const MinusView& y);
     //@}
 
     /**
@@ -604,9 +601,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::OffsetView
     bool operator==(const OffsetView& x, const OffsetView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::OffsetView
-    bool operator!=(const OffsetView& x, const OffsetView& y);
     //@}
 
     /**
@@ -832,10 +826,6 @@ namespace Gecode { namespace Int {
     /// \relates Gecode::Int::ScaleView
     template <class Val, class UnsVal>
     bool operator==(const ScaleView<Val, UnsVal>& x, const ScaleView<Val, UnsVal>& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::ScaleView
-    template <class Val, class UnsVal>
-    bool operator!=(const ScaleView<Val, UnsVal>& x, const ScaleView<Val, UnsVal>& y);
     //@}
 
     /**
@@ -994,9 +984,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::ConstIntView
     bool operator==(const ConstIntView& x, const ConstIntView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::ConstIntView
-    bool operator!=(const ConstIntView& x, const ConstIntView& y);
     //@}
 
     /**
@@ -1011,7 +998,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ZeroIntView(void);
+        ZeroIntView(void) = default;
         //@}
 
         /// \name Value access
@@ -1138,9 +1125,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::ZeroIntView
     bool operator==(const ZeroIntView& x, const ZeroIntView& y);
-    /// Test whether views \a x and \a y are the same
-    /// \relates Gecode::Int::ZeroIntView
-    bool operator!=(const ZeroIntView& x, const ZeroIntView& y);
     //@}
 
     template <class View>
@@ -1330,10 +1314,6 @@ namespace Gecode { namespace Int {
     /// \relates Gecode::Int::CachedView
     template <class View>
     bool operator==(const CachedView<View>& x, const CachedView<View>& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::CachedView
-    template <class View>
-    bool operator!=(const CachedView<View>& x, const CachedView<View>& y);
     //@}
 
     /**
@@ -1358,7 +1338,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewDiffRanges(void);
+        ViewDiffRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewDiffRanges(const CachedView<View>& x);
         /// Initialize with ranges for view \a x
@@ -1380,7 +1360,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BoolView(void);
+        BoolView(void) = default;
         /// Initialize from Boolean variable \a y
         BoolView(const BoolVar& y);
         /// Initialize from Boolean variable implementation \a y
@@ -1572,7 +1552,7 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NegBoolView(void);
+        NegBoolView(void) = default;
         /// Initialize with Boolean view \a y
         explicit NegBoolView(const BoolView& y);
         //@}
@@ -1682,9 +1662,6 @@ namespace Gecode { namespace Int {
     /// Test whether views \a x and \a y are the same
     /// \relates Gecode::Int::NegBoolView
     bool operator==(const NegBoolView& x, const NegBoolView& y);
-    /// Test whether views \a x and \a y are not the same
-    /// \relates Gecode::Int::NegBoolView
-    bool operator!=(const NegBoolView& x, const NegBoolView& y);
     //@}
 
     /**

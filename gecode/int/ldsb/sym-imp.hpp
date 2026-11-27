@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     template <class View>
-    SymmetryImp<View>::~SymmetryImp(void) {}
+    SymmetryImp<View>::~SymmetryImp(void) = default;
 
     template <class View>
     void*

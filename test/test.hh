@@ -234,6 +234,16 @@ namespace Test {
         static std::string str(const Gecode::IntArgs& i);
         //@}
 
+        /// \name Checking comparison operators
+        //@{
+        /// Whether \a x and \a y are equal by == and != in both argument orders
+        template <class T1, class T2>
+        static bool compares_equal(const T1& x, const T2& y);
+        /// Whether \a x and \a y are unequal by == and != in both argument orders
+        template <class T1, class T2>
+        static bool compares_unequal(const T1& x, const T2& y);
+        //@}
+
         /// Random number generator
         mutable Gecode::Support::RandomGenerator _rand;
     };

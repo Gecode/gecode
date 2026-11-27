@@ -124,16 +124,89 @@ and the type has a real move constructor, such as `std::function`,
 `std::string`, `std::vector`, or a branching configuration, take it by value
 and `std::move` it into place instead.
 
-The check's `AllowedTypes` keeps Gecode's shallow handles passed by value:
-`Home`, the groups, `Pos`, `Reify`, the variables (`IntVar` and so on), the
-variable arrays and `ViewArray`, the open variable and view lists, the views,
-and `View::VarType`. Copying one copies a few pointers or ids, with no
-reference count or allocation, and Gecode code relies on their value
-semantics. Owned and reference-counted types are not exempt: `SharedHandle`
-types such as `IntSet`, `TupleSet`, `DFA`, `Rnd`, `Action`, and `CHB`,
-`SharedArray`, the `*Args` arrays, `REG`, strings, and callbacks. Their copies
-touch a reference count or allocate, so they follow the rule above. `FloatVal`
-is not exempt either: it is two doubles, not a handle.
+Gecode's shallow handles are trivially copyable, so the check never reports
+them: `Home`, the groups, `Pos`, `Reify`, the variables (`IntVar` and so
+on), the variable arrays and `ViewArray`, the open variable and view lists,
+`LocalHandle`, `AFC`, and the views. Copying one copies a few pointers or ids,
+with no reference count or allocation, and Gecode code relies on their value
+semantics. Keep them so: define no copy member, move member, or destructor
+for a handle that only copies its members, or default it on its first
+declaration. `test/array.cpp` asserts the property. The check's
+`AllowedTypes` lists only `Float::ScaleView`, a view that is not trivially
+copyable because its `FloatVal` member is not. Owned and reference-counted
+types are not exempt: `SharedHandle` types such as `IntSet`, `TupleSet`,
+`DFA`, `Rnd`, `Action`, and `CHB`, `SharedArray`, the `*Args` arrays, `REG`,
+strings, and callbacks. Their copies touch a reference count or allocate, so
+they follow the rule above. `FloatVal` is not exempt either: it is two
+doubles, not a handle.
+
+Special members follow the rule of zero: a class whose members copy, move,
+and destroy themselves declares no copy member, move member, or destructor.
+Where a special member must be declared, for example a default constructor
+beside other constructors or a virtual destructor, write `= default` instead
+of an empty body or a member-wise copy, on the member's first declaration in
+the class. A member defaulted out of line is user-provided and keeps the
+class non-trivial. Virtual destructors may stay out of line: their class is
+never trivial, and one defined in a .cpp file decides where the vtable is
+emitted. A member that must not be called is a public `= delete`, not a
+private member without a definition. `modernize-use-equals-default` and
+`modernize-use-equals-delete` enforce these rules.
+
+Some hand-written members stay, each after a
+`// NOLINTNEXTLINE(modernize-use-equals-default)` line. Cloning constructors
+such as `Space(Space&)` are copy constructors despite their non-const
+parameter, so the compiler declares no implicit copy or move constructor beside
+them. They take their source by non-const reference because cloning writes
+forwarding pointers into it, and they update their variables with `update()`.
+An empty default constructor stays where defaulting it would change what
+value-initialization does: `T()`, `T{}`, and the `alloc<T>(n)` functions of
+spaces, regions, and the heap zero a class whose default constructor is not
+user-provided, while the empty constructor leaves fields without an initializer
+untouched. A constructor whose body is empty only in some configurations stays
+as well.
+
+Comparisons use the C++20 forms. A class whose equality compares every field
+declares `bool operator==(const T&) const = default;`. A class ordered
+lexicographically by its fields in declaration order declares
+`auto operator<=>(const T&) const = default;` instead, which also provides
+`==`; its header includes `<compare>`. Declare no `operator!=` and no `<`,
+`<=`, `>`, or `>=` beside them: the compiler rewrites `a != b` as
+`!(a == b)` and the relational operators through `operator<=>`, in either
+argument order. A hand-written `operator==` stays where equality is not
+field-wise, for example a deep comparison of a shared object or a comparison
+of the address an allocator refers to, and it gets no `operator!=` either. A
+hand-written `operator<` stays where the order is not the field order, such
+as a sort key. Operators that build modelling expressions, such as
+`IntVar < IntVar`, keep all their operators, and so do the possibly/certainly
+interval comparisons of `FloatVal`. The kernel's heterogeneous `ConstView`,
+`VarImpView`, and `DerivedView` templates keep `operator!=`: without it, their
+reversed `operator==` candidates would join every view comparison. A class
+with both an implicit converting constructor and an implicit conversion
+operator keeps `operator!=` as well. `TupleSet` is one: without its
+`operator!=`, `true != t` is ambiguous between its `int` constructor and its
+`bool` conversion. Rewriting
+covers only operator expressions, so write `a != b`, not `operator!=(a, b)` or
+`a.operator<(b)`. No clang-tidy check enforces this rule.
+
+A const/non-const overload pair stays a pair unless one member with an
+explicit object parameter, `template <class Self> auto& f(this Self&& self)`,
+removes a duplicated body of more than one statement, not counting `assert`,
+or a `const_cast` forwarding idiom. A pair whose bodies are one statement each
+stays: the merged template is not shorter. Merge only when the merged member
+returns the same type and accepts the same receivers as the pair, including
+rvalues and calls through derived classes. A member reached through `self`
+is looked up in the receiver's class, so a derived class can hide it, and a
+class that inherits privately and re-exports the member with `using` makes
+the base inaccessible, so the call no longer compiles. Storage reached
+through a pointer does not inherit const from `self`; return it through
+`std::forward_like<Self&>`. An explicit-object member cannot be virtual or
+static, takes no trailing cv or ref qualifier, and its address is a plain
+function pointer rather than a member pointer. The merged member is a
+template over `Self`, so its definition must be visible to callers: a pair
+defined in a .cpp file moves to a header. `Matrix::operator()` keeps its pair
+for the derived-class reason: its two bodies duplicate a range check, but a
+merged member would reject a privately derived matrix. No clang-tidy check
+enforces this rule.
 
 Other performance checks need focused review: `performance-enum-size` changes
 layouts and ABI, and `performance-no-int-to-ptr` conflicts with deliberate

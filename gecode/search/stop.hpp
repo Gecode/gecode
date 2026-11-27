@@ -40,9 +40,7 @@ namespace Gecode { namespace Search {
      * Base class
      *
      */
-    forceinline
-    Stop::Stop(void) {}
-    forceinline Stop::~Stop(void) {}
+    forceinline Stop::~Stop(void) = default;
 
     /*
      * Stopping for node limit

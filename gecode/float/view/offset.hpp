@@ -39,8 +39,6 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline
-    OffsetView::OffsetView(void) {}
-    forceinline
     OffsetView::OffsetView(const FloatView& y, FloatNum d)
         : DerivedView<FloatView>(y), c(d) {}
 
@@ -186,10 +184,6 @@ namespace Gecode { namespace Float {
     forceinline bool
     operator==(const OffsetView& x, const OffsetView& y) {
         return (x.base() == y.base()) && (x.offset() == y.offset());
-    }
-    forceinline bool
-    operator!=(const OffsetView& x, const OffsetView& y) {
-        return !(x == y);
     }
 
 }} // namespace Gecode::Float

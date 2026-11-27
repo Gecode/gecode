@@ -43,9 +43,6 @@ namespace Gecode {
         : l(l0), r(r0), srt(srt0) {}
 
     forceinline
-    SetRel::SetRel(void) {}
-
-    forceinline
     SetRel::SetRel(const SetExpr& e0, SetRelType srt, const SetExpr& e1)
         : _e0(e0), _srt(srt), _e1(e1) {}
 

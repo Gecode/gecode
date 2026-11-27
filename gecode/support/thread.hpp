@@ -99,12 +99,10 @@ namespace Gecode { namespace Support {
         /// Free memory allocated from heap
         static void operator delete(void* p);
 
-    private:
         /// A mutex cannot be copied
-        Mutex(const Mutex&) {}
+        Mutex(const Mutex&) = delete;
         /// A mutex cannot be assigned
-        void
-        operator=(const Mutex&) {}
+        Mutex& operator=(const Mutex&) = delete;
     };
 
     /**
@@ -123,12 +121,10 @@ namespace Gecode { namespace Support {
         /// Leave lock
         ~Lock(void);
 
-    private:
         /// A lock cannot be copied
-        Lock(const Lock& l) : m(l.m) {}
+        Lock(const Lock&) = delete;
         /// A lock cannot be assigned
-        void
-        operator=(const Lock&) {}
+        Lock& operator=(const Lock&) = delete;
     };
 
     /**
@@ -158,12 +154,10 @@ namespace Gecode { namespace Support {
         /// Wait until the event becomes signalled
         void wait(void);
 
-    private:
         /// An event cannot be copied
-        Event(const Event&) {}
+        Event(const Event&) = delete;
         /// An event cannot be assigned
-        void
-        operator=(const Event&) {}
+        Event& operator=(const Event&) = delete;
     };
 
     /**
@@ -175,7 +169,7 @@ namespace Gecode { namespace Support {
     class Terminator {
     public:
         /// Destructor
-        virtual ~Terminator() {}
+        virtual ~Terminator() = default;
         /// The function that is called when the thread has terminated
         virtual void terminated(void) = 0;
     };
@@ -205,7 +199,7 @@ namespace Gecode { namespace Support {
         /// The function that is executed when the thread starts
         virtual void run(void) = 0;
         /// Destructor
-        virtual ~Runnable(void) {}
+        virtual ~Runnable(void) = default;
         /// Allocate memory from heap
         static void* operator new(size_t s);
         /// Free memory allocated from heap
@@ -268,12 +262,10 @@ namespace Gecode { namespace Support {
         /// release globally acquired mutex \a m
         GECODE_SUPPORT_EXPORT static void release_global_mutex(Mutex* m);
 
-    private:
         /// A thread cannot be copied
-        Thread(const Thread&) {}
+        Thread(const Thread&) = delete;
         /// A thread cannot be assigned
-        void
-        operator=(const Thread&) {}
+        Thread& operator=(const Thread&) = delete;
     };
 
 }} // namespace Gecode::Support

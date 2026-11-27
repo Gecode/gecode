@@ -56,7 +56,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinMax(void);
+        MinMax(void) = default;
         /// Initialize with range \a min to \a max
         MinMax(int min, int max);
         //@}
@@ -83,9 +83,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         mi = 1;
         ma = 0;
     }
-
-    forceinline
-    MinMax::MinMax(void) {}
 
     forceinline
     MinMax::MinMax(int min, int max)

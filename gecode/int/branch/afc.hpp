@@ -33,18 +33,6 @@
 namespace Gecode {
 
     forceinline
-    IntAFC::IntAFC(void) {}
-
-    forceinline
-    IntAFC::IntAFC(const IntAFC& a)
-        : AFC(a) {}
-
-    forceinline IntAFC&
-    IntAFC::operator=(const IntAFC& a) {
-        return static_cast<IntAFC&>(AFC::operator=(a));
-    }
-
-    forceinline
     IntAFC::IntAFC(Home home, const IntVarArgs& x, double d, bool share) {
         AFC::init(home, x, d, share);
     }
@@ -52,18 +40,6 @@ namespace Gecode {
     forceinline void
     IntAFC::init(Home home, const IntVarArgs& x, double d, bool share) {
         AFC::init(home, x, d, share);
-    }
-
-    forceinline
-    BoolAFC::BoolAFC(void) {}
-
-    forceinline
-    BoolAFC::BoolAFC(const BoolAFC& a)
-        : AFC(a) {}
-
-    forceinline BoolAFC&
-    BoolAFC::operator=(const BoolAFC& a) {
-        return static_cast<BoolAFC&>(AFC::operator=(a));
     }
 
     forceinline

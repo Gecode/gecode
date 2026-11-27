@@ -55,7 +55,7 @@ namespace Gecode { namespace Gist {
         /// Right coordinate
         int right;
         /// Default constructor
-        BoundingBox(void) {}
+        BoundingBox(void) = default;
     };
 
     /// \brief %Extent representing shape of a tree at one depth level
@@ -87,14 +87,14 @@ namespace Gecode { namespace Gist {
         BoundingBox bb;
         /// The shape is an array of extents, one for each depth level
         Extent shape[1];
-        /// Copy constructor
-        Shape(const Shape&);
-        /// Assignment operator
-        Shape& operator=(const Shape&);
-        /// Constructor
-        Shape(void);
 
     public:
+        /// Copy constructor
+        Shape(const Shape&) = delete;
+        /// Assignment operator
+        Shape& operator=(const Shape&) = delete;
+        /// Constructor
+        Shape(void) = delete;
         /// Construct shape of depth \a d
         static Shape* allocate(int d);
         // Destruct

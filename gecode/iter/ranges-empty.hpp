@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Empty(void);
+        Empty(void) = default;
         /// Initialize
         void init(void);
         //@}
@@ -66,9 +66,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         unsigned int width(void) const;
         //@}
     };
-
-    forceinline
-    Empty::Empty(void) {}
 
     forceinline void
     Empty::init(void) {}

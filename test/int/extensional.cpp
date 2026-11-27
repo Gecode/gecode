@@ -827,6 +827,25 @@ namespace Test { namespace Int {
             }
         };
 
+        /// %Test for comparing DFAs
+        class DFACompare : public ::Test::Base {
+        public:
+            DFACompare(void) : ::Test::Base("Int::Extensional::DFA::Compare") {}
+
+            bool
+            run(void) override {
+                using namespace Gecode;
+                DFA d(REG(0) + REG(1));
+                DFA same(REG(0) + REG(1));
+                DFA other(REG(1) + REG(0));
+                // NOLINTNEXTLINE(performance-unnecessary-copy-initialization)
+                DFA d_copy(d);
+                DFA empty, other_empty;
+                return compares_equal(d, same) && compares_equal(d, d_copy) && compares_unequal(d, other) &&
+                       compares_equal(empty, other_empty) && compares_unequal(d, empty);
+            }
+        };
+
         /// Space used by open regular tests
         class OpenRegularSpace : public Gecode::Space {
         public:
@@ -1675,6 +1694,46 @@ namespace Test { namespace Int {
             }
         };
 
+        /// %Test for comparing finalized tuple sets
+        class TupleSetCompare : public ::Test::Base {
+        public:
+            TupleSetCompare(void) : ::Test::Base("Int::Extensional::TupleSet::Compare") {}
+
+            bool
+            run(void) override {
+                using namespace Gecode;
+                TupleSet t(2), same(2), other(2);
+                t.add(IntArgs({0, 1})).add(IntArgs({1, 0})).finalize();
+                same.add(IntArgs({0, 1})).add(IntArgs({1, 0})).finalize();
+                other.add(IntArgs({0, 1})).finalize();
+                TupleSet t_copy(t);
+                if (!compares_equal(t, same) || !compares_equal(t, t_copy) || !compares_unequal(t, other))
+                    return false;
+                // A bool on the left compares with the tuple set's bool
+                // conversion; TupleSet::operator!= keeps these unambiguous.
+                return (true == t) && !(true != t);
+            }
+        };
+
+        /// %Test for comparing the bit-set words that tuple-set supports use
+        class BitSetDataCompare : public ::Test::Base {
+        public:
+            BitSetDataCompare(void) : ::Test::Base("Int::Extensional::BitSetData::Compare") {}
+
+            bool
+            run(void) override {
+                using Gecode::Support::BitSetData;
+                BitSetData b, other;
+                b.init(false);
+                other.init(false);
+                BitSetData b_copy(b);
+                if (!compares_equal(b, other) || !compares_equal(b, b_copy))
+                    return false;
+                other.set(3);
+                return compares_unequal(b, other);
+            }
+        };
+
         /// Disabled compact propagators preserve pending work when cloned
         class TupleSetDisabledClone : public ::Test::Base {
         public:
@@ -2400,6 +2459,7 @@ namespace Test { namespace Int {
         OpenRegularEmpty open_regular_empty_reject(OpenRegularEmpty::Kind::REJECT);
         OpenRegularEmpty open_regular_no_finals(OpenRegularEmpty::Kind::NO_FINALS);
         OpenRegularClosed open_regular_closed;
+        DFACompare dfa_compare;
 
         /// Exhaustive positive, negative, and reified sparse-table semantics.
         class CreateSparse {
@@ -2446,6 +2506,8 @@ namespace Test { namespace Int {
         TupleSetSupportOffsetBoundary tuple_set_support_offset_boundary;
         TupleSetTerminalFinalizationFailure tuple_set_terminal_failure;
         TupleSetDFARepresentation tuple_set_dfa_representation;
+        TupleSetCompare tuple_set_compare;
+        BitSetDataCompare bit_set_data_compare;
         TupleSetDisabledClone tuple_set_disabled_clone;
         TupleSetAutoDefaultDispatch tuple_set_auto_default_dispatch;
         DenseCompressedTupleSetWideGap dense_compressed_tuple_set_wide_gap;

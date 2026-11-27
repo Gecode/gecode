@@ -39,6 +39,7 @@ namespace Gecode {
      *
      */
     forceinline
+    // NOLINTNEXTLINE(modernize-use-equals-default)
     SearchTracer::EngineInfo::EngineInfo(void) {}
 
     forceinline
@@ -279,7 +280,7 @@ namespace Gecode {
         return w2e[wid];
     }
 
-    forceinline SearchTracer::~SearchTracer(void) {}
+    forceinline SearchTracer::~SearchTracer(void) = default;
 
 } // namespace Gecode
 

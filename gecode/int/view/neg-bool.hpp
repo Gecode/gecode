@@ -46,8 +46,6 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline
-    NegBoolView::NegBoolView(void) {}
-    forceinline
     NegBoolView::NegBoolView(const BoolView& y)
         : DerivedView<BoolView>(y) {}
 
@@ -207,10 +205,6 @@ namespace Gecode { namespace Int {
     operator==(const NegBoolView& x, const NegBoolView& y) {
         return x.base() == y.base();
     }
-    forceinline bool
-    operator!=(const NegBoolView& x, const NegBoolView& y) {
-        return !(x == y);
-    }
 
     /**
      * \brief %Range iterator for negated Boolean variable views
@@ -222,16 +216,13 @@ namespace Gecode { namespace Int {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ViewRanges(void);
+        ViewRanges(void) = default;
         /// Initialize with ranges for view \a x
         ViewRanges(const NegBoolView& x);
         /// Initialize with ranges for view \a x
         void init(const NegBoolView& x);
         //@}
     };
-
-    forceinline
-    ViewRanges<NegBoolView>::ViewRanges(void) {}
 
     forceinline
     ViewRanges<NegBoolView>::ViewRanges(const NegBoolView& x)

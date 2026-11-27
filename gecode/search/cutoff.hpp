@@ -36,9 +36,7 @@
 
 namespace Gecode { namespace Search {
 
-    forceinline
-    Cutoff::Cutoff(void) {}
-    forceinline Cutoff::~Cutoff(void) {}
+    forceinline Cutoff::~Cutoff(void) = default;
 
     forceinline
     CutoffConstant::CutoffConstant(unsigned long long int c0)
