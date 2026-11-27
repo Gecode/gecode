@@ -1572,8 +1572,8 @@ namespace Test { namespace LDSB {
         setup(Home home, SetVarArray& xs) {
             Symmetries syms;
             syms << variable_sequence_symmetry(xs, 2);
-            rel(home, xs[0], SOT_INTER, xs[1], SRT_EQ, IntSet::empty);
-            rel(home, xs[2], SOT_INTER, xs[3], SRT_EQ, IntSet::empty);
+            rel(home, xs[0], SOT_INTERSECTION, xs[1], SRT_EQ, IntSet::empty);
+            rel(home, xs[2], SOT_INTERSECTION, xs[3], SRT_EQ, IntSet::empty);
             for (int i = 0; i < 4; i++)
                 cardinality(home, xs[i], 1, 1);
             branch(home, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);

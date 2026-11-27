@@ -194,12 +194,12 @@ namespace Gecode { namespace Int { namespace NValues {
                 for (int i = n_dis; i--;)
                     for (ViewRanges<IntView> rx(x[dis[i]]); rx(); ++rx) {
                         // Event when a range starts
-                        re[j].ret = RET_FST;
+                        re[j].ret = RET_START;
                         re[j].val = rx.min();
                         re[j].view = dis[i];
                         j++;
                         // Event when a range ends
-                        re[j].ret = RET_LST;
+                        re[j].ret = RET_FINISH;
                         re[j].val = rx.max();
                         re[j].view = dis[i];
                         j++;
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace NValues {
             // Process all events
             for (int i = 0; true; i++)
                 switch (re[i].ret) {
-                case RET_FST:
+                case RET_START:
                     // Process all overlapping views
                     for (Iter::Values::BitSet<Support::BitSet<Region>> j(cur); j(); ++j) {
                         int di = re[i].view, dj = j.val();
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace NValues {
                     }
                     cur.set(static_cast<unsigned int>(re[i].view));
                     break;
-                case RET_LST:
+                case RET_FINISH:
                     cur.clear(static_cast<unsigned int>(re[i].view));
                     break;
                 case RET_END:

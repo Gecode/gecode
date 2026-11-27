@@ -115,8 +115,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, BoolView, RM_IMP>::post(home, x, n, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, BoolView, RM_PMI>::post(home, x, n, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Rel::ReEqDomInt<IntView, BoolView, RM_RIMP>::post(home, x, n, r.var())));
             break;
         default:
             throw UnknownReifyMode("Int::dom");
@@ -136,8 +136,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Dom::ReRange<IntView, RM_IMP>::post(home, x, min, max, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Dom::ReRange<IntView, RM_PMI>::post(home, x, min, max, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Dom::ReRange<IntView, RM_RIMP>::post(home, x, min, max, r.var())));
             break;
         default:
             throw UnknownReifyMode("Int::dom");
@@ -157,8 +157,8 @@ namespace Gecode {
         case RM_IMP:
             GECODE_ES_FAIL((Dom::ReIntSet<IntView, RM_IMP>::post(home, x, is, r.var())));
             break;
-        case RM_PMI:
-            GECODE_ES_FAIL((Dom::ReIntSet<IntView, RM_PMI>::post(home, x, is, r.var())));
+        case RM_RIMP:
+            GECODE_ES_FAIL((Dom::ReIntSet<IntView, RM_RIMP>::post(home, x, is, r.var())));
             break;
         default:
             throw UnknownReifyMode("Int::dom");

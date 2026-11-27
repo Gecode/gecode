@@ -97,7 +97,7 @@ namespace Gecode { namespace Set { namespace Rel {
     ExecStatus
     ReSubset<View0, View1, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return home.ES_SUBSUMED(*this);
             GECODE_REWRITE(*this, (Subset<View0, View1>::post(home(*this), x0, x1)));
         }
@@ -109,7 +109,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
         // check whether cardinalities still allow subset
         if (x0.card_min() > x1.card_max()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(b.zero_none(home));
             return home.ES_SUBSUMED(*this);
         }
@@ -132,7 +132,7 @@ namespace Gecode { namespace Set { namespace Rel {
             LubRanges<View1> x1ub(x1);
             Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View1>> d(x0lb, x1ub);
             if (d()) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
             } else if (x0.assigned() && x1.assigned()) {
@@ -147,7 +147,7 @@ namespace Gecode { namespace Set { namespace Rel {
             LubRanges<View1> x1ub(x1);
             Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1>> i(x0ub, x1ub);
             if (!i()) {
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 return home.ES_SUBSUMED(*this);
             }

@@ -47,7 +47,7 @@ namespace Test { namespace Branch {
             Gecode::SetVarArgs xx(x.size() - 1);
             for (int i = x.size() - 1; i--;)
                 xx[i] = x[i];
-            Gecode::rel(home, Gecode::SOT_DUNION, xx, x[x.size() - 1]);
+            Gecode::rel(home, Gecode::SOT_DISJOINT_UNION, xx, x[x.size() - 1]);
         }
     };
 

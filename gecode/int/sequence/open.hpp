@@ -264,7 +264,7 @@ namespace Gecode { namespace Int { namespace Sequence {
             // eliminates assigned terms. Delayed posting then has the same
             // propagation strength as posting before those assignments.
             if (vbd(ipl) == IPL_DEF)
-                ipl = static_cast<IntPropLevel>(ipl | ((width <= 2) ? IPL_DOM : IPL_BND));
+                ipl |= (width <= 2) ? IPL_DOM : IPL_BND;
         }
 
         OpenSlidingSumEq(Space& home, OpenSlidingSumEq& p)

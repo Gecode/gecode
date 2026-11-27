@@ -43,7 +43,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     forceinline void
     rel_eq(Home home, View0 x0, SetOpType op, View1 x1, Res x2) {
         switch (op) {
-        case SOT_DUNION: {
+        case SOT_DISJOINT_UNION: {
             EmptyView emptyset;
             GECODE_ES_FAIL((SuperOfInter<View0, View1, EmptyView>::post(home, x0, x1, emptyset)));
         }
@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         case SOT_UNION: {
             GECODE_ES_FAIL((Union<View0, View1, Res>::post(home, x0, x1, x2)));
         } break;
-        case SOT_INTER: {
+        case SOT_INTERSECTION: {
             GECODE_ES_FAIL((Intersection<View0, View1, Res>::post(home, x0, x1, x2)));
         } break;
         case SOT_MINUS: {
@@ -65,7 +65,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     forceinline void
     rel_sub(Home home, View0 x0, SetOpType op, View1 x1, View2 x2) {
         switch (op) {
-        case SOT_DUNION: {
+        case SOT_DISJOINT_UNION: {
             EmptyView emptyset;
             GECODE_ES_FAIL((SuperOfInter<View0, View1, EmptyView>::post(home, x0, x1, emptyset)));
         }
@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
             GECODE_ES_FAIL((Union<View0, View1, SetView>::post(home, x0, x1, tmp)));
         } break;
-        case SOT_INTER: {
+        case SOT_INTERSECTION: {
             GECODE_ES_FAIL((SuperOfInter<View0, View1, View2>::post(home, x0, x1, x2)));
         } break;
         case SOT_MINUS: {
@@ -90,7 +90,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     forceinline void
     rel_sup(Home home, View0 x0, SetOpType op, View1 x1, View2 x2) {
         switch (op) {
-        case SOT_DUNION: {
+        case SOT_DISJOINT_UNION: {
             EmptyView emptyset;
             GECODE_ES_FAIL((SuperOfInter<View0, View1, EmptyView>::post(home, x0, x1, emptyset)));
         }
@@ -98,7 +98,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         case SOT_UNION: {
             GECODE_ES_FAIL((SubOfUnion<View0, View1, View2>::post(home, x0, x1, x2)));
         } break;
-        case SOT_INTER: {
+        case SOT_INTERSECTION: {
             SetVar tmp(home);
             GECODE_ES_FAIL((Rel::Subset<View2, SetView>::post(home, x2, tmp)));
 
@@ -163,7 +163,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         case SRT_SUP:
             rel_sup<View0, View1, View2>(home, x, op, y, z);
             break;
-        case SRT_DISJ: {
+        case SRT_DISJOINT: {
             SetVar tmp(home);
             EmptyView emptyset;
             GECODE_ES_FAIL((SuperOfInter<View2, SetView, EmptyView>::post(home, z, tmp, emptyset)));

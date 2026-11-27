@@ -54,7 +54,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_intersect(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_set_op(s, SOT_INTER, ce, ann);
+            p_set_op(s, SOT_INTERSECTION, ce, ann);
         }
         void
         p_set_diff(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -90,7 +90,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_array_set_partition(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_array_set_op(s, SOT_DUNION, ce, ann);
+            p_array_set_op(s, SOT_DISJOINT_UNION, ce, ann);
         }
 
         void
@@ -212,7 +212,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_set_disjoint(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            rel(s, s.to_set_var(ce[0]), SRT_DISJ, s.to_set_var(ce[1]));
+            rel(s, s.to_set_var(ce[0]), SRT_DISJOINT, s.to_set_var(ce[1]));
         }
 
         void
@@ -259,7 +259,7 @@ namespace Gecode { namespace FlatZinc {
                 }
             }
             SetVar selector = s.to_set_var(ce[0]);
-            dom(s, selector, SRT_DISJ, 0);
+            dom(s, selector, SRT_DISJOINT, 0);
             if (is_constant) {
                 IntSetArgs sv = s.to_int_set_args(ce[1], 1);
                 element(s, op, sv, selector, s.to_set_var(ce[2]), universe);
@@ -276,18 +276,18 @@ namespace Gecode { namespace FlatZinc {
 
         void
         p_array_set_element_intersect(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_array_set_element_op(s, ce, ann, SOT_INTER);
+            p_array_set_element_op(s, ce, ann, SOT_INTERSECTION);
         }
 
         void
         p_array_set_element_intersect_in(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
             IntSet d = s.to_int_set(ce[3]);
-            p_array_set_element_op(s, ce, ann, SOT_INTER, d);
+            p_array_set_element_op(s, ce, ann, SOT_INTERSECTION, d);
         }
 
         void
         p_array_set_element_partition(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-            p_array_set_element_op(s, ce, ann, SOT_DUNION);
+            p_array_set_element_op(s, ce, ann, SOT_DISJOINT_UNION);
         }
 
         void
@@ -373,9 +373,9 @@ namespace Gecode { namespace FlatZinc {
             case 4:
                 return SRT_SUP;
             case 5:
-                return SRT_DISJ;
+                return SRT_DISJOINT;
             case 6:
-                return SRT_CMPL;
+                return SRT_COMPLEMENT;
             case 7:
                 return SRT_LQ;
             case 8:
@@ -417,7 +417,7 @@ namespace Gecode { namespace FlatZinc {
         }
         void
         p_array_set_intersect(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-            rel(s, SOT_INTER, s.to_set_var_args(ce[0]), s.to_set_var(ce[1]));
+            rel(s, SOT_INTERSECTION, s.to_set_var_args(ce[0]), s.to_set_var(ce[1]));
         }
         void
         p_set_element2d(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {

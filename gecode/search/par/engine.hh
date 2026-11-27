@@ -160,12 +160,20 @@ namespace Gecode { namespace Search { namespace Par {
         /// \name Commands from engine to workers and wait management
         //@{
         /// Commands from engine to workers
-        enum Cmd {
+        enum class Cmd {
             C_WORK,     ///< Perform work
             C_WAIT,     ///< Run into wait lock
             C_RESET,    ///< Perform reset operation
             C_TERMINATE ///< Terminate
         };
+        /// Perform work
+        static constexpr Cmd C_WORK = Cmd::C_WORK;
+        /// Run into wait lock
+        static constexpr Cmd C_WAIT = Cmd::C_WAIT;
+        /// Perform reset operation
+        static constexpr Cmd C_RESET = Cmd::C_RESET;
+        /// Terminate
+        static constexpr Cmd C_TERMINATE = Cmd::C_TERMINATE;
 
     protected:
         /// The current command

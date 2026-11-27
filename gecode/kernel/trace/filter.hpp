@@ -46,11 +46,12 @@ namespace Gecode {
 
     protected:
         /// Type of trace filter expression
-        enum NodeType {
+        enum class NodeType {
             NT_GROUP,  ///< Propagator or brancher group
             NT_NEGATE, ///< Negation of expression
             NT_ADD     ///< More than one expression
         };
+        using enum NodeType;
         /// Node for trace filter expression
         class Node : public HeapAllocated {
         public:
@@ -260,7 +261,7 @@ namespace Gecode {
         f = heap.alloc<Filter>(1);
         f[0].g = g;
         f[0].neg = false;
-        f[0].what = 1 << ViewTraceInfo::PROPAGATOR;
+        f[0].what = 1 << std::to_underlying(ViewTraceInfo::PROPAGATOR);
     }
     forceinline
     TraceFilter::TFO::TFO(BrancherGroup g)
@@ -268,14 +269,14 @@ namespace Gecode {
         f = heap.alloc<Filter>(1);
         f[0].g = g;
         f[0].neg = false;
-        f[0].what = 1 << ViewTraceInfo::BRANCHER;
+        f[0].what = 1 << std::to_underlying(ViewTraceInfo::BRANCHER);
     }
     forceinline bool
     TraceFilter::TFO::operator()(const ViewTraceInfo& vti) const {
         if (n == 0)
             return true;
         for (int i = 0; i < n; i++)
-            if (f[i].what & (1 << vti.what())) {
+            if (f[i].what & (1 << std::to_underlying(vti.what()))) {
                 // Group is of the right type
                 switch (vti.what()) {
                 case ViewTraceInfo::PROPAGATOR:
@@ -309,7 +310,7 @@ namespace Gecode {
         if (n == 0)
             return true;
         for (int i = 0; i < n; i++)
-            if ((f[i].what & (1 << ViewTraceInfo::PROPAGATOR)) && (f[i].g.in(pg) != f[i].neg))
+            if ((f[i].what & (1 << std::to_underlying(ViewTraceInfo::PROPAGATOR))) && (f[i].g.in(pg) != f[i].neg))
                 return true;
         return false;
     }
@@ -324,7 +325,7 @@ namespace Gecode {
         if (n == 0)
             return true;
         for (int i = 0; i < n; i++)
-            if ((f[i].what & (1 << ViewTraceInfo::BRANCHER)) && (f[i].g.in(bg) != f[i].neg))
+            if ((f[i].what & (1 << std::to_underlying(ViewTraceInfo::BRANCHER))) && (f[i].g.in(bg) != f[i].neg))
                 return true;
         return false;
     }

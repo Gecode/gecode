@@ -404,7 +404,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReLq<View, CtrlView, rm>::post(Home home, View x0, View x1, CtrlView b) {
         if (b.one()) {
-            if (rm == RM_PMI)
+            if (rm == RM_RIMP)
                 return ES_OK;
             return Lq<View, View>::post(home, x0, x1);
         }
@@ -420,7 +420,7 @@ namespace Gecode { namespace Int { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
@@ -450,7 +450,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReLq<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_REWRITE(*this, (Lq<View, View>::post(home(*this), x0, x1)));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -462,7 +462,7 @@ namespace Gecode { namespace Int { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
@@ -488,7 +488,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReLqInt<View, CtrlView, rm>::post(Home home, View x, int c, CtrlView b) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x.lq(home, c));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -500,7 +500,7 @@ namespace Gecode { namespace Int { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:
@@ -528,7 +528,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ExecStatus
     ReLqInt<View, CtrlView, rm>::propagate(Space& home, const ModEventDelta&) {
         if (b.one()) {
-            if (rm != RM_PMI)
+            if (rm != RM_RIMP)
                 GECODE_ME_CHECK(x0.lq(home, c));
         } else if (b.zero()) {
             if (rm != RM_IMP)
@@ -540,7 +540,7 @@ namespace Gecode { namespace Int { namespace Rel {
                     GECODE_ME_CHECK(b.one_none(home));
                 break;
             case RT_FALSE:
-                if (rm != RM_PMI)
+                if (rm != RM_RIMP)
                     GECODE_ME_CHECK(b.zero_none(home));
                 break;
             case RT_MAYBE:

@@ -190,7 +190,7 @@ namespace Test { namespace Set {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
-                Gecode::element(home, SOT_INTER, xs, x[x.size() - 2], x[x.size() - 1]);
+                Gecode::element(home, SOT_INTERSECTION, xs, x[x.size() - 2], x[x.size() - 1]);
             }
         };
         ElementInter _elementinter("Element::Inter");
@@ -235,7 +235,7 @@ namespace Test { namespace Set {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
-                Gecode::element(home, SOT_INTER, xs, x[x.size() - 2], x[x.size() - 1], ds_12);
+                Gecode::element(home, SOT_INTERSECTION, xs, x[x.size() - 2], x[x.size() - 1], ds_12);
             }
         };
         ElementInterIn _elementinterin("Element::InterIn");
@@ -287,7 +287,7 @@ namespace Test { namespace Set {
                 SetVarArgs xs(x.size() - 2);
                 for (int i = x.size() - 2; i--;)
                     xs[i] = x[i];
-                Gecode::element(home, SOT_DUNION, xs, x[x.size() - 2], x[x.size() - 1]);
+                Gecode::element(home, SOT_DISJOINT_UNION, xs, x[x.size() - 2], x[x.size() - 1]);
             }
         };
         ElementDisjoint _elementdisjoint("Element::Disjoint");
@@ -386,7 +386,7 @@ namespace Test { namespace Set {
                 if (y())
                     return false;
                 CountableSetRanges z(x.lub, x[1]);
-                if (op != SOT_INTER)
+                if (op != SOT_INTERSECTION)
                     return !z();
                 if (universe == Universe::Default)
                     return false;
@@ -397,7 +397,7 @@ namespace Test { namespace Set {
             void
             post(Space& home, SetVarArray& x, IntVarArray&) override {
                 Args xs;
-                if ((op == SOT_INTER) && (universe == Universe::Given))
+                if ((op == SOT_INTERSECTION) && (universe == Universe::Given))
                     Gecode::element(home, op, xs, x[0], x[1], given);
                 else
                     Gecode::element(home, op, xs, x[0], x[1]);
@@ -405,21 +405,21 @@ namespace Test { namespace Set {
         };
 
         ElementEmpty<IntSetArgs> _element_empty_const_union("Const", SOT_UNION);
-        ElementEmpty<IntSetArgs> _element_empty_const_dunion("Const", SOT_DUNION);
-        ElementEmpty<IntSetArgs> _element_empty_const_inter("Const", SOT_INTER);
-        ElementEmpty<IntSetArgs> _element_empty_const_inter_default("Const", SOT_INTER, Universe::Default);
+        ElementEmpty<IntSetArgs> _element_empty_const_dunion("Const", SOT_DISJOINT_UNION);
+        ElementEmpty<IntSetArgs> _element_empty_const_inter("Const", SOT_INTERSECTION);
+        ElementEmpty<IntSetArgs> _element_empty_const_inter_default("Const", SOT_INTERSECTION, Universe::Default);
         ElementEmpty<IntArgs> _element_empty_int_union("Int", SOT_UNION);
-        ElementEmpty<IntArgs> _element_empty_int_dunion("Int", SOT_DUNION);
-        ElementEmpty<IntArgs> _element_empty_int_inter("Int", SOT_INTER);
-        ElementEmpty<IntArgs> _element_empty_int_inter_default("Int", SOT_INTER, Universe::Default);
+        ElementEmpty<IntArgs> _element_empty_int_dunion("Int", SOT_DISJOINT_UNION);
+        ElementEmpty<IntArgs> _element_empty_int_inter("Int", SOT_INTERSECTION);
+        ElementEmpty<IntArgs> _element_empty_int_inter_default("Int", SOT_INTERSECTION, Universe::Default);
         ElementEmpty<SetVarArgs> _element_empty_set_var_union("SetVar", SOT_UNION);
-        ElementEmpty<SetVarArgs> _element_empty_set_var_dunion("SetVar", SOT_DUNION);
-        ElementEmpty<SetVarArgs> _element_empty_set_var_inter("SetVar", SOT_INTER);
-        ElementEmpty<SetVarArgs> _element_empty_set_var_inter_default("SetVar", SOT_INTER, Universe::Default);
+        ElementEmpty<SetVarArgs> _element_empty_set_var_dunion("SetVar", SOT_DISJOINT_UNION);
+        ElementEmpty<SetVarArgs> _element_empty_set_var_inter("SetVar", SOT_INTERSECTION);
+        ElementEmpty<SetVarArgs> _element_empty_set_var_inter_default("SetVar", SOT_INTERSECTION, Universe::Default);
         ElementEmpty<IntVarArgs> _element_empty_int_var_union("IntVar", SOT_UNION);
-        ElementEmpty<IntVarArgs> _element_empty_int_var_dunion("IntVar", SOT_DUNION);
-        ElementEmpty<IntVarArgs> _element_empty_int_var_inter("IntVar", SOT_INTER);
-        ElementEmpty<IntVarArgs> _element_empty_int_var_inter_default("IntVar", SOT_INTER, Universe::Default);
+        ElementEmpty<IntVarArgs> _element_empty_int_var_dunion("IntVar", SOT_DISJOINT_UNION);
+        ElementEmpty<IntVarArgs> _element_empty_int_var_inter("IntVar", SOT_INTERSECTION);
+        ElementEmpty<IntVarArgs> _element_empty_int_var_inter_default("IntVar", SOT_INTERSECTION, Universe::Default);
 
         /// Space with the variables for posting element with an integer index
         class IndexFixture : public Gecode::Space {

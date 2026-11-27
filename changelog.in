@@ -77,6 +77,96 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Give abbreviated constants descriptive names, and remove the old spellings
+without compatibility aliases. Values and semantics are unchanged, as are the
+command-line option values and the "AOE" that StdSearchTracer prints.
+[MORE]
+The public renames are:
+RestartMode: RM_NONE, RM_CONSTANT, RM_LINEAR, RM_LUBY, and RM_GEOMETRIC to
+RESTART_NONE, RESTART_CONSTANT, RESTART_LINEAR, RESTART_LUBY, and
+RESTART_GEOMETRIC, because ReifyMode also uses the prefix RM_.
+ReifyMode: RM_PMI to RM_RIMP.
+TaskType: TT_FIXP, TT_FIXS, and TT_FIXE to TT_FIXED_PROCESSING, TT_FIXED_START,
+and TT_FIXED_END.
+SetRelType: SRT_DISJ and SRT_CMPL to SRT_DISJOINT and SRT_COMPLEMENT.
+SetOpType: SOT_DUNION and SOT_INTER to SOT_DISJOINT_UNION and SOT_INTERSECTION.
+ScriptMode: SM_STAT to SM_STATISTICS.
+MetaInfo::RestartReason: RR_NO, RR_SOL, RR_CMPL, and RR_LIM to RR_NONE,
+RR_SOLUTION, RR_COMPLETE, and RR_LIMIT.
+SearchTracer::EngineType: AOE to OTHER.
+The test component renames are:
+Test::Float::AssignmentType: CPLT_ASSIGNMENT to COMPLETE_ASSIGNMENT.
+Test::MatchType: MT_ANY, MT_NOT, and MT_FIRST to MATCH_ANY, MATCH_NOT, and
+MATCH_FIRST.
+The internal renames are:
+Int::GCC::Edge::EdgeFlag: EF_MRKLB, EF_MRKUB, EF_LM, EF_UM, and EF_DEL to
+EF_MARKED_LBC, EF_MARKED_UBC, EF_MATCHED_LBC, EF_MATCHED_UBC, and EF_DELETED.
+Int::NValues::RangeEventType: RET_FST and RET_LST to RET_START and RET_FINISH.
+Support::IntType: IT_SHRT to IT_SHORT.
+Int::BoolTest: BT_COMP to BT_COMPLEMENT.
+Int::Cumulatives::EventType: EVENT_CHCK and EVENT_PRUN to EVENT_CHECK and
+EVENT_PRUNE.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Make 68 enums enum class, with using enum at their scope or, in class templates,
+static constexpr aliases, so existing spellings such as IRT_EQ,
+Gecode::SS_FAILED, and IntVarBranch::SEL_RND still compile. Their values stop converting to int and stop mixing with other enums.
+Code that stores such a value in an int, does arithmetic or bitwise operations
+on it, streams it, uses it as an array index or a bit position such as
+1 << RM_EQV, or compares it with an integer no longer compiles. Convert
+explicitly with std::to_underlying or static_cast. Installed headers now use
+std::to_underlying, so code that does not build through the exported CMake
+targets needs C++23 as well.
+[MORE]
+The scoped enums are:
+Kernel: ExecStatus, SpaceStatus, ActorProperty, PropCost::ActualCost,
+PropCost::Mod, ViewTraceInfo::What, PropagateTraceInfo::Status,
+PostTraceInfo::Status, NGL::Status, MetaInfo::Type, MetaInfo::RestartReason,
+TFE::NodeType.
+Search: SearchTracer::EngineType, SearchTracer::NodeType,
+Search::HeuristicGuidance::Sense, Search::Beam::Offer,
+Search::Seq::ExpansionStep::State, Search::Par::Engine::Cmd,
+CPProfiler::NodeStatus, CPProfiler::MessageMarshalling::Field.
+Integer: ReifyMode, IntRelType, BoolOpType, IntPropLevel, TaskType,
+TupleSet::Data::State, IntVarBranch::Select, BoolVarBranch::Select,
+IntValBranch::Select, BoolValBranch::Select, IntAssign::Select,
+BoolAssign::Select, Int::Cumulatives::EventType (formerly the typedef ev_t),
+Int::Extensional::CompactStatus::StatusType, Int::GCC::BC,
+Int::NValues::RangeEventType, Int::Sequence::TakesStatus, Int::SortTaskOrder,
+Int::Event::Type, Int::RelTest, Int::BoolTest.
+Set: SetRelType, SetOpType, SetVarBranch::Select, SetValBranch::Select,
+SetAssign::Select.
+Float: FloatRelType, FloatVarBranch::Select, FloatValBranch::Select,
+FloatAssign::Select, Float::RelTest.
+MiniModel: LinIntExpr::NodeType, LinFloatExpr::NodeType, SetExpr::NodeType,
+BoolExpr::NodeType.
+Driver: ScriptMode, RestartMode.
+FlatZinc: FlatZinc::FlatZincSpace::Meth, FlatZinc::IntBoolVarBranch::Select,
+FlatZinc::SymbolType.
+Gist, support, and iterators: Gist::NodeStatus, Support::BitSetStatus,
+Support::IntType, Iter::Ranges::CompareStatus.
+Test component: Test::MatchType, Test::Int::ConTestLevel,
+Test::Float::MaybeType, Test::Float::AssignmentType.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+IntPropLevel is enum class with underlying type unsigned int and gains
+operator|, operator&, and operator|=, so levels combine without casts. Test a
+bit with (ipl & IPL_BASIC) != IPL_DEF, since the result no longer converts to
+bool. Remove IPL_BITS_, which was a bit-field width rather than a level.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

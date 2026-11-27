@@ -202,16 +202,16 @@ namespace Gecode { namespace Int { namespace Unary {
 
     forceinline int
     ManFixPSETask::est(void) const {
-        return (_t == TT_FIXS) ? _p : _s.min();
+        return (_t == TT_FIXED_START) ? _p : _s.min();
     }
     forceinline int
     ManFixPSETask::ect(void) const {
         switch (_t) {
-        case TT_FIXP:
+        case TT_FIXED_PROCESSING:
             return _s.min() + _p;
-        case TT_FIXS:
+        case TT_FIXED_START:
             return _s.min();
-        case TT_FIXE:
+        case TT_FIXED_END:
             return _p;
         default:
             GECODE_NEVER;
@@ -220,16 +220,16 @@ namespace Gecode { namespace Int { namespace Unary {
     }
     forceinline int
     ManFixPSETask::lst(void) const {
-        return (_t == TT_FIXS) ? _p : _s.max();
+        return (_t == TT_FIXED_START) ? _p : _s.max();
     }
     forceinline int
     ManFixPSETask::lct(void) const {
         switch (_t) {
-        case TT_FIXP:
+        case TT_FIXED_PROCESSING:
             return _s.max() + _p;
-        case TT_FIXS:
+        case TT_FIXED_START:
             return _s.max();
-        case TT_FIXE:
+        case TT_FIXED_END:
             return _p;
         default:
             GECODE_NEVER;
@@ -239,11 +239,11 @@ namespace Gecode { namespace Int { namespace Unary {
     forceinline int
     ManFixPSETask::pmin(void) const {
         switch (_t) {
-        case TT_FIXP:
+        case TT_FIXED_PROCESSING:
             return _p;
-        case TT_FIXS:
+        case TT_FIXED_START:
             return _s.min() - _p;
-        case TT_FIXE:
+        case TT_FIXED_END:
             return _p - _s.max();
         default:
             GECODE_NEVER;
@@ -253,11 +253,11 @@ namespace Gecode { namespace Int { namespace Unary {
     forceinline int
     ManFixPSETask::pmax(void) const {
         switch (_t) {
-        case TT_FIXP:
+        case TT_FIXED_PROCESSING:
             return _p;
-        case TT_FIXS:
+        case TT_FIXED_START:
             return _s.max() - _p;
-        case TT_FIXE:
+        case TT_FIXED_END:
             return _p - _s.min();
         default:
             GECODE_NEVER;
@@ -268,10 +268,10 @@ namespace Gecode { namespace Int { namespace Unary {
     forceinline ModEvent
     ManFixPSETask::est(Space& home, int n) {
         switch (_t) {
-        case TT_FIXE: // fall through
-        case TT_FIXP:
+        case TT_FIXED_END: // fall through
+        case TT_FIXED_PROCESSING:
             return _s.gq(home, n);
-        case TT_FIXS:
+        case TT_FIXED_START:
             return (n <= _p) ? ME_INT_NONE : ME_INT_FAILED;
         default:
             GECODE_NEVER;
@@ -281,11 +281,11 @@ namespace Gecode { namespace Int { namespace Unary {
     forceinline ModEvent
     ManFixPSETask::ect(Space& home, int n) {
         switch (_t) {
-        case TT_FIXE:
+        case TT_FIXED_END:
             return (n <= _p) ? ME_INT_NONE : ME_INT_FAILED;
-        case TT_FIXP:
+        case TT_FIXED_PROCESSING:
             return _s.gq(home, n - _p);
-        case TT_FIXS:
+        case TT_FIXED_START:
             return _s.gq(home, n);
         default:
             GECODE_NEVER;
@@ -295,10 +295,10 @@ namespace Gecode { namespace Int { namespace Unary {
     forceinline ModEvent
     ManFixPSETask::lst(Space& home, int n) {
         switch (_t) {
-        case TT_FIXE: // fall through
-        case TT_FIXP:
+        case TT_FIXED_END: // fall through
+        case TT_FIXED_PROCESSING:
             return _s.lq(home, n);
-        case TT_FIXS:
+        case TT_FIXED_START:
             return (n >= _p) ? ME_INT_NONE : ME_INT_FAILED;
         default:
             GECODE_NEVER;
@@ -308,11 +308,11 @@ namespace Gecode { namespace Int { namespace Unary {
     forceinline ModEvent
     ManFixPSETask::lct(Space& home, int n) {
         switch (_t) {
-        case TT_FIXE:
+        case TT_FIXED_END:
             return (n >= _p) ? ME_INT_NONE : ME_INT_FAILED;
-        case TT_FIXP:
+        case TT_FIXED_PROCESSING:
             return _s.lq(home, n - _p);
-        case TT_FIXS:
+        case TT_FIXED_START:
             return _s.lq(home, n);
         default:
             GECODE_NEVER;
@@ -323,15 +323,15 @@ namespace Gecode { namespace Int { namespace Unary {
     ManFixPSETask::norun(Space& home, int e, int l) {
         if (e <= l) {
             switch (_t) {
-            case TT_FIXP: {
+            case TT_FIXED_PROCESSING: {
                 Iter::Ranges::Singleton r(norun_bound(static_cast<long long>(e) - _p + 1), l);
                 return _s.minus_r(home, r, false);
             }
-            case TT_FIXE:
+            case TT_FIXED_END:
                 if (e <= _p)
                     return _s.gr(home, l);
                 break;
-            case TT_FIXS:
+            case TT_FIXED_START:
                 if (l >= _p)
                     return _s.lq(home, e);
                 break;

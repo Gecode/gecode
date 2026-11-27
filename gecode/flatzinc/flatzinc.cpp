@@ -1144,24 +1144,24 @@ namespace Gecode { namespace FlatZinc {
             for (unsigned int i = 0; i < flat_ann.size(); i++) {
                 if (flat_ann[i]->is_call("restart_geometric")) {
                     AST::Call* call = flat_ann[i]->get_call("restart_geometric");
-                    opt.restart(RM_GEOMETRIC);
+                    opt.restart(RESTART_GEOMETRIC);
                     AST::Array* args = call->get_args(2);
                     opt.restart_base(args->a[0]->get_float());
                     opt.restart_scale(args->a[1]->get_int());
                 } else if (flat_ann[i]->is_call("restart_luby")) {
                     AST::Call* call = flat_ann[i]->get_call("restart_luby");
-                    opt.restart(RM_LUBY);
+                    opt.restart(RESTART_LUBY);
                     opt.restart_scale(call->args->get_int());
                 } else if (flat_ann[i]->is_call("restart_linear")) {
                     AST::Call* call = flat_ann[i]->get_call("restart_linear");
-                    opt.restart(RM_LINEAR);
+                    opt.restart(RESTART_LINEAR);
                     opt.restart_scale(call->args->get_int());
                 } else if (flat_ann[i]->is_call("restart_constant")) {
                     AST::Call* call = flat_ann[i]->get_call("restart_constant");
-                    opt.restart(RM_CONSTANT);
+                    opt.restart(RESTART_CONSTANT);
                     opt.restart_scale(call->args->get_int());
                 } else if (flat_ann[i]->is_call("restart_none")) {
-                    opt.restart(RM_NONE);
+                    opt.restart(RESTART_NONE);
                 } else if (flat_ann[i]->is_call("relax_and_reconstruct")) {
                     if (_lns != 0)
                         throw FlatZinc::Error("FlatZinc", "Only one relax_and_reconstruct annotation allowed");
@@ -1782,7 +1782,7 @@ namespace Gecode { namespace FlatZinc {
     void
     FlatZincSpace::run_engine(std::ostream& out, const Printer& p, const FlatZincOptions& opt,
                               Support::Timer& t_total) {
-        if (opt.restart() == RM_NONE) {
+        if (opt.restart() == RESTART_NONE) {
             run_meta<Engine, Driver::EngineToMeta>(out, p, opt, t_total);
         } else {
             run_meta<Engine, RBS>(out, p, opt, t_total);
@@ -1926,7 +1926,7 @@ namespace Gecode { namespace FlatZinc {
 
         o.threads = opt.threads();
         o.nogoods_limit = opt.nogoods() ? opt.nogoods_limit() : 0;
-        if (opt.restart() != RM_NONE)
+        if (opt.restart() != RESTART_NONE)
             o.cutoff = new Search::CutoffAppend(new Search::CutoffConstant(0), 1, Driver::create_cutoff(opt));
         int no_of_solutions = opt.solutions();
         if (no_of_solutions == -1) {
@@ -1958,7 +1958,7 @@ namespace Gecode { namespace FlatZinc {
                 }
             }
             proof = se.end_reason() == Search::EndReason::Exhausted;
-            if (opt.mode() == SM_STAT) {
+            if (opt.mode() == SM_STATISTICS) {
                 stat = se.statistics();
             }
         }
@@ -1981,7 +1981,7 @@ namespace Gecode { namespace FlatZinc {
                 out << "=====UNKNOWN=====" << '\n' << std::flush;
             }
         }
-        if (opt.mode() == SM_STAT) {
+        if (opt.mode() == SM_STATISTICS) {
             double total_time = (t_total.stop() / 1000.0);
             double solve_time = (t_solve.stop() / 1000.0);
             double init_time = total_time - solve_time;
@@ -2686,7 +2686,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
     IntPropLevel
     FlatZincSpace::annotation_to_int_prop_level(AST::Node* ann) {
-        int ipl = IPL_DEF;
+        IntPropLevel ipl = IPL_DEF;
         if (ann) {
             if (ann->has_atom("val") || ann->has_atom("value_propagation"))
                 ipl = IPL_VAL;
@@ -2704,7 +2704,7 @@ namespace Gecode { namespace FlatZinc {
                     ipl |= IPL_ADVANCED;
             }
         }
-        return static_cast<IntPropLevel>(ipl);
+        return ipl;
     }
 
     DFA

@@ -44,11 +44,12 @@ namespace Gecode { namespace Search { namespace Seq {
     class ExpansionStep {
     public:
         /// What the step produced
-        enum State {
+        enum class State {
             CHILD,    ///< A propagated child
             TERMINAL, ///< The node itself, as it does not branch
             EXHAUSTED ///< Nothing, all alternatives have been expanded
         };
+        using enum State;
         /// The state
         State state;
         /// The child or node
