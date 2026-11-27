@@ -38,7 +38,7 @@
 #include <QPluginLoader>
 #include <QLibrary>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
     /**
      * \brief Interface for branch plugins
      *
@@ -64,10 +64,12 @@ namespace Gecode { namespace FlatZinc {
      */
     class GECODE_VTABLE_EXPORT BranchPlugin {
     public:
+        /// Destructor
+        virtual ~BranchPlugin() = default;
         /// The custom branch method that this plugin provides
         virtual void branch(Gecode::FlatZinc::FlatZincSpace& s, Gecode::FlatZinc::AST::Call* c) = 0;
     };
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 Q_DECLARE_INTERFACE(Gecode::FlatZinc::BranchPlugin, "org.gecode.FlatZinc.BranchPlugin/1.0");
 #endif
 

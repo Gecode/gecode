@@ -41,10 +41,11 @@
 #include <gecode/instance.hh>
 
 #include <climits>
+#include <exception>
 #include <new>
 #include <utility>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     /*
      * Character classes and number syntax, ASCII only and independent of the
@@ -135,7 +136,7 @@ namespace Gecode { namespace Instance {
         grow(int m) {
             // Doubling, computed without overflow
             long long int d = std::min(2LL * cap, static_cast<long long int>(INT_MAX));
-            int c = std::max(std::max(m, static_cast<int>(d)), 2);
+            int c = std::max({m, static_cast<int>(d), 2});
             T* y = static_cast<T*>(heap.ralloc(sizeof(T) * static_cast<size_t>(c)));
             for (int i = 0; i < n; i++) {
                 new (&y[i]) T(std::move(x[i]));
@@ -149,7 +150,7 @@ namespace Gecode { namespace Instance {
 
     public:
         /// Empty array
-        Seq(void) : x(nullptr), n(0), cap(0) {}
+        Seq() : x(nullptr), n(0), cap(0) {}
         /// Copy elements of \a s
         Seq(const Seq& s) : Seq() {
             // Delegating, so that the destructor runs if a copy throws
@@ -172,19 +173,19 @@ namespace Gecode { namespace Instance {
             return *this;
         }
         /// Release memory
-        ~Seq(void) {
+        ~Seq() {
             clear();
             if (x != nullptr)
                 heap.rfree(x);
         }
         /// Return number of elements
         int
-        size(void) const {
+        size() const {
             return n;
         }
         /// Test whether empty
         bool
-        empty(void) const {
+        empty() const {
             return n == 0;
         }
         /// Make room for \a m elements
@@ -219,13 +220,13 @@ namespace Gecode { namespace Instance {
         }
         /// Remove last element
         void
-        pop(void) {
+        pop() {
             assert(n > 0);
             x[--n].~T();
         }
         /// Remove all elements
         void
-        clear(void) {
+        clear() {
             while (n > 0)
                 x[--n].~T();
         }
@@ -243,45 +244,50 @@ namespace Gecode { namespace Instance {
         }
         /// Return last element
         T&
-        back(void) {
+        back() {
             assert(n > 0);
             return x[n - 1];
         }
         /// Return last element
         const T&
-        back(void) const {
+        back() const {
             assert(n > 0);
             return x[n - 1];
         }
         /// Iteration support
         T*
-        begin(void) {
+        begin() {
             return x;
         }
         /// Iteration support
         T*
-        end(void) {
+        end() {
             return x + n;
         }
         /// Iteration support
         const T*
-        begin(void) const {
+        begin() const {
             return x;
         }
         /// Iteration support
         const T*
-        end(void) const {
+        end() const {
             return x + n;
         }
     };
 
     /// Error about the shape or type of a value, located by the caller
-    class ShapeError {
+    class ShapeError : public std::exception {
     public:
         /// Message
         std::string msg;
         /// Initialize with message \a m
         explicit ShapeError(const std::string& m) : msg(m) {}
+        /// Return the message
+        const char*
+        what() const noexcept override {
+            return msg.c_str();
+        }
     };
 
     /**
@@ -293,7 +299,7 @@ namespace Gecode { namespace Instance {
      * list), level \a k has one entry per list at depth \a k. The lengths at
      * the last level sum to the number of leaves.
      */
-    class Value {
+    class Value { // NOLINT(bugprone-exception-escape): the check sees the copy of a Seq argument
     public:
         /// Type of the leaves
         ValueType type;
@@ -311,7 +317,7 @@ namespace Gecode { namespace Instance {
         Seq<std::string> strs;
 
         /// The empty integer list
-        Value(void) : type(ValueType::INT), depth(1) {
+        Value() : type(ValueType::INT), depth(1) {
             lengths.push(Seq<int>());
             lengths[0].push(0);
         }
@@ -341,17 +347,17 @@ namespace Gecode { namespace Instance {
 
         /// Test whether scalar
         bool
-        is_scalar(void) const {
+        is_scalar() const {
             return depth == 0;
         }
         /// Test whether numeric scalar
         bool
-        is_number(void) const {
+        is_number() const {
             return (depth == 0) && (type != ValueType::STRING);
         }
         /// Return number of leaves
         int
-        leaves(void) const {
+        leaves() const {
             switch (type) {
             case ValueType::INT:
                 return ints.size();
@@ -363,7 +369,7 @@ namespace Gecode { namespace Instance {
         }
         /// Return length of outermost list
         int
-        size(void) const {
+        size() const {
             return depth == 0 ? 0 : lengths[0][0];
         }
         /// Return value of numeric scalar or leaf \a i as a double
@@ -373,7 +379,7 @@ namespace Gecode { namespace Instance {
         }
         /// Convert integer leaves to floats
         void
-        to_float(void) {
+        to_float() {
             if (type != ValueType::INT)
                 return;
             for (long long int v : ints)
@@ -408,7 +414,7 @@ namespace Gecode { namespace Instance {
         }
         /// Test whether this is an empty list
         bool
-        is_empty_list(void) const {
+        is_empty_list() const {
             return (depth > 0) && (lengths[0][0] == 0);
         }
         /// Make this the empty list of type \a t, keeping the memory for reuse
@@ -428,7 +434,7 @@ namespace Gecode { namespace Instance {
         }
 
         /// Compute \a starts, needed by range
-        void index(void);
+        void index();
         /// Find leaf range of list \a pos at level \a level
         void range(int level, int pos, int& from, int& to) const;
     };
@@ -466,9 +472,9 @@ namespace Gecode { namespace Instance {
         /// Add a row \a v; throws ShapeError with a phrase completing the name
         void add(Value& v);
         /// Add a missing row
-        void skip(void);
+        void skip();
         /// Return the array
-        Value finish(void);
+        Value finish();
     };
 
     /// A named value
@@ -479,7 +485,7 @@ namespace Gecode { namespace Instance {
         /// Value
         Value value;
         /// Initialize as the empty integer list without a name
-        Entry(void) = default;
+        Entry() = default;
         /// Initialize as \a v named \a n
         Entry(const std::string& n, Value&& v) : name(n), value(std::move(v)) {}
     };
@@ -636,7 +642,7 @@ namespace Gecode { namespace Instance {
         explicit Type(ReadType r = ReadType::INT) : read(r), exclusive(false), named(nullptr), base(1) {}
         /// Test whether the type has a range, possibly through its name
         bool
-        ranged(void) const {
+        ranged() const {
             return (lo != nullptr) || (hi != nullptr) || (named != nullptr);
         }
         /// Return a use of the type defined by type statement \a d
@@ -676,7 +682,7 @@ namespace Gecode { namespace Instance {
     };
 
     /// Sequence of statements
-    typedef Seq<std::unique_ptr<Stmt>> Block;
+    using Block = Seq<std::unique_ptr<Stmt>>;
 
     /// Arm of a sections statement
     class Arm {
@@ -690,7 +696,7 @@ namespace Gecode { namespace Instance {
         /// Whether the sections statement ends after this arm
         bool last;
         /// Initialize
-        Arm(void) : optional(false), last(false) {}
+        Arm() : optional(false), last(false) {}
     };
 
     /// Statement
@@ -821,7 +827,7 @@ namespace Gecode { namespace Instance {
     /// Read file \a path into a string
     std::string read_file(const std::string& path);
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 #endif
 

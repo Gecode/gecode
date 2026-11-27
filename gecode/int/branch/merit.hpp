@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     // Minimum merit
     template <class View>
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View>
     forceinline bool
-    MeritAFCSize<View>::notice(void) const {
+    MeritAFCSize<View>::notice() const {
         return false;
     }
     template <class View>
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View>
     forceinline bool
-    MeritActionSize<View>::notice(void) const {
+    MeritActionSize<View>::notice() const {
         return true;
     }
     template <class View>
@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
     template <class View>
     forceinline bool
-    MeritCHBSize<View>::notice(void) const {
+    MeritCHBSize<View>::notice() const {
         return true;
     }
     template <class View>
@@ -198,6 +198,6 @@ namespace Gecode { namespace Int { namespace Branch {
         return x.regret_max();
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

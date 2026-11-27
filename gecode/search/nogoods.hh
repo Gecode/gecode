@@ -35,13 +35,13 @@
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Class for a sentinel no-good literal
     class GECODE_SEARCH_EXPORT NoNGL : public NGL {
     public:
         /// Constructor for creation
-        NoNGL(void) = default;
+        NoNGL() = default;
         /// Constructor for creation
         NoNGL(Space& home);
         /// Constructor for cloning \a ngl
@@ -88,7 +88,7 @@ namespace Gecode { namespace Search {
         size_t dispose(Space& home) override;
     };
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #include <gecode/search/nogoods.hpp>
 

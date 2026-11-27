@@ -42,7 +42,7 @@
  * \brief Float branchers
  */
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /**
      * \defgroup FuncFloatViewSel Merit-based float view selection for branchers
@@ -139,7 +139,7 @@ namespace Gecode { namespace Float { namespace Branch {
         /// Return AFC over size as merit for view \a x at position \a i
         double operator()(const Space& home, FloatView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -163,7 +163,7 @@ namespace Gecode { namespace Float { namespace Branch {
         /// Return action over size as merit for view \a x at position \a i
         double operator()(const Space& home, FloatView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
@@ -187,24 +187,24 @@ namespace Gecode { namespace Float { namespace Branch {
         /// Return CHB Q-score over size as merit for view \a x at position \a i
         double operator()(const Space& home, FloatView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Dispose view selection
         void dispose(Space& home);
     };
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/merit.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /// Return view selectors for float views
     GECODE_FLOAT_EXPORT
     ViewSel<FloatView>* view_selection(Space& home, const FloatVarBranch& fvb);
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /**
      * \defgroup FuncFloatValSel Float value selection for brancher
@@ -267,7 +267,7 @@ namespace Gecode { namespace Float { namespace Branch {
             r = r.split(a);
         }
         bool
-        random(void) const {
+        random() const {
             return true;
         }
         /// Constructor for initialization
@@ -277,16 +277,16 @@ namespace Gecode { namespace Float { namespace Branch {
         /// Return value of view \a x at position \a i
         FloatNumBranch val(const Space& home, FloatView x, int i);
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const;
+        bool notice() const;
         /// Delete value selection
         void dispose(Space& home);
     };
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/val-sel.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /**
      * \defgroup FuncFloatValCommit Float value commit classes
@@ -320,11 +320,11 @@ namespace Gecode { namespace Float { namespace Branch {
         void print(const Space& home, unsigned int a, FloatView x, int i, FloatNumBranch n, std::ostream& o) const;
     };
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #include <gecode/float/branch/val-commit.hpp>
 
-namespace Gecode { namespace Float { namespace Branch {
+namespace Gecode::Float::Branch {
 
     /// Return value and commit for float views
     GECODE_FLOAT_EXPORT
@@ -334,7 +334,7 @@ namespace Gecode { namespace Float { namespace Branch {
     GECODE_FLOAT_EXPORT
     ValSelCommitBase<FloatView, FloatNumBranch>* value_selection_commit(Space& home, const FloatAssign& ia);
 
-}}} // namespace Gecode::Float::Branch
+} // namespace Gecode::Float::Branch
 
 #endif
 

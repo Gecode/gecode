@@ -32,7 +32,7 @@
 
 #include <gecode/search/seq/dead.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// A dead engine (failed root, or a meta engine that has finished)
     template <class Tracer>
@@ -51,13 +51,13 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize, next() returns no solution for reason \a r
         Dead(const Options& o, const Statistics& stat0, EndReason r);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Return why the last call to next() returned no solution
-        EndReason end_reason(void) const override;
+        EndReason end_reason() const override;
         /// Delete
-        ~Dead(void) override;
+        ~Dead() override;
     };
 
     template <class Tracer>
@@ -69,25 +69,25 @@ namespace Gecode { namespace Search { namespace Seq {
 
     template <class Tracer>
     Space*
-    Dead<Tracer>::next(void) {
+    Dead<Tracer>::next() {
         end = reason;
         return nullptr;
     }
 
     template <class Tracer>
     EndReason
-    Dead<Tracer>::end_reason(void) const {
+    Dead<Tracer>::end_reason() const {
         return end;
     }
 
     template <class Tracer>
     Statistics
-    Dead<Tracer>::statistics(void) const {
+    Dead<Tracer>::statistics() const {
         return stat;
     }
 
     template <class Tracer>
-    Dead<Tracer>::~Dead(void) {
+    Dead<Tracer>::~Dead() {
         tracer.done();
     }
 
@@ -95,10 +95,9 @@ namespace Gecode { namespace Search { namespace Seq {
     dead(const Options& o, const Statistics& stat, EndReason r) {
         if (o.tracer)
             return new Dead<TraceRecorder>(o, stat, r);
-        else
-            return new Dead<NoTraceRecorder>(o, stat, r);
+        return new Dead<NoTraceRecorder>(o, stat, r);
     }
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 // STATISTICS: search-seq

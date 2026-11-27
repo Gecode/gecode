@@ -36,7 +36,7 @@
 
 #include <sstream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     template <class View>
     forceinline
@@ -75,19 +75,19 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline unsigned int
-    ComplementView<View>::glb_size(void) const {
+    ComplementView<View>::glb_size() const {
         return Limits::card - x.lub_size();
     }
 
     template <class View>
     forceinline unsigned int
-    ComplementView<View>::lub_size(void) const {
+    ComplementView<View>::lub_size() const {
         return Limits::card - x.glb_size();
     }
 
     template <class View>
     forceinline unsigned int
-    ComplementView<View>::unknown_size(void) const {
+    ComplementView<View>::unknown_size() const {
         return lub_size() - glb_size();
     }
 
@@ -105,66 +105,62 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline unsigned int
-    ComplementView<View>::card_min(void) const {
+    ComplementView<View>::card_min() const {
         return Limits::card - x.card_max();
     }
 
     template <class View>
     forceinline unsigned int
-    ComplementView<View>::card_max(void) const {
+    ComplementView<View>::card_max() const {
         return Limits::card - x.card_min();
     }
 
     template <class View>
     forceinline int
-    ComplementView<View>::lub_min(void) const {
+    ComplementView<View>::lub_min() const {
         GlbRanges<View> lb(x);
         RangesCompl<GlbRanges<View>> lbc(lb);
         if (lbc()) {
             return lbc.min();
-        } else {
-            return BndSet::MIN_OF_EMPTY;
         }
+        return BndSet::MIN_OF_EMPTY;
     }
 
     template <class View>
     forceinline int
-    ComplementView<View>::lub_max(void) const {
+    ComplementView<View>::lub_max() const {
         GlbRanges<View> lb(x);
         RangesCompl<GlbRanges<View>> lbc(lb);
         if (lbc()) {
             while (lbc())
                 ++lbc;
             return lbc.max();
-        } else {
-            return BndSet::MAX_OF_EMPTY;
         }
+        return BndSet::MAX_OF_EMPTY;
     }
 
     template <class View>
     forceinline int
-    ComplementView<View>::glb_min(void) const {
+    ComplementView<View>::glb_min() const {
         LubRanges<View> ub(x);
         RangesCompl<LubRanges<View>> ubc(ub);
         if (ubc()) {
             return ubc.min();
-        } else {
-            return BndSet::MIN_OF_EMPTY;
         }
+        return BndSet::MIN_OF_EMPTY;
     }
 
     template <class View>
     forceinline int
-    ComplementView<View>::glb_max(void) const {
+    ComplementView<View>::glb_max() const {
         LubRanges<View> ub(x);
         RangesCompl<LubRanges<View>> ubc(ub);
         if (ubc()) {
             while (ubc())
                 ++ubc;
             return ubc.max();
-        } else {
-            return BndSet::MAX_OF_EMPTY;
         }
+        return BndSet::MAX_OF_EMPTY;
     }
 
     template <class View>
@@ -347,29 +343,29 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) = default;
-        /// Initialize with ranges for view \a x
-        LubRanges(const ComplementView<View>& x);
-        /// Initialize with ranges for view \a x
-        void init(const ComplementView<View>& x);
+        LubRanges() = default;
+        /// Initialize with ranges for view \a s
+        LubRanges(const ComplementView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const ComplementView<View>& s);
         //@}
 
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of ranges (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -387,31 +383,31 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline bool
-    LubRanges<ComplementView<View>>::operator()(void) const {
+    LubRanges<ComplementView<View>>::operator()() const {
         return lbc();
     }
 
     template <class View>
     forceinline void
-    LubRanges<ComplementView<View>>::operator++(void) {
+    LubRanges<ComplementView<View>>::operator++() {
         return ++lbc;
     }
 
     template <class View>
     forceinline int
-    LubRanges<ComplementView<View>>::min(void) const {
+    LubRanges<ComplementView<View>>::min() const {
         return lbc.min();
     }
 
     template <class View>
     forceinline int
-    LubRanges<ComplementView<View>>::max(void) const {
+    LubRanges<ComplementView<View>>::max() const {
         return lbc.max();
     }
 
     template <class View>
     forceinline unsigned int
-    LubRanges<ComplementView<View>>::width(void) const {
+    LubRanges<ComplementView<View>>::width() const {
         return lbc.width();
     }
 
@@ -429,7 +425,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void) = default;
+        LubRanges() = default;
         /// Initialize with ranges for view \a x
         LubRanges(const ComplementView<ComplementView<View>>& x);
         /// Initialize with ranges for view \a x
@@ -462,29 +458,29 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) = default;
-        /// Initialize with ranges for view \a x
-        GlbRanges(const ComplementView<View>& x);
-        /// Initialize with ranges for view \a x
-        void init(const ComplementView<View>& x);
+        GlbRanges() = default;
+        /// Initialize with ranges for view \a s
+        GlbRanges(const ComplementView<View>& s);
+        /// Initialize with ranges for view \a s
+        void init(const ComplementView<View>& s);
         //@}
 
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of ranges (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -502,31 +498,31 @@ namespace Gecode { namespace Set {
 
     template <class View>
     forceinline bool
-    GlbRanges<ComplementView<View>>::operator()(void) const {
+    GlbRanges<ComplementView<View>>::operator()() const {
         return ubc();
     }
 
     template <class View>
     forceinline void
-    GlbRanges<ComplementView<View>>::operator++(void) {
+    GlbRanges<ComplementView<View>>::operator++() {
         return ++ubc;
     }
 
     template <class View>
     forceinline int
-    GlbRanges<ComplementView<View>>::min(void) const {
+    GlbRanges<ComplementView<View>>::min() const {
         return ubc.min();
     }
 
     template <class View>
     forceinline int
-    GlbRanges<ComplementView<View>>::max(void) const {
+    GlbRanges<ComplementView<View>>::max() const {
         return ubc.max();
     }
 
     template <class View>
     forceinline unsigned int
-    GlbRanges<ComplementView<View>>::width(void) const {
+    GlbRanges<ComplementView<View>>::width() const {
         return ubc.width();
     }
 
@@ -544,7 +540,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void) = default;
+        GlbRanges() = default;
         /// Initialize with ranges for view \a x
         GlbRanges(const ComplementView<ComplementView<View>>& x);
         /// Initialize with ranges for view \a x
@@ -579,6 +575,6 @@ namespace Gecode { namespace Set {
         return x.base() == y.base();
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

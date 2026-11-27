@@ -88,7 +88,7 @@ namespace {
             k.update(*this, s.k);
         }
         Space*
-        copy(void) override {
+        copy() override {
             return new Bishops(*this);
         }
     };
@@ -206,7 +206,7 @@ protected:
 
     /// Post knight-constraints
     void
-    knight_constraints(void) {
+    knight_constraints() {
         static const int kmoves[4][2] = {{-1, 2}, {1, 2}, {2, -1}, {2, 1}};
         Matrix<BoolVarArray> kb(knights, n, n);
         for (int x = n; x--;)
@@ -332,7 +332,7 @@ public:
 
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new CrowdedChess(*this);
     }
 

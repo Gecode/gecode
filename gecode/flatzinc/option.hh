@@ -33,7 +33,7 @@
 #ifndef FLATZINC_OPTION_HH
 #define FLATZINC_OPTION_HH
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Optional value
     template <class Val>
@@ -44,19 +44,19 @@ namespace Gecode { namespace FlatZinc {
 
     public:
         bool
-        operator()(void) const {
+        operator()() const {
             return _some;
         }
         const Val&
-        some(void) const {
+        some() const {
             return _v;
         }
         Val&
-        some(void) {
+        some() {
             return _v;
         }
         static Option<Val>
-        none(void) {
+        none() {
             Option<Val> o;
             o._some = false;
             new (&o._v) Val();
@@ -71,7 +71,7 @@ namespace Gecode { namespace FlatZinc {
         }
     };
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

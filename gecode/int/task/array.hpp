@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Task array
@@ -38,7 +38,7 @@ namespace Gecode { namespace Int {
 
     template <class Task>
     forceinline
-    TaskArray<Task>::TaskArray(void)
+    TaskArray<Task>::TaskArray()
         : n(0), t(nullptr) {}
     template <class Task>
     forceinline
@@ -47,20 +47,8 @@ namespace Gecode { namespace Int {
         assert(n >= 0);
     }
     template <class Task>
-    forceinline
-    TaskArray<Task>::TaskArray(const TaskArray<Task>& a)
-        : n(a.n), t(a.t) {}
-    template <class Task>
-    forceinline const TaskArray<Task>&
-    TaskArray<Task>::operator=(const TaskArray<Task>& a) {
-        n = a.n;
-        t = a.t;
-        return *this;
-    }
-
-    template <class Task>
     forceinline int
-    TaskArray<Task>::size(void) const {
+    TaskArray<Task>::size() const {
         return n;
     }
     template <class Task>
@@ -138,7 +126,7 @@ namespace Gecode { namespace Int {
 
     template <class TaskView>
     forceinline int
-    TaskViewArray<TaskView>::size(void) const {
+    TaskViewArray<TaskView>::size() const {
         return t.size();
     }
 
@@ -175,6 +163,6 @@ namespace Gecode { namespace Int {
         return os << s.str();
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

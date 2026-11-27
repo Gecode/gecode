@@ -33,10 +33,10 @@
 #include <deque>
 #include <set>
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     forceinline
-    Literal::Literal(void)
+    Literal::Literal()
         : _variable(-1), _value(-1) {}
 
     forceinline
@@ -49,19 +49,19 @@ namespace Gecode { namespace Int { namespace LDSB {
         : PosValChoice<Val>(b, a, p, n), _literals(literals), _nliterals(nliterals) {}
 
     template <class Val>
-    LDSBChoice<Val>::~LDSBChoice(void) {
+    LDSBChoice<Val>::~LDSBChoice() {
         delete[] _literals;
     }
 
     template <class Val>
     forceinline const Literal*
-    LDSBChoice<Val>::literals(void) const {
+    LDSBChoice<Val>::literals() const {
         return _literals;
     }
 
     template <class Val>
     forceinline int
-    LDSBChoice<Val>::nliterals(void) const {
+    LDSBChoice<Val>::nliterals() const {
         return _nliterals;
     }
 
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         std::set<Literal> seen;
 
         seen.insert(Literal(choice_pos, choice_val));
-        queue.push_back(Literal(choice_pos, choice_val));
+        queue.emplace_back(choice_pos, choice_val);
 
         do {
             Literal l = queue[0];
@@ -145,13 +145,13 @@ namespace Gecode { namespace Int { namespace LDSB {
 
             for (int i = 0; i < _nsyms; i++) {
                 ArgArray<Literal> to_exclude = _syms[i]->symmetric(l, this->x);
-                for (int j = 0; j < to_exclude.size(); ++j) {
-                    if (seen.find(to_exclude[j]) == seen.end())
-                        queue.push_back(to_exclude[j]);
-                    seen.insert(to_exclude[j]);
+                for (auto j : to_exclude) {
+                    if (!seen.contains(j))
+                        queue.push_back(j);
+                    seen.insert(j);
                 }
             }
-        } while (queue.size() > 0);
+        } while (!queue.empty());
 
         // Convert "seen" vector into array.
         int nliterals = static_cast<int>(seen.size());
@@ -258,6 +258,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         }
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

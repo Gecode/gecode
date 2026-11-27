@@ -32,12 +32,12 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest(
                 "sudoku", "predicate all_different_int(array [int] of var int: x);\n\
 predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -134,6 +134,6 @@ solve satisfy;\n\
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

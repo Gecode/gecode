@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Float { namespace Arithmetic {
+namespace Gecode::Float::Arithmetic {
 
     /*
      * Positive bounds consistent squaring
@@ -110,14 +110,14 @@ namespace Gecode { namespace Float { namespace Arithmetic {
                 return ((x0.val() == 0) || (x0.val() == 1)) ? ES_OK : ES_FAILED;
             GECODE_ME_CHECK(x1.lq(home, 1));
             return SqrPlus<FloatView, FloatView>::post(home, x0, x1);
-        } else {
-            if (x0.min() >= 0)
-                return SqrPlus<FloatView, FloatView>::post(home, x0, x1);
-            if (x0.max() <= 0)
-                return SqrPlus<MinusView, FloatView>::post(home, MinusView(x0), x1);
-            GECODE_ME_CHECK(x1.eq(home, sqr(x0.val())));
-            (void)new (home) Sqr<View>(home, x0, x1);
         }
+        if (x0.min() >= 0)
+            return SqrPlus<FloatView, FloatView>::post(home, x0, x1);
+        if (x0.max() <= 0)
+            return SqrPlus<MinusView, FloatView>::post(home, MinusView(x0), x1);
+        GECODE_ME_CHECK(x1.eq(home, sqr(x0.val())));
+        (void)new (home) Sqr<View>(home, x0, x1);
+
         return ES_OK;
     }
 
@@ -211,6 +211,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Float::Arithmetic
+} // namespace Gecode::Float::Arithmetic
 
 // STATISTICS: float-prop

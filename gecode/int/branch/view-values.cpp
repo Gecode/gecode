@@ -32,7 +32,7 @@
 
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     PosValuesChoice::PosValuesChoice(const Brancher& b, const Pos& p, IntView x) : PosChoice(b, x.size(), p), n(0) {
         for (ViewRanges<IntView> r(x); r(); ++r)
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Branch {
         }
     }
 
-    PosValuesChoice::~PosValuesChoice(void) {
+    PosValuesChoice::~PosValuesChoice() {
         heap.free<PosMin>(pm, n + 1);
     }
 
@@ -73,6 +73,6 @@ namespace Gecode { namespace Int { namespace Branch {
         }
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 // STATISTICS: int-branch

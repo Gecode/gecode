@@ -32,12 +32,12 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("jobshop", "array [1..4] of var 0..14: s :: output_array([1..4]);\
 var 0..14: end :: output_var;\
 var bool: b1 :: output_var;\
@@ -69,6 +69,6 @@ s = array1d(1..4, [0, 2, 2, 7]);\n\
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

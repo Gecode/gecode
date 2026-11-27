@@ -61,17 +61,17 @@ namespace {
     public:
         /// Whether a valid specification has been found
         bool
-        valid(void) const {
+        valid() const {
             return data != nullptr;
         }
         /// Return maximal capacity of a bin
         int
-        capacity(void) const {
+        capacity() const {
             return data[0];
         }
         /// Return number of items
         int
-        items(void) const {
+        items() const {
             return data[1];
         }
         /// Return size of item \a i
@@ -91,7 +91,7 @@ namespace {
         }
         /// Compute lower bound
         int
-        clower(void) const {
+        clower() const {
             /*
              * The lower bound is due to: S. Martello, P. Toth. Lower bounds
              * and reduction procedures for the bin packing problem.
@@ -136,7 +136,7 @@ namespace {
         }
         /// Compute upper bound
         int
-        cupper(void) const {
+        cupper() const {
             // Use a naive greedy algorithm
             const int c = capacity(), n = items();
 
@@ -185,7 +185,7 @@ namespace {
         }
         /// Return sum of all item sizes
         int
-        total(void) const {
+        total() const {
             int t = 0;
             for (int i = 0; i < items(); i++)
                 t += size(i);
@@ -193,12 +193,12 @@ namespace {
         }
         /// Return lower bound
         int
-        lower(void) const {
+        lower() const {
             return l;
         }
         /// Return upper bound
         int
-        upper(void) const {
+        upper() const {
             return u;
         }
     };
@@ -238,7 +238,7 @@ protected:
         /** Initialize choice for brancher \a b, alternatives \a a,
          *  item \a i and same bins \a s.
          */
-        Choice(const Brancher& b, unsigned int a, int i, int* s, int n_s)
+        Choice(const Brancher& b, unsigned int a, int i, const int* s, int n_s)
             : Gecode::Choice(b, a), item(i), same(heap.alloc<int>(n_s)), n_same(n_s) {
             for (int k = n_same; k--;)
                 same[k] = s[k];
@@ -252,7 +252,7 @@ protected:
                 e << same[i];
         }
         /// Destructor
-        ~Choice(void) override {
+        ~Choice() override {
             heap.free<int>(same, n_same);
         }
     };
@@ -348,8 +348,7 @@ public:
          */
         if ((slack == 0) || (n_same == n_possible) || (slack == INT_MAX))
             return new Choice(*this, 1, item, same, 1);
-        else
-            return new Choice(*this, 2, item, same, n_same);
+        return new Choice(*this, 2, item, same, n_same);
     }
     /// Return choice
     const Gecode::Choice*
@@ -400,14 +399,14 @@ public:
 };
 
 /// Post branching (assumes that \a s is sorted)
-void
+static void
 cdbf(Home home, const IntVarArgs& l, const IntVarArgs& b, const IntArgs& s) {
     if (b.size() != s.size())
         throw Int::ArgumentSizeMismatch("cdbf");
     ViewArray<Int::IntView> load(home, l);
     ViewArray<Int::IntView> bin(home, b);
     IntSharedArray size(s);
-    return CDBF::post(home, load, bin, size);
+    CDBF::post(home, load, bin, size);
 }
 
 /**
@@ -510,7 +509,7 @@ public:
     }
     /// Return cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return bins;
     }
     /// Constructor for cloning \a s
@@ -521,7 +520,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new BinPacking(*this);
     }
     /// Print solution

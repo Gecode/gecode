@@ -32,10 +32,10 @@
  *
  */
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     forceinline
-    SetDelta::SetDelta(void)
+    SetDelta::SetDelta()
         : _glb_min(1), _glb_max(0), _lub_min(1), _lub_max(0) {}
 
     forceinline
@@ -43,30 +43,30 @@ namespace Gecode { namespace Set {
         : _glb_min(glb_min), _glb_max(glb_max), _lub_min(lub_min), _lub_max(lub_max) {}
 
     forceinline int
-    SetDelta::glb_min(void) const {
+    SetDelta::glb_min() const {
         return _glb_min;
     }
     forceinline int
-    SetDelta::glb_max(void) const {
+    SetDelta::glb_max() const {
         return _glb_max;
     }
     forceinline int
-    SetDelta::lub_min(void) const {
+    SetDelta::lub_min() const {
         return _lub_min;
     }
     forceinline int
-    SetDelta::lub_max(void) const {
+    SetDelta::lub_max() const {
         return _lub_max;
     }
     forceinline bool
-    SetDelta::glb_any(void) const {
+    SetDelta::glb_any() const {
         return _glb_min > _glb_max;
     }
     forceinline bool
-    SetDelta::lub_any(void) const {
+    SetDelta::lub_any() const {
         return _lub_min > _lub_max;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

@@ -36,7 +36,7 @@
 
 #include <string>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// %Test branching with distinct propagator
     class Bool : public BoolTest {
@@ -56,19 +56,19 @@ namespace Test { namespace Assign {
 
     /// Merit that prefers the variable at position \a p
     template <int p>
-    double
+    static double
     bool_merit_at(const Gecode::Space&, Gecode::BoolVar, int i) {
         return (i == p) ? 1.0 : 0.0;
     }
 
     /// Filter that accepts every variable
-    bool
+    static bool
     bool_accept(const Gecode::Space&, Gecode::BoolVar, int) {
         return true;
     }
 
     /// Print function that prints nothing
-    void
+    static void
     bool_print_nothing(const Gecode::Space&, const Gecode::Brancher&, unsigned int, Gecode::BoolVar, int, const int&,
                        std::ostream&) {}
 
@@ -87,13 +87,13 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new BoolOrderSpace(*this);
         }
     };
 
     /// Whether assigning one first in \a s sets exactly the last \a n variables
-    bool
+    static bool
     assigned_last_first(BoolOrderSpace* s, int n) {
         Gecode::DFS<BoolOrderSpace> e(s);
         delete s;
@@ -116,7 +116,7 @@ namespace Test { namespace Assign {
         BoolTieBreak(int n0) : Base("Bool::Assign::TieBreak::" + std::to_string(n0)), n(n0) {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             TieBreak<BoolVarBranch> vars(BOOL_VAR_MERIT_MAX(&bool_merit_at<4>));
             if (n > 1)
@@ -142,10 +142,10 @@ namespace Test { namespace Assign {
     class BoolVarSelection : public Base {
     public:
         /// Create and register test
-        BoolVarSelection(void) : Base("Bool::Assign::VarSelection") {}
+        BoolVarSelection() : Base("Bool::Assign::VarSelection") {}
         /// Perform test
         bool
-        run(void) override {
+        run() override {
             using namespace Gecode;
             BoolOrderSpace* s = new BoolOrderSpace(1);
             assign(*s, s->x, BOOL_VAR_MERIT_MAX(&bool_merit_at<4>), BOOL_ASSIGN_MAX());
@@ -157,6 +157,6 @@ namespace Test { namespace Assign {
         BoolVarSelection var_selection;
     } // namespace
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 // STATISTICS: test-branch

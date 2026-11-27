@@ -47,15 +47,14 @@
 
 namespace Gecode {
 
-    CPProfilerSearchTracer::GetInfo::~GetInfo(void) = default;
+    CPProfilerSearchTracer::GetInfo::~GetInfo() = default;
 
-    CPProfilerSearchTracer::CPProfilerSearchTracer(int eid, std::string name0, unsigned int port,
-                                                   const GetInfo* pgetinfo)
-        : connector(new CPProfiler::Connector(port)), execution_id(eid), name(std::move(name0)), restart(0),
-          pgi(pgetinfo) {}
+    CPProfilerSearchTracer::CPProfilerSearchTracer(int eid, std::string name0, unsigned int port, const GetInfo* pgi0)
+        : connector(new CPProfiler::Connector(port)), execution_id(eid), name(std::move(name0)), restart(0), pgi(pgi0) {
+    }
 
     void
-    CPProfilerSearchTracer::init(void) {
+    CPProfilerSearchTracer::init() {
         // Try to find out whether engine is a restart engine
         bool restarts = ((engines() == 2U) && (engine(0U).type() == EngineType::RBS));
         connector->connect();
@@ -133,12 +132,12 @@ namespace Gecode {
     }
 
     void
-    CPProfilerSearchTracer::done(void) {
+    CPProfilerSearchTracer::done() {
         connector->done();
         connector->disconnect();
     }
 
-    CPProfilerSearchTracer::~CPProfilerSearchTracer(void) {
+    CPProfilerSearchTracer::~CPProfilerSearchTracer() {
         delete connector;
         delete pgi;
     }

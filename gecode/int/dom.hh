@@ -43,7 +43,7 @@
  * \brief Domain propagators
  */
 
-namespace Gecode { namespace Int { namespace Dom {
+namespace Gecode::Int::Dom {
 
     /**
      * \brief Reified range dom-propagator
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Dom {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Dom
+} // namespace Gecode::Int::Dom
 
 #include <gecode/int/dom/range.hpp>
 #include <gecode/int/dom/set.hpp>

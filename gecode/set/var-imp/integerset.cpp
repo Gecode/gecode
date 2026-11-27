@@ -32,7 +32,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     BndSet::BndSet(Space& home, const IntSet& is) {
         if (is.ranges() == 0) {
@@ -193,7 +193,6 @@ namespace Gecode { namespace Set {
             newlst = c;
             RangeList* nc = c->next();
             c->next(nullptr);
-            p = c;
             c = nc;
         } else if (p != nullptr) {
             p->next(nullptr);
@@ -270,7 +269,6 @@ namespace Gecode { namespace Set {
                     }
                     RangeList* nc = cend->next(); // performs loop step!
                     c->dispose(home, cend);
-                    p = cend;
                     c = nc;
                     if (c != nullptr && c->min() <= ma) {
                         // start of range clipped, end remains
@@ -293,14 +291,14 @@ namespace Gecode { namespace Set {
 #endif
 
     bool
-    BndSet::is_consistent(void) const {
+    BndSet::is_consistent() const {
 #ifndef NDEBUG
         if (fst() == nullptr) {
-            if (lst() != nullptr || size() != 0) {
+            if (lst() != nullptr || !empty()) {
                 std::cerr << "Strange empty set.\n";
                 return false;
-            } else
-                return true;
+            }
+            return true;
         }
 
         if (fst() != nullptr && lst() == nullptr) {
@@ -344,6 +342,6 @@ namespace Gecode { namespace Set {
         return true;
     }
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 // STATISTICS: set-var

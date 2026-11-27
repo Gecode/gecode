@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
     /**
      * \brief Value iterator for values in a bitset
@@ -47,7 +47,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// Limit value
         unsigned int limit;
         /// Move to next set bit
-        void move(void);
+        void move();
 
     public:
         /// \name Constructors and initialization
@@ -61,15 +61,15 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -86,21 +86,21 @@ namespace Gecode { namespace Iter { namespace Values {
 
     template <class BS>
     forceinline void
-    BitSet<BS>::operator++(void) {
+    BitSet<BS>::operator++() {
         cur = bs.next(cur + 1);
     }
     template <class BS>
     forceinline bool
-    BitSet<BS>::operator()(void) const {
+    BitSet<BS>::operator()() const {
         return cur < limit;
     }
 
     template <class BS>
     forceinline int
-    BitSet<BS>::val(void) const {
+    BitSet<BS>::val() const {
         return static_cast<int>(cur);
     }
 
-}}} // namespace Gecode::Iter::Values
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

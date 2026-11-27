@@ -38,7 +38,6 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #include <gecode/set/branch.hh>
-#include <cstdarg>
 #endif
 
 #include <gecode/minimodel.hh>
@@ -52,13 +51,13 @@
  * \namespace Test::LDSB
  * \brief Testing for LDSB
  */
-namespace Test { namespace LDSB {
+namespace Test::LDSB {
 
     using namespace Gecode;
 
     /// Returns true iff a and b are equal (they have the same size and
     /// the same elements in the same positions).
-    bool
+    static bool
     equal(const IntArgs& a, const IntArgs& b) {
         if (a.size() != b.size())
             return false;
@@ -71,7 +70,7 @@ namespace Test { namespace LDSB {
 #ifdef GECODE_HAS_SET_VARS
     /// Returns true iff a and b are equal (they have the same size and
     /// the same elements in the same positions).
-    bool
+    static bool
     equal(const IntSetArgs& a, const IntSetArgs& b) {
         if (a.size() != b.size())
             return false;
@@ -103,7 +102,7 @@ namespace Test { namespace LDSB {
      * prints an explanation to standard error and returns false.
      */
     template <class T, class VarArgsType>
-    bool
+    static bool
     check(DFS<T>& e, std::vector<VarArgsType> expected) {
         int expected_count = expected.size();
         for (int i = 0; i < expected_count; ++i) {
@@ -153,12 +152,12 @@ namespace Test { namespace LDSB {
         }
         /// Copy during cloning
         Space*
-        copy(void) override {
+        copy() override {
             return new OneArray(*this);
         }
         /// Return the solution as IntArgs
         IntArgs
-        solution(void) {
+        solution() {
             IntArgs a(xs.size());
             for (int i = 0; i < a.size(); ++i)
                 a[i] = xs[i].val();
@@ -166,7 +165,7 @@ namespace Test { namespace LDSB {
         }
         /// Expected solutions
         virtual IntArgs*
-        expected_solutions(void) {
+        expected_solutions() {
             return nullptr;
         }
     };
@@ -185,12 +184,12 @@ namespace Test { namespace LDSB {
         }
         /// Copy during cloning
         Space*
-        copy(void) override {
+        copy() override {
             return new OneArraySet(*this);
         }
         /// Return the solution as IntSetArgs
         IntSetArgs
-        solution(void) {
+        solution() {
             IntSetArgs a(xs.size());
             for (int i = 0; i < a.size(); ++i) {
                 SetVarGlbRanges glbranges(xs[i]);
@@ -200,7 +199,7 @@ namespace Test { namespace LDSB {
         }
         /// Expected solutions
         virtual IntSetArgs*
-        expected_solutions(void) {
+        expected_solutions() {
             return nullptr;
         }
     };
@@ -219,7 +218,7 @@ namespace Test { namespace LDSB {
             : Test::Base("LDSB::" + label), c_d(c), a_d(a) {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             OneArray* s = new OneArray(T::n, T::l, T::u);
             T::setup(*s, s->xs);
             Search::Options o = Search::Options::def;
@@ -248,7 +247,7 @@ namespace Test { namespace LDSB {
             : Test::Base("LDSB::" + label), c_d(c), a_d(a) {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             OneArraySet* s = new OneArraySet(T::n, T::l, T::u);
             T::setup(*s, s->xs);
             Search::Options o = Search::Options::def;
@@ -286,7 +285,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -313,7 +312,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -340,7 +339,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0}));
@@ -401,7 +400,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -441,7 +440,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2}));
@@ -475,7 +474,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -507,7 +506,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0, 0, 0}));
@@ -559,7 +558,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0, 0, 0}));
@@ -622,7 +621,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0, 0, 0}));
@@ -668,7 +667,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0}));
@@ -712,7 +711,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 3, 1, 0, 2, 2, 0, 1, 3, 0, 0}));
@@ -783,7 +782,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 3, 1, 0, 2, 2, 0, 1, 3, 0, 0}));
@@ -815,7 +814,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 6}));
@@ -859,7 +858,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 5}));
@@ -888,7 +887,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({3, 3}));
@@ -919,7 +918,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             return SimIntValSym3::expected_solutions();
         }
     };
@@ -944,7 +943,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -971,7 +970,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -998,7 +997,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({3, 2, 1, 0}));
@@ -1025,7 +1024,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0}));
@@ -1065,7 +1064,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0}));
@@ -1107,7 +1106,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -1146,7 +1145,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2}));
@@ -1181,7 +1180,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -1213,7 +1212,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0}));
@@ -1252,11 +1251,11 @@ namespace Test { namespace LDSB {
                 xs.update(*this, s.xs);
             }
             Space*
-            copy(void) override {
+            copy() override {
                 return new Latin(*this);
             }
             IntArgs
-            solution(void) {
+            solution() {
                 IntArgs a(xs.size());
                 for (int i = 0; i < a.size(); ++i)
                     a[i] = xs[i].val();
@@ -1265,7 +1264,7 @@ namespace Test { namespace LDSB {
 
             /// Compute list of expected solutions
             static std::vector<IntArgs>
-            expected_solutions(void) {
+            expected_solutions() {
                 static std::vector<IntArgs> expected;
                 expected.clear();
                 expected.push_back(IntArgs({1, 2, 3, 4, 2, 1, 4, 3, 3, 4, 1, 2, 4, 3, 2, 1}));
@@ -1279,7 +1278,7 @@ namespace Test { namespace LDSB {
         LDSBLatin(const std::string& label) : Test::Base("LDSB::" + label) {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             Latin* s = new Latin();
             DFS<Latin> e(s);
             bool r = check(e, Latin::expected_solutions());
@@ -1340,7 +1339,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0, 0, 0}));
@@ -1366,7 +1365,7 @@ namespace Test { namespace LDSB {
         }
     };
 
-    double
+    static double
     position(const Space& home, IntVar x, int i) {
         (void)home;
         (void)x;
@@ -1402,7 +1401,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({3, 2, 0, 1}));
@@ -1412,15 +1411,15 @@ namespace Test { namespace LDSB {
 
 #ifdef GECODE_HAS_SET_VARS
     /// Convenient way to make IntSetArgs
-    IntSetArgs
-    isa(int n, ...) {
+    template <class... Values>
+    static IntSetArgs
+    isa(int n, Values... values) {
         IntSetArgs sets;
-        va_list args;
-        va_start(args, n);
         int i = 0;
         IntArgs a;
-        while (i < n) {
-            int x = va_arg(args, int);
+        for (int x : {values...}) {
+            if (i == n)
+                break;
             if (x == -1) {
                 i++;
                 sets << IntSet(a);
@@ -1429,7 +1428,6 @@ namespace Test { namespace LDSB {
                 a << x;
             }
         }
-        va_end(args);
         return sets;
     }
 
@@ -1451,7 +1449,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntSetArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntSetArgs> expected;
             expected.clear();
             expected.push_back(isa(2, 0, 1, -1, 0, 1, -1));
@@ -1503,7 +1501,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntSetArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntSetArgs> expected;
             expected.clear();
             expected.push_back(isa(2, 0, 1, -1, 0, 1, -1));
@@ -1546,7 +1544,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntSetArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntSetArgs> expected;
             expected.clear();
             expected.push_back(isa(3, 1, -1, 1, -1, 1, -1));
@@ -1580,7 +1578,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntSetArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntSetArgs> expected;
             expected.clear();
             expected.push_back(isa(4, 0, -1, 1, -1, 0, -1, 1, -1));
@@ -1610,7 +1608,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntSetArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntSetArgs> expected;
             expected.clear();
 
@@ -1664,7 +1662,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3, 4, 5}));
@@ -1693,7 +1691,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 0}));
@@ -1728,7 +1726,7 @@ namespace Test { namespace LDSB {
         }
         /// Compute list of expected solutions
         static std::vector<IntArgs>
-        expected_solutions(void) {
+        expected_solutions() {
             static std::vector<IntArgs> expected;
             expected.clear();
             expected.push_back(IntArgs({0, 1, 2, 3}));
@@ -1753,7 +1751,7 @@ namespace Test { namespace LDSB {
         }
         /// Copy during cloning
         Space*
-        copy(void) override {
+        copy() override {
             return new EmptyFixture(*this);
         }
     };
@@ -1767,7 +1765,7 @@ namespace Test { namespace LDSB {
 
     /// Return the symmetries described by \a spec for the variables \a x
     template <class VarArgs>
-    Symmetries
+    static Symmetries
     symmetries(SymmetrySpec spec, const VarArgs& x) {
         Symmetries s;
         if (spec == SymmetrySpec::NONE)
@@ -1789,7 +1787,7 @@ namespace Test { namespace LDSB {
 
     /// Return the number of solutions of \a s and delete \a s
     template <class T>
-    int
+    static int
     count_solutions(T* s) {
         DFS<T> e(s);
         delete s;
@@ -1839,10 +1837,10 @@ namespace Test { namespace LDSB {
 
     public:
         /// Initialize test
-        EmptyInt(void) : Base("LDSB::EmptyInt") {}
+        EmptyInt() : Base("LDSB::EmptyInt") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             for (bool tie : {false, true})
                 if ((solutions(0, SymmetrySpec::NONE, tie) != 1) || (solutions(0, SymmetrySpec::EMPTY, tie) != 1) ||
                     (solutions(2, SymmetrySpec::NONE, tie) != 4) || (solutions(2, SymmetrySpec::EMPTY, tie) != 4) ||
@@ -1872,10 +1870,10 @@ namespace Test { namespace LDSB {
 
     public:
         /// Initialize test
-        EmptyBool(void) : Base("LDSB::EmptyBool") {}
+        EmptyBool() : Base("LDSB::EmptyBool") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             for (bool tie : {false, true})
                 if ((solutions(0, SymmetrySpec::NONE, tie) != 1) || (solutions(0, SymmetrySpec::EMPTY, tie) != 1) ||
                     (solutions(2, SymmetrySpec::NONE, tie) != 4) || (solutions(2, SymmetrySpec::EMPTY, tie) != 4) ||
@@ -1889,10 +1887,10 @@ namespace Test { namespace LDSB {
     class LiteralCompare : public Base {
     public:
         /// Initialize test
-        LiteralCompare(void) : Base("LDSB::Literal::Compare") {}
+        LiteralCompare() : Base("LDSB::Literal::Compare") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             using Gecode::Int::LDSB::Literal;
             const Literal l(0, 1);
             const Literal l_copy(l);
@@ -1923,10 +1921,10 @@ namespace Test { namespace LDSB {
 
     public:
         /// Initialize test
-        EmptySet(void) : Base("LDSB::EmptySet") {}
+        EmptySet() : Base("LDSB::EmptySet") {}
         /// Perform actual tests
         bool
-        run(void) override {
+        run() override {
             for (bool tie : {false, true})
                 if ((solutions(0, SymmetrySpec::NONE, tie) != 1) || (solutions(0, SymmetrySpec::EMPTY, tie) != 1) ||
                     (solutions(2, SymmetrySpec::NONE, tie) != 4) || (solutions(2, SymmetrySpec::EMPTY, tie) != 4) ||
@@ -1981,6 +1979,6 @@ namespace Test { namespace LDSB {
     LDSBSet<SetVarSeqSym2> setvarseqsym2("SetVarSeqSym2");
     EmptySet empty_set;
 #endif
-}} // namespace Test::LDSB
+} // namespace Test::LDSB
 
 // STATISTICS: test-core

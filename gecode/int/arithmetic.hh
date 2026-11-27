@@ -46,7 +46,7 @@
  * \brief Numerical (arithmetic) propagators
  */
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent absolute value propagator
@@ -115,11 +115,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, View x0, View x1);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/abs.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent ternary maximum propagator
@@ -245,11 +245,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, ViewArray<View>& x, View y);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/max.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Argument maximum propagator
@@ -292,11 +292,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IdxViewArray<VA>& x, VB y);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/argmax.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Operations for square and square-root propagators
@@ -307,9 +307,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     class SqrOps {
     public:
         /// Return whether exponent is even
-        bool even(void) const;
+        bool even() const;
         /// Return exponent
-        int exp(void) const;
+        int exp() const;
         /// Set exponent to \a m
         void exp(int m);
         /// Return \f$x^2\f$
@@ -344,9 +344,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Initialize with exponent \a n
         PowOps(int n);
         /// Return whether exponent is even
-        bool even(void) const;
+        bool even() const;
         /// Return exponent
-        int exp(void) const;
+        int exp() const;
         /// Set exponent to \a m
         void exp(int m);
         /// Return \f$x^n\f$ where \f$n>0\f$
@@ -360,11 +360,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         int ceil_nth_root(int x) const;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/pow-ops.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent positive power propagator
@@ -488,11 +488,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/pow.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Positive bounds consistent n-th root propagator
@@ -618,11 +618,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/nroot.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds or domain consistent propagator for \f$x_0\times x_1=x_0\f$
@@ -775,11 +775,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/mult.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds propagator for \f$\gcd(x_0,x_1)=x_2\f$
@@ -795,7 +795,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Constructor for cloning \a p
         Gcd(Space& home, Gcd& p);
         /// Constructor for posting
-        Gcd(Home home, IntView x0, IntView x1, IntView x2);
+        Gcd(Home home, IntView y0, IntView y1, IntView y2);
 
     public:
         /// Post propagator
@@ -823,7 +823,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Reification control
         BoolView b;
         /// Constructor for posting
-        ReGcd(Home home, IntView x0, IntView x1, IntView x2, BoolView b);
+        ReGcd(Home home, IntView y0, IntView y1, IntView y2, BoolView b);
         /// Constructor for cloning \a p
         ReGcd(Space& home, ReGcd<rm>& p);
 
@@ -842,11 +842,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/gcd.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Reified bounds propagator for divisibility
@@ -862,7 +862,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         using ReBinaryPropagator<IntView, PC_INT_BND, BoolView>::x1;
         using ReBinaryPropagator<IntView, PC_INT_BND, BoolView>::b;
         /// Constructor for posting
-        ReDivides(Home home, IntView x0, IntView x1, BoolView b);
+        ReDivides(Home home, IntView y0, IntView y1, BoolView b);
         /// Constructor for cloning \a p
         ReDivides(Space& home, ReDivides<rm>& p);
 
@@ -879,11 +879,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/divides.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /** \brief Bounds propagator for an exact n-ary product
      *
@@ -897,7 +897,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Whether the remaining product is negated
         bool neg;
         /// Constructor for posting
-        Product(Home home, ViewArray<IntView>& x, IntView y, bool neg);
+        Product(Home home, ViewArray<IntView>& z, IntView w, bool neg);
         /// Constructor for cloning \a p
         Product(Space& home, Product& p);
 
@@ -929,7 +929,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Reification control
         BoolView b;
         /// Constructor for posting
-        ReProduct(Home home, ViewArray<IntView>& x, IntView y, BoolView b);
+        ReProduct(Home home, ViewArray<IntView>& z, IntView w, BoolView c);
         /// Constructor for cloning \a p
         ReProduct(Space& home, ReProduct<rm>& p);
 
@@ -948,11 +948,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/product.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /** \brief Bounds propagator for a fixed-modulus n-ary product
      *
@@ -970,7 +970,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Exact product of removed factors, or zero when not representable
         int a;
         /// Constructor for posting
-        ProductMod(Home home, ViewArray<IntView>& x, int m, IntView y, int c, int a);
+        ProductMod(Home home, ViewArray<IntView>& z, int m, IntView w, int c, int a);
         /// Constructor for cloning \a p
         ProductMod(Space& home, ProductMod& p);
 
@@ -1001,7 +1001,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Canonical residue
         IntView y;
         /// Constructor for posting
-        ProductModVar(Home home, ViewArray<IntView>& x, IntView m, IntView y);
+        ProductModVar(Home home, ViewArray<IntView>& z, IntView m, IntView w);
         /// Constructor for cloning \a p
         ProductModVar(Space& home, ProductModVar& p);
 
@@ -1037,7 +1037,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Reification control
         BoolView b;
         /// Constructor for posting
-        ReProductModVar(Home home, ViewArray<IntView>& x, IntView m, IntView y, BoolView b);
+        ReProductModVar(Home home, ViewArray<IntView>& z, IntView m, IntView w, BoolView c);
         /// Constructor for cloning \a p
         ReProductModVar(Space& home, ReProductModVar<rm>& p);
 
@@ -1073,7 +1073,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         /// Positive modulus
         int m;
         /// Constructor for posting
-        ReProductMod(Home home, ViewArray<IntView>& x, int m, IntView y, BoolView b);
+        ReProductMod(Home home, ViewArray<IntView>& z, int m, IntView w, BoolView c);
         /// Constructor for cloning \a p
         ReProductMod(Space& home, ReProductMod<rm>& p);
 
@@ -1092,11 +1092,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/product-mod.hpp>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /**
      * \brief Bounds consistent positive division propagator
@@ -1182,7 +1182,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
     };
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 #include <gecode/int/arithmetic/divmod.hpp>
 

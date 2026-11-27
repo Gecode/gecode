@@ -73,12 +73,12 @@ namespace Gecode {
         Misc* m;
 
         /// Default constructor
-        Node(void);
+        Node();
         /// Destructor
-        ~Node(void);
+        ~Node();
         /// Decrement reference count and possibly free memory
         GECODE_MINIMODEL_EXPORT
-        bool decrement(void);
+        bool decrement();
         /// Memory management
         static void* operator new(size_t size);
         /// Memory management
@@ -89,9 +89,9 @@ namespace Gecode {
      * Operations for nodes
      *
      */
-    BoolExpr::Node::Node(void) : use(1), same(0), t(NT_AND), l(nullptr), r(nullptr), m(nullptr) {}
+    BoolExpr::Node::Node() : use(1), same(0), t(NT_AND), l(nullptr), r(nullptr), m(nullptr) {}
 
-    BoolExpr::Node::~Node(void) {
+    BoolExpr::Node::~Node() {
         delete m;
     }
 
@@ -105,7 +105,7 @@ namespace Gecode {
     }
 
     bool
-    BoolExpr::Node::decrement(void) {
+    BoolExpr::Node::decrement() {
         if (--use == 0) {
             if ((l != nullptr) && l->decrement())
                 delete l;
@@ -125,7 +125,7 @@ namespace Gecode {
         return n;
     }
 
-    BoolExpr::BoolExpr(void) : n(new Node) {}
+    BoolExpr::BoolExpr() : n(new Node) {}
 
     BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
         n->use++;
@@ -229,7 +229,7 @@ namespace Gecode {
         n->m = m;
     }
 
-    const BoolExpr&
+    BoolExpr&
     BoolExpr::operator=(const BoolExpr& e) {
         if (this != &e) {
             if (n->decrement())
@@ -240,9 +240,9 @@ namespace Gecode {
         return *this;
     }
 
-    BoolExpr::Misc::~Misc(void) = default;
+    BoolExpr::Misc::~Misc() = default;
 
-    BoolExpr::~BoolExpr(void) {
+    BoolExpr::~BoolExpr() {
         if (n->decrement())
             delete n;
     }
@@ -251,8 +251,8 @@ namespace Gecode {
         /// %Node for negation normalform (%NNF)
         class NNF {
         public:
-            typedef BoolExpr::NodeType NodeType;
-            typedef BoolExpr::Node Node;
+            using NodeType = BoolExpr::NodeType;
+            using Node = BoolExpr::Node;
             /// Type of node
             NodeType t;
             /// Number of positive literals for node type
@@ -584,7 +584,7 @@ namespace Gecode {
     void
     BoolExpr::rel(Home home, const IntPropLevels& ipls) const {
         Region r;
-        return NNF::nnf(r, n, false)->rel(home, ipls);
+        NNF::nnf(r, n, false)->rel(home, ipls);
     }
 
     BoolExpr
@@ -660,7 +660,7 @@ namespace Gecode {
         /// Constructor
         BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx);
         /// Destructor
-        ~BElementExpr(void) override;
+        ~BElementExpr() override;
         /// Constrain \a b to be equivalent to the expression (negated if \a neg)
         void post(Home home, BoolVar b, bool neg, const IntPropLevels& ipls) override;
     };
@@ -672,7 +672,7 @@ namespace Gecode {
             new (&a[i]) BoolExpr(b[i]);
     }
 
-    BElementExpr::~BElementExpr(void) {
+    BElementExpr::~BElementExpr() {
         if (a != nullptr)
             heap.free<BoolExpr>(a, n);
     }

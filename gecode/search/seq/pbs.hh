@@ -36,7 +36,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /**
      * \brief Shared stop information
@@ -79,7 +79,7 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize shared stop information
         void share(SharedStopInfo* ssi);
         /// Whether the portfolio has a stop object
-        bool portfolio_stop(void) const;
+        bool portfolio_stop() const;
         /// Return true if portfolio engine must be stopped
         bool stop(const Statistics& s, const Options& o) override;
     };
@@ -98,7 +98,7 @@ namespace Gecode { namespace Search { namespace Seq {
 
     public:
         /// Default constructor
-        Asset(void);
+        Asset();
         /// Copy constructor
         Asset(const Asset& s) = default;
         /// Assignment operator
@@ -106,25 +106,25 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize with engine \a e, its stop object \a so, and the coverage \a c of its spoke
         void init(Engine* e, Stop* so, SpokeCoverage c);
         /// Return the coverage of the spoke of the asset
-        SpokeCoverage coverage(void) const;
+        SpokeCoverage coverage() const;
         /// Return next solution
-        Space* next(void);
+        Space* next();
         /// Return statistics of asset
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Return why the last call to next() of the asset returned no solution
-        EndReason end_reason(void) const;
+        EndReason end_reason() const;
         /// Whether the portfolio has a stop object
-        bool portfolio_stop(void) const;
+        bool portfolio_stop() const;
         /// Constrain with better solution \a b
         void constrain(const Space& b);
         /// Park the asset after its stop object stopped it
-        void park(void);
+        void park();
         /// Resume a parked asset
-        void resume(void);
+        void resume();
         /// Whether the asset is parked
-        bool parked(void) const;
+        bool parked() const;
         /// Delete asset
-        ~Asset(void);
+        ~Asset();
     };
 
     /// Sequential portfolio engine implementation
@@ -148,21 +148,21 @@ namespace Gecode { namespace Search { namespace Seq {
 
     public:
         /// Initialize with \a n assets, their stop objects, and the coverage of their spokes
-        PBS(Engine** assets, Stop** stops, const SpokeCoverage* coverage, unsigned int n, const Statistics& stat,
+        PBS(Engine** e, Stop** s, const SpokeCoverage* c, unsigned int n, const Statistics& stat0,
             const Search::Options& opt);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Statistics statistics(void) const override;
+        Statistics statistics() const override;
         /// Return why the last call to next() returned no solution
-        EndReason end_reason(void) const override;
+        EndReason end_reason() const override;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b) override;
         /// Destructor
-        ~PBS(void) override;
+        ~PBS() override;
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/pbs.hpp>
 

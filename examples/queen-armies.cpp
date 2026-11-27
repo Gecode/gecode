@@ -119,12 +119,12 @@ public:
     }
     /// Return copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new QueenArmies(*this);
     }
     /// Return solution cost
     IntVar
-    cost(void) const override {
+    cost() const override {
         return q;
     }
     /// Print solution
@@ -260,7 +260,7 @@ public:
 };
 
 /** \brief Position of a piece in a square board. */
-int
+static int
 pos(int i, int j, int n) {
     return i * n + j;
 }

@@ -32,14 +32,16 @@
 
 #include <gecode/kernel.hh>
 
+#include <algorithm>
+
 namespace Gecode {
 
-    Region::Pool::Pool(void) : c(new Chunk), n_c(2U) {
+    Region::Pool::Pool() : c(new Chunk), n_c(2U) {
         c->next = new Chunk;
         c->next->next = nullptr;
     }
     Region::Chunk*
-    Region::Pool::chunk(void) {
+    Region::Pool::chunk() {
         Chunk* n;
         {
             Support::Lock l(m);
@@ -66,7 +68,7 @@ namespace Gecode {
             n_c++;
         }
     }
-    Region::Pool::~Pool(void) {
+    Region::Pool::~Pool() {
         Support::Lock l(m);
         // If that were the case there would be a memory leak!
         assert(c != nullptr);
@@ -78,7 +80,7 @@ namespace Gecode {
     }
 
     Region::Pool&
-    Region::pool(void) {
+    Region::pool() {
         thread_local static Region::Pool _p;
         return _p;
     }
@@ -102,7 +104,7 @@ namespace Gecode {
                 HeapInfo* n = static_cast<HeapInfo*>(heap.ralloc(sizeof(HeapInfo) + (2 * h->n - 1) * sizeof(void*)));
                 n->size = 2 * h->n;
                 n->n = h->n;
-                memcpy(&n->blocks[0], &h->blocks[0], h->n * sizeof(void*));
+                std::copy_n(&h->blocks[0], h->n, &n->blocks[0]);
                 hi = Support::mark(n);
                 heap.rfree(h);
                 h = n;
@@ -113,7 +115,7 @@ namespace Gecode {
     }
 
     void
-    Region::heap_free(void) {
+    Region::heap_free() {
         assert(hi != nullptr);
         if (Support::marked(hi)) {
             HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));

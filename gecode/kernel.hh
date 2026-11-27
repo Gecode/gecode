@@ -84,26 +84,22 @@
  *
  */
 
-namespace Gecode {
+/// Kernel configuration parameters
+namespace Gecode::Kernel::Config {
+    /// Rescale factor for action and afc values
+    const double rescale = 1e-50;
+    /// Rescale action and afc values when larger than this
+    const double rescale_limit = DBL_MAX * rescale;
 
-    /// Kernel configuration parameters
-    namespace Kernel { namespace Config {
-        /// Rescale factor for action and afc values
-        const double rescale = 1e-50;
-        /// Rescale action and afc values when larger than this
-        const double rescale_limit = DBL_MAX * rescale;
-
-        /// Initial value for alpha in CHB
-        const double chb_alpha_init = 0.4;
-        /// Limit for decreasing alpha in CHB
-        const double chb_alpha_limit = 0.06;
-        /// Alpha decrement in CHB
-        const double chb_alpha_decrement = 1e-6;
-        /// Initial value for Q-score in CHB
-        const double chb_qscore_init = 0.05;
-    }} // namespace Kernel::Config
-
-} // namespace Gecode
+    /// Initial value for alpha in CHB
+    const double chb_alpha_init = 0.4;
+    /// Limit for decreasing alpha in CHB
+    const double chb_alpha_limit = 0.06;
+    /// Alpha decrement in CHB
+    const double chb_alpha_decrement = 1e-6;
+    /// Initial value for Q-score in CHB
+    const double chb_qscore_init = 0.05;
+} // namespace Gecode::Kernel::Config
 
 /*
  * General exceptions and kernel exceptions

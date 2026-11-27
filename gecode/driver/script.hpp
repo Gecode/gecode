@@ -40,7 +40,7 @@
 #include <csignal>
 #endif
 
-namespace Gecode { namespace Driver {
+namespace Gecode::Driver {
 
     /**
      * \brief Stop object based on nodes, failures, and time
@@ -93,8 +93,7 @@ namespace Gecode { namespace Driver {
                bool intr) {
             if (!intr && (node == 0ULL) && (fail == 0ULL) && (time == 0.0) && (restart == 0ULL))
                 return nullptr;
-            else
-                return new CombinedStop(node, fail, time, restart);
+            return new CombinedStop(node, fail, time, restart);
         }
 #ifdef GECODE_THREADS_WINDOWS
         /// Handler for catching Ctrl-C
@@ -122,12 +121,12 @@ namespace Gecode { namespace Driver {
 #ifdef GECODE_THREADS_WINDOWS
                 SetConsoleCtrlHandler((PHANDLER_ROUTINE)interrupt, install);
 #else
-                std::signal(SIGINT, install ? interrupt : SIG_DFL);
+                (void)std::signal(SIGINT, install ? interrupt : SIG_DFL);
 #endif
             }
         }
         /// Destructor
-        ~CombinedStop(void) override {
+        ~CombinedStop() override {
             delete ns;
             delete fs;
             delete ts;
@@ -144,7 +143,7 @@ namespace Gecode { namespace Driver {
     /**
      * \brief Compute arithmetic mean of \a n elements in \a t
      */
-    GECODE_DRIVER_EXPORT double am(double t[], unsigned int n);
+    GECODE_DRIVER_EXPORT double am(const double t[], unsigned int n);
 
     /**
      * \brief Compute deviation of \a n elements in \a t
@@ -225,7 +224,7 @@ namespace Gecode { namespace Driver {
     class ScriptGetInfo : public CPProfilerSearchTracer::GetInfo {
     public:
         /// Initialize
-        ScriptGetInfo(void) = default;
+        ScriptGetInfo() = default;
         /// Return info for a space (which must be a script)
         std::string get_info(const Space& home) const override;
     };
@@ -255,14 +254,15 @@ namespace Gecode { namespace Driver {
     ScriptBase<BaseSpace>::select_ostream(const char* sn, std::ofstream& ofs) {
         if (strcmp(sn, "stdout") == 0) {
             return std::cout;
-        } else if (strcmp(sn, "stdlog") == 0) {
-            return std::clog;
-        } else if (strcmp(sn, "stderr") == 0) {
-            return std::cerr;
-        } else {
-            ofs.open(sn);
-            return ofs;
         }
+        if (strcmp(sn, "stdlog") == 0) {
+            return std::clog;
+        }
+        if (strcmp(sn, "stderr") == 0) {
+            return std::cerr;
+        }
+        ofs.open(sn);
+        return ofs;
     }
 
 #ifdef GECODE_HAS_CPPROFILER
@@ -396,11 +396,11 @@ namespace Gecode { namespace Driver {
                                     delete px;
                                 }
                                 break;
-                            } else {
-                                s_n++;
-                                delete px;
-                                px = ex;
                             }
+                            s_n++;
+                            delete px;
+                            px = ex;
+
                         } while (s_n < s_l);
                     } else {
                         do {
@@ -422,9 +422,9 @@ namespace Gecode { namespace Driver {
                     } else if (e.end_reason() == Search::EndReason::Limit) {
                         l_out << "Search engine stopped..." << '\n' << "\treason: ";
                         int r = static_cast<CombinedStop*>(so.stop)->reason(stat, so);
-                        if (r & CombinedStop::SR_INT)
+                        if (r & CombinedStop::SR_INT) {
                             l_out << "user interrupt " << '\n';
-                        else {
+                        } else {
                             if (r & CombinedStop::SR_NODE)
                                 l_out << "node ";
                             if (r & CombinedStop::SR_FAIL)
@@ -591,6 +591,6 @@ namespace Gecode { namespace Driver {
             log_file.close();
     }
 
-}} // namespace Gecode::Driver
+} // namespace Gecode::Driver
 
 // STATISTICS: driver-any

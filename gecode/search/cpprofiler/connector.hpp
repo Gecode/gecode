@@ -41,7 +41,7 @@
 #include <vector>
 #include <cstring>
 
-#if defined(_WIN32)
+#ifdef _WIN32
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -52,7 +52,7 @@
 #endif
 
 #include <basetsd.h>
-typedef SSIZE_T ssize_t;
+using ssize_t = SSIZE_T;
 
 #else
 
@@ -62,7 +62,7 @@ typedef SSIZE_T ssize_t;
 
 #endif
 
-namespace Gecode { namespace CPProfiler {
+namespace Gecode::CPProfiler {
 
     class Node {
         NodeUID node_;
@@ -106,12 +106,12 @@ namespace Gecode { namespace CPProfiler {
 
         int socket_fd;
         bool _connected;
-#if defined(_WIN32)
+#ifdef _WIN32
         bool _winsock_started;
 #endif
 
         static int send_all(int s, const char* buf, int* len);
-        void send_over_socket(void);
+        void send_over_socket();
         void send_raw_msg(const std::vector<char>& buf);
 
     public:
@@ -121,7 +121,7 @@ namespace Gecode { namespace CPProfiler {
 
         /// connect to a socket via port specified in the construction (6565 by
         /// default)
-        void connect(void);
+        void connect();
 
         // sends START_SENDING message to the Profiler with a model name
         void start(const std::string& file_path = "", int execution_id = -1, bool has_restarts = false);
@@ -129,7 +129,7 @@ namespace Gecode { namespace CPProfiler {
         void done();
 
         /// disconnect from a socket
-        void disconnect(void);
+        void disconnect();
 
         void send_node(const Node& node);
         Node create_node(NodeUID node, NodeUID parent, int alt, int kids, NodeStatus status);
@@ -233,7 +233,7 @@ namespace Gecode { namespace CPProfiler {
      */
     inline Connector::Connector(unsigned int port)
         : port(port), socket_fd(-1), _connected(false)
-#if defined(_WIN32)
+#ifdef _WIN32
           ,
           _winsock_started(false)
 #endif
@@ -273,7 +273,7 @@ namespace Gecode { namespace CPProfiler {
             bytes_left -= static_cast<int>(n);
         }
 
-        *len = static_cast<int>(total); // return number actually sent here
+        *len = total; // return number actually sent here
 
         return (n == -1) ? -1 : 0; // return -1 on failure, 0 on success
     }
@@ -288,7 +288,7 @@ namespace Gecode { namespace CPProfiler {
     }
 
     inline void
-    Connector::send_over_socket(void) {
+    Connector::send_over_socket() {
         if (!_connected)
             return;
 
@@ -298,11 +298,11 @@ namespace Gecode { namespace CPProfiler {
     }
 
     inline void
-    Connector::connect(void) {
+    Connector::connect() {
         struct addrinfo hints, *server_info, *p;
         int rv;
 
-#if defined(_WIN32)
+#ifdef _WIN32
         // Initialise Winsock.
         WSADATA winsock_data;
         int startup_result = WSAStartup(MAKEWORD(2, 2), &winsock_data);
@@ -317,20 +317,22 @@ namespace Gecode { namespace CPProfiler {
         hints.ai_family = AF_UNSPEC;
         hints.ai_socktype = SOCK_STREAM;
 
-        if ((rv = getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &server_info)) != 0) {
+        rv = getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &server_info);
+        if (rv != 0) {
             std::cerr << "getaddrinfo: " << gai_strerror(rv) << "\n";
             goto give_up;
         }
 
         // loop through all the results and connect to the first we can
         for (p = server_info; p != nullptr; p = p->ai_next) {
-            if ((socket_fd = static_cast<int>(socket(p->ai_family, p->ai_socktype, p->ai_protocol))) == -1) {
+            socket_fd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+            if (socket_fd == -1) {
                 // errno is set here, but we don't examine it.
                 continue;
             }
 
             if (::connect(socket_fd, p->ai_addr, p->ai_addrlen) == -1) {
-#if defined(_WIN32)
+#ifdef _WIN32
                 closesocket(socket_fd);
 #else
                 close(socket_fd);
@@ -356,13 +358,12 @@ namespace Gecode { namespace CPProfiler {
         return;
     give_up:
         _connected = false;
-#if defined(_WIN32)
+#ifdef _WIN32
         if (_winsock_started) {
             WSACleanup();
             _winsock_started = false;
         }
 #endif
-        return;
     }
 
     inline void
@@ -371,12 +372,12 @@ namespace Gecode { namespace CPProfiler {
         std::string base_name(file_path);
         {
             size_t pos = base_name.find_last_of('/');
-            if (pos != static_cast<size_t>(-1)) {
+            if (pos != std::string::npos) {
                 base_name = base_name.substr(pos + 1, base_name.length() - pos - 1);
             }
         }
 
-        std::string info{""};
+        std::string info;
         {
             std::stringstream ss;
             ss << "{";
@@ -396,7 +397,7 @@ namespace Gecode { namespace CPProfiler {
     inline void
     Connector::restart(int restart_id) {
 
-        std::string info{""};
+        std::string info;
         {
             std::stringstream ss;
             ss << "{";
@@ -418,7 +419,7 @@ namespace Gecode { namespace CPProfiler {
     inline void
     Connector::disconnect() {
         if (socket_fd != -1) {
-#if defined(_WIN32)
+#ifdef _WIN32
             closesocket(socket_fd);
 #else
             close(socket_fd);
@@ -426,7 +427,7 @@ namespace Gecode { namespace CPProfiler {
             socket_fd = -1;
         }
         _connected = false;
-#if defined(_WIN32)
+#ifdef _WIN32
         if (_winsock_started) {
             WSACleanup();
             _winsock_started = false;
@@ -456,6 +457,6 @@ namespace Gecode { namespace CPProfiler {
         return Node(node, parent, alt, kids, status);
     }
 
-}} // namespace Gecode::CPProfiler
+} // namespace Gecode::CPProfiler
 
 // STATISTICS: search-trace

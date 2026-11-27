@@ -35,7 +35,7 @@
 #include <algorithm>
 #include <vector>
 
-namespace Gecode { namespace Int { namespace Extensional {
+namespace Gecode::Int::Extensional {
 
     /**
      * \brief Sort transition array by input state
@@ -136,9 +136,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     };
 
     /// Return the compact index for an external state identifier
-    forceinline int
+    static forceinline int
     state_index(const std::vector<int>& states, int state) {
-        return static_cast<int>(std::lower_bound(states.begin(), states.end(), state) - states.begin());
+        return static_cast<int>(std::ranges::lower_bound(states, state) - states.begin());
     }
 
     /// Information about states
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         SI_FINAL = 4       ///< State is final
     };
 
-}}} // namespace Gecode::Int::Extensional
+} // namespace Gecode::Int::Extensional
 
 namespace Gecode {
 
@@ -186,8 +186,8 @@ namespace Gecode {
             }
             for (int* f = &f_spec[0]; *f >= 0; f++)
                 states.push_back(*f);
-            std::sort(states.begin(), states.end());
-            states.erase(std::unique(states.begin(), states.end()), states.end());
+            std::ranges::sort(states);
+            states.erase(std::ranges::unique(states).begin(), states.end());
             n_states = static_cast<int>(states.size());
             start = state_index(states, start);
         } else {

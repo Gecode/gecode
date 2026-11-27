@@ -31,7 +31,7 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check that recomputation does not lose solutions
     bool
     check(const std::string& output, int expected, const std::string& representative) {
@@ -39,14 +39,14 @@ namespace Test { namespace FlatZinc { namespace {
         int solutions = 0;
         for (std::string::size_type p = 0; (p = output.find(separator, p)) != std::string::npos; p += separator.size())
             solutions++;
-        return (solutions == expected) && (output.find(representative) != std::string::npos);
+        return (solutions == expected) && (output.contains(representative));
     }
 
     /// Helper class to create and register test
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest(
                 "Issue166::Original",
                 "predicate gecode_global_cardinality(array [int] of var int: x, array [int] of int: cover, array [int] of var int: counts);\n\
@@ -83,6 +83,6 @@ solve :: int_search([D,A,E,B],input_order,indomain_random,complete) satisfy;\n",
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

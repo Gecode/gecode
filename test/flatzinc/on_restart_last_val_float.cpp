@@ -35,7 +35,7 @@
 #include <cmath>
 #include <sstream>
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Check the restart sequence without depending on final decimal digits.
     bool
     check(const std::string& output) {
@@ -60,7 +60,7 @@ namespace Test { namespace FlatZinc { namespace {
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("on_restart::last_val_float",
                                    R"FZN(
 predicate gecode_on_restart_status(var int: s);
@@ -90,6 +90,6 @@ solve :: int_search(X_INTRODUCED_2_,input_order,indomain_min,complete) maximize 
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

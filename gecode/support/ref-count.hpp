@@ -32,7 +32,7 @@
 
 #include <atomic>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /// A class for thread-safe reference counting
     class RefCount {
@@ -44,11 +44,11 @@ namespace Gecode { namespace Support {
         /// Initialize
         RefCount(unsigned long int n);
         /// Increment counter
-        void inc(void);
+        void inc();
         /// Decrement counter and return true if it hits zero
-        bool dec(void);
+        bool dec();
         /// Test whether reference count is non-zero
-        operator bool(void) const;
+        operator bool() const;
     };
 
     forceinline
@@ -56,18 +56,18 @@ namespace Gecode { namespace Support {
         n.store(n0, std::memory_order_release);
     }
     forceinline void
-    RefCount::inc(void) {
+    RefCount::inc() {
         (void)n.fetch_add(1U, std::memory_order_relaxed);
     }
     forceinline bool
-    RefCount::dec(void) {
+    RefCount::dec() {
         return n.fetch_sub(1U, std::memory_order_acq_rel) == 1U;
     }
     forceinline RefCount::
-    operator bool(void) const {
+    operator bool() const {
         return n.load(std::memory_order_acquire) > 0U;
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 /*
  *  Main authors:
  *     Christopher Mears <chris.mears@monash.edu>
@@ -30,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     /// Convert a \a DynamicStack<T,A> into an \a ArgArray<T>
     template <class T, class A>
@@ -44,7 +46,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     template <class View>
-    SymmetryImp<View>::~SymmetryImp(void) = default;
+    SymmetryImp<View>::~SymmetryImp() = default;
 
     template <class View>
     void*
@@ -68,10 +70,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         int maximum = _indices[0];
         int minimum = _indices[0];
         for (unsigned int i = 1; i < n; i++) {
-            if (_indices[i] > maximum)
-                maximum = _indices[i];
-            if (_indices[i] < minimum)
-                minimum = _indices[i];
+            maximum = std::max(_indices[i], maximum);
+            minimum = std::min(_indices[i], minimum);
         }
         indices.resize(home, maximum - minimum + 1, minimum);
 
@@ -117,10 +117,8 @@ namespace Gecode { namespace Int { namespace LDSB {
         int maximum = vs[0];
         int minimum = vs[0];
         for (unsigned int i = 1; i < n; i++) {
-            if (vs[i] > maximum)
-                maximum = vs[i];
-            if (vs[i] < minimum)
-                minimum = vs[i];
+            maximum = std::max(vs[i], maximum);
+            minimum = std::min(vs[i], minimum);
         }
         values.resize(home, maximum - minimum + 1, minimum);
 
@@ -161,15 +159,14 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     template <class View>
-    VariableSequenceSymmetryImp<View>::VariableSequenceSymmetryImp(Space& home, int* _indices, unsigned int n,
+    VariableSequenceSymmetryImp<View>::VariableSequenceSymmetryImp(Space& home, const int* _indices, unsigned int n,
                                                                    unsigned int seqsize)
         : n_indices(n), seq_size(seqsize), n_seqs(n / seqsize) {
         indices = home.alloc<unsigned int>(n_indices);
         unsigned int max_index = _indices[0];
         for (unsigned int i = 0; i < n_indices; i++) {
             indices[i] = _indices[i];
-            if (indices[i] > max_index)
-                max_index = indices[i];
+            max_index = std::max(indices[i], max_index);
         }
 
         lookup_size = max_index + 1;
@@ -205,7 +202,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     VariableSequenceSymmetryImp<View>::symmetric(Literal l, const ViewArray<View>& x) const {
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
-        if (l._variable < (int)lookup_size) {
+        if (std::cmp_less(l._variable, lookup_size)) {
             int pos_it = lookup[l._variable];
             if (pos_it == -1) {
                 return dynamic_stack_to_arg_array(s);
@@ -228,10 +225,9 @@ namespace Gecode { namespace Int { namespace LDSB {
                     if ((!xv.assigned() && !yv.assigned()) ||
                         (xv.assigned() && yv.assigned() && xv.val() == yv.val())) {
                         continue;
-                    } else {
-                        active = false;
-                        break;
                     }
+                    active = false;
+                    break;
                 }
 
                 if (active) {
@@ -262,7 +258,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     template <class View>
-    ValueSequenceSymmetryImp<View>::ValueSequenceSymmetryImp(Space& home, int* _values, unsigned int n,
+    ValueSequenceSymmetryImp<View>::ValueSequenceSymmetryImp(Space& home, const int* _values, unsigned int n,
                                                              unsigned int seqsize)
         : n_values(n), seq_size(seqsize), n_seqs(n / seqsize), dead_sequences(home, n_seqs) {
         values = home.alloc<int>(n_values);
@@ -313,6 +309,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         return new (home) ValueSequenceSymmetryImp<View>(home, *this);
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: int-branch

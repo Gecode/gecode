@@ -36,7 +36,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace GCC {
+namespace Gecode::Int::GCC {
 
     /**
      * \defgroup GCCBndSup Support for GCC bounds propagation
@@ -244,22 +244,22 @@ namespace Gecode { namespace Int { namespace GCC {
         /// \name Initialization
         //@{
         /// Constructor
-        PartialSum(void);
+        PartialSum();
         /// Initialization
-        void init(Space& home, ViewArray<Card>& k, bool up);
+        void init(Space& home, ViewArray<Card>& elements, bool up);
         /// Mark datstructure as requiring reinitialization
-        void reinit(void);
+        void reinit();
         /// Test whether already initialized
-        operator bool(void) const;
+        operator bool() const;
         //@}
         /// \name Access
         //@{
         /// Compute the maximum capacity of an interval
         int sumup(int from, int to) const;
         /// Return smallest bound of variables
-        int min_value(void) const;
+        int min_value() const;
         /// Return largest bound of variables
-        int max_value(void) const;
+        int max_value() const;
         /// Skip neighbouring array entries if their values do not differ
         int skip_non_null_elements_right(int v) const;
         /// Skip neighbouring array entries if their values do not differ
@@ -288,12 +288,12 @@ namespace Gecode { namespace Int { namespace GCC {
 
     template <class Card>
     forceinline
-    PartialSum<Card>::PartialSum(void)
+    PartialSum<Card>::PartialSum()
         : sum(nullptr), size(-1) {}
 
     template <class Card>
     forceinline PartialSum<Card>::
-    operator bool(void) const {
+    operator bool() const {
         return size != -1;
     }
     template <class Card>
@@ -365,7 +365,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     template <class Card>
     forceinline void
-    PartialSum<Card>::reinit(void) {
+    PartialSum<Card>::reinit() {
         size = -1;
     }
 
@@ -374,23 +374,22 @@ namespace Gecode { namespace Int { namespace GCC {
     PartialSum<Card>::sumup(int from, int to) const {
         if (from <= to) {
             return sum[to - first_value] - sum[from - first_value - 1];
-        } else {
-            assert(to - first_value - 1 >= 0);
-            assert(to - first_value - 1 < size);
-            assert(from - first_value >= 0);
-            assert(from - first_value < size);
-            return sum[to - first_value - 1] - sum[from - first_value];
         }
+        assert(to - first_value - 1 >= 0);
+        assert(to - first_value - 1 < size);
+        assert(from - first_value >= 0);
+        assert(from - first_value < size);
+        return sum[to - first_value - 1] - sum[from - first_value];
     }
 
     template <class Card>
     forceinline int
-    PartialSum<Card>::min_value(void) const {
+    PartialSum<Card>::min_value() const {
         return first_value + 3;
     }
     template <class Card>
     forceinline int
-    PartialSum<Card>::max_value(void) const {
+    PartialSum<Card>::max_value() const {
         return last_value - 2;
     }
 
@@ -592,6 +591,6 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     //@}
 
-}}} // namespace Gecode::Int::GCC
+} // namespace Gecode::Int::GCC
 
 // STATISTICS: int-prop

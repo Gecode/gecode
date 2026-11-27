@@ -30,13 +30,13 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /// Float trace view
     class FloatTraceView {
     public:
         /// Default constructor (initializes with no view)
-        FloatTraceView(void) = default;
+        FloatTraceView() = default;
         /// Duplicate view \a y
         FloatTraceView(Space& home, FloatView y);
         /// Update duplicated view from view \a y and delta \a d
@@ -58,6 +58,6 @@ namespace Gecode { namespace Float {
         return x.size();
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-trace

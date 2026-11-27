@@ -33,7 +33,7 @@
 #include <gecode/int/rel.hh>
 #include <gecode/int/distinct.hh>
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     template <class VY>
     forceinline
@@ -158,6 +158,6 @@ namespace Gecode { namespace Int { namespace NValues {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

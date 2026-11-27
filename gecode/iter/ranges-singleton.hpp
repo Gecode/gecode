@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for singleton range
@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Singleton(void) = default;
+        Singleton() = default;
         /// Initialize with range \a min to \a max
         Singleton(int min, int max);
         /// Initialize with range \a min to \a max
@@ -53,7 +53,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -68,11 +68,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     }
 
     forceinline void
-    Singleton::operator++(void) {
+    Singleton::operator++() {
         mi = 1;
         ma = 0;
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

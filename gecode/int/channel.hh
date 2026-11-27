@@ -41,10 +41,10 @@
  * \brief %Channel propagators
  */
 
-namespace Gecode { namespace Int { namespace Channel {
+namespace Gecode::Int::Channel {
 
     /// Processing stack
-    typedef Support::StaticStack<int, Region> ProcessStack;
+    using ProcessStack = Support::StaticStack<int, Region>;
 
     /**
      * \brief Base-class for channel propagators
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace Channel {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Channel
+} // namespace Gecode::Int::Channel
 
 #include <gecode/int/channel/base.hpp>
 #include <gecode/int/channel/val.hpp>

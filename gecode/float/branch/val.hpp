@@ -45,17 +45,17 @@ namespace Gecode {
         : ValBranch<FloatVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline FloatValBranch::Select
-    FloatValBranch::select(void) const {
+    FloatValBranch::select() const {
         return s;
     }
 
     inline FloatValBranch
-    FLOAT_VAL_SPLIT_MIN(void) {
+    FLOAT_VAL_SPLIT_MIN() {
         return FloatValBranch(FloatValBranch::SEL_SPLIT_MIN);
     }
 
     inline FloatValBranch
-    FLOAT_VAL_SPLIT_MAX(void) {
+    FLOAT_VAL_SPLIT_MAX() {
         return FloatValBranch(FloatValBranch::SEL_SPLIT_MAX);
     }
 

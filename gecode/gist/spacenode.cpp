@@ -39,7 +39,7 @@
 #include <QString>
 #include <QVector>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /// \brief Representation of a branch in the search tree
     class Branch {
@@ -104,9 +104,8 @@ namespace Gecode { namespace Gist {
                     if (cur_space->status() == SS_FAILED) {
                         copy = static_cast<Space*>(Support::mark(cur_space));
                         return rdist;
-                    } else {
-                        middle_node->copy = cur_space->clone();
                     }
+                    middle_node->copy = cur_space->clone();
                 }
                 Branch b = stck.top();
                 stck.pop();
@@ -267,7 +266,7 @@ namespace Gecode { namespace Gist {
     }
 
     void
-    SpaceNode::dispose(void) {
+    SpaceNode::dispose() {
         delete choice;
         delete static_cast<Space*>(Support::clear_pointer_tag_bits(copy));
     }
@@ -345,6 +344,6 @@ namespace Gecode { namespace Gist {
         return no_of_open_children;
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

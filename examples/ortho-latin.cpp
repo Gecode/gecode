@@ -134,7 +134,7 @@ public:
 
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new OrthoLatinSquare(*this);
     }
     /// Print solution

@@ -30,10 +30,10 @@
  *
  */
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     forceinline bool
-    LayoutCursor::may_move_downwards(void) {
+    LayoutCursor::may_move_downwards() {
         return NodeCursor<VisualNode>::may_move_downwards() && node()->is_dirty();
     }
 
@@ -41,13 +41,11 @@ namespace Gecode { namespace Gist {
         : NodeCursor<VisualNode>(the_node, na) {}
 
     forceinline void
-    LayoutCursor::process_current_node(void) {
+    LayoutCursor::process_current_node() {
         VisualNode* current_node = node();
         if (current_node->is_dirty()) {
             if (current_node->is_hidden()) {
                 // do nothing
-            } else if (false && current_node->get_number_of_children() < 1) {
-                current_node->set_shape(Shape::leaf);
             } else {
                 current_node->compute_shape(na);
             }
@@ -57,6 +55,6 @@ namespace Gecode { namespace Gist {
             current_node->set_children_layout_done(true);
     }
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 // STATISTICS: gist-any

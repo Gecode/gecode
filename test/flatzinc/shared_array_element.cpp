@@ -32,12 +32,12 @@
 
 #include "test/flatzinc.hh"
 
-namespace Test { namespace FlatZinc { namespace {
+namespace Test::FlatZinc { namespace {
     /// Helper class to create and register tests
     class Create {
     public:
         /// Perform creation and registration
-        Create(void) {
+        Create() {
             (void)new FlatZincTest("SharedArrayElement",
                                    "predicate count(array [int] of var int: x,var int: y,var int: c);\n\
 array [1..6] of int: X_INTRODUCED_25_ = [0,0,1,1,0,1];\n\
@@ -106,6 +106,6 @@ Y = array1d(1..15, [0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0]);\n\
     };
 
     Create c;
-}}} // namespace Test::FlatZinc
+}} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

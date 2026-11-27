@@ -38,7 +38,7 @@
 
 #include <gecode/search.hh>
 
-namespace Test { namespace Assign {
+namespace Test::Assign {
 
     /// Space for executing integer tests
     class IntTestSpace : public Gecode::Space {
@@ -53,7 +53,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new IntTestSpace(*this);
         }
     };
@@ -71,7 +71,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new BoolTestSpace(*this);
         }
     };
@@ -91,7 +91,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new SetTestSpace(*this);
         }
     };
@@ -113,7 +113,7 @@ namespace Test { namespace Assign {
         }
         /// Copy space during cloning
         Gecode::Space*
-        copy(void) override {
+        copy() override {
             return new FloatTestSpace(*this);
         }
     };
@@ -131,7 +131,7 @@ namespace Test { namespace Assign {
     /// Number of integer value selections
     const int n_int_assign = sizeof(int_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     int_val(const Gecode::Space&, Gecode::IntVar x, int) {
         return x.min();
     }
@@ -147,7 +147,7 @@ namespace Test { namespace Assign {
     /// Number of integer value selections
     const int n_bool_assign = sizeof(bool_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     bool_val(const Gecode::Space&, Gecode::BoolVar x, int) {
         return x.min();
     }
@@ -157,7 +157,7 @@ namespace Test { namespace Assign {
         : Base("Int::Assign::" + s), arity(a), dom(d) {}
 
     bool
-    IntTest::run(void) {
+    IntTest::run() {
         using namespace Gecode;
         IntTestSpace* root = new IntTestSpace(arity, dom);
         post(*root, root->x);
@@ -217,7 +217,7 @@ namespace Test { namespace Assign {
     BoolTest::BoolTest(const std::string& s, int a) : Base("Bool::Assign::" + s), arity(a) {}
 
     bool
-    BoolTest::run(void) {
+    BoolTest::run() {
         using namespace Gecode;
         BoolTestSpace* root = new BoolTestSpace(arity);
         post(*root, root->x);
@@ -284,7 +284,7 @@ namespace Test { namespace Assign {
     /// Number of set value selections
     const int n_set_assign = sizeof(set_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    int
+    static int
     set_val(const Gecode::Space&, Gecode::SetVar x, int) {
         Gecode::SetVarUnknownRanges r(x);
         return r.min();
@@ -295,7 +295,7 @@ namespace Test { namespace Assign {
         : Base("Set::Assign::" + s), arity(a), dom(d) {}
 
     bool
-    SetTest::run(void) {
+    SetTest::run() {
         using namespace Gecode;
         SetTestSpace* root = new SetTestSpace(arity, dom);
         post(*root, root->x);
@@ -379,7 +379,7 @@ namespace Test { namespace Assign {
     /// Number of float value selections
     const int n_float_assign = sizeof(float_assign_name) / sizeof(const char*);
     /// Test function for branch value function
-    Gecode::FloatNumBranch
+    static Gecode::FloatNumBranch
     float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
         Gecode::FloatNumBranch nl;
         nl.n = x.med();
@@ -392,7 +392,7 @@ namespace Test { namespace Assign {
         : Base("Float::Assign::" + s), arity(a), dom(d) {}
 
     bool
-    FloatTest::run(void) {
+    FloatTest::run() {
         using namespace Gecode;
         FloatTestSpace* root = new FloatTestSpace(arity, dom);
         post(*root, root->x);
@@ -449,6 +449,6 @@ namespace Test { namespace Assign {
 
 #endif
 
-}} // namespace Test::Assign
+} // namespace Test::Assign
 
 // STATISTICS: test-branch

@@ -36,13 +36,14 @@
  *
  */
 
+#include <algorithm>
 #include <iostream>
 #include <iterator>
 #include <vector>
 #include <sstream>
 #include <initializer_list>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Occurrence information for a view
     template <class View>
@@ -70,7 +71,7 @@ namespace Gecode { namespace Kernel {
     GECODE_KERNEL_EXPORT
     bool duplicates(void** p, int n, void** q, int m);
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 namespace Gecode {
 
@@ -121,32 +122,32 @@ namespace Gecode {
         /// \name Associated types
         //@{
         /// Type of the variable stored in this array
-        typedef Var value_type;
+        using value_type = Var;
         /// Type of a reference to the value type
-        typedef Var& reference;
+        using reference = Var&;
         /// Type of a constant reference to the value type
-        typedef const Var& const_reference;
+        using const_reference = const Var&;
         /// Type of a pointer to the value type
-        typedef Var* pointer;
+        using pointer = Var*;
         /// Type of a read-only pointer to the value type
-        typedef const Var* const_pointer;
+        using const_pointer = const Var*;
         /// Type of the iterator used to iterate through this array's elements
-        typedef Var* iterator;
+        using iterator = Var*;
         /// Type of the iterator used to iterate read-only through this array's elements
-        typedef const Var* const_iterator;
+        using const_iterator = const Var*;
         /// Type of the iterator used to iterate backwards through this array's elements
-        typedef std::reverse_iterator<Var*> reverse_iterator;
+        using reverse_iterator = std::reverse_iterator<Var*>;
         /// Type of the iterator used to iterate backwards and read-only through this array's elements
-        typedef std::reverse_iterator<const Var*> const_reverse_iterator;
+        using const_reverse_iterator = std::reverse_iterator<const Var*>;
         //@}
 
         //@{
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        VarArray(void);
-        /// Allocate array with \a m variables
-        VarArray(Space& home, int m);
+        VarArray();
+        /// Allocate array with \a n0 variables
+        VarArray(Space& home, int n0);
         /// Initialize from variable argument array \a a (copy elements)
         VarArray(Space& home, const VarArgArray<Var>&);
         /// Initialize from variable array \a a (share elements)
@@ -158,7 +159,7 @@ namespace Gecode {
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         //@}
 
         /// \name Array elements
@@ -172,31 +173,31 @@ namespace Gecode {
          * If \a n is -1, then all possible elements starting from \a start
          * with increment \a inc are returned.
          */
-        typename ArrayTraits<VarArgArray<Var>>::ArgsType slice(int start, int inc = 1, int n = -1);
+        ArrayTraits<VarArgArray<Var>>::ArgsType slice(int start, int inc = 1, int n = -1);
         //@}
 
         /// \name Array iteration
         //@{
         /// Return an iterator at the beginning of the array
-        iterator begin(void);
+        iterator begin();
         /// Return a read-only iterator at the beginning of the array
-        const_iterator begin(void) const;
+        const_iterator begin() const;
         /// Return an iterator past the end of the array
-        iterator end(void);
+        iterator end();
         /// Return a read-only iterator past the end of the array
-        const_iterator end(void) const;
+        const_iterator end() const;
         /// Return a reverse iterator at the end of the array
-        reverse_iterator rbegin(void);
+        reverse_iterator rbegin();
         /// Return a reverse and read-only iterator at the end of the array
-        const_reverse_iterator rbegin(void) const;
+        const_reverse_iterator rbegin() const;
         /// Return a reverse iterator past the beginning of the array
-        reverse_iterator rend(void);
+        reverse_iterator rend();
         /// Return a reverse and read-only iterator past the beginning of the array
-        const_reverse_iterator rend(void) const;
+        const_reverse_iterator rend() const;
         //@}
 
         /// Test if all variables are assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
         /// \name Cloning
         //@{
@@ -214,31 +215,31 @@ namespace Gecode {
      * \relates VarArray
      */
     template <class T>
-    typename ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArray<T>& x, const VarArgArray<T>& y);
+    ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArray<T>& x, const VarArgArray<T>& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates VarArray
      */
     template <class T>
-    typename ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArray<T>& x, const VarArray<T>& y);
+    ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArray<T>& x, const VarArray<T>& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates VarArray
      */
     template <class T>
-    typename ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArgArray<T>& x, const VarArray<T>& y);
+    ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArgArray<T>& x, const VarArray<T>& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates VarArray
      */
     template <class T>
-    typename ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArray<T>& x, const T& y);
+    ArrayTraits<VarArray<T>>::ArgsType operator+(const VarArray<T>& x, const T& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates VarArray
      */
     template <class T>
-    typename ArrayTraits<VarArray<T>>::ArgsType operator+(const T& x, const VarArray<T>& y);
+    ArrayTraits<VarArray<T>>::ArgsType operator+(const T& x, const VarArray<T>& y);
 
     /**
      * \brief View arrays
@@ -259,33 +260,33 @@ namespace Gecode {
         /// \name Associated types
         //@{
         /// Type of the view stored in this array
-        typedef View value_type;
+        using value_type = View;
         /// Type of a reference to the value type
-        typedef View& reference;
+        using reference = View&;
         /// Type of a constant reference to the value type
-        typedef const View& const_reference;
+        using const_reference = const View&;
         /// Type of a pointer to the value type
-        typedef View* pointer;
+        using pointer = View*;
         /// Type of a read-only pointer to the value type
-        typedef const View* const_pointer;
+        using const_pointer = const View*;
         /// Type of the iterator used to iterate through this array's elements
-        typedef View* iterator;
+        using iterator = View*;
         /// Type of the iterator used to iterate read-only through this array's elements
-        typedef const View* const_iterator;
+        using const_iterator = const View*;
         /// Type of the iterator used to iterate backwards through this array's elements
-        typedef std::reverse_iterator<View*> reverse_iterator;
+        using reverse_iterator = std::reverse_iterator<View*>;
         /// Type of the iterator used to iterate backwards and read-only through this array's elements
-        typedef std::reverse_iterator<const View*> const_reverse_iterator;
+        using const_reverse_iterator = std::reverse_iterator<const View*>;
         //@}
 
         /// \name Constructors and initialization
         //@{
         /// Default constructor (array of size 0)
-        ViewArray(void);
-        /// Allocate array with \a m views
-        ViewArray(Space& home, int m);
-        /// Allocate array with \a m views
-        ViewArray(Region& r, int m);
+        ViewArray();
+        /// Allocate array with \a n0 views
+        ViewArray(Space& home, int n0);
+        /// Allocate array with \a n0 views
+        ViewArray(Region& r, int n0);
         /// Initialize from view array \a a (share elements)
         ViewArray(const ViewArray<View>& a) = default;
         /// Initialize from view array \a a (copy elements)
@@ -333,7 +334,7 @@ namespace Gecode {
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         /// Decrease size of array (number of elements)
         void size(int n);
         //@}
@@ -349,21 +350,21 @@ namespace Gecode {
         /// \name Array iteration
         //@{
         /// Return an iterator at the beginning of the array
-        iterator begin(void);
+        iterator begin();
         /// Return a read-only iterator at the beginning of the array
-        const_iterator begin(void) const;
+        const_iterator begin() const;
         /// Return an iterator past the end of the array
-        iterator end(void);
+        iterator end();
         /// Return a read-only iterator past the end of the array
-        const_iterator end(void) const;
+        const_iterator end() const;
         /// Return a reverse iterator at the end of the array
-        reverse_iterator rbegin(void);
+        reverse_iterator rbegin();
         /// Return a reverse and read-only iterator at the end of the array
-        const_reverse_iterator rbegin(void) const;
+        const_reverse_iterator rbegin() const;
         /// Return a reverse iterator past the beginning of the array
-        reverse_iterator rend(void);
+        reverse_iterator rend();
         /// Return a reverse and read-only iterator past the beginning of the array
-        const_reverse_iterator rend(void) const;
+        const_reverse_iterator rend() const;
         //@}
 
         /// \name Dependencies
@@ -388,8 +389,8 @@ namespace Gecode {
 
         /// \name Cloning
         //@{
-        /// Update array to be a clone of array \a a
-        void update(Space& home, ViewArray<View>& a);
+        /// Update array to be a clone of array \a y
+        void update(Space& home, ViewArray<View>& y);
         //@}
 
         /// \name Moving elements
@@ -458,7 +459,7 @@ namespace Gecode {
         //@}
 
         /// Test if all variables are assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
         /// \name View equality
         //@{
@@ -467,7 +468,7 @@ namespace Gecode {
          *
          * Note that assigned views are ignored.
          */
-        bool same(void) const;
+        bool same() const;
         /**
          * \brief Test whether array contains a view being the same as \a y
          *
@@ -475,7 +476,7 @@ namespace Gecode {
          */
         bool same(const View& y) const;
         /// Remove all duplicate views from array (changes element order)
-        void unique(void);
+        void unique();
         //@}
 
         /// Allocate memory from heap (disabled)
@@ -569,35 +570,35 @@ namespace Gecode {
         /// \name Associated types
         //@{
         /// Type of the view stored in this array
-        typedef T value_type;
+        using value_type = T;
         /// Type of a reference to the value type
-        typedef T& reference;
+        using reference = T&;
         /// Type of a constant reference to the value type
-        typedef const T& const_reference;
+        using const_reference = const T&;
         /// Type of a pointer to the value type
-        typedef T* pointer;
+        using pointer = T*;
         /// Type of a read-only pointer to the value type
-        typedef const T* const_pointer;
+        using const_pointer = const T*;
         /// Type of the iterator used to iterate through this array's elements
-        typedef T* iterator;
+        using iterator = T*;
         /// Type of the iterator used to iterate read-only through this array's elements
-        typedef const T* const_iterator;
+        using const_iterator = const T*;
         /// Type of the iterator used to iterate backwards through this array's elements
-        typedef std::reverse_iterator<T*> reverse_iterator;
+        using reverse_iterator = std::reverse_iterator<T*>;
         /// Type of the iterator used to iterate backwards and read-only through this array's elements
-        typedef std::reverse_iterator<const T*> const_reverse_iterator;
+        using const_reverse_iterator = std::reverse_iterator<const T*>;
         //@}
 
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        ArgArrayBase(void);
+        ArgArrayBase();
         /// Allocate array with \a n elements
         explicit ArgArrayBase(int n);
         /// Initialize from argument array \a a (copy elements)
         ArgArrayBase(const ArgArrayBase<T>& a);
         /// Initialize from view array \a a (copy elements)
-        const ArgArrayBase<T>& operator=(const ArgArrayBase<T>& a);
+        ArgArrayBase<T>& operator=(const ArgArrayBase<T>& a);
         /// Initialize from vector \a a
         ArgArrayBase(const std::vector<T>& a);
         /// Initialize from initializer list \a a
@@ -610,7 +611,7 @@ namespace Gecode {
         /// \name Array size
         //@{
         /// Return size of array (number of elements)
-        int size(void) const;
+        int size() const;
         //@}
 
         /// \name Array elements
@@ -624,27 +625,27 @@ namespace Gecode {
         /// \name Array iteration
         //@{
         /// Return an iterator at the beginning of the array
-        iterator begin(void);
+        iterator begin();
         /// Return a read-only iterator at the beginning of the array
-        const_iterator begin(void) const;
+        const_iterator begin() const;
         /// Return an iterator past the end of the array
-        iterator end(void);
+        iterator end();
         /// Return a read-only iterator past the end of the array
-        const_iterator end(void) const;
+        const_iterator end() const;
         /// Return a reverse iterator at the end of the array
-        reverse_iterator rbegin(void);
+        reverse_iterator rbegin();
         /// Return a reverse and read-only iterator at the end of the array
-        const_reverse_iterator rbegin(void) const;
+        const_reverse_iterator rbegin() const;
         /// Return a reverse iterator past the beginning of the array
-        reverse_iterator rend(void);
+        reverse_iterator rend();
         /// Return a reverse and read-only iterator past the beginning of the array
-        const_reverse_iterator rend(void) const;
+        const_reverse_iterator rend() const;
         //@}
 
         /// \name Destructor
         //@{
         /// Destructor
-        ~ArgArrayBase(void);
+        ~ArgArrayBase();
         //@}
     };
 
@@ -655,19 +656,19 @@ namespace Gecode {
      * \relates ArgArray
      */
     template <class T>
-    typename ArrayTraits<ArgArray<T>>::ArgsType operator+(const ArgArray<T>& x, const ArgArray<T>& y);
+    ArrayTraits<ArgArray<T>>::ArgsType operator+(const ArgArray<T>& x, const ArgArray<T>& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates ArgArray
      */
     template <class T>
-    typename ArrayTraits<ArgArray<T>>::ArgsType operator+(const ArgArray<T>& x, const T& y);
+    ArrayTraits<ArgArray<T>>::ArgsType operator+(const ArgArray<T>& x, const T& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates ArgArray
      */
     template <class T>
-    typename ArrayTraits<ArgArray<T>>::ArgsType operator+(const T& x, const ArgArray<T>& y);
+    ArrayTraits<ArgArray<T>>::ArgsType operator+(const T& x, const ArgArray<T>& y);
 
     /**
      * \brief Argument array for non-primitive types
@@ -690,11 +691,11 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        ArgArray(void) = default;
+        ArgArray() = default;
         /// Allocate array with \a n elements
         explicit ArgArray(int n);
-        /// Allocate array with \a n elements and initialize with elements from array \a e
-        ArgArray(int n, const T* e);
+        /// Allocate array with \a n elements and initialize with elements from array \a a0
+        ArgArray(int n, const T* a0);
         /// Initialize from argument array \a a (copy elements)
         ArgArray(const ArgArray<T>& a);
         /// Initialize from vector \a a
@@ -708,19 +709,19 @@ namespace Gecode {
         /// \name Array elements
         //@{
         /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
-        typename ArrayTraits<ArgArray<T>>::ArgsType slice(int start, int inc = 1, int n = -1);
+        ArrayTraits<ArgArray<T>>::ArgsType slice(int start, int inc = 1, int n = -1);
         //@}
         /// \name Appending elements
         //@{
         /// Insert a new element \a x at the end of the array (increase size by 1)
-        typename ArrayTraits<ArgArray<T>>::ArgsType& operator<<(const T& x);
+        ArrayTraits<ArgArray<T>>::ArgsType& operator<<(const T& x);
         /// Append \a x to the end of the array
-        typename ArrayTraits<ArgArray<T>>::ArgsType& operator<<(const ArgArray<T>& x);
+        ArrayTraits<ArgArray<T>>::ArgsType& operator<<(const ArgArray<T>& x);
         //@}
 
-        friend typename ArrayTraits<ArgArray<T>>::ArgsType operator+ <>(const ArgArray<T>& x, const ArgArray<T>& y);
-        friend typename ArrayTraits<ArgArray<T>>::ArgsType operator+ <>(const ArgArray<T>& x, const T& y);
-        friend typename ArrayTraits<ArgArray<T>>::ArgsType operator+ <>(const T& x, const ArgArray<T>& y);
+        friend ArrayTraits<ArgArray<T>>::ArgsType operator+ <>(const ArgArray<T>& x, const ArgArray<T>& y);
+        friend ArrayTraits<ArgArray<T>>::ArgsType operator+ <>(const ArgArray<T>& x, const T& y);
+        friend ArrayTraits<ArgArray<T>>::ArgsType operator+ <>(const T& x, const ArgArray<T>& y);
 
         /// Assignment operator
         ArgArray& operator=(const ArgArray&) = default;
@@ -730,9 +731,9 @@ namespace Gecode {
     template <>
     class ArrayTraits<ArgArray<double>> {
     public:
-        typedef ArgArray<double> StorageType;
-        typedef double ValueType;
-        typedef ArgArray<double> ArgsType;
+        using StorageType = ArgArray<double>;
+        using ValueType = double;
+        using ArgsType = ArgArray<double>;
     };
 
     template <class>
@@ -742,19 +743,19 @@ namespace Gecode {
      * \relates ArgArray
      */
     template <class Var>
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType operator+(const VarArgArray<Var>& x, const VarArgArray<Var>& y);
+    ArrayTraits<VarArgArray<Var>>::ArgsType operator+(const VarArgArray<Var>& x, const VarArgArray<Var>& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates ArgArray
      */
     template <class Var>
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType operator+(const VarArgArray<Var>& x, const Var& y);
+    ArrayTraits<VarArgArray<Var>>::ArgsType operator+(const VarArgArray<Var>& x, const Var& y);
 
     /** Concatenate \a x and \a y and return result
      * \relates ArgArray
      */
     template <class Var>
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType operator+(const Var& x, const VarArgArray<Var>& y);
+    ArrayTraits<VarArgArray<Var>>::ArgsType operator+(const Var& x, const VarArgArray<Var>& y);
 
     /**
      * \brief Argument array for variables
@@ -778,13 +779,13 @@ namespace Gecode {
         /// \name Constructors and initialization
         //@{
         /// Allocate empty array
-        VarArgArray(void) = default;
+        VarArgArray() = default;
         /// Allocate array with \a n elements
         explicit VarArgArray(int n);
         /// Initialize from variable argument array \a a (copy elements)
         VarArgArray(const VarArgArray<Var>& a);
-        /// Initialize from variable array \a a (copy elements)
-        VarArgArray(const VarArray<Var>& a);
+        /// Initialize from variable array \a x (copy elements)
+        VarArgArray(const VarArray<Var>& x);
         /// Initialize from vector \a a
         VarArgArray(const std::vector<Var>& a);
         /// Initialize from initializer list \a a
@@ -796,23 +797,23 @@ namespace Gecode {
         /// \name Array elements
         //@{
         /// Return slice \f$y\f$ of length \a n such that forall \f$0\leq i<n\f$, \f$y_i=x_{\text{start}+i\cdot\text{inc}}\f$
-        typename ArrayTraits<VarArgArray<Var>>::ArgsType slice(int start, int inc = 1, int n = -1);
+        ArrayTraits<VarArgArray<Var>>::ArgsType slice(int start, int inc = 1, int n = -1);
         //@}
         /// \name Appending elements
         //@{
         /// Insert a new element \a x at the end of the array (increase size by 1)
-        typename ArrayTraits<VarArgArray<Var>>::ArgsType& operator<<(const Var& x);
+        ArrayTraits<VarArgArray<Var>>::ArgsType& operator<<(const Var& x);
         /// Append \a x to the end of the array
-        typename ArrayTraits<VarArgArray<Var>>::ArgsType& operator<<(const VarArgArray<Var>& x);
+        ArrayTraits<VarArgArray<Var>>::ArgsType& operator<<(const VarArgArray<Var>& x);
         //@}
 
         /// Test if all variables are assigned
-        bool assigned(void) const;
+        bool assigned() const;
 
-        friend typename ArrayTraits<VarArgArray<Var>>::ArgsType operator+
+        friend ArrayTraits<VarArgArray<Var>>::ArgsType operator+
             <>(const VarArgArray<Var>& x, const VarArgArray<Var>& y);
-        friend typename ArrayTraits<VarArgArray<Var>>::ArgsType operator+ <>(const VarArgArray<Var>& x, const Var& y);
-        friend typename ArrayTraits<VarArgArray<Var>>::ArgsType operator+ <>(const Var& x, const VarArgArray<Var>& y);
+        friend ArrayTraits<VarArgArray<Var>>::ArgsType operator+ <>(const VarArgArray<Var>& x, const Var& y);
+        friend ArrayTraits<VarArgArray<Var>>::ArgsType operator+ <>(const Var& x, const VarArgArray<Var>& y);
 
         /// Assignment operator
         VarArgArray& operator=(const VarArgArray&) = default;
@@ -886,7 +887,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline
-    VarArray<Var>::VarArray(void)
+    VarArray<Var>::VarArray()
         : n(0), x(nullptr) {}
 
     template <class Var>
@@ -899,7 +900,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline int
-    VarArray<Var>::size(void) const {
+    VarArray<Var>::size() const {
         return n;
     }
 
@@ -918,7 +919,7 @@ namespace Gecode {
     }
 
     template <class Var>
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType
+    ArrayTraits<VarArgArray<Var>>::ArgsType
     VarArray<Var>::slice(int start, int inc, int max_n) {
         assert(n == 0 || start < n);
         if (n == 0 || max_n < 0)
@@ -937,50 +938,50 @@ namespace Gecode {
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::iterator
-    VarArray<Var>::begin(void) {
+    forceinline VarArray<Var>::iterator
+    VarArray<Var>::begin() {
         return x;
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::const_iterator
-    VarArray<Var>::begin(void) const {
+    forceinline VarArray<Var>::const_iterator
+    VarArray<Var>::begin() const {
         return x;
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::iterator
-    VarArray<Var>::end(void) {
+    forceinline VarArray<Var>::iterator
+    VarArray<Var>::end() {
         return x + n;
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::const_iterator
-    VarArray<Var>::end(void) const {
+    forceinline VarArray<Var>::const_iterator
+    VarArray<Var>::end() const {
         return x + n;
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::reverse_iterator
-    VarArray<Var>::rbegin(void) {
+    forceinline VarArray<Var>::reverse_iterator
+    VarArray<Var>::rbegin() {
         return reverse_iterator(x + n);
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::const_reverse_iterator
-    VarArray<Var>::rbegin(void) const {
+    forceinline VarArray<Var>::const_reverse_iterator
+    VarArray<Var>::rbegin() const {
         return const_reverse_iterator(x + n);
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::reverse_iterator
-    VarArray<Var>::rend(void) {
+    forceinline VarArray<Var>::reverse_iterator
+    VarArray<Var>::rend() {
         return reverse_iterator(x);
     }
 
     template <class Var>
-    forceinline typename VarArray<Var>::const_reverse_iterator
-    VarArray<Var>::rend(void) const {
+    forceinline VarArray<Var>::const_reverse_iterator
+    VarArray<Var>::rend() const {
         return const_reverse_iterator(x);
     }
 
@@ -999,7 +1000,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline bool
-    VarArray<Var>::assigned(void) const {
+    VarArray<Var>::assigned() const {
         for (int i = 0; i < n; i++)
             if (!x[i].assigned())
                 return false;
@@ -1007,7 +1008,7 @@ namespace Gecode {
     }
 
     template <class Var>
-    typename ArrayTraits<VarArray<Var>>::ArgsType
+    ArrayTraits<VarArray<Var>>::ArgsType
     operator+(const VarArray<Var>& x, const VarArray<Var>& y) {
         typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size() + y.size());
         for (int i = 0; i < x.size(); i++)
@@ -1018,7 +1019,7 @@ namespace Gecode {
     }
 
     template <class Var>
-    typename ArrayTraits<VarArray<Var>>::ArgsType
+    ArrayTraits<VarArray<Var>>::ArgsType
     operator+(const VarArray<Var>& x, const VarArgArray<Var>& y) {
         typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size() + y.size());
         for (int i = 0; i < x.size(); i++)
@@ -1029,7 +1030,7 @@ namespace Gecode {
     }
 
     template <class Var>
-    typename ArrayTraits<VarArray<Var>>::ArgsType
+    ArrayTraits<VarArray<Var>>::ArgsType
     operator+(const VarArgArray<Var>& x, const VarArray<Var>& y) {
         typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size() + y.size());
         for (int i = 0; i < x.size(); i++)
@@ -1040,7 +1041,7 @@ namespace Gecode {
     }
 
     template <class Var>
-    typename ArrayTraits<VarArray<Var>>::ArgsType
+    ArrayTraits<VarArray<Var>>::ArgsType
     operator+(const VarArray<Var>& x, const Var& y) {
         typename ArrayTraits<VarArray<Var>>::ArgsType r(x.size() + 1);
         for (int i = 0; i < x.size(); i++)
@@ -1050,7 +1051,7 @@ namespace Gecode {
     }
 
     template <class Var>
-    typename ArrayTraits<VarArray<Var>>::ArgsType
+    ArrayTraits<VarArray<Var>>::ArgsType
     operator+(const Var& x, const VarArray<Var>& y) {
         typename ArrayTraits<VarArray<Var>>::ArgsType r(y.size() + 1);
         r[0] = x;
@@ -1066,7 +1067,7 @@ namespace Gecode {
 
     template <class View>
     forceinline
-    ViewArray<View>::ViewArray(void)
+    ViewArray<View>::ViewArray()
         : n(0), x(nullptr) {}
 
     template <class View>
@@ -1105,7 +1106,7 @@ namespace Gecode {
 
     template <class View>
     forceinline int
-    ViewArray<View>::size(void) const {
+    ViewArray<View>::size() const {
         return n;
     }
 
@@ -1130,50 +1131,50 @@ namespace Gecode {
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::iterator
-    ViewArray<View>::begin(void) {
+    forceinline ViewArray<View>::iterator
+    ViewArray<View>::begin() {
         return x;
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::const_iterator
-    ViewArray<View>::begin(void) const {
+    forceinline ViewArray<View>::const_iterator
+    ViewArray<View>::begin() const {
         return x;
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::iterator
-    ViewArray<View>::end(void) {
+    forceinline ViewArray<View>::iterator
+    ViewArray<View>::end() {
         return x + n;
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::const_iterator
-    ViewArray<View>::end(void) const {
+    forceinline ViewArray<View>::const_iterator
+    ViewArray<View>::end() const {
         return x + n;
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::reverse_iterator
-    ViewArray<View>::rbegin(void) {
+    forceinline ViewArray<View>::reverse_iterator
+    ViewArray<View>::rbegin() {
         return reverse_iterator(x + n);
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::const_reverse_iterator
-    ViewArray<View>::rbegin(void) const {
+    forceinline ViewArray<View>::const_reverse_iterator
+    ViewArray<View>::rbegin() const {
         return const_reverse_iterator(x + n);
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::reverse_iterator
-    ViewArray<View>::rend(void) {
+    forceinline ViewArray<View>::reverse_iterator
+    ViewArray<View>::rend() {
         return reverse_iterator(x);
     }
 
     template <class View>
-    forceinline typename ViewArray<View>::const_reverse_iterator
-    ViewArray<View>::rend(void) const {
+    forceinline ViewArray<View>::const_reverse_iterator
+    ViewArray<View>::rend() const {
         return const_reverse_iterator(x);
     }
 
@@ -1337,7 +1338,7 @@ namespace Gecode {
 
     template <class View>
     forceinline bool
-    ViewArray<View>::assigned(void) const {
+    ViewArray<View>::assigned() const {
         for (int i = 0; i < n; i++)
             if (!x[i].assigned())
                 return false;
@@ -1346,7 +1347,7 @@ namespace Gecode {
 
     template <class View>
     bool
-    ViewArray<View>::same(void) const {
+    ViewArray<View>::same() const {
         if (n < 2)
             return false;
         Region r;
@@ -1377,7 +1378,7 @@ namespace Gecode {
 
     template <class View>
     void
-    ViewArray<View>::unique(void) {
+    ViewArray<View>::unique() {
         if (n < 2)
             return;
         Region r;
@@ -1485,8 +1486,7 @@ namespace Gecode {
         if (n + i >= capacity) {
             assert(n + i >= onstack_size);
             int new_capacity = (3 * capacity) / 2;
-            if (new_capacity <= n + i)
-                new_capacity = n + i;
+            new_capacity = std::max(new_capacity, n + i);
             T* new_a = allocate(new_capacity);
             heap.copy<T>(new_a, a, n);
             if (capacity > onstack_size)
@@ -1498,7 +1498,7 @@ namespace Gecode {
 
     template <class T>
     forceinline
-    ArgArrayBase<T>::ArgArrayBase(void)
+    ArgArrayBase<T>::ArgArrayBase()
         : n(0), capacity(onstack_size), a(allocate(0)) {}
 
     template <class T>
@@ -1528,13 +1528,13 @@ namespace Gecode {
     }
 
     template <class T>
-    forceinline ArgArrayBase<T>::~ArgArrayBase(void) {
+    forceinline ArgArrayBase<T>::~ArgArrayBase() {
         if (capacity > onstack_size)
             heap.free(a, capacity);
     }
 
     template <class T>
-    forceinline const ArgArrayBase<T>&
+    forceinline ArgArrayBase<T>&
     ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
         if (&aa != this) {
             if (capacity > onstack_size)
@@ -1549,7 +1549,7 @@ namespace Gecode {
 
     template <class T>
     forceinline int
-    ArgArrayBase<T>::size(void) const {
+    ArgArrayBase<T>::size() const {
         return n;
     }
 
@@ -1568,50 +1568,50 @@ namespace Gecode {
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::iterator
-    ArgArrayBase<T>::begin(void) {
+    forceinline ArgArrayBase<T>::iterator
+    ArgArrayBase<T>::begin() {
         return a;
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::const_iterator
-    ArgArrayBase<T>::begin(void) const {
+    forceinline ArgArrayBase<T>::const_iterator
+    ArgArrayBase<T>::begin() const {
         return a;
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::iterator
-    ArgArrayBase<T>::end(void) {
+    forceinline ArgArrayBase<T>::iterator
+    ArgArrayBase<T>::end() {
         return a + n;
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::const_iterator
-    ArgArrayBase<T>::end(void) const {
+    forceinline ArgArrayBase<T>::const_iterator
+    ArgArrayBase<T>::end() const {
         return a + n;
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::reverse_iterator
-    ArgArrayBase<T>::rbegin(void) {
+    forceinline ArgArrayBase<T>::reverse_iterator
+    ArgArrayBase<T>::rbegin() {
         return reverse_iterator(a + n);
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::const_reverse_iterator
-    ArgArrayBase<T>::rbegin(void) const {
+    forceinline ArgArrayBase<T>::const_reverse_iterator
+    ArgArrayBase<T>::rbegin() const {
         return const_reverse_iterator(a + n);
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::reverse_iterator
-    ArgArrayBase<T>::rend(void) {
+    forceinline ArgArrayBase<T>::reverse_iterator
+    ArgArrayBase<T>::rend() {
         return reverse_iterator(a);
     }
 
     template <class T>
-    forceinline typename ArgArrayBase<T>::const_reverse_iterator
-    ArgArrayBase<T>::rend(void) const {
+    forceinline ArgArrayBase<T>::const_reverse_iterator
+    ArgArrayBase<T>::rend() const {
         return const_reverse_iterator(a);
     }
 
@@ -1725,37 +1725,37 @@ namespace Gecode {
         : ArgArrayBase<T>(first, last) {}
 
     template <class T>
-    forceinline typename ArrayTraits<ArgArray<T>>::ArgsType
+    forceinline ArrayTraits<ArgArray<T>>::ArgsType
     ArgArray<T>::slice(int start, int inc, int max_n) {
         return ArgArrayBase<T>::template slice<typename ArrayTraits<ArgArray<T>>::ArgsType>(start, inc, max_n);
     }
 
     template <class T>
-    forceinline typename ArrayTraits<ArgArray<T>>::ArgsType&
+    forceinline ArrayTraits<ArgArray<T>>::ArgsType&
     ArgArray<T>::operator<<(const T& x) {
         return ArgArrayBase<T>::template append<typename ArrayTraits<ArgArray<T>>::ArgsType>(x);
     }
 
     template <class T>
-    forceinline typename ArrayTraits<ArgArray<T>>::ArgsType&
+    forceinline ArrayTraits<ArgArray<T>>::ArgsType&
     ArgArray<T>::operator<<(const ArgArray<T>& x) {
         return ArgArrayBase<T>::template append<typename ArrayTraits<ArgArray<T>>::ArgsType>(x);
     }
 
     template <class T>
-    typename ArrayTraits<ArgArray<T>>::ArgsType
+    ArrayTraits<ArgArray<T>>::ArgsType
     operator+(const ArgArray<T>& x, const ArgArray<T>& y) {
         return x.template concat<typename ArrayTraits<ArgArray<T>>::ArgsType>(y);
     }
 
     template <class T>
-    typename ArrayTraits<ArgArray<T>>::ArgsType
+    ArrayTraits<ArgArray<T>>::ArgsType
     operator+(const ArgArray<T>& x, const T& y) {
         return x.template concat<typename ArrayTraits<ArgArray<T>>::ArgsType>(y);
     }
 
     template <class T>
-    typename ArrayTraits<ArgArray<T>>::ArgsType
+    ArrayTraits<ArgArray<T>>::ArgsType
     operator+(const T& x, const ArgArray<T>& y) {
         ArgArray<T> xa(1);
         xa[0] = x;
@@ -1800,37 +1800,37 @@ namespace Gecode {
     }
 
     template <class Var>
-    forceinline typename ArrayTraits<VarArgArray<Var>>::ArgsType
+    forceinline ArrayTraits<VarArgArray<Var>>::ArgsType
     VarArgArray<Var>::slice(int start, int inc, int max_n) {
         return ArgArrayBase<Var>::template slice<typename ArrayTraits<VarArgArray<Var>>::ArgsType>(start, inc, max_n);
     }
 
     template <class Var>
-    forceinline typename ArrayTraits<VarArgArray<Var>>::ArgsType&
+    forceinline ArrayTraits<VarArgArray<Var>>::ArgsType&
     VarArgArray<Var>::operator<<(const Var& x) {
         return ArgArrayBase<Var>::template append<typename ArrayTraits<VarArgArray<Var>>::ArgsType>(x);
     }
 
     template <class Var>
-    forceinline typename ArrayTraits<VarArgArray<Var>>::ArgsType&
+    forceinline ArrayTraits<VarArgArray<Var>>::ArgsType&
     VarArgArray<Var>::operator<<(const VarArgArray<Var>& x) {
         return ArgArrayBase<Var>::template append<typename ArrayTraits<VarArgArray<Var>>::ArgsType>(x);
     }
 
     template <class Var>
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType
+    ArrayTraits<VarArgArray<Var>>::ArgsType
     operator+(const VarArgArray<Var>& x, const VarArgArray<Var>& y) {
         return x.template concat<typename ArrayTraits<VarArgArray<Var>>::ArgsType>(y);
     }
 
     template <class Var>
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType
+    ArrayTraits<VarArgArray<Var>>::ArgsType
     operator+(const VarArgArray<Var>& x, const Var& y) {
         return x.template concat<typename ArrayTraits<VarArgArray<Var>>::ArgsType>(y);
     }
 
     template <class Var>
-    typename ArrayTraits<VarArgArray<Var>>::ArgsType
+    ArrayTraits<VarArgArray<Var>>::ArgsType
     operator+(const Var& x, const VarArgArray<Var>& y) {
         VarArgArray<Var> xa(1);
         xa[0] = x;
@@ -1839,7 +1839,7 @@ namespace Gecode {
 
     template <class Var>
     forceinline bool
-    VarArgArray<Var>::assigned(void) const {
+    VarArgArray<Var>::assigned() const {
         for (int i = 0; i < n; i++)
             if (!a[i].assigned())
                 return false;

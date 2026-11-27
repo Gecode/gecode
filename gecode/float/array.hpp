@@ -40,7 +40,7 @@ namespace Gecode {
      */
 
     forceinline
-    FloatValArgs::FloatValArgs(void)
+    FloatValArgs::FloatValArgs()
         : ArgArray<FloatVal>(0) {}
 
     forceinline

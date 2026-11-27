@@ -91,7 +91,7 @@ namespace Gecode {
             } else {
                 return nullptr;
             }
-            if (strcmp(s, eopt))
+            if (strcmp(s, eopt) != 0)
                 return nullptr;
             if (argc == 2) {
                 std::cerr << "Missing argument for option \"" << iopt << "\"" << '\n' << std::flush;
@@ -103,7 +103,7 @@ namespace Gecode {
         BaseOption::BaseOption(const char* o, const char* e)
             : eopt(strdup(o)), iopt(duplicate_option_flag(o)), exp(strdup(e)) {}
 
-        BaseOption::~BaseOption(void) {
+        BaseOption::~BaseOption() {
             strdel(eopt);
             strdel(iopt);
             strdel(exp);
@@ -113,7 +113,7 @@ namespace Gecode {
             : BaseOption(o, e), sopt(strdup(s)), siopt(duplicate_option_flag(s)) {
             value(v);
         }
-        RandomOption::~RandomOption(void) {
+        RandomOption::~RandomOption() {
             strdel(sopt);
             strdel(siopt);
         }
@@ -123,7 +123,7 @@ namespace Gecode {
             seed_given = state_given = false;
         }
         Rnd
-        RandomOption::rnd(void) const {
+        RandomOption::rnd() const {
             return initial;
         }
         int
@@ -172,7 +172,7 @@ namespace Gecode {
             return 2;
         }
         void
-        RandomOption::help(void) {
+        RandomOption::help() {
             std::cerr << "\t" << iopt << " (64-bit decimal/hex seed, time, hw)\n"
                       << "\t\t" << exp << "\n"
                       << "\t" << siopt << " (complete " << Rnd::name() << " state; mutually exclusive with " << iopt
@@ -197,12 +197,12 @@ namespace Gecode {
             return 0;
         }
         void
-        StringValueOption::help(void) {
+        StringValueOption::help() {
             std::cerr << '\t' << iopt << " (string) default: " << ((cur == nullptr) ? "NONE" : cur) << '\n'
                       << "\t\t" << exp << '\n'
                       << std::flush;
         }
-        StringValueOption::~StringValueOption(void) {
+        StringValueOption::~StringValueOption() {
             strdel(cur);
         }
 
@@ -250,7 +250,7 @@ namespace Gecode {
             return 0;
         }
         void
-        StringOption::help(void) {
+        StringOption::help() {
             if (fst == nullptr)
                 return;
             std::cerr << '\t' << iopt << " (";
@@ -269,7 +269,7 @@ namespace Gecode {
                     std::cerr << "\t\t  " << v->opt << ": " << v->help << '\n' << std::flush;
         }
 
-        StringOption::~StringOption(void) {
+        StringOption::~StringOption() {
             Value* v = fst;
             while (v != nullptr) {
                 strdel(v->opt);
@@ -290,7 +290,7 @@ namespace Gecode {
         }
 
         void
-        IntOption::help(void) {
+        IntOption::help() {
             std::cerr << '\t' << iopt << " (int) default: " << cur << '\n' << "\t\t" << exp << '\n' << std::flush;
         }
 
@@ -304,7 +304,7 @@ namespace Gecode {
         }
 
         void
-        UnsignedIntOption::help(void) {
+        UnsignedIntOption::help() {
             std::cerr << '\t' << iopt << " (unsigned int) default: " << cur << '\n'
                       << "\t\t" << exp << '\n'
                       << std::flush;
@@ -320,7 +320,7 @@ namespace Gecode {
         }
 
         void
-        UnsignedLongLongIntOption::help(void) {
+        UnsignedLongLongIntOption::help() {
             std::cerr << '\t' << iopt << " (unsigned long long int) default: " << cur << '\n'
                       << "\t\t" << exp << '\n'
                       << std::flush;
@@ -336,7 +336,7 @@ namespace Gecode {
         }
 
         void
-        DoubleOption::help(void) {
+        DoubleOption::help() {
             using namespace std;
             cerr << '\t' << iopt << " (double) default: " << cur << '\n' << "\t\t" << exp << '\n' << std::flush;
         }
@@ -353,28 +353,29 @@ namespace Gecode {
             } else {
                 return 0;
             }
-            if (strcmp(s, eopt))
+            if (strcmp(s, eopt) != 0)
                 return 0;
             if (argc == 2) {
                 // Option without argument
                 cur = true;
                 return 1;
-            } else if (!strcmp(argv[2], "true") || !strcmp(argv[2], "1")) {
+            }
+            if (!strcmp(argv[2], "true") || !strcmp(argv[2], "1")) {
                 cur = true;
                 return 2;
-            } else if (!strcmp(argv[2], "false") || !strcmp(argv[2], "0")) {
+            }
+            if (!strcmp(argv[2], "false") || !strcmp(argv[2], "0")) {
                 cur = false;
                 return 2;
-            } else {
-                // Option without argument
-                cur = true;
-                return 1;
-            }
+            } // Option without argument
+            cur = true;
+            return 1;
+
             return 0;
         }
 
         void
-        BoolOption::help(void) {
+        BoolOption::help() {
             using namespace std;
             cerr << '\t' << iopt << " (optional: false, 0, true, 1) default: " << (cur ? "true" : "false") << '\n'
                  << "\t\t" << exp << '\n'
@@ -433,7 +434,7 @@ namespace Gecode {
         }
 
         void
-        IplOption::help(void) {
+        IplOption::help() {
             using namespace std;
             cerr << '\t' << iopt << " (def,val,bnd,dom,basic,advanced,full)" << '\n' << "\t\tdefault: ";
             switch (vbd(cur)) {
@@ -452,9 +453,9 @@ namespace Gecode {
             default:
                 GECODE_NEVER;
             }
-            if ((cur & IPL_FULL) == IPL_FULL)
+            if ((cur & IPL_FULL) == IPL_FULL) {
                 cerr << ",full";
-            else {
+            } else {
                 if ((cur & IPL_BASIC) != IPL_DEF)
                     cerr << ",basic";
                 if ((cur & IPL_ADVANCED) != IPL_DEF)
@@ -522,7 +523,7 @@ namespace Gecode {
         }
 
         void
-        TraceOption::help(void) {
+        TraceOption::help() {
             using namespace std;
             cerr << '\t' << iopt << " (init,prune,fix,fail,done,propagate,commit,post,none,all,variable,general)"
                  << " default: ";
@@ -601,7 +602,7 @@ namespace Gecode {
         }
 
         void
-        ProfilerOption::help(void) {
+        ProfilerOption::help() {
             std::cerr << '\t' << iopt << " (unsigned int,int) default: " << cur_port << "," << cur_execution_id << '\n'
                       << "\t\t" << exp << '\n'
                       << std::flush;
@@ -619,7 +620,7 @@ namespace Gecode {
         }
         lst = &o;
     }
-    BaseOptions::BaseOptions(const char* n) : fst(nullptr), lst(nullptr), _name(Driver::BaseOption::strdup(n)) {}
+    BaseOptions::BaseOptions(const char* s) : fst(nullptr), lst(nullptr), _name(Driver::BaseOption::strdup(s)) {}
 
     void
     BaseOptions::name(const char* n) {
@@ -628,7 +629,7 @@ namespace Gecode {
     }
 
     void
-    BaseOptions::help(void) {
+    BaseOptions::help() {
         std::cerr << "Gecode configuration information:" << '\n'
                   << " - Version: " << GECODE_VERSION << '\n'
                   << " - Variable types: ";
@@ -699,7 +700,6 @@ namespace Gecode {
         argc = c;
         for (int i = 1; i < argc; i++)
             argv[i] = v[i];
-        return;
     }
 
     namespace {
@@ -719,12 +719,12 @@ namespace Gecode {
             unrecognised(*this, argv[1]);
     }
 
-    BaseOptions::~BaseOptions(void) {
+    BaseOptions::~BaseOptions() {
         Driver::BaseOption::strdel(_name);
     }
 
-    Options::Options(const char* n)
-        : BaseOptions(n),
+    Options::Options(const char* s)
+        : BaseOptions(s),
 
           _model("model", "model variants"), _symmetry("symmetry", "symmetry variants"),
           _propagation("propagation", "propagation variants"), _branching("branching", "branching variants"),
@@ -823,10 +823,10 @@ namespace Gecode {
 #endif
     }
 
-    SizeOptions::SizeOptions(const char* e) : Options(e), _size(0) {}
+    SizeOptions::SizeOptions(const char* s) : Options(s), _size(0) {}
 
     void
-    SizeOptions::help(void) {
+    SizeOptions::help() {
         Options::help();
         std::cerr << "\t(unsigned int) default: " << size() << '\n'
                   << "\t\twhich version/size for script" << '\n'
@@ -863,19 +863,19 @@ namespace Gecode {
         size(static_cast<unsigned int>(atoi(argv[1])));
     }
 
-    InstanceOptions::InstanceOptions(const char* e)
-        : Options(e), _inst(nullptr), _spec(nullptr),
+    InstanceOptions::InstanceOptions(const char* s)
+        : Options(s), _inst(nullptr), _spec(nullptr),
           _spec_file("spec", "file with a reader spec for instance files (default: the script's own spec)"),
           _param("param", "parameter for the reader spec (name=value; repeat or separate by commas for several)") {}
 
-    InstanceOptions::InstanceOptions(const char* e, const char* s) : InstanceOptions(e) {
+    InstanceOptions::InstanceOptions(const char* s, const char* spec0) : InstanceOptions(s) {
         add(_spec_file);
         add(_param);
-        spec(s);
+        spec(spec0);
     }
 
     void
-    InstanceOptions::forget(void) const {
+    InstanceOptions::forget() const {
         _data.reset();
     }
 
@@ -906,7 +906,7 @@ namespace Gecode {
     }
 
     void
-    InstanceOptions::help(void) {
+    InstanceOptions::help() {
         Options::help();
         std::cerr << "\t(string) default: " << ((instance() == nullptr) ? "NONE" : instance()) << '\n'
                   << "\t\twhich instance for script (name or file)" << '\n'
@@ -963,7 +963,7 @@ namespace Gecode {
     }
 
     bool
-    InstanceOptions::is_file(void) const {
+    InstanceOptions::is_file() const {
         if (instance() == nullptr)
             return false;
         // Directories can be opened on some systems, but not read
@@ -974,7 +974,7 @@ namespace Gecode {
     }
 
     Instance::Data
-    InstanceOptions::data(void) const {
+    InstanceOptions::data() const {
         if (_data)
             return *_data;
         if (instance() == nullptr)
@@ -993,7 +993,7 @@ namespace Gecode {
         return *_data;
     }
 
-    InstanceOptions::~InstanceOptions(void) {
+    InstanceOptions::~InstanceOptions() {
         Driver::BaseOption::strdel(_inst);
         Driver::BaseOption::strdel(_spec);
     }

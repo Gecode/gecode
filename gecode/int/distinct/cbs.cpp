@@ -36,7 +36,7 @@
 
 #include <gecode/int/distinct.hh>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     /*
      * Program used to precompute both factors using GNU gmp and the c++ MPFR
@@ -10202,7 +10202,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         37249, 37442, 37636, 37830, 38025, 38220, 38416, 38612, 38809, 39006, 39204, 39402, 39601, 39800, 40000, 40200,
     };
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 #endif
 

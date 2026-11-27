@@ -58,22 +58,22 @@ namespace Gecode {
 
         public:
             /// Initialize
-            Object(void);
+            Object();
             /// Delete shared object
-            virtual ~Object(void);
+            virtual ~Object();
         };
 
     private:
         /// The shared object
         Object* o;
         /// Subscribe handle to object
-        void subscribe(void);
+        void subscribe();
         /// Cancel subscription of handle to object
-        void cancel(void);
+        void cancel();
 
     public:
         /// Create shared handle with no object pointing to
-        SharedHandle(void);
+        SharedHandle();
         /// Create shared handle that points to shared object \a so
         SharedHandle(SharedHandle::Object* so);
         /// Copy constructor maintaining reference count
@@ -81,35 +81,35 @@ namespace Gecode {
         /// Assignment operator maintaining reference count
         SharedHandle& operator=(const SharedHandle& sh);
         /// Destructor that maintains reference count
-        ~SharedHandle(void);
+        ~SharedHandle();
         /// Whether handle points to an object
-        explicit operator bool(void) const;
+        explicit operator bool() const;
 
     protected:
         /// Access to the shared object
-        SharedHandle::Object* object(void) const;
+        SharedHandle::Object* object() const;
         /// Modify shared object
         void object(SharedHandle::Object* n);
     };
 
     forceinline
-    SharedHandle::Object::Object(void)
+    SharedHandle::Object::Object()
         : rc(0) {}
-    forceinline SharedHandle::Object::~Object(void) {
+    forceinline SharedHandle::Object::~Object() {
         assert(!rc);
     }
 
     forceinline SharedHandle::Object*
-    SharedHandle::object(void) const {
+    SharedHandle::object() const {
         return o;
     }
     forceinline void
-    SharedHandle::subscribe(void) {
+    SharedHandle::subscribe() {
         if (o != nullptr)
             o->rc.inc();
     }
     forceinline void
-    SharedHandle::cancel(void) {
+    SharedHandle::cancel() {
         if ((o != nullptr) && o->rc.dec())
             delete o;
         o = nullptr;
@@ -123,7 +123,7 @@ namespace Gecode {
         }
     }
     forceinline
-    SharedHandle::SharedHandle(void)
+    SharedHandle::SharedHandle()
         : o(nullptr) {}
     forceinline
     SharedHandle::SharedHandle(SharedHandle::Object* so)
@@ -145,10 +145,10 @@ namespace Gecode {
         return *this;
     }
     forceinline SharedHandle::
-    operator bool(void) const {
+    operator bool() const {
         return o != nullptr;
     }
-    forceinline SharedHandle::~SharedHandle(void) {
+    forceinline SharedHandle::~SharedHandle() {
         cancel();
     }
 

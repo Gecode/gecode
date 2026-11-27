@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     template <class View>
     forceinline RelTest
@@ -90,6 +90,6 @@ namespace Gecode { namespace Float {
         return RT_MAYBE;
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

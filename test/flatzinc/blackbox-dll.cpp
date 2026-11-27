@@ -72,7 +72,7 @@ namespace {
     std::atomic<unsigned int> next_id(0);
 
     unsigned int
-    instance_id(void) {
+    instance_id() {
         return next_id.fetch_add(1, std::memory_order_relaxed) + 1;
     }
 

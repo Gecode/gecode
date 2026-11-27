@@ -50,7 +50,7 @@ public:
     int a; ///< away team
     int g; ///< game number
     /// Default constructor
-    Play(void) : h(0), a(0), g(0) {}
+    Play() : h(0), a(0), g(0) {}
 };
 
 /// Round robin schedule
@@ -62,12 +62,12 @@ protected:
     Play* plays;
     /// Return number of weeks
     int
-    weeks(void) const {
+    weeks() const {
         return teams - 1;
     }
     /// Return number of periods
     int
-    periods(void) const {
+    periods() const {
         return teams / 2;
     }
     /// Game number for game between home team \a h and away team \a a
@@ -152,7 +152,7 @@ public:
         }
     }
     /// Delete schedule
-    ~RRS(void) {
+    ~RRS() {
         delete[] plays;
     }
 };
@@ -182,12 +182,12 @@ protected:
 
     /// Return number of weeks
     int
-    weeks(void) const {
+    weeks() const {
         return teams - 1;
     }
     /// Return number of periods
     int
-    periods(void) const {
+    periods() const {
         return teams / 2;
     }
     /// Home team in period \a p and week \a w
@@ -302,7 +302,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new SportsLeague(*this);
     }
     /// Print solution

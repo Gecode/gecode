@@ -36,78 +36,74 @@
 
 #include "test/int.hh"
 
-namespace Test { namespace Int {
+/// %Tests for value precedence constraints
+namespace Test::Int::Precede {
 
-    /// %Tests for value precedence constraints
-    namespace Precede {
+    /// %Test for single value precedence constraint
+    class Single : public Test {
+    private:
+        /// The values for precedence
+        int s, t;
 
-        /// %Test for single value precedence constraint
-        class Single : public Test {
-        private:
-            /// The values for precedence
-            int s, t;
+    public:
+        /// Create and register test
+        Single(int s0, int t0) : Test("Precede::Single::" + str(s0) + "<" + str(t0), 8, 1, 4), s(s0), t(t0) {}
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            int n = x.size();
+            for (int i = 0; i < n; i++) {
+                if (x[i] == t)
+                    return false;
+                if (x[i] == s)
+                    return true;
+            }
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::precede(home, x, s, t);
+        }
+    };
 
-        public:
-            /// Create and register test
-            Single(int s0, int t0) : Test("Precede::Single::" + str(s0) + "<" + str(t0), 8, 1, 4), s(s0), t(t0) {}
-            /// %Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                int n = x.size();
-                for (int i = 0; i < n; i++) {
-                    if (x[i] == t)
+    /// %Test for multiple value precedence constraint
+    class Multi : public Test {
+    private:
+        /// The values for precedence
+        Gecode::IntArgs c;
+
+    public:
+        /// Create and register test
+        Multi(const Gecode::IntArgs& c0) : Test("Precede::Multi::" + str(c0), 6, 1, 5), c(c0) {
+            consistency_test_level = CTL_NONE;
+        }
+        /// %Test whether \a x is solution
+        bool
+        solution(const Assignment& x) const override {
+            for (int j = 0; j < c.size() - 1; j++)
+                for (int i = 0; i < x.size(); i++) {
+                    if (x[i] == c[j + 1])
                         return false;
-                    if (x[i] == s)
-                        return true;
+                    if (x[i] == c[j])
+                        break;
                 }
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                Gecode::precede(home, x, s, t);
-            }
-        };
+            return true;
+        }
+        /// Post constraint on \a x
+        void
+        post(Gecode::Space& home, Gecode::IntVarArray& x) override {
+            Gecode::precede(home, x, c);
+        }
+    };
 
-        /// %Test for multiple value precedence constraint
-        class Multi : public Test {
-        private:
-            /// The values for precedence
-            Gecode::IntArgs c;
+    Single _a(2, 3);
+    Single _b(1, 4);
 
-        public:
-            /// Create and register test
-            Multi(const Gecode::IntArgs& c0) : Test("Precede::Multi::" + str(c0), 6, 1, 5), c(c0) {
-                consistency_test_level = CTL_NONE;
-            }
-            /// %Test whether \a x is solution
-            bool
-            solution(const Assignment& x) const override {
-                for (int j = 0; j < c.size() - 1; j++)
-                    for (int i = 0; i < x.size(); i++) {
-                        if (x[i] == c[j + 1])
-                            return false;
-                        if (x[i] == c[j])
-                            break;
-                    }
-                return true;
-            }
-            /// Post constraint on \a x
-            void
-            post(Gecode::Space& home, Gecode::IntVarArray& x) override {
-                Gecode::precede(home, x, c);
-            }
-        };
+    Multi _c(Gecode::IntArgs({1, 2, 3}));
+    Multi _d(Gecode::IntArgs({3, 2, 1}));
+    Multi _e(Gecode::IntArgs({4, 2, 3, 1}));
 
-        Single _a(2, 3);
-        Single _b(1, 4);
-
-        Multi _c(Gecode::IntArgs({1, 2, 3}));
-        Multi _d(Gecode::IntArgs({3, 2, 1}));
-        Multi _e(Gecode::IntArgs({4, 2, 3, 1}));
-
-    } // namespace Precede
-
-}} // namespace Test::Int
+} // namespace Test::Int::Precede
 
 // STATISTICS: test-int

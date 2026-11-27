@@ -37,7 +37,7 @@
 
 #include <atomic>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Whether incoming solution \a s should replace incumbent \a b
     forceinline bool
@@ -109,17 +109,17 @@ namespace Gecode { namespace Search {
         /// Initialization
         WorkerToEngine(Space* s, const Options& o);
         /// Return next solution (nullptr, if none exists or search has been stopped)
-        Space* next(void) override;
+        Space* next() override;
         /// Return statistics
-        Search::Statistics statistics(void) const override;
+        Search::Statistics statistics() const override;
         /// Return why the last call to next() returned no solution
-        EndReason end_reason(void) const override;
+        EndReason end_reason() const override;
         /// Constrain future solutions to be better than \a b
         void constrain(const Space& b) override;
         /// Reset engine to restart at space \a s
         void reset(Space* s) override;
         /// Return no-goods
-        NoGoods& nogoods(void) override;
+        NoGoods& nogoods() override;
     };
 
     forceinline Space*
@@ -132,19 +132,19 @@ namespace Gecode { namespace Search {
         : Engine(o, 1U), w(s, o), end(EndReason::NotEnded) {}
     template <class Worker>
     Space*
-    WorkerToEngine<Worker>::next(void) {
+    WorkerToEngine<Worker>::next() {
         Space* s = w.next();
         end = (s != nullptr) ? EndReason::NotEnded : w.end_reason();
         return s;
     }
     template <class Worker>
     Search::Statistics
-    WorkerToEngine<Worker>::statistics(void) const {
+    WorkerToEngine<Worker>::statistics() const {
         return w.statistics();
     }
     template <class Worker>
     EndReason
-    WorkerToEngine<Worker>::end_reason(void) const {
+    WorkerToEngine<Worker>::end_reason() const {
         return end;
     }
     template <class Worker>
@@ -160,11 +160,11 @@ namespace Gecode { namespace Search {
     }
     template <class Worker>
     NoGoods&
-    WorkerToEngine<Worker>::nogoods(void) {
+    WorkerToEngine<Worker>::nogoods() {
         return w.nogoods();
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 #endif
 

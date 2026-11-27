@@ -34,31 +34,31 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// VarArg type for integer views
     template <>
     class ViewToVarArg<IntView> {
     public:
-        typedef IntVarArgs argtype;
+        using argtype = IntVarArgs;
     };
     /// VarArg type for minus views
     template <>
     class ViewToVarArg<MinusView> {
     public:
-        typedef IntVarArgs argtype;
+        using argtype = IntVarArgs;
     };
     /// VarArg type for Boolean views
     template <>
     class ViewToVarArg<BoolView> {
     public:
-        typedef BoolVarArgs argtype;
+        using argtype = BoolVarArgs;
     };
     /// VarArg type for Boolean views
     template <>
     class ViewToVarArg<NegBoolView> {
     public:
-        typedef BoolVarArgs argtype;
+        using argtype = BoolVarArgs;
     };
 
     template <class View>
@@ -69,7 +69,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline
-    IdxViewArray<View>::IdxViewArray(void)
+    IdxViewArray<View>::IdxViewArray()
         : xs(nullptr), n(0) {}
 
     template <class View>
@@ -81,7 +81,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline
-    IdxViewArray<View>::IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& xa)
+    IdxViewArray<View>::IdxViewArray(Space& home, const ViewToVarArg<View>::argtype& xa)
         : xs(nullptr) {
         n = xa.size();
         if (n > 0) {
@@ -105,7 +105,7 @@ namespace Gecode { namespace Int {
 
     template <class View>
     forceinline int
-    IdxViewArray<View>::size(void) const {
+    IdxViewArray<View>::size() const {
         return n;
     }
 
@@ -179,6 +179,6 @@ namespace Gecode { namespace Int {
         return os << s.str();
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-prop

@@ -147,9 +147,9 @@ namespace Test {
 
                 START_TEST("Iteration");
                 {
-                    typedef typename Array::reference reference;
-                    typedef typename Array::pointer pointer;
-                    typedef typename Array::iterator iterator;
+                    using reference = Array::reference;
+                    using pointer = Array::pointer;
+                    using iterator = Array::iterator;
                     const iterator begin = a.begin(), end = a.end();
                     CHECK_TEST(end - begin == a.size(), "Distance != size");
                     int index = 0;
@@ -169,9 +169,9 @@ namespace Test {
                 }
                 START_TEST("Read-only iteration");
                 {
-                    typedef typename Array::const_reference reference;
-                    typedef typename Array::const_pointer pointer;
-                    typedef typename Array::const_iterator iterator;
+                    using reference = Array::const_reference;
+                    using pointer = Array::const_pointer;
+                    using iterator = Array::const_iterator;
                     const iterator begin = const_a.begin(), end = const_a.end();
                     CHECK_TEST(end - begin == const_a.size(), "Distance != size");
                     int index = 0;
@@ -194,9 +194,9 @@ namespace Test {
 
                 START_TEST("Reverse iteration");
                 {
-                    typedef typename Array::reference reference;
-                    typedef typename Array::pointer pointer;
-                    typedef typename Array::reverse_iterator iterator;
+                    using reference = Array::reference;
+                    using pointer = Array::pointer;
+                    using iterator = Array::reverse_iterator;
                     const iterator begin = a.rbegin(), end = a.rend();
                     CHECK_TEST(end - begin == a.size(), "Distance != size");
                     int index = a.size();
@@ -217,9 +217,9 @@ namespace Test {
 
                 START_TEST("Reverse read-only iteration");
                 {
-                    typedef typename Array::const_reference reference;
-                    typedef typename Array::const_pointer pointer;
-                    typedef typename Array::const_reverse_iterator iterator;
+                    using reference = Array::const_reference;
+                    using pointer = Array::const_pointer;
+                    using iterator = Array::const_reverse_iterator;
                     const iterator begin = const_a.rbegin(), end = const_a.rend();
                     CHECK_TEST(end - begin == const_a.size(), "Distance != size");
                     int index = a.size();
@@ -251,11 +251,11 @@ namespace Test {
         /// Test space
         class TestSpace : public Gecode::Space {
         public:
-            TestSpace(void) : Space() {}
+            TestSpace() = default;
             // NOLINTNEXTLINE(modernize-use-equals-default)
             TestSpace(TestSpace& s) : Space(s) {}
             Space*
-            copy(void) override {
+            copy() override {
                 return new TestSpace(*this);
             }
         };
@@ -267,10 +267,10 @@ namespace Test {
         class EmptyVector : public Test::Base {
         public:
             /// Initialize test
-            EmptyVector(void) : Test::Base(vector_prefix + "Empty") {}
+            EmptyVector() : Test::Base(vector_prefix + "Empty") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 std::vector<int> ints;
                 Gecode::IntArgs ia(ints);
                 if (ia.size() != 0)
@@ -293,14 +293,14 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::VarArray<Gecode::IntVar> Array;
+            using Array = Gecode::VarArray<Gecode::IntVar>;
 
         public:
             /// Initialize test
-            VarArrayIterator(void) : Iterator("VarArray") {}
+            VarArrayIterator() : Iterator("VarArray") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
@@ -316,14 +316,14 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::ArgArrayBase<int> Array;
+            using Array = Gecode::ArgArrayBase<int>;
 
         public:
             /// Initialize test
-            VarArgsIterator(void) : Iterator("VarArgs") {}
+            VarArgsIterator() : Iterator("VarArgs") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
@@ -339,14 +339,14 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::ViewArray<Gecode::IntVar> Array;
+            using Array = Gecode::ViewArray<Gecode::IntVar>;
 
         public:
             /// Initialize test
-            ViewArrayIterator(void) : Iterator("ViewArray") {}
+            ViewArrayIterator() : Iterator("ViewArray") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // Space for the test
                 TestSpace s;
                 // VarArray for the test
@@ -362,14 +362,14 @@ namespace Test {
             /// Maximum array size
             static const int n = 16;
             /// Array type being tested
-            typedef Gecode::SharedArray<int> Array;
+            using Array = Gecode::SharedArray<int>;
 
         public:
             /// Initialize test
-            SharedArrayIterator(void) : Iterator("SharedArray") {}
+            SharedArrayIterator() : Iterator("SharedArray") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // SharedArray for the test
                 Array a(_rand(n));
                 // Run the iterator test
@@ -394,10 +394,10 @@ namespace Test {
         class SharedDataCopyOnly : public Test::Base {
         public:
             /// Initialize test
-            SharedDataCopyOnly(void) : Test::Base("Array::SharedData::CopyOnly") {}
+            SharedDataCopyOnly() : Test::Base("Array::SharedData::CopyOnly") {}
             /// Perform actual tests
             bool
-            run(void) override {
+            run() override {
                 // A temporary must bind to the copying constructor
                 Gecode::SharedData<CopyOnlyData> d(CopyOnlyData(3));
                 return d().value == 3;

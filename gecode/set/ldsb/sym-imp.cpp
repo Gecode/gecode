@@ -31,12 +31,13 @@
  */
 
 #include <gecode/set/ldsb.hh>
+#include <utility>
 
-namespace Gecode { namespace Set { namespace LDSB {
+namespace Gecode::Set::LDSB {
     // XXX: implementation of equalValues could be improved?
 
     /// Do two set variables have equal least-upper-bounds?
-    bool
+    static bool
     equal_lub(const Set::SetView& x, const Set::SetView& y) {
         unsigned int n = x.lub_size();
         if (n != y.lub_size())
@@ -46,11 +47,11 @@ namespace Gecode { namespace Set { namespace LDSB {
                 return false;
         return true;
     }
-}}} // namespace Gecode::Set::LDSB
+} // namespace Gecode::Set::LDSB
 
 // Note carefully that this is in the Gecode::Int::LDSB namespace, not
 // Gecode::Set::LDSB.
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
     template <>
     ArgArray<Literal>
     VariableSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
@@ -65,9 +66,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                 lits[j++] = Literal(i.val(), l._value);
             }
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
 
     template <>
@@ -84,9 +84,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                 lits[j++] = Literal(l._variable, i.val());
             }
             return lits;
-        } else {
-            return ArgArray<Literal>(0);
         }
+        return ArgArray<Literal>(0);
     }
 
     template <>
@@ -94,7 +93,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     VariableSequenceSymmetryImp<Set::SetView>::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
         Region region;
         Support::DynamicStack<Literal, Region> s(region);
-        if (l._variable < (int)lookup_size) {
+        if (std::cmp_less(l._variable, lookup_size)) {
             int pos_it = lookup[l._variable];
             if (pos_it == -1) {
                 return dynamic_stack_to_arg_array(s);
@@ -117,10 +116,9 @@ namespace Gecode { namespace Int { namespace LDSB {
                     if ((!xv.assigned() && !yv.assigned()) ||
                         (xv.assigned() && yv.assigned() && Set::LDSB::equal_lub(xv, yv))) {
                         continue;
-                    } else {
-                        active = false;
-                        break;
                     }
+                    active = false;
+                    break;
                 }
 
                 if (active) {
@@ -151,6 +149,6 @@ namespace Gecode { namespace Int { namespace LDSB {
         }
         return dynamic_stack_to_arg_array(s);
     }
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 // STATISTICS: set-branch

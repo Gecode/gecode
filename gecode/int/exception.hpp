@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \defgroup FuncThrowInt Integer exceptions
@@ -160,6 +160,6 @@ namespace Gecode { namespace Int {
 
     //@}
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-other

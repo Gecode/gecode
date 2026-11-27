@@ -39,7 +39,7 @@
 
 #include <memory>
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Memory chunk with size information
     class MemoryChunk {
@@ -68,13 +68,13 @@ namespace Gecode { namespace Kernel {
             HeapChunk* hc;
         } heap;
         /// A mutex for access
-        GECODE_KERNEL_EXPORT static Support::Mutex& m(void);
+        GECODE_KERNEL_EXPORT static Support::Mutex& m();
 
     public:
         /// Initialize
-        SharedMemory(void);
+        SharedMemory();
         /// Destructor
-        ~SharedMemory(void);
+        ~SharedMemory();
         /// \name Heap management
         //@
         /// Return heap chunk, preferable of size \a s, but at least of size \a l
@@ -84,7 +84,7 @@ namespace Gecode { namespace Kernel {
         //@}
     };
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 namespace Gecode {
 
@@ -103,20 +103,20 @@ namespace Gecode {
 
     public:
         /// Use uninitialized
-        FreeList(void) = default;
+        FreeList() = default;
         /// Initialize with next freelist object \a n
         FreeList(FreeList* n);
         /// Return next freelist object
-        FreeList* next(void) const;
+        FreeList* next() const;
         /// Return pointer to next link in freelist object
-        FreeList** next_ref(void);
+        FreeList** next_ref();
         /// Set next freelist object to \a n
         void next(FreeList* n);
     };
 
 } // namespace Gecode
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /// Manage memory for space
     class MemoryManager {
@@ -150,7 +150,7 @@ namespace Gecode { namespace Kernel {
          */
         void* alloc(SharedMemory& sm, size_t s);
         /// Get the memory area for subscriptions
-        void* subscriptions(void) const;
+        void* subscriptions() const;
 
     private:
         /// Start of free lists
@@ -180,9 +180,9 @@ namespace Gecode { namespace Kernel {
         void reuse(void* p, size_t s);
     };
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /*
      * Shared memory area
@@ -190,11 +190,11 @@ namespace Gecode { namespace Kernel {
      */
 
     forceinline
-    SharedMemory::SharedMemory(void) {
+    SharedMemory::SharedMemory() {
         heap.n_hc = 0;
         heap.hc = nullptr;
     }
-    forceinline SharedMemory::~SharedMemory(void) {
+    forceinline SharedMemory::~SharedMemory() {
         while (heap.hc != nullptr) {
             HeapChunk* hc = heap.hc;
             heap.hc = static_cast<HeapChunk*>(hc->next);
@@ -236,7 +236,7 @@ namespace Gecode { namespace Kernel {
         }
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 namespace Gecode {
 
@@ -250,12 +250,12 @@ namespace Gecode {
         : _next(n) {}
 
     forceinline FreeList*
-    FreeList::next(void) const {
+    FreeList::next() const {
         return _next;
     }
 
     forceinline FreeList**
-    FreeList::next_ref(void) {
+    FreeList::next_ref() {
         return &_next;
     }
 
@@ -266,7 +266,7 @@ namespace Gecode {
 
 } // namespace Gecode
 
-namespace Gecode { namespace Kernel {
+namespace Gecode::Kernel {
 
     /*
      * The active memory manager
@@ -298,7 +298,7 @@ namespace Gecode { namespace Kernel {
     }
 
     forceinline void*
-    MemoryManager::subscriptions(void) const {
+    MemoryManager::subscriptions() const {
         return &cur_hc->area[0];
     }
 
@@ -313,7 +313,7 @@ namespace Gecode { namespace Kernel {
         size_t overhead = sizeof(HeapChunk) - sizeof(double);
         sz += overhead;
         // Round size to next multiple of current heap chunk size
-        size_t allocate = ((sz > cur_hcsz) ? (static_cast<size_t>(sz / cur_hcsz) + 1) * cur_hcsz : cur_hcsz);
+        size_t allocate = ((sz > cur_hcsz) ? ((sz / cur_hcsz) + 1) * cur_hcsz : cur_hcsz);
         // Request a chunk of preferably size allocate, but at least size sz
         HeapChunk* hc = sm.alloc(allocate, sz);
         start = ptr_cast<char*>(&hc->area[0]);
@@ -338,8 +338,8 @@ namespace Gecode { namespace Kernel {
     MemoryManager::MemoryManager(SharedMemory& sm)
         : cur_hcsz(MemoryConfig::hcsz_min), requested(0), slack(nullptr) {
         alloc_fill(sm, cur_hcsz, true);
-        for (size_t i = 0; i < MemoryConfig::fl_size_max - MemoryConfig::fl_size_min + 1; i++)
-            fl[i] = nullptr;
+        for (auto& list : fl)
+            list = nullptr;
     }
 
     forceinline
@@ -353,8 +353,8 @@ namespace Gecode { namespace Kernel {
         // Skip the memory area at the beginning for subscriptions
         lsz -= s_sub;
         start += s_sub;
-        for (size_t i = 0; i < MemoryConfig::fl_size_max - MemoryConfig::fl_size_min + 1; i++)
-            fl[i] = nullptr;
+        for (auto& list : fl)
+            list = nullptr;
     }
 
     forceinline void
@@ -386,7 +386,7 @@ namespace Gecode { namespace Kernel {
 #endif
 
         size_t aligned_s = s;
-        void* aligned_p = std::align(std::min(static_cast<size_t>(GECODE_MEMORY_ALIGNMENT), s),
+        void* aligned_p = std::align(std::min(GECODE_MEMORY_ALIGNMENT, s),
                                      MemoryConfig::fl_size_min << MemoryConfig::fl_unit_size, p, aligned_s);
 
         if (aligned_p == nullptr || aligned_s < (MemoryConfig::fl_size_min << MemoryConfig::fl_unit_size))
@@ -470,6 +470,6 @@ namespace Gecode { namespace Kernel {
         }
     }
 
-}} // namespace Gecode::Kernel
+} // namespace Gecode::Kernel
 
 // STATISTICS: kernel-memory

@@ -35,10 +35,10 @@
 
 #include <map>
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     std::pair<int, int>
-    find_var(int* indices, unsigned int n_values, unsigned int seq_size, int index) {
+    find_var(const int* indices, unsigned int n_values, unsigned int seq_size, int index) {
         unsigned int seq = 0;
         unsigned int pos = 0;
         for (unsigned int i = 0U; i < n_values; i++) {
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace LDSB {
         return false;
     }
 
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
     using namespace Int::LDSB;
@@ -145,7 +145,7 @@ namespace Gecode {
     }
 } // namespace Gecode
 
-namespace Gecode { namespace Int { namespace LDSB {
+namespace Gecode::Int::LDSB {
 
     /// Map from variable implementation to index
     class VariableMap : public std::map<VarImpBase*, int> {};
@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace LDSB {
      */
 
     /// Create an integer symmetry implementation from a symmetry handle
-    SymmetryImp<IntView>*
+    static SymmetryImp<IntView>*
     create_int_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
 
     /// Create a boolean symmetry implementation from a symmetry handle
-    SymmetryImp<BoolView>*
+    static SymmetryImp<BoolView>*
     create_bool_sym(Space& home, const SymmetryHandle& s, VariableMap variable_map) {
         VariableSymmetryObject* varref = dynamic_cast<VariableSymmetryObject*>(s.ref);
         ValueSymmetryObject* valref = dynamic_cast<ValueSymmetryObject*>(s.ref);
@@ -263,23 +263,23 @@ namespace Gecode { namespace Int { namespace LDSB {
      * in \a nsyms and returns nullptr if there are none.
      */
     template <class View>
-    SymmetryImp<View>**
+    static SymmetryImp<View>**
     create_syms(Space& home, const Symmetries& syms, const VariableMap& variable_map,
                 SymmetryImp<View>* (*create_sym)(Space&, const SymmetryHandle&, VariableMap), int& nsyms) {
         nsyms = 0;
-        for (int i = 0; i < syms.size(); i++)
-            if (!is_empty(syms[i]))
+        for (const auto& sym : syms)
+            if (!is_empty(sym))
                 nsyms++;
         if (nsyms == 0)
             return nullptr;
         SymmetryImp<View>** array = home.alloc<SymmetryImp<View>*>(nsyms);
         int created = 0;
-        for (int i = 0; i < syms.size(); i++)
-            if (!is_empty(syms[i]))
-                array[created++] = create_sym(home, syms[i], variable_map);
+        for (const auto& sym : syms)
+            if (!is_empty(sym))
+                array[created++] = create_sym(home, sym, variable_map);
         return array;
     }
-}}} // namespace Gecode::Int::LDSB
+} // namespace Gecode::Int::LDSB
 
 namespace Gecode {
 

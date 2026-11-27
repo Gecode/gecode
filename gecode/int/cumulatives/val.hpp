@@ -39,7 +39,7 @@
  *   Constraint with Negative Heights. CP 2002, pages 63-79, Springer-Verlag.
  */
 
-namespace Gecode { namespace Int { namespace Cumulatives {
+namespace Gecode::Int::Cumulatives {
 
     template <class ViewM, class ViewP, class ViewU, class View>
     forceinline
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
         // Default constructor for region-allocated memory
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        Event(void) {}
+        Event() {}
 
         /// Order events based on date.
         bool
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                             if (me_failed(s[t].minus_r(home, a, false)) || me_failed(e[t].minus_r(home, b, false)))
                                 return ES_FAILED;
                         }
-                        if (me_failed(p[t].lq(home, std::max(std::max(low - s[t].min(), e[t].max() - up - 1), 0)))) {
+                        if (me_failed(p[t].lq(home, std::max({low - s[t].min(), e[t].max() - up - 1, 0})))) {
                             return ES_FAILED;
                         }
                     }
@@ -220,17 +220,6 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
         return ES_OK;
     }
-
-    namespace {
-        template <class C>
-        class Less {
-        public:
-            bool
-            operator()(const C& lhs, const C& rhs) {
-                return lhs < rhs;
-            }
-        };
-    } // namespace
 
     template <class ViewM, class ViewP, class ViewU, class View>
     ExecStatus
@@ -286,7 +275,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             }
 
             // Sort the events according to date
-            Less<Event> less;
+            std::less<> less;
             Support::insertion(&events[0], events_size, less);
 
             // Sweep line along d, starting at 0
@@ -325,6 +314,6 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         return subsumed ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Cumulatives
+} // namespace Gecode::Int::Cumulatives
 
 // STATISTICS: int-prop

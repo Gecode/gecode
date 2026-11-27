@@ -38,7 +38,7 @@
 #include <gecode/search/worker.hh>
 #include <gecode/search/seq/path.hh>
 
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Depth-first search engine implementation
     template <class Tracer>
@@ -59,20 +59,20 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize for space \a s with options \a o
         DFS(Space* s, const Options& o);
         /// %Search for next solution
-        Space* next(void);
+        Space* next();
         /// Return statistics
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Constrain future solutions to be better than \a b (should never be called)
         void constrain(const Space& b);
         /// Reset engine to restart at space \a s
         void reset(Space* s);
         /// Return no-goods
-        NoGoods& nogoods(void);
+        NoGoods& nogoods();
         /// Destructor
-        ~DFS(void);
+        ~DFS();
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #include <gecode/search/seq/dfs.hpp>
 

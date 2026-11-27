@@ -38,7 +38,7 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode::MiniModel {
 
     /// Non-linear arithmetic expressions over integer variables
     class GECODE_MINIMODEL_EXPORT ArithNonLinIntExpr : public NonLinIntExpr {
@@ -84,7 +84,7 @@ namespace Gecode { namespace MiniModel {
         ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
             : t(t0), b(b0), n(n0), a_int(0), a(allocate(n0)) {}
         /// Destructor
-        ~ArithNonLinIntExpr(void) override {
+        ~ArithNonLinIntExpr() override {
             if (a != nullptr)
                 heap.free<LinIntExpr>(a, n);
         }
@@ -95,9 +95,9 @@ namespace Gecode { namespace MiniModel {
             switch (t) {
             case ANLE_ABS: {
                 IntVar x = a[0].post(home, ipls);
-                if (x.min() >= 0)
+                if (x.min() >= 0) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     abs(home, x, y, ipls.abs());
                 }
@@ -108,11 +108,11 @@ namespace Gecode { namespace MiniModel {
                 } else if (n == 2) {
                     IntVar x0 = a[0].post(home, ipls);
                     IntVar x1 = a[1].post(home, ipls);
-                    if (x0.max() <= x1.min())
+                    if (x0.max() <= x1.min()) {
                         y = result(home, ret, x0);
-                    else if (x1.max() <= x0.min())
+                    } else if (x1.max() <= x0.min()) {
                         y = result(home, ret, x1);
-                    else {
+                    } else {
                         y = result(home, ret);
                         min(home, x0, x1, y, ipls.min2());
                     }
@@ -130,11 +130,11 @@ namespace Gecode { namespace MiniModel {
                 } else if (n == 2) {
                     IntVar x0 = a[0].post(home, ipls);
                     IntVar x1 = a[1].post(home, ipls);
-                    if (x0.max() <= x1.min())
+                    if (x0.max() <= x1.min()) {
                         y = result(home, ret, x1);
-                    else if (x1.max() <= x0.min())
+                    } else if (x1.max() <= x0.min()) {
                         y = result(home, ret, x0);
-                    else {
+                    } else {
                         y = result(home, ret);
                         max(home, x0, x1, y, ipls.max2());
                     }
@@ -150,15 +150,15 @@ namespace Gecode { namespace MiniModel {
                 assert(n == 2);
                 IntVar x0 = a[0].post(home, ipls);
                 IntVar x1 = a[1].post(home, ipls);
-                if (x0.assigned() && (x0.val() == 0))
+                if (x0.assigned() && (x0.val() == 0)) {
                     y = result(home, ret, x0);
-                else if (x0.assigned() && (x0.val() == 1))
+                } else if (x0.assigned() && (x0.val() == 1)) {
                     y = result(home, ret, x1);
-                else if (x1.assigned() && (x1.val() == 0))
+                } else if (x1.assigned() && (x1.val() == 0)) {
                     y = result(home, ret, x1);
-                else if (x1.assigned() && (x1.val() == 1))
+                } else if (x1.assigned() && (x1.val() == 1)) {
                     y = result(home, ret, x0);
-                else {
+                } else {
                     y = result(home, ret);
                     mult(home, x0, x1, y, ipls.mult());
                 }
@@ -168,11 +168,11 @@ namespace Gecode { namespace MiniModel {
                 IntVar x0 = a[0].post(home, ipls);
                 IntVar x1 = a[1].post(home, ipls);
                 rel(home, x1, IRT_NQ, 0);
-                if (x1.assigned() && (x1.val() == 1))
+                if (x1.assigned() && (x1.val() == 1)) {
                     y = result(home, ret, x0);
-                else if (x0.assigned() && (x0.val() == 0))
+                } else if (x0.assigned() && (x0.val() == 0)) {
                     y = result(home, ret, x0);
-                else {
+                } else {
                     y = result(home, ret);
                     div(home, x0, x1, y, ipls.div());
                 }
@@ -187,9 +187,9 @@ namespace Gecode { namespace MiniModel {
             case ANLE_SQR: {
                 assert(n == 1);
                 IntVar x = a[0].post(home, ipls);
-                if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
+                if (x.assigned() && ((x.val() == 0) || (x.val() == 1))) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     sqr(home, x, y, ipls.sqr());
                 }
@@ -197,9 +197,9 @@ namespace Gecode { namespace MiniModel {
             case ANLE_SQRT: {
                 assert(n == 1);
                 IntVar x = a[0].post(home, ipls);
-                if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
+                if (x.assigned() && ((x.val() == 0) || (x.val() == 1))) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     sqrt(home, x, y, ipls.sqrt());
                 }
@@ -207,9 +207,9 @@ namespace Gecode { namespace MiniModel {
             case ANLE_POW: {
                 assert(n == 1);
                 IntVar x = a[0].post(home, ipls);
-                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1)))
+                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1))) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     pow(home, x, a_int, y, ipls.pow());
                 }
@@ -217,9 +217,9 @@ namespace Gecode { namespace MiniModel {
             case ANLE_NROOT: {
                 assert(n == 1);
                 IntVar x = a[0].post(home, ipls);
-                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1)))
+                if (x.assigned() && (a_int > 0) && ((x.val() == 0) || (x.val() == 1))) {
                     y = result(home, ret, x);
-                else {
+                } else {
                     y = result(home, ret);
                     nroot(home, x, a_int, y, ipls.nroot());
                 }
@@ -278,7 +278,7 @@ namespace Gecode { namespace MiniModel {
         }
     };
     /// Check if \a e is of type \a t
-    bool
+    static bool
     has_type(const LinIntExpr& e, ArithNonLinIntExpr::ArithNonLinIntExprType t) {
         return e.nle() && dynamic_cast<ArithNonLinIntExpr*>(e.nle()) != nullptr &&
                dynamic_cast<ArithNonLinIntExpr*>(e.nle())->t == t;
@@ -290,16 +290,16 @@ namespace Gecode { namespace MiniModel {
 
     public:
         ArithNonLinIntExprGuard(ArithNonLinIntExpr* e0) : e(e0) {}
-        ~ArithNonLinIntExprGuard(void) {
+        ~ArithNonLinIntExprGuard() {
             delete e;
         }
         void
-        release(void) {
+        release() {
             e = nullptr;
         }
     };
 
-}} // namespace Gecode::MiniModel
+} // namespace Gecode::MiniModel
 
 namespace Gecode {
 

@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /*
      * Constructors and initialization
@@ -47,40 +47,40 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline FloatVal
-    ScaleView::scale(void) const {
+    ScaleView::scale() const {
         return a;
     }
     forceinline FloatVal
-    ScaleView::domain(void) const {
+    ScaleView::domain() const {
         return x.domain() * a;
     }
     forceinline FloatNum
-    ScaleView::min(void) const {
+    ScaleView::min() const {
         FloatVal c = x.min();
         c *= a;
         return c.min();
     }
     forceinline FloatNum
-    ScaleView::max(void) const {
+    ScaleView::max() const {
         FloatVal c = x.max();
         c *= a;
         return c.max();
     }
     forceinline FloatNum
-    ScaleView::med(void) const {
+    ScaleView::med() const {
         FloatVal c = x.med();
         c *= a;
         return (c.min() + c.max()) / 2;
     }
     forceinline FloatVal
-    ScaleView::val(void) const {
+    ScaleView::val() const {
         FloatVal c = x.val();
         c *= a;
         return c;
     }
 
     forceinline FloatNum
-    ScaleView::size(void) const {
+    ScaleView::size() const {
         FloatVal c = x.size();
         c *= a;
         return c.max();
@@ -91,7 +91,7 @@ namespace Gecode { namespace Float {
      *
      */
     forceinline bool
-    ScaleView::zero_in(void) const {
+    ScaleView::zero_in() const {
         return x.zero_in();
     }
     forceinline bool
@@ -214,6 +214,6 @@ namespace Gecode { namespace Float {
         return (x.base() == y.base()) && (x.scale() == y.scale());
     }
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 // STATISTICS: float-var

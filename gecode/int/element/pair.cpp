@@ -32,7 +32,7 @@
 
 #include <gecode/int/element.hh>
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     Actor*
     Pair::copy(Space& home) {
@@ -62,15 +62,15 @@ namespace Gecode { namespace Int { namespace Element {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a value or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next value (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Value access
         //@{
         /// Return current value
-        int val(void) const;
+        int val() const;
         //@}
     };
 
@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace Element {
         : x(x0), xv(x0), yv(y0), w(w0) {}
     template <class View>
     forceinline void
-    PairValues<View>::operator++(void) {
+    PairValues<View>::operator++() {
         ++xv;
         if (!xv()) {
             xv.init(x);
@@ -89,12 +89,12 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class View>
     forceinline bool
-    PairValues<View>::operator()(void) const {
+    PairValues<View>::operator()() const {
         return yv();
     }
     template <class View>
     forceinline int
-    PairValues<View>::val(void) const {
+    PairValues<View>::val() const {
         return xv.val() + w * yv.val();
     }
 
@@ -127,7 +127,8 @@ namespace Gecode { namespace Int { namespace Element {
         if (x0.assigned() && x1.assigned()) {
             GECODE_ME_CHECK(x2.eq(home, x0.val() + w * x1.val()));
             return home.ES_SUBSUMED(*this);
-        } else if (x1.assigned()) {
+        }
+        if (x1.assigned()) {
             OffsetView x0x1w(x0, x1.val() * w);
             GECODE_REWRITE(*this, (Rel::EqDom<OffsetView, IntView>::post(home(*this), x0x1w, x2)));
         }
@@ -178,7 +179,8 @@ namespace Gecode { namespace Int { namespace Element {
         if (x0.assigned() && x1.assigned()) {
             GECODE_ME_CHECK(x2.eq(home, x0.val() + w * x1.val()));
             return home.ES_SUBSUMED(*this);
-        } else if (x1.assigned()) {
+        }
+        if (x1.assigned()) {
             OffsetView x0x1w(x0.base(), x0.offset() + x1.val() * w);
             GECODE_REWRITE(*this, (Rel::EqDom<OffsetView, OffsetView>::post(home(*this), x0x1w, x2)));
         }
@@ -195,6 +197,6 @@ namespace Gecode { namespace Int { namespace Element {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop

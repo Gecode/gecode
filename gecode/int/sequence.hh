@@ -36,7 +36,7 @@
 #include <gecode/int.hh>
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Sequence {
+namespace Gecode::Int::Sequence {
 
     /**
      * \namespace Gecode::Int::Sequence
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
     public:
         /// Default constructor
-        ViewValSupportArray(void);
+        ViewValSupportArray();
         /// Copy constructor
         ViewValSupportArray(const ViewValSupportArray<View, Val, iss>&);
         /// Construct an ViewValSupportArray from \a x
@@ -78,13 +78,13 @@ namespace Gecode { namespace Int { namespace Sequence {
         /// Construct an ViewValSupportArray of size \a n
         ViewValSupportArray(Space& home, int n);
         /// Return the current size
-        int size(void) const;
-        /// Access element \a n
-        ViewValSupport<View, Val, iss>& operator[](int n);
+        int size() const;
+        /// Access element \a i
+        ViewValSupport<View, Val, iss>& operator[](int i);
         /// Access element \a n
         const ViewValSupport<View, Val, iss>& operator[](int) const;
         /// Cloning
-        void update(Space& home, ViewValSupportArray<View, Val, iss>& x);
+        void update(Space& home, ViewValSupportArray<View, Val, iss>& a);
         /// Propagate
         ExecStatus propagate(Space& home, ViewArray<View>& a, const Val& s, int q, int l, int u);
         /// Advise
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Sequence {
         bool tofail;
     };
 
-}}} // namespace Gecode::Int::Sequence
+} // namespace Gecode::Int::Sequence
 
 #include <gecode/int/sequence/set-op.hpp>
 #include <gecode/int/sequence/violations.hpp>

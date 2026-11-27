@@ -30,16 +30,17 @@
  *
  */
 
+#include <algorithm>
 #include <gecode/search.hh>
 
 #include <cmath>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     const Options Options::def;
 
     Options
-    Options::expand(void) const {
+    Options::expand() const {
 #ifdef GECODE_HAS_THREADS
         double t = threads;
         if (t <= -1.0) {
@@ -52,8 +53,7 @@ namespace Gecode { namespace Search {
             t = t * Support::Thread::npu();
         }
         t = floor(t + 0.5);
-        if (t < 1.0)
-            t = 1.0;
+        t = std::max(t, 1.0);
         Options o(*this);
         o.threads = t;
         return o;
@@ -62,6 +62,6 @@ namespace Gecode { namespace Search {
 #endif
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

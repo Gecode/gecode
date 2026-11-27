@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     template <class T>
     forceinline
@@ -42,24 +42,24 @@ namespace Gecode { namespace Search {
         : e(e0) {}
     template <class T>
     forceinline T*
-    Base<T>::next(void) {
+    Base<T>::next() {
         return dynamic_cast<T*>(e->next());
     }
     template <class T>
     forceinline Statistics
-    Base<T>::statistics(void) const {
+    Base<T>::statistics() const {
         return e->statistics();
     }
     template <class T>
     forceinline EndReason
-    Base<T>::end_reason(void) const {
+    Base<T>::end_reason() const {
         return e->end_reason();
     }
     template <class T>
-    forceinline Base<T>::~Base(void) {
+    forceinline Base<T>::~Base() {
         delete e;
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

@@ -49,12 +49,12 @@
 #include <thread>
 #endif
 
-#if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
 #include <csignal>
 #include <unistd.h>
 #endif
 
-namespace Test { namespace FlatZinc {
+namespace Test::FlatZinc {
 
     namespace {
         const char* blackbox_decl = "predicate gecode_blackbox("
@@ -106,7 +106,7 @@ namespace Test { namespace FlatZinc {
 
         void
         reset_log(const std::string& log) {
-            std::remove(log.c_str());
+            (void)std::remove(log.c_str());
         }
 
         std::vector<std::pair<std::string, std::string>>
@@ -116,7 +116,7 @@ namespace Test { namespace FlatZinc {
             std::string event;
             std::string id;
             while (in >> event >> id) {
-                entries.push_back(std::make_pair(event, id));
+                entries.emplace_back(event, id);
             }
             return entries;
         }
@@ -178,9 +178,8 @@ namespace Test { namespace FlatZinc {
             instances.insert(prototype);
             return (entries.size() == 10) && (entries[0].first == "init") && (inits == 1) && (clone_count == 2) &&
                    (start_count == 2) && (ready_count == 2) && (free_count == 3) && (clones.size() == 2) &&
-                   (clones.find(prototype) == clones.end()) && (starts == clones) && (ready == clones) &&
-                   (freed == instances) && frees_after_calls &&
-                   (calls == std::vector<std::string>{"start", "start", "ready", "ready"});
+                   (!clones.contains(prototype)) && (starts == clones) && (ready == clones) && (freed == instances) &&
+                   frees_after_calls && (calls == std::vector<std::string>{"start", "start", "ready", "ready"});
         }
 
         bool
@@ -211,12 +210,12 @@ namespace Test { namespace FlatZinc {
             return true;
         }
 
-#if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
         bool
         descendant_gone(const std::string& output, const std::string& log) {
             const std::vector<std::pair<std::string, std::string>> entries = read_log(log);
             reset_log(log);
-            if (output.find("y = 1;") == std::string::npos) {
+            if (!output.contains("y = 1;")) {
                 return false;
             }
             for (const auto& entry : entries) {
@@ -242,9 +241,9 @@ namespace Test { namespace FlatZinc {
     namespace Blackbox {
         class NativeProtocol : public Base {
         public:
-            NativeProtocol(void) : Base("FlatZinc::blackbox::native_protocol", TestTags::check()) {}
+            NativeProtocol() : Base("FlatZinc::blackbox::native_protocol", TestTags::check()) {}
             bool
-            run(void) override {
+            run() override {
                 std::vector<int64_t> int_input{-2};
                 std::vector<double> float_input{1.25};
                 std::vector<int64_t> int_output(1);
@@ -264,7 +263,7 @@ namespace Test { namespace FlatZinc {
 
 #ifdef GECODE_HAS_THREADS
         template <class T>
-        bool
+        static bool
         parallel_runs(T& black_box) {
             bool echoed[2] = {false, false};
             std::exception_ptr exception[2];
@@ -281,7 +280,7 @@ namespace Test { namespace FlatZinc {
             };
             std::thread first;
             std::thread second;
-            auto join = [&first, &second](void) {
+            auto join = [&first, &second]() {
                 if (first.joinable()) {
                     first.join();
                 }
@@ -310,13 +309,14 @@ namespace Test { namespace FlatZinc {
             NativeExecParallelSessions(const std::string& executable0, const std::string& log0)
                 : Base("FlatZinc::blackbox::native_exec_parallel_sessions"), executable(executable0), log(log0) {}
             bool
-            run(void) override {
+            run() override {
                 reset_log(log);
                 bool ok = false;
                 try {
                     Gecode::FlatZinc::BlackBoxExec black_box(executable, {"normal", log});
                     ok = parallel_runs(black_box) && concurrent_log(log);
                 } catch (...) {
+                    // Ignored: the check after this block reports the failure
                 }
                 reset_log(log);
                 return ok;
@@ -333,7 +333,7 @@ namespace Test { namespace FlatZinc {
             NativeDllParallelCalls(const std::string& library0, const std::string& log0)
                 : Base("FlatZinc::blackbox::native_dll_parallel_calls"), library(library0), log(log0) {}
             bool
-            run(void) override {
+            run() override {
                 reset_log(log);
                 bool ok = false;
                 try {
@@ -343,6 +343,7 @@ namespace Test { namespace FlatZinc {
                     }
                     ok = ok && dll_parallel_lifecycle(log);
                 } catch (...) {
+                    // Ignored: the check after this block reports the failure
                 }
                 reset_log(log);
                 return ok;
@@ -353,7 +354,7 @@ namespace Test { namespace FlatZinc {
         class Create {
         public:
             /// Perform creation and registration
-            Create(void) {
+            Create() {
                 (void)new NativeProtocol;
                 (void)new FlatZincErrorTest(TestTags::check(), "blackbox::malformed_annotation",
                                             std::string(blackbox_decl) +
@@ -515,7 +516,7 @@ namespace Test { namespace FlatZinc {
                     }
 #endif
 
-#if defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
+#ifdef GECODE_HAS_POSIX_BLACKBOX_EXEC
                     const std::string descendant_log = fixture_log("exec_descendant");
                     if (!descendant_log.empty()) {
                         (void)new FlatZincTest(
@@ -530,7 +531,7 @@ namespace Test { namespace FlatZinc {
                             [descendant_log](const std::string& output) {
                                 return descendant_gone(output, descendant_log);
                             },
-                            [descendant_log](void) { reset_log(descendant_log); });
+                            [descendant_log]() { reset_log(descendant_log); });
                     }
 #endif
                 }
@@ -576,7 +577,7 @@ namespace Test { namespace FlatZinc {
                                 reset_log(dll_model_log);
                                 return ok;
                             },
-                            [dll_model_log](void) { reset_log(dll_model_log); });
+                            [dll_model_log]() { reset_log(dll_model_log); });
                     }
 
 #ifdef GECODE_HAS_THREADS
@@ -603,6 +604,6 @@ namespace Test { namespace FlatZinc {
         Create c;
     } // namespace Blackbox
 
-}} // namespace Test::FlatZinc
+} // namespace Test::FlatZinc
 
 // STATISTICS: test-flatzinc

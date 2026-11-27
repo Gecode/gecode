@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for adding a single range to a range iterator
@@ -51,17 +51,17 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        AddRange(void) = default;
-        /// Initialize with ranges \a i and range \a min to \a max
-        AddRange(I& i, int min, int max);
-        /// Initialize with ranges \a i and range \a min to \a max
-        void init(I& i, int min, int max);
+        AddRange() = default;
+        /// Initialize with ranges \a i and range \a r_min0 to \a r_max0
+        AddRange(I& i, int r_min0, int r_max0);
+        /// Initialize with ranges \a i and range \a r_min0 to \a r_max0
+        void init(I& i, int r_min0, int r_max0);
         //@}
 
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -76,7 +76,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        SubRange(void) = default;
+        SubRange() = default;
         /// Initialize with ranges \a i and range \a min to \a max
         SubRange(I& i, int min, int max);
         /// Initialize with ranges \a i and range \a min to \a max
@@ -86,7 +86,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I>
     forceinline void
-    AddRange<I>::operator++(void) {
+    AddRange<I>::operator++() {
         if (i()) {
             mi = r_min + i.min();
             ma = r_max + i.max();
@@ -127,6 +127,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
         AddRange<I>::init(i, -r_max, -r_min);
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

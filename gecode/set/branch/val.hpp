@@ -45,37 +45,37 @@ namespace Gecode {
         : ValBranch<SetVar>(std::move(v), std::move(c)), s(SEL_VAL_COMMIT) {}
 
     forceinline SetValBranch::Select
-    SetValBranch::select(void) const {
+    SetValBranch::select() const {
         return s;
     }
 
     inline SetValBranch
-    SET_VAL_MIN_INC(void) {
+    SET_VAL_MIN_INC() {
         return SetValBranch(SetValBranch::SEL_MIN_INC);
     }
 
     inline SetValBranch
-    SET_VAL_MIN_EXC(void) {
+    SET_VAL_MIN_EXC() {
         return SetValBranch(SetValBranch::SEL_MIN_EXC);
     }
 
     inline SetValBranch
-    SET_VAL_MED_INC(void) {
+    SET_VAL_MED_INC() {
         return SetValBranch(SetValBranch::SEL_MED_INC);
     }
 
     inline SetValBranch
-    SET_VAL_MED_EXC(void) {
+    SET_VAL_MED_EXC() {
         return SetValBranch(SetValBranch::SEL_MED_EXC);
     }
 
     inline SetValBranch
-    SET_VAL_MAX_INC(void) {
+    SET_VAL_MAX_INC() {
         return SetValBranch(SetValBranch::SEL_MAX_INC);
     }
 
     inline SetValBranch
-    SET_VAL_MAX_EXC(void) {
+    SET_VAL_MAX_EXC() {
         return SetValBranch(SetValBranch::SEL_MAX_EXC);
     }
 

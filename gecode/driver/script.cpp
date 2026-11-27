@@ -35,7 +35,7 @@
 
 #include <cmath>
 
-namespace Gecode { namespace Driver {
+namespace Gecode::Driver {
 
     void
     stop(Support::Timer& timer, std::ostream& os) {
@@ -68,7 +68,7 @@ namespace Gecode { namespace Driver {
     }
 
     double
-    am(double t[], unsigned int n) {
+    am(const double t[], unsigned int n) {
         if (n < 1)
             return 0.0;
         double s = 0;
@@ -92,6 +92,6 @@ namespace Gecode { namespace Driver {
 
     bool CombinedStop::sigint;
 
-}} // namespace Gecode::Driver
+} // namespace Gecode::Driver
 
 // STATISTICS: driver-any

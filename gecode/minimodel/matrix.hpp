@@ -60,7 +60,7 @@ namespace Gecode {
 
     template <class A>
     Slice<A>&
-    Slice<A>::reverse(void) {
+    Slice<A>::reverse() {
         for (int i = 0; i < _r.size() / 2; i++)
             std::swap(_r[i], _r[_r.size() - i - 1]);
         return *this;
@@ -68,27 +68,18 @@ namespace Gecode {
 
     template <class A>
     inline Slice<A>::
-    operator ArgsType(void) {
+    operator ArgsType() const {
         return _r;
     }
+    // MSVC needs the qualified name in this conversion function
     template <class A>
     inline Slice<A>::
-    operator Matrix<typename Slice<A>::ArgsType>(void) {
-        return Matrix<typename Slice<A>::ArgsType>(_r, _tc - _fc, _tr - _fr);
-    }
-    template <class A>
-    inline Slice<A>::
-    operator const ArgsType(void) const {
-        return _r;
-    }
-    template <class A>
-    inline Slice<A>::
-    operator const Matrix<typename Slice<A>::ArgsType>(void) const {
+    operator Matrix<typename Slice<A>::ArgsType>() const {
         return Matrix<typename Slice<A>::ArgsType>(_r, _tc - _fc, _tr - _fr);
     }
 
     template <class A>
-    typename Slice<A>::ArgsType
+    Slice<A>::ArgsType
     operator+(const Slice<A>& x, const Slice<A>& y) {
         typename Slice<A>::ArgsType xx = x;
         typename Slice<A>::ArgsType yy = y;
@@ -96,28 +87,28 @@ namespace Gecode {
     }
 
     template <class A>
-    typename Slice<A>::ArgsType
+    Slice<A>::ArgsType
     operator+(const Slice<A>& x, const typename ArrayTraits<A>::ArgsType& y) {
         typename Slice<A>::ArgsType xx = x;
         return xx + y;
     }
 
     template <class A>
-    typename Slice<A>::ArgsType
+    Slice<A>::ArgsType
     operator+(const typename ArrayTraits<A>::ArgsType& x, const Slice<A>& y) {
         typename Slice<A>::ArgsType yy = y;
         return x + yy;
     }
 
     template <class A>
-    typename Slice<A>::ArgsType
+    Slice<A>::ArgsType
     operator+(const Slice<A>& x, const typename ArrayTraits<A>::ValueType& y) {
         typename Slice<A>::ArgsType xx = x;
         return xx + y;
     }
 
     template <class A>
-    typename Slice<A>::ArgsType
+    Slice<A>::ArgsType
     operator+(const typename ArrayTraits<A>::ValueType& x, const Slice<A>& y) {
         typename Slice<A>::ArgsType yy = y;
         return x + yy;
@@ -141,22 +132,22 @@ namespace Gecode {
 
     template <class A>
     forceinline int
-    Matrix<A>::width(void) const {
+    Matrix<A>::width() const {
         return _w;
     }
     template <class A>
     forceinline int
-    Matrix<A>::height(void) const {
+    Matrix<A>::height() const {
         return _h;
     }
     template <class A>
-    inline typename Matrix<A>::ArgsType const
-    Matrix<A>::get_array(void) const {
+    inline Matrix<A>::ArgsType
+    Matrix<A>::get_array() const {
         return ArgsType(_a);
     }
 
     template <class A>
-    forceinline typename Matrix<A>::ValueType&
+    forceinline Matrix<A>::ValueType&
     Matrix<A>::operator()(int c, int r) {
         if ((c >= _w) || (r >= _h))
             throw MiniModel::ArgumentOutOfRange("Matrix::operator ()");
@@ -164,7 +155,7 @@ namespace Gecode {
     }
 
     template <class A>
-    forceinline const typename Matrix<A>::ValueType&
+    forceinline const Matrix<A>::ValueType&
     Matrix<A>::operator()(int c, int r) const {
         if ((c >= _w) || (r >= _h))
             throw MiniModel::ArgumentOutOfRange("Matrix::operator ()");
@@ -207,7 +198,7 @@ namespace Gecode {
     template <class Char, class Traits, class A>
     std::basic_ostream<Char, Traits>&
     operator<<(std::basic_ostream<Char, Traits>& os, const Slice<A>& s) {
-        return os << static_cast<typename Slice<A>::ArgsType>(s);
+        return os << static_cast<Slice<A>::ArgsType>(s);
     }
 
     forceinline void

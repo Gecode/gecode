@@ -36,7 +36,7 @@
 
 #include <gecode/int/bool.hh>
 
-namespace Gecode { namespace Int { namespace Linear {
+namespace Gecode::Int::Linear {
 
     /*
      * Baseclass for integer Boolean sum using dependencies
@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class VX>
     forceinline void
-    LinBoolInt<VX>::normalize(void) {
+    LinBoolInt<VX>::normalize() {
         if (n_as != n_hs) {
             // Remove views for which no more subscriptions exist
             int n_x = x.size();
@@ -164,8 +164,7 @@ namespace Gecode { namespace Int { namespace Linear {
             return ES_FAILED;
         if ((c <= 0) || (c == n))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX>
@@ -279,8 +278,7 @@ namespace Gecode { namespace Int { namespace Linear {
             return ES_FAILED;
         if ((c == 0) || (c == n))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX>
@@ -508,7 +506,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     template <class VX, class VB>
     forceinline void
-    ReLinBoolInt<VX, VB>::normalize(void) {
+    ReLinBoolInt<VX, VB>::normalize() {
         if (n_s != x.size()) {
             int n_x = x.size();
             for (int i = n_x; i--;)
@@ -551,7 +549,7 @@ namespace Gecode { namespace Int { namespace Linear {
     class BoolNegTraits<BoolView> {
     public:
         /// The negated view
-        typedef NegBoolView NegView;
+        using NegView = NegBoolView;
         /// Return negated View
         static NegBoolView
         neg(BoolView x) {
@@ -565,7 +563,7 @@ namespace Gecode { namespace Int { namespace Linear {
     class BoolNegTraits<NegBoolView> {
     public:
         /// The negated view
-        typedef BoolView NegView;
+        using NegView = BoolView;
         /// Return negated View
         static BoolView
         neg(NegBoolView x) {
@@ -601,8 +599,7 @@ namespace Gecode { namespace Int { namespace Linear {
         n_s--;
         if ((n_s < c) || (c <= 0))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX, class VB, ReifyMode rm>
@@ -710,8 +707,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
         if ((c < 0) || (c > n_s) || (n_s == 0))
             return ES_NOFIX;
-        else
-            return ES_FIX;
+        return ES_FIX;
     }
 
     template <class VX, class VB, ReifyMode rm>
@@ -785,6 +781,6 @@ namespace Gecode { namespace Int { namespace Linear {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Linear
+} // namespace Gecode::Int::Linear
 
 // STATISTICS: int-prop

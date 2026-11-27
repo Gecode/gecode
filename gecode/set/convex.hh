@@ -41,7 +41,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Convex {
+namespace Gecode::Set::Convex {
 
     /**
      * \namespace Gecode::Set::Convex
@@ -93,7 +93,7 @@ namespace Gecode { namespace Set { namespace Convex {
         static ExecStatus post(Home home, SetView x, SetView y);
     };
 
-}}} // namespace Gecode::Set::Convex
+} // namespace Gecode::Set::Convex
 
 #include <gecode/set/convex/conv.hpp>
 #include <gecode/set/convex/hull.hpp>

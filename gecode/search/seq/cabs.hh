@@ -38,7 +38,7 @@
 #include <gecode/search/seq/choice-expansion.hh>
 
 #ifdef GECODE_HAS_EXPERIMENTAL
-namespace Gecode { namespace Search { namespace Seq {
+namespace Gecode::Search::Seq {
 
     /// Sequential complete anytime beam search
     class CABS : public Worker {
@@ -78,7 +78,7 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Make \a s the incumbent and return a copy, if it improves
         Space* publish(std::unique_ptr<Space> s);
         /// Move to the next layer or pass, false if done
-        bool advance(void);
+        bool advance();
         /// Start search from root \a s
         void initialize(Space* s, bool clone);
 
@@ -86,20 +86,20 @@ namespace Gecode { namespace Search { namespace Seq {
         /// Initialize for space \a s with options \a o
         CABS(Space* s, const Options& o);
         /// Return next better solution (nullptr if none or stopped)
-        Space* next(void);
+        Space* next();
         /// Return statistics
-        Statistics statistics(void) const;
+        Statistics statistics() const;
         /// Return why next() returned no solution, Incomplete at the width or frontier limit
-        EndReason end_reason(void) const;
-        /// Constrain future solutions to be better than \a b
-        void constrain(const Space& b);
+        EndReason end_reason() const;
+        /// Constrain future solutions to be better than \a s
+        void constrain(const Space& s);
         /// Reset engine to restart at space \a s
         void reset(Space* s);
         /// Return no-goods (none)
-        NoGoods& nogoods(void);
+        NoGoods& nogoods();
     };
 
-}}} // namespace Gecode::Search::Seq
+} // namespace Gecode::Search::Seq
 
 #endif
 

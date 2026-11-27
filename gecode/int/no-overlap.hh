@@ -40,7 +40,7 @@
  * \brief %No-overlap propagators
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /**
      * \brief Dimension combining coordinate and integer size information
@@ -60,18 +60,18 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     public:
         /// Default constructor
-        FixDim(void);
+        FixDim();
         /// Constructor
         FixDim(IntView c, int s);
 
         /// Return smallest start coordinate
-        int ssc(void) const;
+        int ssc() const;
         /// Return largest start coordinate
-        int lsc(void) const;
+        int lsc() const;
         /// Return smallest end coordinate
-        int sec(void) const;
+        int sec() const;
         /// Return largest end coordinate
-        int lec(void) const;
+        int lec() const;
 
         /// Dimension must not overlap with \a d
         ExecStatus no_overlap(Space& home, FixDim& d);
@@ -107,18 +107,18 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     public:
         /// Default constructor
-        FlexDim(void) = default;
+        FlexDim() = default;
         /// Constructor
         FlexDim(IntView c0, IntView s, IntView c1);
 
         /// Return smallest start coordinate
-        int ssc(void) const;
+        int ssc() const;
         /// Return largest start coordinate
-        int lsc(void) const;
+        int lsc() const;
         /// Return smallest end coordinate
-        int sec(void) const;
+        int sec() const;
         /// Return largest end coordinate
-        int lec(void) const;
+        int lec() const;
 
         /// Dimension must not overlap with \a d
         ExecStatus no_overlap(Space& home, FlexDim& d);
@@ -134,11 +134,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         void reschedule(Space& home, Propagator& p);
     };
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/dim.hpp>
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /**
      * \brief Mandatory box class
@@ -155,14 +155,14 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         /// Access to dimension \a i
         Dim& operator[](int i);
         /// Return number of dimensions
-        static int dim(void);
+        static int dim();
 
         /// Whether box is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether box is optional
-        bool optional(void) const;
+        bool optional() const;
         /// Whether box is excluded
-        bool excluded(void) const;
+        bool excluded() const;
 
         /// Exclude box
         ExecStatus exclude(Space& home);
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         ExecStatus no_overlap(Space& home, ManBox<Dim, n>& b);
 
         /// Update box during cloning
-        void update(Space& home, ManBox<Dim, n>& r);
+        void update(Space& home, ManBox<Dim, n>& b);
 
         /// Subscribe propagator \a p to box
         void subscribe(Space& home, Propagator& p);
@@ -200,17 +200,17 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         /// Set Boolean view to \a o
         void optional(BoolView o);
         /// Whether box is mandatory
-        bool mandatory(void) const;
+        bool mandatory() const;
         /// Whether box is optional
-        bool optional(void) const;
+        bool optional() const;
         /// Whether box is excluded
-        bool excluded(void) const;
+        bool excluded() const;
 
         /// Exclude box
         ExecStatus exclude(Space& home);
 
         /// Update box during cloning
-        void update(Space& home, OptBox<Dim, n>& r);
+        void update(Space& home, OptBox<Dim, n>& b);
 
         /// Subscribe propagator \a p to box
         void subscribe(Space& home, Propagator& p);
@@ -220,11 +220,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         void reschedule(Space& home, Propagator& p);
     };
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/box.hpp>
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     /**
      * \brief Base class for no-overlap propagator
@@ -318,7 +318,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 #include <gecode/int/no-overlap/base.hpp>
 #include <gecode/int/no-overlap/man.hpp>

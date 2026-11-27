@@ -45,10 +45,10 @@
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/blackbox.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     Registry&
-    registry(void) {
+    registry() {
         static Registry r;
         return r;
     }
@@ -1317,9 +1317,9 @@ namespace Gecode { namespace FlatZinc {
                     if ((targets.size() != 0) && ((targets.min() < 1) || (targets.max() > q)))
                         throw FlatZinc::Error("Registry", "invalid NFA transition");
                     for (IntSetValues target(targets); target(); ++target)
-                        transitions.push_back(DFA::Transition(state + 1, first_symbol + symbol, target.val()));
+                        transitions.emplace_back(state + 1, first_symbol + symbol, target.val());
                 }
-            transitions.push_back(DFA::Transition(-1, 0, 0));
+            transitions.emplace_back(-1, 0, 0);
             std::vector<int> accepting;
             for (IntSetValues final(finals); final(); ++final)
                 accepting.push_back(final.val());
@@ -1633,7 +1633,8 @@ namespace Gecode { namespace FlatZinc {
             bool has_exec = (ann != nullptr) && ann->has_call("blackbox_exec");
             if (has_dll && has_exec) {
                 throw FlatZinc::Error("Registry", "Blackbox constraint has multiple execution method annotations.");
-            } else if (has_dll) {
+            }
+            if (has_dll) {
                 c = ann->get_call("blackbox_dll");
                 mode = "dll";
             } else if (has_exec) {
@@ -1659,8 +1660,8 @@ namespace Gecode { namespace FlatZinc {
                                                       "of strings.");
                 }
                 AST::Array* al = arr->a[1]->get_array();
-                for (unsigned int i = 0; i < al->a.size(); i++) {
-                    args.push_back(string_arg(al->a[i], "argument"));
+                for (auto& arg : al->a) {
+                    args.push_back(string_arg(arg, "argument"));
                 }
             } else {
                 target = string_arg(c->args, "target");
@@ -1803,10 +1804,10 @@ namespace Gecode { namespace FlatZinc {
                 return;
             }
             int lo = Int::Limits::max, hi = Int::Limits::min, n = 0;
-            for (int i = 0; i < x.size(); i++)
-                if (!(x[i].assigned() && (x[i].val() == c))) {
-                    lo = std::min(lo, x[i].min());
-                    hi = std::max(hi, x[i].max());
+            for (auto& xi : x)
+                if (!(xi.assigned() && (xi.val() == c))) {
+                    lo = std::min(lo, xi.min());
+                    hi = std::max(hi, xi.max());
                     n++;
                 }
             if (n < 2)
@@ -1836,8 +1837,8 @@ namespace Gecode { namespace FlatZinc {
             if ((x.size() != y.size()) || (x.size() != z.size()))
                 throw FlatZinc::Error("Registry", "sort arrays must have equal lengths");
             int offset = ce[3]->get_int();
-            for (int i = 0; i < z.size(); i++)
-                z[i] = expr(s, z[i] - offset);
+            for (auto& zi : z)
+                zi = expr(s, zi - offset);
             IntVarArgs xyz;
             xyz << x << y << z;
             unshare(s, xyz);
@@ -2050,7 +2051,7 @@ namespace Gecode { namespace FlatZinc {
 
         class BuiltinPosters {
         public:
-            BuiltinPosters(void) {
+            BuiltinPosters() {
                 registry().add("all_different_int", &p_distinct);
                 registry().add("all_different_offset", &p_distinct_offset);
                 registry().add("gecode_all_different_offset_fzn", &p_distinct_offset);
@@ -2294,6 +2295,6 @@ namespace Gecode { namespace FlatZinc {
         BuiltinPosters builtin_posters;
 
     } // namespace
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-any

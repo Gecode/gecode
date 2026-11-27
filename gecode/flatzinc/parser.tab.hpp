@@ -107,7 +107,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 644 "./gecode/flatzinc/parser.yxx"
+#line 649 "./gecode/flatzinc/parser.yxx"
  int int_value; char* string_value; bool bool_value; double float_value;
          std::vector<int>* set_values;
          Gecode::FlatZinc::AST::SetLit* set_literal;

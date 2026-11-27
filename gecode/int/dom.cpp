@@ -49,8 +49,8 @@ namespace Gecode {
         using namespace Int;
         Limits::check(n, "Int::dom");
         GECODE_POST;
-        for (int i = 0; i < x.size(); i++) {
-            IntView xv(x[i]);
+        for (auto xi : x) {
+            IntView xv(xi);
             GECODE_ME_FAIL(xv.eq(home, n));
         }
     }
@@ -72,8 +72,8 @@ namespace Gecode {
         Limits::check(min, "Int::dom");
         Limits::check(max, "Int::dom");
         GECODE_POST;
-        for (int i = 0; i < x.size(); i++) {
-            IntView xv(x[i]);
+        for (auto xi : x) {
+            IntView xv(xi);
             GECODE_ME_FAIL(xv.gq(home, min));
             GECODE_ME_FAIL(xv.lq(home, max));
         }
@@ -96,9 +96,9 @@ namespace Gecode {
         Limits::check(is.min(), "Int::dom");
         Limits::check(is.max(), "Int::dom");
         GECODE_POST;
-        for (int i = 0; i < x.size(); i++) {
+        for (auto xi : x) {
             IntSetRanges ris(is);
-            IntView xv(x[i]);
+            IntView xv(xi);
             GECODE_ME_FAIL(xv.inter_r(home, ris, false));
         }
     }

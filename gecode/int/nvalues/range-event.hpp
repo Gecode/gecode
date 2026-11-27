@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode::Int::NValues {
 
     forceinline bool
     RangeEvent::operator<(RangeEvent re) const {
@@ -41,6 +41,6 @@ namespace Gecode { namespace Int { namespace NValues {
         return false;
     }
 
-}}} // namespace Gecode::Int::NValues
+} // namespace Gecode::Int::NValues
 
 // STATISTICS: int-prop

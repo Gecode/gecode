@@ -35,13 +35,13 @@
 
 #include <gecode/int/branch.hh>
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode::Int::Branch {
 
     /// Standard view/value selectors over the materialized prefix
     template <class View, class Filter, int n>
     class OpenListBrancher : public Brancher {
     protected:
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         OpenViewList<View> list;
         ViewSel<View>* vs[n];
         /// Binary value selector, or null for one alternative per domain value
@@ -341,7 +341,7 @@ namespace Gecode { namespace Int { namespace Branch {
         while ((n < 4) && (selectors[n - 1].select() != VarBranch::SEL_NONE) &&
                (selectors[n - 1].select() != VarBranch::SEL_RND) && (selectors[n].select() != VarBranch::SEL_NONE))
             n++;
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         typename ArrayTraits<VarArgArray<Var>>::ArgsType x(list.known_length());
         for (int i = 0; i < x.size(); i++)
             x[i] = list[i];
@@ -367,7 +367,7 @@ namespace Gecode { namespace Int { namespace Branch {
         }
     }
 
-}}} // namespace Gecode::Int::Branch
+} // namespace Gecode::Int::Branch
 
 #endif
 

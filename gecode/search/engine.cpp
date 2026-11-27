@@ -33,9 +33,9 @@
 #include <gecode/search.hh>
 #include <gecode/search/worker-control.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
-    Engine::Engine(void) : worker_control() {}
+    Engine::Engine() = default;
 
     Engine::Engine(const Options& o, unsigned int capacity) : worker_control(o.worker_control) {
         WorkerControlAccess::attach(worker_control, capacity);
@@ -51,11 +51,11 @@ namespace Gecode { namespace Search {
         (void)s;
     }
     NoGoods&
-    Engine::nogoods(void) {
+    Engine::nogoods() {
         return NoGoods::eng;
     }
 
-    Engine::~Engine(void) {
+    Engine::~Engine() {
         WorkerControlAccess::detach(worker_control);
     }
 
@@ -63,8 +63,8 @@ namespace Gecode { namespace Search {
      * Defined out of line so that the vtable, and with it the destructor of
      * the options, is only emitted in the search library.
      */
-    Builder::~Builder(void) = default;
+    Builder::~Builder() = default;
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

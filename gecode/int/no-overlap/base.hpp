@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NoOverlap {
+namespace Gecode::Int::NoOverlap {
 
     template <class Box>
     forceinline
@@ -86,6 +86,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
             b[i].reschedule(home, *this);
     }
 
-}}} // namespace Gecode::Int::NoOverlap
+} // namespace Gecode::Int::NoOverlap
 
 // STATISTICS: int-prop

@@ -62,7 +62,7 @@ namespace Gecode {
         /// Initialize choice for brancher \a b, number of alternatives \a a, and position \a p
         PosChoice(const Brancher& b, unsigned int a, const Pos& p);
         /// Return position in array
-        const Pos& pos(void) const;
+        const Pos& pos() const;
         /// Archive into \a e
         void archive(Archive& e) const override;
     };
@@ -77,7 +77,7 @@ namespace Gecode {
     class ViewBrancher : public Brancher {
     protected:
         /// The corresponding variable
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         /// Views to branch on
         ViewArray<View> x;
         /// Unassigned views start at x[start]
@@ -124,7 +124,7 @@ namespace Gecode {
     PosChoice::PosChoice(const Brancher& b, unsigned int a, const Pos& p)
         : Choice(b, a), _pos(p) {}
     forceinline const Pos&
-    PosChoice::pos(void) const {
+    PosChoice::pos() const {
         return _pos;
     }
     forceinline void
@@ -143,6 +143,7 @@ namespace Gecode {
             // Key each selector by brancher and role; value selectors use role 0.
             vs[i]->random_split(id());
             vs[i]->random_split(1U + static_cast<unsigned int>(i));
+            // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.rand): a member random(), not the C library function
             random_state = random_state || vs[i]->random();
         }
         for (int i = 0; i < n; i++)

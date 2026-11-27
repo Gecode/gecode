@@ -35,7 +35,7 @@
 
 #include <gecode/set.hh>
 
-namespace Gecode { namespace Set { namespace Distinct {
+namespace Gecode::Set::Distinct {
 
     /**
      * \namespace Gecode::Set::Distinct
@@ -66,7 +66,7 @@ namespace Gecode { namespace Set { namespace Distinct {
         static ExecStatus post(Home home, ViewArray<SetView> x, unsigned int c);
     };
 
-}}} // namespace Gecode::Set::Distinct
+} // namespace Gecode::Set::Distinct
 
 #include <gecode/set/distinct/atmostOne.hpp>
 

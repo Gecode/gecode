@@ -44,7 +44,7 @@
  * \brief Value precedence propagators
  */
 
-namespace Gecode { namespace Int { namespace Precede {
+namespace Gecode::Int::Precede {
 
     /**
      * \brief Single value precedence propagator
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Precede {
         static ExecStatus post(Home home, ViewArray<View>& x, int s, int t);
     };
 
-}}} // namespace Gecode::Int::Precede
+} // namespace Gecode::Int::Precede
 
 #include <gecode/int/precede/single.hpp>
 

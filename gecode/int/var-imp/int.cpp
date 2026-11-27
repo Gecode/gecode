@@ -36,7 +36,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     forceinline bool
     IntVarImp::closer_min(int n) const {
@@ -46,7 +46,7 @@ namespace Gecode { namespace Int {
     }
 
     int
-    IntVarImp::med(void) const {
+    IntVarImp::med() const {
         // Computes the median
         if (fst() == nullptr)
             return (dom.min() + dom.max()) / 2 - ((dom.min() + dom.max()) % 2 < 0 ? 1 : 0);
@@ -75,16 +75,15 @@ namespace Gecode { namespace Int {
                 c = n;
             }
             return (m >= c->min());
-        } else {
-            const RangeList* n = nullptr;
-            const RangeList* c = lst();
-            while (m < c->min()) {
-                const RangeList* p = c->prev(n);
-                n = c;
-                c = p;
-            }
-            return (m <= c->max());
         }
+        const RangeList* n = nullptr;
+        const RangeList* c = lst();
+        while (m < c->min()) {
+            const RangeList* p = c->prev(n);
+            n = c;
+            c = p;
+        }
+        return (m <= c->max());
     }
 
     /*
@@ -427,6 +426,6 @@ namespace Gecode { namespace Int {
         IntVarImpBase::subscribe(home, a, dom.min() == dom.max(), fail);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

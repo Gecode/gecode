@@ -32,7 +32,7 @@
 
 #include <gecode/int/rel.hh>
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     forceinline
     Pair::Pair(Home home, IntView x0, IntView x1, IntView x2, int w0)
@@ -96,6 +96,6 @@ namespace Gecode { namespace Int { namespace Element {
     PairWithOffsets::PairWithOffsets(Space& home, PairWithOffsets& p)
         : TernaryPropagator<OffsetView, PC_INT_DOM>(home, p), w(p.w) {}
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop

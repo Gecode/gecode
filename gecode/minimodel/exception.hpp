@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode::MiniModel {
 
     /**
      * \defgroup FuncThrowMiniModel MiniModel exceptions
@@ -62,6 +62,6 @@ namespace Gecode { namespace MiniModel {
     };
     //@}
 
-}} // namespace Gecode::MiniModel
+} // namespace Gecode::MiniModel
 
 // STATISTICS: minimodel-any

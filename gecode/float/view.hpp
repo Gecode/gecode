@@ -34,7 +34,7 @@
 
 #include <iostream>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
 
     /**
      * \defgroup TaskActorFloatView Float views
@@ -56,7 +56,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        FloatView(void) = default;
+        FloatView() = default;
         /// Initialize from float variable \a y
         FloatView(const FloatVar& y);
         /// Initialize from float variable \a y
@@ -66,13 +66,13 @@ namespace Gecode { namespace Float {
         /// \name Value access
         //@{
         /// Return domain
-        FloatVal domain(void) const;
+        FloatVal domain() const;
         /// Return minimum of domain
-        FloatNum min(void) const;
+        FloatNum min() const;
         /// Return maximum of domain
-        FloatNum max(void) const;
+        FloatNum max() const;
         /// Return median of domain (closest representation)
-        FloatNum med(void) const;
+        FloatNum med() const;
         /**
          * \brief Return assigned value
          *
@@ -80,16 +80,16 @@ namespace Gecode { namespace Float {
          * is not yet assigned.
          *
          */
-        FloatVal val(void) const;
+        FloatVal val() const;
 
         /// Return size of domain (distance between maximum and minimum)
-        FloatNum size(void) const;
+        FloatNum size() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether 0 is contained in domain
-        bool zero_in(void) const;
+        bool zero_in() const;
         /// Test whether \a n is contained in domain
         bool in(FloatNum n) const;
         /// Test whether \a n is contained in domain
@@ -158,7 +158,7 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        MinusView(void) = default;
+        MinusView() = default;
         /// Initialize with float view \a y
         explicit MinusView(const FloatView& y);
         //@}
@@ -166,13 +166,13 @@ namespace Gecode { namespace Float {
         /// \name Value access
         //@{
         /// Return domain
-        FloatVal domain(void) const;
+        FloatVal domain() const;
         /// Return minimum of domain
-        FloatNum min(void) const;
+        FloatNum min() const;
         /// Return maximum of domain
-        FloatNum max(void) const;
+        FloatNum max() const;
         /// Return median of domain (closest representation)
-        FloatNum med(void) const;
+        FloatNum med() const;
         /**
          * \brief Return assigned value
          *
@@ -180,16 +180,16 @@ namespace Gecode { namespace Float {
          * is not yet assigned.
          *
          */
-        FloatVal val(void) const;
+        FloatVal val() const;
 
         /// Return size of domain (distance between maximum and minimum)
-        FloatNum size(void) const;
+        FloatNum size() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether 0 is contained in domain
-        bool zero_in(void) const;
+        bool zero_in() const;
         /// Test whether \a n is contained in domain
         bool in(FloatNum n) const;
         /// Test whether \a n is contained in domain
@@ -268,25 +268,25 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        OffsetView(void) = default;
+        OffsetView() = default;
         /// Initialize with float view \a y and an offset c
-        explicit OffsetView(const FloatView& y, FloatNum c);
+        explicit OffsetView(const FloatView& y, FloatNum d);
         //@}
 
         /// \name Value access
         //@{
         /// Return offset
-        FloatNum offset(void) const;
+        FloatNum offset() const;
         /// Change offset to be \a n
         void offset(FloatNum n);
         /// Return domain
-        FloatVal domain(void) const;
+        FloatVal domain() const;
         /// Return minimum of domain
-        FloatNum min(void) const;
+        FloatNum min() const;
         /// Return maximum of domain
-        FloatNum max(void) const;
+        FloatNum max() const;
         /// Return median of domain (closest representation)
-        FloatNum med(void) const;
+        FloatNum med() const;
         /**
          * \brief Return assigned value
          *
@@ -294,16 +294,16 @@ namespace Gecode { namespace Float {
          * is not yet assigned.
          *
          */
-        FloatVal val(void) const;
+        FloatVal val() const;
 
         /// Return size of domain (distance between maximum and minimum)
-        FloatNum size(void) const;
+        FloatNum size() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether 0 is contained in domain
-        bool zero_in(void) const;
+        bool zero_in() const;
         /// Test whether \a n is contained in domain
         bool in(FloatNum n) const;
         /// Test whether \a n is contained in domain
@@ -394,23 +394,23 @@ namespace Gecode { namespace Float {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        ScaleView(void) = default;
+        ScaleView() = default;
         /// Initialize as \f$b\cdot y\f$
-        ScaleView(const FloatVal& b, const FloatView& y);
+        ScaleView(const FloatVal& d, const FloatView& y);
         //@}
 
         /// \name Value access
         //@{
         /// Return domain
-        FloatVal domain(void) const;
+        FloatVal domain() const;
         /// Return scale factor of scale view
-        FloatVal scale(void) const;
+        FloatVal scale() const;
         /// Return minimum of domain
-        FloatNum min(void) const;
+        FloatNum min() const;
         /// Return maximum of domain
-        FloatNum max(void) const;
+        FloatNum max() const;
         /// Return median of domain (closest representation)
-        FloatNum med(void) const;
+        FloatNum med() const;
 
         /**
          * \brief Return assigned value
@@ -419,16 +419,16 @@ namespace Gecode { namespace Float {
          * is not yet assigned.
          *
          */
-        FloatVal val(void) const;
+        FloatVal val() const;
 
         /// Return size of domain (distance between maximum and minimum)
-        FloatNum size(void) const;
+        FloatNum size() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether 0 is contained in domain
-        bool zero_in(void) const;
+        bool zero_in() const;
         /// Test whether \a n is contained in domain
         bool in(FloatNum n) const;
         /// Test whether \a n is contained in domain
@@ -500,7 +500,7 @@ namespace Gecode { namespace Float {
     bool operator==(const ScaleView& x, const ScaleView& y);
     //@}
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #include <gecode/float/var/float.hpp>
 #include <gecode/float/view/float.hpp>
@@ -510,7 +510,7 @@ namespace Gecode { namespace Float {
 #include <gecode/float/view/print.hpp>
 #include <gecode/float/var/print.hpp>
 
-namespace Gecode { namespace Float {
+namespace Gecode::Float {
     /**
      * \defgroup TaskActorFloatTest Testing relations between float views
      * \ingroup TaskActorFloat
@@ -548,7 +548,7 @@ namespace Gecode { namespace Float {
 
     //@}
 
-}} // namespace Gecode::Float
+} // namespace Gecode::Float
 
 #include <gecode/float/view/rel-test.hpp>
 

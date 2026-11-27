@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace MinDistance {
+namespace Gecode::Int::MinDistance {
 
     /// Inclusive requirement, with an empty matrix denoting all zeroes
     forceinline int
@@ -461,8 +461,8 @@ namespace Gecode { namespace Int { namespace MinDistance {
         Region region;
         bool* present = region.alloc<bool>(d.size());
         std::fill(present, present + d.size(), false);
-        for (int i = 0; i < x.size(); i++)
-            for (ViewValues<IntView> v(x[i]); v(); ++v)
+        for (auto xi : x)
+            for (ViewValues<IntView> v(xi); v(); ++v)
                 present[v.val()] = true;
         int* sites = region.alloc<int>(d.size());
         int n = 0;
@@ -500,6 +500,6 @@ namespace Gecode { namespace Int { namespace MinDistance {
         return sizeof(*this);
     }
 
-}}} // namespace Gecode::Int::MinDistance
+} // namespace Gecode::Int::MinDistance
 
 // STATISTICS: int-prop

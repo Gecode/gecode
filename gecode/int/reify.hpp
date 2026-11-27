@@ -38,13 +38,13 @@ namespace Gecode {
      */
 
     forceinline
-    Reify::Reify(void)
+    Reify::Reify()
         : rm(RM_EQV) {}
     forceinline
     Reify::Reify(BoolVar x0, ReifyMode rm0)
         : x(x0), rm(rm0) {}
     forceinline BoolVar
-    Reify::var(void) const {
+    Reify::var() const {
         return x;
     }
     forceinline void
@@ -52,7 +52,7 @@ namespace Gecode {
         x = x0;
     }
     forceinline ReifyMode
-    Reify::mode(void) const {
+    Reify::mode() const {
         return rm;
     }
     forceinline void

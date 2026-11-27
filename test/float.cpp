@@ -39,7 +39,7 @@
 #include <algorithm>
 #include <iomanip>
 
-namespace Test { namespace Float {
+namespace Test::Float {
 
     /*
      * Complete assignments
@@ -92,7 +92,7 @@ namespace Test { namespace Float {
         a--;
     }
 
-}} // namespace Test::Float
+} // namespace Test::Float
 
 std::ostream&
 operator<<(std::ostream& os, const Test::Float::Assignment& a) {
@@ -103,9 +103,9 @@ operator<<(std::ostream& os, const Test::Float::Assignment& a) {
     return os;
 }
 
-namespace Test { namespace Float {
+namespace Test::Float {
 
-    Gecode::FloatNum
+    static Gecode::FloatNum
     rand_f_val_down(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         using namespace Gecode::Float;
@@ -115,7 +115,7 @@ namespace Test { namespace Float {
                                         r.sub_down(u, l)));
     }
 
-    Gecode::FloatNum
+    static Gecode::FloatNum
     rand_f_val_up(Gecode::FloatNum l, Gecode::FloatNum u, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
         using namespace Gecode::Float;
@@ -156,17 +156,17 @@ namespace Test { namespace Float {
     }
 
     Gecode::Space*
-    TestSpace::copy(void) {
+    TestSpace::copy() {
         return new TestSpace(*this);
     }
 
     void
-    TestSpace::enable(void) {
+    TestSpace::enable() {
         Gecode::PropagatorGroup::all.enable(*this);
     }
 
     void
-    TestSpace::disable(void) {
+    TestSpace::disable() {
         Gecode::PropagatorGroup::all.disable(*this);
         (void)status();
     }
@@ -178,7 +178,7 @@ namespace Test { namespace Float {
     }
 
     bool
-    TestSpace::assigned(void) const {
+    TestSpace::assigned() const {
         for (int i = x.size(); i--;)
             if (!x[i].assigned())
                 return false;
@@ -194,7 +194,7 @@ namespace Test { namespace Float {
     }
 
     void
-    TestSpace::post(void) {
+    TestSpace::post() {
         if (reified) {
             test->post(*this, x, r);
             if (opt.log)
@@ -207,15 +207,14 @@ namespace Test { namespace Float {
     }
 
     bool
-    TestSpace::failed(void) {
+    TestSpace::failed() {
         if (opt.log) {
             olog << ind(3) << "Fixpoint: " << x;
             bool f = (status() == Gecode::SS_FAILED);
             olog << '\n' << ind(3) << "     -->  " << x << '\n';
             return f;
-        } else {
-            return status() == Gecode::SS_FAILED;
         }
+        return status() == Gecode::SS_FAILED;
     }
 
     void
@@ -259,7 +258,7 @@ namespace Test { namespace Float {
     void
     TestSpace::assign(const Assignment& a, MaybeType& sol, bool skip, Gecode::Support::RandomGenerator& rand) {
         using namespace Gecode;
-        int i = skip ? static_cast<int>(rand(a.size())) : -1;
+        int i = skip ? rand(a.size()) : -1;
 
         for (int j = a.size(); j--;)
             if (i != j) {
@@ -289,7 +288,7 @@ namespace Test { namespace Float {
     }
 
     Gecode::FloatNum
-    TestSpace::cut(int* cut_directions) {
+    TestSpace::cut(const int* cut_directions) {
         using namespace Gecode;
         using namespace Gecode::Float;
         // Select variable to be cut
@@ -401,7 +400,7 @@ namespace Test { namespace Float {
     }
 
     unsigned int
-    TestSpace::propagators(void) {
+    TestSpace::propagators() {
         return Gecode::PropagatorGroup::all.size(*this);
     }
 
@@ -409,7 +408,7 @@ namespace Test { namespace Float {
                                                         Gecode::FRT_LT, Gecode::FRT_GQ, Gecode::FRT_GR};
 
     Assignment*
-    Test::assignment(void) const {
+    Test::assignment() const {
         switch (assignment_type) {
         case COMPLETE_ASSIGNMENT:
             return new CpltAssignment(arity, dom, step);
@@ -471,10 +470,10 @@ namespace Test { namespace Float {
     Test::post(Gecode::Space&, Gecode::FloatVarArray&, Gecode::Reify) {}
 
     bool
-    Test::run(void) {
+    Test::run() {
         using namespace Gecode;
-        const char* test = "NONE";
-        const char* problem = "NONE";
+        const char* test = nullptr;
+        const char* problem = nullptr;
 
         // Set up assignments
         Assignment* ap = assignment();
@@ -907,7 +906,7 @@ namespace Test { namespace Float {
         return false;
     }
 
-}} // namespace Test::Float
+} // namespace Test::Float
 
 #undef START_TEST
 #undef CHECK_TEST

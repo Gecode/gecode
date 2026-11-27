@@ -262,12 +262,12 @@ namespace {
         }
         /// Perform copying during cloning
         Space*
-        copy(void) override {
+        copy() override {
             return new DistinctLinear(*this);
         }
         /// Return a solution
         IntArgs
-        solution(void) const {
+        solution() const {
             IntArgs s(x.size());
             for (int i = 0; i < x.size(); i++)
                 s[i] = x[i].val();
@@ -305,7 +305,7 @@ namespace {
         Entry* cache; ///< Where all entries start
     public:
         /// Initialize cache as empty
-        Cache(void) : cache(nullptr) {}
+        Cache() : cache(nullptr) {}
         /// Return possibly cached Data for \a n distinct variables with sum \a c
         TupleSet
         get(int n, int c) {
@@ -323,7 +323,7 @@ namespace {
             return cache->ts;
         }
         /// Delete cache entries
-        ~Cache(void) {
+        ~Cache() {
             Entry* e = cache;
             while (e != nullptr) {
                 Entry* d = e;
@@ -459,7 +459,7 @@ public:
     }
     /// Perform copying during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Kakuro(*this);
     }
     /// Print solution

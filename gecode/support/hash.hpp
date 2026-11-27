@@ -36,7 +36,7 @@ namespace Gecode {
 
     /// Combine hash value \a h into \a seed
     template <class T>
-    void cmb_hash(std::size_t& seed, const T h);
+    void cmb_hash(std::size_t& seed, T h);
 
     template <class T>
     forceinline void

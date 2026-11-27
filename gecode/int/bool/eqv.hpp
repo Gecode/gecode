@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Bool {
+namespace Gecode::Int::Bool {
 
     template <class BVA, class BVB, class BVC>
     forceinline
@@ -59,7 +59,8 @@ namespace Gecode { namespace Int { namespace Bool {
                 if (b1.one()) {
                     GECODE_ME_CHECK(b2.one(home));
                     return ES_OK;
-                } else if (b1.zero()) {
+                }
+                if (b1.zero()) {
                     GECODE_ME_CHECK(b2.zero(home));
                     return ES_OK;
                 }
@@ -68,7 +69,8 @@ namespace Gecode { namespace Int { namespace Bool {
                 if (b1.one()) {
                     GECODE_ME_CHECK(b2.zero(home));
                     return ES_OK;
-                } else if (b1.zero()) {
+                }
+                if (b1.zero()) {
                     GECODE_ME_CHECK(b2.one(home));
                     return ES_OK;
                 }
@@ -209,6 +211,6 @@ namespace Gecode { namespace Int { namespace Bool {
         }
     }
 
-}}} // namespace Gecode::Int::Bool
+} // namespace Gecode::Int::Bool
 
 // STATISTICS: int-prop

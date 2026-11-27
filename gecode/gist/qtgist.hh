@@ -60,7 +60,7 @@
 
 #endif
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
 
     /**
      * \brief %Gecode Interactive %Search Tool
@@ -187,18 +187,17 @@ namespace Gecode { namespace Gist {
         /// Group of all actions for direct inspector selection
         QActionGroup* inspect_before_fp_group;
 
-    public:
         /// Constructor
         Gist(Space* root, bool bab, QWidget* parent, const Options& opt);
         /// Destructor
-        ~Gist(void) override;
+        ~Gist() override;
 
-        /// Add double click inspector \a i0
-        void add_double_click_inspector(Inspector* i0);
-        /// Add solution inspector \a i0
-        void add_solution_inspector(Inspector* i0);
-        /// Add move inspector \a i0
-        void add_move_inspector(Inspector* i0);
+        /// Add double click inspector \a ins
+        void add_double_click_inspector(Inspector* ins);
+        /// Add solution inspector \a ins
+        void add_solution_inspector(Inspector* ins);
+        /// Add move inspector \a ins
+        void add_move_inspector(Inspector* ins);
         /// Add comparator \a c0
         void add_comparator(Comparator* c0);
 
@@ -207,37 +206,38 @@ namespace Gecode { namespace Gist {
         /// Set preference whether to automatically zoom to fit
         void set_auto_zoom(bool b);
         /// Return preference whether to automatically hide failed subtrees
-        bool get_auto_hide_failed(void);
+        bool get_auto_hide_failed();
         /// Return preference whether to automatically zoom to fit
-        bool get_auto_zoom(void);
+        bool get_auto_zoom();
         /// Set preference whether to show copies in the tree
         void set_show_copies(bool b);
         /// Return preference whether to show copies in the tree
-        bool get_show_copies(void);
+        bool get_show_copies();
 
         /// Set refresh rate
         void set_refresh(int i);
         /// Set refresh pause in msec
         void set_refresh_pause(int i);
         /// Return preference whether to use smooth scrolling and zooming
-        bool get_smooth_scroll_and_zoom(void);
+        bool get_smooth_scroll_and_zoom();
         /// Set preference whether to use smooth scrolling and zooming
         void set_smooth_scroll_and_zoom(bool b);
         /// Return preference whether to move cursor during search
-        bool get_move_during_search(void);
+        bool get_move_during_search();
         /// Set preference whether to move cursor during search
         void set_move_during_search(bool b);
 
         /// Set recomputation parameters \a c_d and \a a_d
         void set_recomp_distances(int c_d, int a_d);
         /// Return recomputation distance
-        int get_cd(void);
+        int get_cd();
         /// Return adaptive recomputation distance
-        int get_ad(void);
+        int get_ad();
 
         /// Stop search and wait until finished
-        bool finish(void);
+        bool finish();
 
+    protected:
         /// Handle resize event
         void resizeEvent(QResizeEvent*) override;
 
@@ -249,7 +249,7 @@ namespace Gecode { namespace Gist {
         void solution(const Space*);
 
         /// Signals that %Gist is ready to be closed
-        void search_finished(void);
+        void search_finished();
 
     private Q_SLOTS:
         /// Displays the context menu for a node
@@ -271,11 +271,11 @@ namespace Gecode { namespace Gist {
         /// Reacts on removing a bookmark
         void remove_bookmark(int idx);
         /// Populate the inspector menus from the actions found in Gist
-        void populate_inspectors(void);
+        void populate_inspectors();
         /// Populate the bookmarks menu
-        void populate_bookmarks_menu(void);
+        void populate_bookmarks_menu();
         /// Shows node status information
-        void show_stats(void);
+        void show_stats();
         /// Inspect current node with inspector described by \a a
         void inspect_with_action(QAction* a);
         /// Inspect current node with inspector described by \a a
@@ -286,7 +286,7 @@ namespace Gecode { namespace Gist {
         void add_inspector(Inspector* i, QAction*& nas, QAction*& nad, QAction*& nam);
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

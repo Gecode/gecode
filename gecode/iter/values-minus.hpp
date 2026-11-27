@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Iter { namespace Values {
+namespace Gecode::Iter::Values {
 
     /**
      * \brief Value iterator for pointwise minus of a value iterator
@@ -48,7 +48,7 @@ namespace Gecode { namespace Iter { namespace Values {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Minus(void) = default;
+        Minus() = default;
         /// Copy constructor
         Minus(const Minus& m) = default;
         /// Initialize with values from \a i
@@ -82,11 +82,8 @@ namespace Gecode { namespace Iter { namespace Values {
         init(r, i);
     }
 
-    forceinline Minus&
-    Minus::operator=(const Minus& m) {
-        return static_cast<Minus&>(ValueListIter::operator=(m));
-    }
+    forceinline Minus& Minus::operator=(const Minus& m) = default;
 
-}}} // namespace Gecode::Iter::Values
+} // namespace Gecode::Iter::Values
 
 // STATISTICS: iter-any

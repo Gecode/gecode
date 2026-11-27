@@ -36,7 +36,7 @@
 namespace Gecode {
 
     forceinline int
-    IntDistance::size(void) const {
+    IntDistance::size() const {
         return static_cast<const Data*>(object())->n;
     }
 

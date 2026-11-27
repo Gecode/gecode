@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Sorted {
+namespace Gecode::Int::Sorted {
 
     /**
      * \brief Storage class for mininmum and maximum of a variable.
@@ -85,10 +85,9 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (subsumed) {
                     if (x[i].val() != y[z[i].val()].val()) {
                         return false;
-                    } else {
-                        if (z[i].val() == i) {
-                            dropfst++;
-                        }
+                    }
+                    if (z[i].val() == i) {
+                        dropfst++;
                     }
                 }
             } else {
@@ -96,9 +95,8 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (subsumed) {
                     if (x[i].val() != y[i].val()) {
                         return false;
-                    } else {
-                        dropfst++;
                     }
+                    dropfst++;
                 }
             }
         }
@@ -149,7 +147,7 @@ namespace Gecode { namespace Int { namespace Sorted {
         int n;
 
     public:
-        OfflineMin(void);
+        OfflineMin();
         OfflineMin(OfflineMinItem[], int[], int);
         /**
          *  Find the set x belongs to
@@ -164,18 +162,20 @@ namespace Gecode { namespace Int { namespace Sorted {
         /// Unite two sets \a a and \a b and label the union with \a c
         void unite(int a, int b, int c);
         /// Initialization of the datastructure
-        void initialize_sets(void);
+        void initialize_sets();
         /// Return the size of the Offline-Min item
-        int size(void);
+        int size();
         OfflineMinItem& operator[](int);
     };
 
-    OfflineMin::OfflineMin(void) {
+    forceinline
+    OfflineMin::OfflineMin() {
         n = 0;
         sequence = nullptr;
         vertices = nullptr;
     }
 
+    forceinline
     OfflineMin::OfflineMin(OfflineMinItem s[], int v[], int size) {
         n = size;
         sequence = &s[0];
@@ -226,7 +226,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
 
     forceinline void
-    OfflineMin::initialize_sets(void) {
+    OfflineMin::initialize_sets() {
         for (int i = n; i--;) {
             OfflineMinItem& cur = sequence[i];
             cur.rank = 0;   // initially each set is empty
@@ -241,7 +241,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     }
 
     forceinline int
-    OfflineMin::size(void) {
+    OfflineMin::size() {
         return n;
     }
 
@@ -270,9 +270,8 @@ namespace Gecode { namespace Int { namespace Sorted {
         operator()(const int i, const int j) {
             if (x[i].max() == x[j].max()) {
                 return x[i].min() < x[j].min();
-            } else {
-                return x[i].max() < x[j].max();
             }
+            return x[i].max() < x[j].max();
         }
     };
 
@@ -299,15 +298,12 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (x[i].min() == x[j].min()) {
                     if (z[i].max() == z[j].max()) {
                         return z[i].min() < z[j].min();
-                    } else {
-                        return z[i].max() < z[j].max();
                     }
-                } else {
-                    return x[i].min() < x[j].min();
+                    return z[i].max() < z[j].max();
                 }
-            } else {
-                return x[i].max() < x[j].max();
+                return x[i].min() < x[j].min();
             }
+            return x[i].max() < x[j].max();
         }
     };
 
@@ -327,9 +323,8 @@ namespace Gecode { namespace Int { namespace Sorted {
         operator()(const View& x, const View& y) {
             if (x.min() == y.min()) {
                 return x.max() < y.max();
-            } else {
-                return x.min() < y.min();
             }
+            return x.min() < y.min();
         }
     };
 
@@ -360,15 +355,12 @@ namespace Gecode { namespace Int { namespace Sorted {
                 if (x.x.max() == y.x.max()) {
                     if (x.z.min() == y.z.min()) {
                         return x.z.max() < y.z.max();
-                    } else {
-                        return x.z.min() < y.z.min();
                     }
-                } else {
-                    return x.x.max() < y.x.max();
+                    return x.z.min() < y.z.min();
                 }
-            } else {
-                return x.x.min() < y.x.min();
+                return x.x.max() < y.x.max();
             }
+            return x.x.min() < y.x.min();
         }
     };
 
@@ -403,11 +395,7 @@ namespace Gecode { namespace Int { namespace Sorted {
                     return false;
                 }
             }
-            if (Perm) {
-                subsumed = false;
-            } else {
-                subsumed = true;
-            }
+            subsumed = !Perm;
         }
 
         if (y_complete) {
@@ -422,11 +410,7 @@ namespace Gecode { namespace Int { namespace Sorted {
                         return false;
                     }
                 }
-                if (Perm) {
-                    subsumed = false;
-                } else {
-                    subsumed = true;
-                }
+                subsumed = !Perm;
                 noperm_bc = true;
             }
         }
@@ -550,6 +534,6 @@ namespace Gecode { namespace Int { namespace Sorted {
         return true;
     }
 
-}}} // namespace Gecode::Int::Sorted
+} // namespace Gecode::Int::Sorted
 
 // STATISTICS: int-prop

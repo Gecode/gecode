@@ -38,7 +38,7 @@
 
 #include <iostream>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     class SetVarImp;
     class LUBndSet;
@@ -60,28 +60,28 @@ namespace Gecode { namespace Set {
         int _lub_max; ///< Largest lub value just pruned
     public:
         /// Create set delta as providing no information (if \a any is true)
-        SetDelta(void);
+        SetDelta();
         /// Create set delta with \a min and \a max
         SetDelta(int glb_min, int glb_max, int lub_min, int lub_max);
         /// Return glb minimum
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return glb maximum
-        int glb_max(void) const;
+        int glb_max() const;
         /// Return lub minimum
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return lub maximum
-        int lub_max(void) const;
+        int lub_max() const;
         /// Test whether delta represents any domain change in glb
-        bool glb_any(void) const;
+        bool glb_any() const;
         /// Test whether delta represents any domain change in lub
-        bool lub_any(void) const;
+        bool lub_any() const;
     };
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var-imp/delta.hpp>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \brief Sets of integers
@@ -96,15 +96,15 @@ namespace Gecode { namespace Set {
         unsigned int _size;
         /// The cardinality this set represents
         unsigned int _card;
-        /// Set first range to \a r
-        void fst(RangeList* r);
-        /// Set last range to \a r
-        void lst(RangeList* r);
+        /// Set first range to \a f
+        void fst(RangeList* f);
+        /// Set last range to \a l
+        void lst(RangeList* l);
 
         /// Return first range
-        RangeList* fst(void) const;
+        RangeList* fst() const;
         /// Return last range
-        RangeList* lst(void) const;
+        RangeList* lst() const;
 
     public:
         /// Returned by empty sets when asked for their maximum element
@@ -115,9 +115,9 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        BndSet(void);
+        BndSet();
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
-        BndSet(Space& home, int i, int j);
+        BndSet(Space& home, int mn, int mx);
         /// Initialize as the set represented by \a s
         GECODE_SET_EXPORT BndSet(Space& home, const IntSet& s);
         //@}
@@ -131,15 +131,15 @@ namespace Gecode { namespace Set {
         /// \name Value access
         //@{
         /// Return smallest element
-        int min(void) const;
+        int min() const;
         /// Return greatest element
-        int max(void) const;
+        int max() const;
         /// Return \a n -th smallest element
         int min_n(unsigned int n) const;
         /// Return size
-        unsigned int size(void) const;
+        unsigned int size() const;
         /// Return cardinality
-        unsigned int card(void) const;
+        unsigned int card() const;
         /// Set cardinality
         void card(unsigned int c);
         //@}
@@ -147,21 +147,21 @@ namespace Gecode { namespace Set {
         /// \name Tests
         //@{
         /// Test whether this set is empty
-        bool empty(void) const;
+        bool empty() const;
         /// Test whether \a i is an element of this set
         bool in(int i) const;
         //@}
 
         /// \name Update operations
         //@{
-        /// Make this set equal to \a s
-        void become(Space& home, const BndSet& s);
+        /// Make this set equal to \a that
+        void become(Space& home, const BndSet& that);
         //@}
 
         /// \name Range list access for iteration
         //@{
         /// Return range list for iteration
-        RangeList* ranges(void) const;
+        RangeList* ranges() const;
         //@}
 
     protected:
@@ -172,12 +172,12 @@ namespace Gecode { namespace Set {
     public:
         /// \name Cloning
         //@{
-        /// Update this set to be a clone of set \a x
-        void update(Space& home, BndSet& x);
+        /// Update this set to be a clone of set \a d
+        void update(Space& home, BndSet& d);
         //@}
 
         /// Check whether internal invariants hold
-        GECODE_SET_EXPORT bool is_consistent(void) const;
+        GECODE_SET_EXPORT bool is_consistent() const;
     };
 
     /**
@@ -189,7 +189,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        BndSetRanges(void) = default;
+        BndSetRanges() = default;
         /// Initialize with BndSet \a s
         BndSetRanges(const BndSet& s);
         /// Initialize with BndSet \a s
@@ -213,11 +213,11 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        GLBndSet(void) = default;
+        GLBndSet() = default;
         /// Default constructor. Creates an empty set.
         GLBndSet(Space&);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
-        GLBndSet(Space& home, int i, int j);
+        GLBndSet(Space& home, int i, int ma);
         /// Initialize as the set represented by \a s
         GLBndSet(Space& home, const IntSet& s);
         /// Initialize as the empty set
@@ -227,12 +227,12 @@ namespace Gecode { namespace Set {
         /// \name Update operations
         //@{
         /// Include the set \f$\{i,\dots,j\}\f$ in this set
-        bool include(Space& home, int i, int j, SetDelta& d);
+        bool include(Space& home, int i, int ma, SetDelta& d);
         /// Include the set represented by \a i in this set
         template <class I>
         bool include_i(Space& home, I& i);
         //@}
-    public:
+
         GLBndSet(const GLBndSet&) = delete;
         const GLBndSet& operator=(const GLBndSet&) = delete;
     };
@@ -253,11 +253,11 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor. Creates an empty set.
-        LUBndSet(void) = default;
+        LUBndSet() = default;
         /// Initialize as the full set including everything between Limits::min and Limits::max
         LUBndSet(Space& home);
         /// Initialize as the set \f$ \{i,\dots,j\}\f$
-        LUBndSet(Space& home, int i, int j);
+        LUBndSet(Space& home, int i, int ma);
         /// Initialize as the set represented by \a s
         LUBndSet(Space& home, const IntSet& s);
         /// Initialize as the full set including everything between Limits::min and Limits::max
@@ -267,9 +267,9 @@ namespace Gecode { namespace Set {
         /// \name Update operations
         //@{
         /// Exclude the set \f$\{i,\dots,j\}\f$ from this set
-        bool exclude(Space& home, int i, int j, SetDelta& d);
+        bool exclude(Space& home, int i, int ma, SetDelta& d);
         /// Intersect this set with the set \f$\{i,\dots,j\}\f$
-        bool intersect(Space& home, int i, int j);
+        bool intersect(Space& home, int i, int ma);
         /// Exclude all elements not in the set represented by \a i from this set
         template <class I>
         bool intersect_i(Space& home, I& i);
@@ -279,7 +279,7 @@ namespace Gecode { namespace Set {
         /// Exclude all elements from this set
         void exclude_all(Space& home);
         //@}
-    public:
+
         LUBndSet(const LUBndSet&) = delete;
         const LUBndSet& operator=(const LUBndSet&) = delete;
     };
@@ -300,7 +300,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        RangesCompl(void) = default;
+        RangesCompl() = default;
         /// Initialize with iterator \a i
         RangesCompl(I& i);
         /// Initialize with iterator \a i
@@ -325,7 +325,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        LubRanges(void);
+        LubRanges();
         /// Initialize with least upper bound ranges for set variable \a x
         LubRanges(const T& x);
         /// Initialize with least upper bound ranges for set variable \a x
@@ -335,19 +335,19 @@ namespace Gecode { namespace Set {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -368,7 +368,7 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        GlbRanges(void);
+        GlbRanges();
         /// Initialize with greatest lower bound ranges for set variable \a x
         GlbRanges(const T& x);
         /// Initialize with greatest lower bound ranges for set variable \a x
@@ -378,19 +378,19 @@ namespace Gecode { namespace Set {
         /// \name Iteration control
         //@{
         /// Test whether iterator is still at a range or done
-        bool operator()(void) const;
+        bool operator()() const;
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
 
         /// \name Range access
         //@{
         /// Return smallest value of range
-        int min(void) const;
+        int min() const;
         /// Return largest value of range
-        int max(void) const;
+        int max() const;
         /// Return width of range (distance between minimum and maximum)
-        unsigned int width(void) const;
+        unsigned int width() const;
         //@}
     };
 
@@ -415,20 +415,20 @@ namespace Gecode { namespace Set {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        UnknownRanges(void) = default;
-        /// Initialize with unknown set ranges for set variable \a x
-        UnknownRanges(const T& x);
-        /// Initialize with unknown set ranges for set variable \a x
-        void init(const T& x);
+        UnknownRanges() = default;
+        /// Initialize with unknown set ranges for set variable \a v
+        UnknownRanges(const T& v);
+        /// Initialize with unknown set ranges for set variable \a v
+        void init(const T& v);
         //@}
     };
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var-imp/integerset.hpp>
 #include <gecode/set/var-imp/iter.hpp>
 
-namespace Gecode { namespace Set {
+namespace Gecode::Set {
 
     /**
      * \brief Finite integer set variable implementation
@@ -472,7 +472,7 @@ namespace Gecode { namespace Set {
          * \f$\mathit{lub}(s)=\{\mathit{lub_min},\dots,\mathit{lub_max}\}\f$, and
          * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, const IntSet& glb_d, int lub_min, int lub_max, unsigned int card_min,
+        SetVarImp(Space& home, const IntSet& the_glb, int lub_min, int lub_max, unsigned int card_min,
                   unsigned int card_max);
         /**
          * \brief Initialize with given bounds and cardinality
@@ -482,7 +482,7 @@ namespace Gecode { namespace Set {
          * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
          * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, int glb_min, int glb_max, const IntSet& lub_d, unsigned int card_min,
+        SetVarImp(Space& home, int glb_min, int glb_max, const IntSet& the_lub, unsigned int card_min,
                   unsigned int card_max);
         /**
          * \brief Initialize with given bounds and cardinality
@@ -492,37 +492,38 @@ namespace Gecode { namespace Set {
          * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
          * \f$\mathit{card_min}\leq |s|\leq\mathit{card_max}\f$
          */
-        SetVarImp(Space& home, const IntSet& glb_d, const IntSet& lub_d, unsigned int card_min, unsigned int card_max);
+        SetVarImp(Space& home, const IntSet& the_glb, const IntSet& the_lub, unsigned int card_min,
+                  unsigned int card_max);
         //@}
 
         /// \name Value access
         //@{
         /// Return current cardinality minimum
-        unsigned int card_min(void) const;
+        unsigned int card_min() const;
         /// Return current cardinality maximum
-        unsigned int card_max(void) const;
+        unsigned int card_max() const;
         /// Return minimum of the least upper bound
-        int lub_min(void) const;
+        int lub_min() const;
         /// Return maximum of the least upper bound
-        int lub_max(void) const;
+        int lub_max() const;
         /// Return \a n -th smallest element in the least upper bound
         int lub_min_n(unsigned int n) const;
         /// Return minimum of the greatest lower bound
-        int glb_min(void) const;
+        int glb_min() const;
         /// Return maximum of the greatest lower bound
-        int glb_max(void) const;
+        int glb_max() const;
         /// Return the size of the greatest lower bound
-        unsigned int glb_size(void) const;
+        unsigned int glb_size() const;
         /// Return the size of the least upper bound
-        unsigned int lub_size(void) const;
+        unsigned int lub_size() const;
         //@}
 
         /// \name Domain tests
         //@{
         /// Test whether variable is assigned
-        bool assigned(void) const;
-        /// Test whether \a n is contained in greatest lower bound
-        bool known_in(int n) const;
+        bool assigned() const;
+        /// Test whether \a i is contained in greatest lower bound
+        bool known_in(int i) const;
         /// Test whether \a n is not contained in least upper bound
         bool known_out(int) const;
         //@}
@@ -555,16 +556,16 @@ namespace Gecode { namespace Set {
     public:
         /// \name Domain update by value
         //@{
-        /// Include \a n in the greatest lower bound
-        ModEvent include(Space& home, int n);
+        /// Include \a i in the greatest lower bound
+        ModEvent include(Space& home, int i);
         /// Include the range \f$\{i,\dots,j\}\f$ in the greatest lower bound
         ModEvent include(Space& home, int i, int j);
-        /// Exclude \a n from the least upper bound
-        ModEvent exclude(Space& home, int n);
+        /// Exclude \a i from the least upper bound
+        ModEvent exclude(Space& home, int i);
         /// Exclude the range \f$\{i,\dots,j\}\f$ from the least upper bound
         ModEvent exclude(Space& home, int i, int j);
-        /// Exclude everything but \a n from the least upper bound
-        ModEvent intersect(Space& home, int n);
+        /// Exclude everything but \a i from the least upper bound
+        ModEvent intersect(Space& home, int i);
         /// Exclude everything but the range \f$\{i,\dots,j\}\f$ from the least upper bound
         ModEvent intersect(Space& home, int i, int j);
         /// Restrict cardinality to be at least n
@@ -586,7 +587,6 @@ namespace Gecode { namespace Set {
         ModEvent intersect_i(Space& home, I& i);
         //@}
 
-    public:
         /// \name Dependencies
         //@{
         /**
@@ -640,7 +640,7 @@ namespace Gecode { namespace Set {
 
     class SetView;
 
-}} // namespace Gecode::Set
+} // namespace Gecode::Set
 
 #include <gecode/set/var-imp/set.hpp>
 

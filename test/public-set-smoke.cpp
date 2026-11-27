@@ -42,7 +42,7 @@ namespace {
 
     class SetSmokeTest : public Test::Set::SetTest {
     public:
-        SetSmokeTest(void) : Test::Set::SetTest("Public::Smoke", 1, Gecode::IntSet(0, 1)) {}
+        SetSmokeTest() : Test::Set::SetTest("Public::Smoke", 1, Gecode::IntSet(0, 1)) {}
 
         bool
         solution(const Test::Set::SetAssignment&) const override {

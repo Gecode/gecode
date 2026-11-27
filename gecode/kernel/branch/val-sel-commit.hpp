@@ -49,17 +49,16 @@ namespace Gecode {
         }
         /// \copydoc Gecode::ViewSel::random
         virtual bool
-        random(void) const {
+        random() const {
             return false;
         }
         /// View type
-        typedef View_ View;
+        using View = View_;
         /// Corresponding variable type
-        typedef typename View::VarType Var;
+        using Var = View::VarType;
         /// Value type
-        typedef Val_ Val;
+        using Val = Val_;
 
-    public:
         /// Constructor for initialization
         ValSelCommitBase(Space& home, const ValBranch<Var>& vb);
         /// Constructor for cloning
@@ -75,11 +74,11 @@ namespace Gecode {
         /// Perform cloning
         virtual ValSelCommitBase<View, Val>* copy(Space& home) = 0;
         /// Whether dispose must always be called (that is, notice is needed)
-        virtual bool notice(void) const = 0;
+        virtual bool notice() const = 0;
         /// Delete value selection
         virtual void dispose(Space& home) = 0;
         /// Unused destructor
-        virtual ~ValSelCommitBase(void);
+        virtual ~ValSelCommitBase();
         /// \name Memory management
         //@{
         /// Allocate memory from space
@@ -95,9 +94,9 @@ namespace Gecode {
     template <class ValSel, class ValCommit>
     class ValSelCommit : public ValSelCommitBase<typename ValSel::View, typename ValSel::Val> {
     protected:
-        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Var Var;
-        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Val Val;
-        typedef typename ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::View View;
+        using Var = ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Var;
+        using Val = ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::Val;
+        using View = ValSelCommitBase<typename ValSel::View, typename ValSel::Val>::View;
         /// The value selection object used
         ValSel s;
         /// The commit object used
@@ -109,7 +108,8 @@ namespace Gecode {
             s.random_split(a);
         }
         bool
-        random(void) const override {
+        random() const override {
+            // NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.rand): a member random(), not the C library function
             return s.random();
         }
         /// Constructor for initialization
@@ -131,7 +131,7 @@ namespace Gecode {
         /// Perform cloning
         ValSelCommit<ValSel, ValCommit>* copy(Space& home) override;
         /// Whether dispose must always be called (that is, notice is needed)
-        bool notice(void) const override;
+        bool notice() const override;
         /// Delete value selection
         void dispose(Space& home) override;
     };
@@ -144,7 +144,7 @@ namespace Gecode {
     forceinline
     ValSelCommitBase<View, Val>::ValSelCommitBase(Space&, ValSelCommitBase<View, Val>&) {}
     template <class View, class Val>
-    ValSelCommitBase<View, Val>::~ValSelCommitBase(void) = default;
+    ValSelCommitBase<View, Val>::~ValSelCommitBase() = default;
 
     template <class View, class Val>
     forceinline void
@@ -169,7 +169,7 @@ namespace Gecode {
         : ValSelCommitBase<View, Val>(home, vsc), s(home, vsc.s), c(home, vsc.c) {}
 
     template <class ValSel, class ValCommit>
-    typename ValSelCommit<ValSel, ValCommit>::Val
+    ValSelCommit<ValSel, ValCommit>::Val
     ValSelCommit<ValSel, ValCommit>::val(const Space& home, View x, int i) {
         return s.val(home, x, i);
     }
@@ -201,7 +201,7 @@ namespace Gecode {
 
     template <class ValSel, class ValCommit>
     bool
-    ValSelCommit<ValSel, ValCommit>::notice(void) const {
+    ValSelCommit<ValSel, ValCommit>::notice() const {
         return s.notice() || c.notice();
     }
 

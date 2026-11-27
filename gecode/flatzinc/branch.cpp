@@ -32,7 +32,7 @@
 
 #include <gecode/flatzinc/branch.hh>
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     void
     PosIntChoice::archive(Archive& e) const {
@@ -67,10 +67,9 @@ namespace Gecode { namespace FlatZinc {
         int n = c.val();
         if (p < x.size()) {
             return me_failed(xvsc->commit(home, b, x[p], p, n)) ? ES_FAILED : ES_OK;
-        } else {
-            p -= x.size();
-            return me_failed(yvsc->commit(home, b, y[p], p, n)) ? ES_FAILED : ES_OK;
         }
+        p -= x.size();
+        return me_failed(yvsc->commit(home, b, y[p], p, n)) ? ES_FAILED : ES_OK;
     }
 
     void
@@ -86,10 +85,9 @@ namespace Gecode { namespace FlatZinc {
         int n = c.val();
         if (p < x.size()) {
             return xvsc->ngl(home, b, x[p], n);
-        } else {
-            p -= x.size();
-            return yvsc->ngl(home, b, y[p], n);
         }
+        p -= x.size();
+        return yvsc->ngl(home, b, y[p], n);
     }
 
     void
@@ -154,6 +152,6 @@ namespace Gecode { namespace FlatZinc {
         }
     }
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 // STATISTICS: flatzinc-branch

@@ -34,7 +34,7 @@
 
 #include <gecode/minimodel.hh>
 
-namespace Gecode { namespace MiniModel {
+namespace Gecode::MiniModel {
 
     TooFewArguments::TooFewArguments(const char* l) : Exception(l, "Passed argument array has too few elements") {}
 
@@ -42,6 +42,6 @@ namespace Gecode { namespace MiniModel {
 
     ArgumentOutOfRange::ArgumentOutOfRange(const char* l) : Exception(l, "Argument out of range") {}
 
-}} // namespace Gecode::MiniModel
+} // namespace Gecode::MiniModel
 
 // STATISTICS: minimodel-any

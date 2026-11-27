@@ -40,7 +40,7 @@ using namespace Gecode;
 
 namespace {
     /// The airline employees
-    typedef enum {
+    using Employee = enum {
         Tom,
         David,
         Jeremy,
@@ -61,7 +61,7 @@ namespace {
         Jean,
         Heather,
         Juliet
-    } Employee;
+    };
     const int no_of_employees = Juliet + 1;
 
     /// A flight to schedule
@@ -169,7 +169,7 @@ public:
     }
     /// Copy during cloning
     Space*
-    copy(void) override {
+    copy() override {
         return new Crew(*this);
     }
 };

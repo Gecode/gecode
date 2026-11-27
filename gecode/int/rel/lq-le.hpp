@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /*
      * Less or equal propagator
@@ -134,8 +134,8 @@ namespace Gecode { namespace Int { namespace Rel {
         : FreeList(n), p(p0) {}
 
     template <class View, int o>
-    forceinline typename NaryLqLe<View, o>::Pos*
-    NaryLqLe<View, o>::Pos::next(void) const {
+    forceinline NaryLqLe<View, o>::Pos*
+    NaryLqLe<View, o>::Pos::next() const {
         return static_cast<Pos*>(FreeList::next());
     }
 
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
     template <class View, int o>
     forceinline bool
-    NaryLqLe<View, o>::empty(void) const {
+    NaryLqLe<View, o>::empty() const {
         return pos == nullptr;
     }
     template <class View, int o>
@@ -257,9 +257,9 @@ namespace Gecode { namespace Int { namespace Rel {
         if (x.size() == 2) {
             if (o == 0)
                 return Lq<View, View>::post(home, x[0], x[1]);
-            else
-                return Le<View, View>::post(home, x[0], x[1]);
-        } else if (x.size() >= 2) {
+            return Le<View, View>::post(home, x[0], x[1]);
+        }
+        if (x.size() >= 2) {
             (void)new (home) NaryLqLe<View, o>(home, x);
         }
         return ES_OK;
@@ -552,6 +552,6 @@ namespace Gecode { namespace Int { namespace Rel {
         return home.ES_SUBSUMED(*this);
     }
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 // STATISTICS: int-prop

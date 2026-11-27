@@ -36,7 +36,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Element {
+namespace Gecode::Int::Element {
 
     /**
      * \brief Class for bounds-equality test
@@ -157,12 +157,12 @@ namespace Gecode { namespace Int { namespace Element {
         const IdxView<View>*cur, *end;
 
     public:
-        IterIdxView(void) = default;
+        IterIdxView() = default;
         IterIdxView(const IdxView<View>*, const IdxView<View>*);
         void init(const IdxView<View>*, const IdxView<View>*);
-        bool operator()(void) const;
-        void operator++(void);
-        int val(void) const;
+        bool operator()() const;
+        void operator++();
+        int val() const;
     };
 
     template <class View>
@@ -177,17 +177,17 @@ namespace Gecode { namespace Int { namespace Element {
     }
     template <class View>
     forceinline bool
-    IterIdxView<View>::operator()(void) const {
+    IterIdxView<View>::operator()() const {
         return cur < end;
     }
     template <class View>
     forceinline void
-    IterIdxView<View>::operator++(void) {
+    IterIdxView<View>::operator++() {
         cur++;
     }
     template <class View>
     forceinline int
-    IterIdxView<View>::val(void) const {
+    IterIdxView<View>::val() const {
         return cur->idx;
     }
 
@@ -269,10 +269,10 @@ namespace Gecode { namespace Int { namespace Element {
         if (x0.assigned()) {
             (void)new (home) Rel::EqBnd<VA, VC>(home, iv[x0.val()].view, x1);
             return ES_OK;
-        } else {
-            assert(iv.size() > 1);
-            (void)new (home) ViewBnd<VA, VB, VC>(home, iv, x0, x1);
         }
+        assert(iv.size() > 1);
+        (void)new (home) ViewBnd<VA, VB, VC>(home, iv, x0, x1);
+
         return ES_OK;
     }
 
@@ -342,10 +342,10 @@ namespace Gecode { namespace Int { namespace Element {
         if (x0.assigned()) {
             (void)new (home) Rel::EqDom<VA, VC>(home, iv[x0.val()].view, x1);
             return ES_OK;
-        } else {
-            assert(iv.size() > 1);
-            (void)new (home) ViewDom<VA, VB, VC>(home, iv, x0, x1);
         }
+        assert(iv.size() > 1);
+        (void)new (home) ViewDom<VA, VB, VC>(home, iv, x0, x1);
+
         return ES_OK;
     }
 
@@ -404,19 +404,18 @@ namespace Gecode { namespace Int { namespace Element {
                 if (iv[i].view.in(x1.val()))
                     return shared(x0, x1) ? ES_NOFIX : ES_FIX;
             return ES_FAILED;
-        } else {
-            Region r;
-            ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA>>(iv.size());
-            for (int i = 0; i < iv.size(); i++)
-                i_view[i].init(iv[i].view);
-            Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
-            ModEvent me = x1.inter_r(home, i_val);
-            r.free<ViewRanges<VA>>(i_view, iv.size());
-            GECODE_ME_CHECK(me);
-            return (shared(x0, x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
         }
+        Region r;
+        ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA>>(iv.size());
+        for (int i = 0; i < iv.size(); i++)
+            i_view[i].init(iv[i].view);
+        Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
+        ModEvent me = x1.inter_r(home, i_val);
+        r.free<ViewRanges<VA>>(i_view, iv.size());
+        GECODE_ME_CHECK(me);
+        return (shared(x0, x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Element
+} // namespace Gecode::Int::Element
 
 // STATISTICS: int-prop

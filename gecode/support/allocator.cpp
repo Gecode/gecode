@@ -37,7 +37,7 @@
 #include <mimalloc.h>
 #endif
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     Allocator allocator;
 
@@ -56,6 +56,6 @@ namespace Gecode { namespace Support {
     }
 #endif
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

@@ -41,7 +41,7 @@
 #include <sstream>
 #include <unordered_set>
 
-namespace Gecode { namespace Instance {
+namespace Gecode::Instance {
 
     /*
      * Errors and parameters
@@ -51,11 +51,11 @@ namespace Gecode { namespace Instance {
     Error::Error(const std::string& m) : Exception("Instance", m.c_str()), msg(m) {}
 
     const char*
-    Error::what(void) const noexcept {
+    Error::what() const noexcept {
         return msg.c_str();
     }
 
-    Params::Params(void) : impl(std::make_shared<ParamsImpl>()) {}
+    Params::Params() : impl(std::make_shared<ParamsImpl>()) {}
 
     void
     Params::set(const std::string& name, const std::string& value) {
@@ -99,7 +99,7 @@ namespace Gecode { namespace Instance {
     }
 
     int
-    Params::size(void) const {
+    Params::size() const {
         return impl->names.size();
     }
 
@@ -120,7 +120,7 @@ namespace Gecode { namespace Instance {
     }
 
     void
-    Column::skip(void) {
+    Column::skip() {
         rows++;
         missing = true;
         if (!started)
@@ -180,7 +180,7 @@ namespace Gecode { namespace Instance {
     }
 
     Value
-    Column::finish(void) {
+    Column::finish() {
         if (!started) {
             // No rows added: every row is missing, so empty if it is a list
             if ((d == 0) && (rows > 0))
@@ -198,7 +198,7 @@ namespace Gecode { namespace Instance {
     }
 
     void
-    Value::index(void) {
+    Value::index() {
         // The memory of earlier starts is reused (see clear_list)
         while (starts.size() > depth)
             starts.pop();
@@ -354,10 +354,10 @@ namespace Gecode { namespace Instance {
 
     } // namespace
 
-    Data::Data(void) : impl(std::make_shared<DataImpl>()) {}
+    Data::Data() : impl(std::make_shared<DataImpl>()) {}
 
     int
-    Data::entries(void) const {
+    Data::entries() const {
         return impl->entries.size();
     }
 
@@ -500,7 +500,7 @@ namespace Gecode { namespace Instance {
                 "superset", "symdiff",    "test",   "then",    "true",  "tuple",     "type",       "union",
                 "var",      "where",      "xor"};
             // MiniZinc identifiers start with a letter
-            bool plain = !n.empty() && is_letter(n[0]) && (keywords.count(n) == 0);
+            bool plain = !n.empty() && is_letter(n[0]) && (!keywords.contains(n));
             if (plain)
                 os << n;
             else
@@ -577,12 +577,12 @@ namespace Gecode { namespace Instance {
                 // Arrays with an empty dimension need explicit index sets
                 bool empty = false;
                 for (int k = 0; k < v.depth; k++)
-                    empty = empty || (v.lengths[k].size() == 0) || (v.lengths[k][0] == 0);
+                    empty = empty || (v.lengths[k].empty()) || (v.lengths[k][0] == 0);
                 bool nd = (v.depth > 2) || ((v.depth == 2) && empty);
                 if (nd) {
                     os << "array" << v.depth << "d(";
                     for (int k = 0; k < v.depth; k++)
-                        os << "1.." << (v.lengths[k].size() > 0 ? v.lengths[k][0] : 0) << ", ";
+                        os << "1.." << (!v.lengths[k].empty() ? v.lengths[k][0] : 0) << ", ";
                 }
                 os << "[";
                 for (int i = 0; i < nl; i++) {
@@ -611,6 +611,6 @@ namespace Gecode { namespace Instance {
         }
     }
 
-}} // namespace Gecode::Instance
+} // namespace Gecode::Instance
 
 // STATISTICS: instance-any

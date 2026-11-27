@@ -36,7 +36,7 @@
 #include <QMainWindow>
 #include <QTextEdit>
 
-namespace Gecode { namespace Gist {
+namespace Gecode::Gist {
     /// \brief Window with associated ostream, used for inspecting %Gist nodes
     class TextOutputI : public QMainWindow {
         Q_OBJECT
@@ -52,18 +52,18 @@ namespace Gecode { namespace Gist {
         /// Constructor
         TextOutputI(const std::string& name, QWidget* parent = nullptr);
         /// Destructor
-        ~TextOutputI(void) override;
+        ~TextOutputI() override;
         /// Return stream that prints to the text display
-        std::ostream& get_stream(void);
+        std::ostream& get_stream();
         /// Add html string \a s to the output
         void insert_html(const QString& s);
         /// Flush output
-        void flush(void);
+        void flush();
     protected Q_SLOTS:
-        void change_stay_on_top(void);
+        void change_stay_on_top();
     };
 
-}} // namespace Gecode::Gist
+} // namespace Gecode::Gist
 
 #endif
 

@@ -63,7 +63,7 @@ namespace Test {
         {"check", TestTag::Check}, {"standard", TestTag::Standard}, {"sweep", TestTag::Sweep}};
 
     TestTags
-    TestTags::all(void) {
+    TestTags::all() {
         TestTags tags;
         for (const TestTagDescription& description : test_tag_descriptions)
             tags.add(description.tag);
@@ -91,7 +91,7 @@ namespace Test {
 
     /// Convert the known tag names to a command-line choice list
     static std::string
-    tag_choices(void) {
+    tag_choices() {
         std::string choices;
         for (const TestTagDescription& description : test_tag_descriptions) {
             if (!choices.empty())
@@ -121,8 +121,7 @@ namespace Test {
      */
     Base::Base(std::string s) : Base(std::move(s), TestTags::standard()) {}
 
-    Base::Base(std::string s, TestTags t)
-        : _name(std::move(s)), _tags(t), _next(_tests), _rand(Gecode::Support::RandomGenerator()) {
+    Base::Base(std::string s, TestTags t) : _name(std::move(s)), _tags(t), _next(_tests) {
         _tests = this;
         _n_tests++;
     }
@@ -164,7 +163,7 @@ namespace Test {
     const int Options::default_iterations;
     const unsigned int Options::default_fixpoint_probability_denominator;
 
-    void
+    static void
     report_error(const std::string& name, const std::string& state, const Options& options, std::ostream& ostream) {
         ostream << "Options: -replay " << state;
         if (options.fixpoint_probability_denominator != Test::Options::default_fixpoint_probability_denominator)
@@ -342,7 +341,7 @@ namespace Test {
                 const auto& type = type_pattern.first;
                 const auto& pattern = type_pattern.second;
                 if (type == MATCH_NOT) { // Negative pattern
-                    if (test_name.find(pattern) != std::string::npos) {
+                    if (test_name.contains(pattern)) {
                         // Test matches a negative pattern, should not run
                         return false;
                     }
@@ -351,8 +350,8 @@ namespace Test {
                     positive_patterns = true;
                     if (!match_found) {
                         // No match found yet, test with current pattern
-                        if (((type == MATCH_ANY) && (test_name.find(pattern) != std::string::npos)) ||
-                            ((type == MATCH_FIRST) && (test_name.find(pattern) == 0)))
+                        if (((type == MATCH_ANY) && (test_name.contains(pattern))) ||
+                            ((type == MATCH_FIRST) && (test_name.starts_with(pattern))))
                             match_found = true;
                     }
                 }
@@ -361,17 +360,15 @@ namespace Test {
             if (positive_patterns && match_found) {
                 // Some positive pattern matched the test name
                 return true;
-            } else if (positive_patterns && !match_found) {
+            }
+            if (positive_patterns && !match_found) {
                 // No positive pattern matched the test name
                 return false;
-            } else {
-                // No positive patterns, but no negative pattern ruled the test name out
-                return true;
-            }
-        } else {
-            // With no test-patterns, all tests should run.
+            } // No positive patterns, but no negative pattern ruled the test name out
             return true;
-        }
+
+        } // With no test-patterns, all tests should run.
+        return true;
     }
 
     bool
@@ -380,7 +377,7 @@ namespace Test {
     }
 
     /// Run a single test, returning true iff the test succeeded
-    bool
+    static bool
     run_test(Base* test, uint64_t test_seed, const Options& options, std::ostream& ostream) {
         test->_rand.seed(test_seed);
         if (!options.replay.empty())
@@ -414,7 +411,7 @@ namespace Test {
     }
 
     /// Report test cases; iterations of a test count as one case.
-    void
+    static void
     print_test_summary(size_t selected, size_t passed, size_t failed) {
         const size_t ran = passed + failed;
         std::cout << "\nTest summary: " << selected << " selected, " << ran << " ran, " << passed << " passed, "
@@ -423,12 +420,12 @@ namespace Test {
     }
 
     /// Run all the tests with the supplied options.
-    int
+    static int
     run_tests(const std::vector<Base*>& tests, const Options& options) {
         Gecode::Support::RandomGenerator seed_sequence(options.seed);
         size_t passed = 0;
         size_t failed = 0;
-        for (auto test : tests) {
+        for (auto* test : tests) {
             uint64_t test_seed = seed_sequence.next();
             if (run_test(test, test_seed, options, std::cout)) {
                 ++passed;
@@ -483,8 +480,8 @@ namespace Test {
 
     public:
         TestExecutionControl(const std::vector<Base*>& tests0, const Options& options0, int thread_count)
-            : tests(tests0), options(options0), output_mutex(), next_tests(0), passed(0), failed(0),
-              running_threads(thread_count), execution_done_wait_started(false), execution_done_event() {}
+            : tests(tests0), options(options0), next_tests(0), passed(0), failed(0), running_threads(thread_count),
+              execution_done_wait_started(false) {}
 
         /// Report the results after all threads have finished and return the exit status.
         int
@@ -565,7 +562,7 @@ namespace Test {
         TestExecutor(TestExecutionControl& tec, uint64_t initial_seed) : tec(tec), initial_seed(initial_seed) {}
 
         void
-        run(void) override {
+        run() override {
             // Set up a local source of randomness seeds based on the initial seed supplied.
             Gecode::Support::RandomGenerator seed_sequence(initial_seed);
 
@@ -584,7 +581,7 @@ namespace Test {
                     if (!tec.continue_testing()) {
                         break;
                     }
-                    auto test = tec.tests[i];
+                    auto* test = tec.tests[i];
                     uint64_t test_seed = seed_sequence.next();
                     std::ostringstream test_output;
                     tec.record_result(run_test(test, test_seed, tec.options, test_output));
@@ -601,7 +598,7 @@ namespace Test {
     };
 
     /// Run all the tests with the supplied options in parallel.
-    int
+    static int
     run_tests_parallel(const std::vector<Base*>& tests, const Options& options) {
         using namespace Gecode::Support;
         RandomGenerator seed_sequence(options.seed);
@@ -616,13 +613,13 @@ namespace Test {
         return tec.report_result();
     }
 
-    std::vector<Base*>
+    static std::vector<Base*>
     select_tests(const Options& options) {
         std::vector<Base*> tests;
         bool started = options.start_from == nullptr;
         for (Base* t = Base::tests(); t != nullptr; t = t->next()) {
             if (!started) {
-                if (t->name().find(options.start_from) != std::string::npos) {
+                if (t->name().contains(options.start_from)) {
                     started = true;
                 } else {
                     continue;

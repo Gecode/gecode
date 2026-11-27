@@ -32,7 +32,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode::Int::Cumulative {
 
     template <class ManTask, class Cap, class PL>
     forceinline
@@ -65,9 +65,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
                 for (int i = 0; i < t.size(); i++)
                     mt[i] = t[i];
                 return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask, PL>::post(home, mt);
-            } else {
-                (void)new (home) ManProp<ManTask, Cap, PL>(home, c, t);
             }
+            (void)new (home) ManProp<ManTask, Cap, PL>(home, c, t);
         }
         return ES_OK;
     }
@@ -129,6 +128,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_NOFIX;
     }
 
-}}} // namespace Gecode::Int::Cumulative
+} // namespace Gecode::Int::Cumulative
 
 // STATISTICS: int-prop

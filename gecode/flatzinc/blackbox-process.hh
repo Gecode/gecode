@@ -18,7 +18,7 @@
 #include <thread>
 #endif
 
-namespace Gecode { namespace FlatZinc {
+namespace Gecode::FlatZinc {
 
     /// Platform process session used by the executable blackbox backend.
     class BlackBoxProcessSession {
@@ -27,7 +27,7 @@ namespace Gecode { namespace FlatZinc {
         std::thread::id owner;
 #endif
         // NOLINTNEXTLINE(modernize-use-equals-default)
-        BlackBoxProcessSession(void)
+        BlackBoxProcessSession()
 #ifdef GECODE_HAS_THREADS
             : owner(std::this_thread::get_id())
 #endif
@@ -35,9 +35,9 @@ namespace Gecode { namespace FlatZinc {
         }
 
     public:
-        virtual ~BlackBoxProcessSession(void) = default;
+        virtual ~BlackBoxProcessSession() = default;
         bool
-        owned_by_current_thread(void) const {
+        owned_by_current_thread() const {
 #ifdef GECODE_HAS_THREADS
             return owner == std::this_thread::get_id();
 #else
@@ -50,7 +50,7 @@ namespace Gecode { namespace FlatZinc {
     /// Create the process implementation selected for the target platform.
     BlackBoxProcessSession* create_blackbox_process(const std::string& program, const std::vector<std::string>& args);
 
-}} // namespace Gecode::FlatZinc
+} // namespace Gecode::FlatZinc
 
 #endif
 

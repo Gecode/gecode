@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /*
      * Creation of new variable implementations
@@ -53,53 +53,53 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline BoolStatus
-    BoolVarImp::status(void) const {
+    BoolVarImp::status() const {
         return bits() & 3;
     }
     forceinline int
-    BoolVarImp::min(void) const {
+    BoolVarImp::min() const {
         return static_cast<int>(bits() & 1);
     }
     forceinline int
-    BoolVarImp::max(void) const {
+    BoolVarImp::max() const {
         return static_cast<int>((bits() & 2) >> 1);
     }
     forceinline int
-    BoolVarImp::med(void) const {
+    BoolVarImp::med() const {
         return min();
     }
 
     forceinline int
-    BoolVarImp::val(void) const {
+    BoolVarImp::val() const {
         assert(status() != unassigned_status);
         return min();
     }
 
     forceinline bool
-    BoolVarImp::range(void) const {
+    BoolVarImp::range() const {
         return true;
     }
     forceinline bool
-    BoolVarImp::assigned(void) const {
+    BoolVarImp::assigned() const {
         return status() != unassigned_status;
     }
 
     forceinline unsigned int
-    BoolVarImp::width(void) const {
+    BoolVarImp::width() const {
         return assigned() ? 1U : 2U;
     }
 
     forceinline unsigned int
-    BoolVarImp::size(void) const {
+    BoolVarImp::size() const {
         return assigned() ? 1U : 2U;
     }
 
     forceinline unsigned int
-    BoolVarImp::regret_min(void) const {
+    BoolVarImp::regret_min() const {
         return assigned() ? 1U : 0U;
     }
     forceinline unsigned int
-    BoolVarImp::regret_max(void) const {
+    BoolVarImp::regret_max() const {
         return assigned() ? 1U : 0U;
     }
 
@@ -122,15 +122,15 @@ namespace Gecode { namespace Int {
      *
      */
     forceinline bool
-    BoolVarImp::zero(void) const {
+    BoolVarImp::zero() const {
         return status() < unassigned_status;
     }
     forceinline bool
-    BoolVarImp::one(void) const {
+    BoolVarImp::one() const {
         return status() > unassigned_status;
     }
     forceinline bool
-    BoolVarImp::none(void) const {
+    BoolVarImp::none() const {
         return status() == unassigned_status;
     }
 
@@ -264,12 +264,11 @@ namespace Gecode { namespace Int {
     BoolVarImp::copy(Space& home) {
         if (copied())
             return static_cast<BoolVarImp*>(forward());
-        else if (zero())
+        if (zero())
             return &s_zero;
-        else if (one())
+        if (one())
             return &s_one;
-        else
-            return new (home) BoolVarImp(home, *this);
+        return new (home) BoolVarImp(home, *this);
     }
 
     /*
@@ -346,10 +345,9 @@ namespace Gecode { namespace Int {
             if (!i())
                 return zero_none(home);
             return ME_INT_NONE;
-        } else {
-            assert(i.val() == 1);
-            return one_none(home);
         }
+        assert(i.val() == 1);
+        return one_none(home);
     }
     template <class I>
     forceinline ModEvent
@@ -365,10 +363,9 @@ namespace Gecode { namespace Int {
             if (!i() || (i.val() > 1))
                 return zero(home);
             return ME_INT_NONE;
-        } else {
-            assert(i.val() == 1);
-            return one(home);
         }
+        assert(i.val() == 1);
+        return one(home);
     }
     template <class I>
     forceinline ModEvent
@@ -384,10 +381,9 @@ namespace Gecode { namespace Int {
             if (!i() || (i.val() > 1))
                 return one(home);
             return fail(home);
-        } else {
-            assert(i.val() == 1);
-            return zero(home);
         }
+        assert(i.val() == 1);
+        return zero(home);
     }
 
     /*
@@ -414,6 +410,6 @@ namespace Gecode { namespace Int {
         return BoolVarImpBase::med(me);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

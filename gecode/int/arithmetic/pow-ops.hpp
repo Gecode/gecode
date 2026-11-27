@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     forceinline
     PowOps::PowOps(int n0)
@@ -42,12 +42,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     forceinline bool
-    PowOps::even(void) const {
+    PowOps::even() const {
         return even(n);
     }
 
     forceinline int
-    PowOps::exp(void) const {
+    PowOps::exp() const {
         return n;
     }
 
@@ -181,12 +181,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     forceinline bool
-    SqrOps::even(void) const {
+    SqrOps::even() const {
         return true;
     }
 
     forceinline int
-    SqrOps::exp(void) const {
+    SqrOps::exp() const {
         return 2;
     }
 
@@ -251,6 +251,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         return static_cast<int>(u);
     }
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-other

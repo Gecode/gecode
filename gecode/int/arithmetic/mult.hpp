@@ -36,7 +36,7 @@
 #include <gecode/int/div.hh>
 #include <gecode/int/support-values.hh>
 
-namespace Gecode { namespace Int { namespace Arithmetic {
+namespace Gecode::Int::Arithmetic {
 
     /*
      * Arithmetic help functions
@@ -97,9 +97,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MultZeroOne<View, pc>::equal(View x, int n) {
         if (pc == PC_INT_DOM) {
             return rtest_eq_dom(x, n);
-        } else {
-            return rtest_eq_bnd(x, n);
         }
+        return rtest_eq_bnd(x, n);
     }
 
     template <class View, PropCond pc>
@@ -313,8 +312,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MultPlusDom<VA, VB, VC>::cost(const Space&, const ModEventDelta& med) const {
         if (VA::me(med) == ME_INT_DOM)
             return PropCost::ternary(PropCost::HI);
-        else
-            return PropCost::ternary(PropCost::LO);
+        return PropCost::ternary(PropCost::LO);
     }
 
     template <class VA, class VB, class VC>
@@ -351,6 +349,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MultDom::MultDom(Space& home, MultDom& p)
         : TernaryPropagator<IntView, PC_INT_DOM>(home, p) {}
 
-}}} // namespace Gecode::Int::Arithmetic
+} // namespace Gecode::Int::Arithmetic
 
 // STATISTICS: int-prop

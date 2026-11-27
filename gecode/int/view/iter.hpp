@@ -34,7 +34,7 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     template <class View>
     forceinline
@@ -50,6 +50,6 @@ namespace Gecode { namespace Int {
         Iter::Ranges::ToValues<ViewRanges<View>>::init(r);
     }
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 // STATISTICS: int-var

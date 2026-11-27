@@ -36,14 +36,14 @@
 
 #include <gecode/support.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /*
      * Threads
      */
 
     Mutex*
-    Thread::m(void) {
+    Thread::m() {
         static Mutex* m = new Mutex;
         return m;
     }
@@ -51,7 +51,7 @@ namespace Gecode { namespace Support {
     Thread::Run* Thread::idle = nullptr;
 
     void
-    Thread::Run::exec(void) {
+    Thread::Run::exec() {
         while (true) {
             // Execute runnable
             {
@@ -99,9 +99,9 @@ namespace Gecode { namespace Support {
             Mutex* _to_release;
 
         public:
-            GlobalMutexRunnable(void) : _to_acquire(nullptr), _to_release(nullptr) {}
+            GlobalMutexRunnable() : _to_acquire(nullptr), _to_release(nullptr) {}
             void
-            run(void) override {
+            run() override {
                 while (true) {
                     _m.acquire();
                     if (_to_acquire) {
@@ -142,13 +142,13 @@ namespace Gecode { namespace Support {
         class GlobalMutexRunnableInit {
         public:
             GlobalMutexRunnable* gmr;
-            GlobalMutexRunnableInit(void) : gmr(new GlobalMutexRunnable) {
+            GlobalMutexRunnableInit() : gmr(new GlobalMutexRunnable) {
                 Thread::run(gmr);
             }
         };
 
         GlobalMutexRunnable&
-        global_mutex_runnable(void) {
+        global_mutex_runnable() {
             static GlobalMutexRunnableInit gmri;
             return *gmri.gmr;
         }
@@ -164,6 +164,6 @@ namespace Gecode { namespace Support {
         global_mutex_runnable().release(m);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

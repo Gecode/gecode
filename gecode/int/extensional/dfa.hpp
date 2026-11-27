@@ -31,6 +31,7 @@
  */
 
 #include <sstream>
+#include <utility>
 
 namespace Gecode {
 
@@ -68,25 +69,25 @@ namespace Gecode {
         /// Size of table (as binary logarithm)
         int n_log;
         /// Fill hash table
-        void fill(void);
+        void fill();
         /// Initialize automaton implementation with \a nt transitions
         DFAI(int nt);
         /// Delete automaton implemenentation
-        ~DFAI(void) override;
+        ~DFAI() override;
     };
 
     forceinline
     DFA::DFAI::DFAI(int nt)
         : trans(nt == 0 ? nullptr : heap.alloc<Transition>(nt)) {}
 
-    forceinline DFA::DFAI::~DFAI(void) {
+    forceinline DFA::DFAI::~DFAI() {
         if (n_trans > 0)
             heap.rfree(trans);
         heap.rfree(table);
     }
 
     forceinline void
-    DFA::DFAI::fill(void) {
+    DFA::DFAI::fill() {
         key = static_cast<std::size_t>(n_states);
         cmb_hash(key, n_trans);
         cmb_hash(key, n_symbols);
@@ -94,7 +95,7 @@ namespace Gecode {
         cmb_hash(key, final_lst);
         // Compute smallest logarithm larger than n_symbols
         n_log = 1;
-        while (n_symbols >= static_cast<unsigned int>(1 << n_log))
+        while (std::cmp_greater_equal(n_symbols, 1 << n_log))
             n_log++;
         // Allocate memory
         table = heap.alloc<HashEntry>(1 << n_log);
@@ -124,55 +125,55 @@ namespace Gecode {
     }
 
     forceinline int
-    DFA::n_states(void) const {
+    DFA::n_states() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return (d == nullptr) ? 1 : d->n_states;
     }
 
     forceinline unsigned int
-    DFA::n_symbols(void) const {
+    DFA::n_symbols() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return (d == nullptr) ? 0 : d->n_symbols;
     }
 
     forceinline int
-    DFA::n_transitions(void) const {
+    DFA::n_transitions() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return (d == nullptr) ? 0 : d->n_trans;
     }
 
     forceinline unsigned int
-    DFA::max_degree(void) const {
+    DFA::max_degree() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return (d == nullptr) ? 0 : d->max_degree;
     }
 
     forceinline int
-    DFA::final_fst(void) const {
+    DFA::final_fst() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return (d == nullptr) ? 0 : d->final_fst;
     }
 
     forceinline int
-    DFA::final_lst(void) const {
+    DFA::final_lst() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return (d == nullptr) ? 0 : d->final_lst;
     }
 
     forceinline int
-    DFA::symbol_min(void) const {
+    DFA::symbol_min() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return ((d != nullptr) && (d->n_trans > 0)) ? d->trans[0].symbol : Int::Limits::min;
     }
 
     forceinline int
-    DFA::symbol_max(void) const {
+    DFA::symbol_max() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return ((d != nullptr) && (d->n_trans > 0)) ? d->trans[d->n_trans - 1].symbol : Int::Limits::max;
     }
 
     forceinline std::size_t
-    DFA::hash(void) const {
+    DFA::hash() const {
         const DFAI* d = static_cast<DFAI*>(object());
         return (d != nullptr) ? d->key : 0;
     }
@@ -184,7 +185,7 @@ namespace Gecode {
 
     forceinline
     // NOLINTNEXTLINE(modernize-use-equals-default)
-    DFA::Transition::Transition(void) {}
+    DFA::Transition::Transition() {}
 
     forceinline
     DFA::Transition::Transition(int i_state0, int symbol0, int o_state0)
@@ -222,27 +223,27 @@ namespace Gecode {
     }
 
     forceinline bool
-    DFA::Transitions::operator()(void) const {
+    DFA::Transitions::operator()() const {
         return c_trans < e_trans;
     }
 
     forceinline void
-    DFA::Transitions::operator++(void) {
+    DFA::Transitions::operator++() {
         c_trans++;
     }
 
     forceinline int
-    DFA::Transitions::i_state(void) const {
+    DFA::Transitions::i_state() const {
         return c_trans->i_state;
     }
 
     forceinline int
-    DFA::Transitions::symbol(void) const {
+    DFA::Transitions::symbol() const {
         return c_trans->symbol;
     }
 
     forceinline int
-    DFA::Transitions::o_state(void) const {
+    DFA::Transitions::o_state() const {
         return c_trans->o_state;
     }
 
@@ -263,12 +264,12 @@ namespace Gecode {
     }
 
     forceinline bool
-    DFA::Symbols::operator()(void) const {
+    DFA::Symbols::operator()() const {
         return c_trans < e_trans;
     }
 
     forceinline void
-    DFA::Symbols::operator++(void) {
+    DFA::Symbols::operator++() {
         int s = c_trans->symbol;
         do {
             c_trans++;
@@ -276,7 +277,7 @@ namespace Gecode {
     }
 
     forceinline int
-    DFA::Symbols::val(void) const {
+    DFA::Symbols::val() const {
         return c_trans->symbol;
     }
 
@@ -287,7 +288,7 @@ namespace Gecode {
         st.copyfmt(os);
         st.width(0);
         st << "Start state: 0" << '\n' << "States:      0..." << d.n_states() - 1 << '\n' << "Transitions:";
-        for (int s = 0; s < static_cast<int>(d.n_states()); s++) {
+        for (int s = 0; s < d.n_states(); s++) {
             DFA::Transitions t(d);
             int n = 0;
             while (t()) {

@@ -32,7 +32,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Iter { namespace Ranges {
+namespace Gecode::Iter::Ranges {
 
     /**
      * \brief Range iterator for computing intersection (binary)
@@ -51,7 +51,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        Inter(void) = default;
+        Inter() = default;
         /// Initialize with iterator \a i and \a j
         Inter(I& i, J& j);
         /// Initialize with iterator \a i and \a j
@@ -61,7 +61,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Iteration control
         //@{
         /// Move iterator to next range (if possible)
-        void operator++(void);
+        void operator++();
         //@}
     };
 
@@ -79,7 +79,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
         /// \name Constructors and initialization
         //@{
         /// Default constructor
-        NaryInter(void) = default;
+        NaryInter() = default;
         /// Initialize with single iterator \a i
         template <class I>
         NaryInter(Region& r, I& i);
@@ -115,7 +115,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     template <class I, class J>
     inline void
-    Inter<I, J>::operator++(void) {
+    Inter<I, J>::operator++() {
         if (!i() || !j())
             goto done;
         do {
@@ -309,10 +309,13 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
     forceinline NaryInter&
     NaryInter::operator=(const NaryInter& m) {
-        f = nullptr;
-        return static_cast<NaryInter&>(RangeListIter::operator=(m));
+        if (this != &m) {
+            f = nullptr;
+            RangeListIter::operator=(m);
+        }
+        return *this;
     }
 
-}}} // namespace Gecode::Iter::Ranges
+} // namespace Gecode::Iter::Ranges
 
 // STATISTICS: iter-any

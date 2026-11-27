@@ -38,27 +38,27 @@ namespace Gecode {
      */
 
     forceinline FloatNum
-    pi_half_lower(void) {
+    pi_half_lower() {
         return 0x1.921fb54442d18p+0;
     }
     forceinline FloatNum
-    pi_half_upper(void) {
+    pi_half_upper() {
         return 0x1.921fb54442d19p+0;
     }
     forceinline FloatNum
-    pi_lower(void) {
+    pi_lower() {
         return 0x1.921fb54442d18p+1;
     }
     forceinline FloatNum
-    pi_upper(void) {
+    pi_upper() {
         return 0x1.921fb54442d19p+1;
     }
     forceinline FloatNum
-    pi_twice_lower(void) {
+    pi_twice_lower() {
         return 0x1.921fb54442d18p+2;
     }
     forceinline FloatNum
-    pi_twice_upper(void) {
+    pi_twice_upper() {
         return 0x1.921fb54442d19p+2;
     }
 } // namespace Gecode

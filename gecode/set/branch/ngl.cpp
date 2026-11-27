@@ -32,7 +32,7 @@
 
 #include <gecode/set/branch.hh>
 
-namespace Gecode { namespace Set { namespace Branch {
+namespace Gecode::Set::Branch {
 
     NGL*
     IncNGL::copy(Space& home) {
@@ -43,9 +43,8 @@ namespace Gecode { namespace Set { namespace Branch {
         // Is n in the glb(x)?
         if (x.contains(n))
             return NGL::SUBSUMED;
-        else
-            // Is n not in the lub(x)?
-            return x.not_contains(n) ? NGL::FAILED : NGL::NONE;
+        // Is n not in the lub(x)?
+        return x.not_contains(n) ? NGL::FAILED : NGL::NONE;
     }
     ExecStatus
     IncNGL::prune(Space& home) {
@@ -61,15 +60,14 @@ namespace Gecode { namespace Set { namespace Branch {
         // Is n not in the lub(x)?
         if (x.not_contains(n))
             return NGL::SUBSUMED;
-        else
-            // Is n in the lub(x)?
-            return x.contains(n) ? NGL::FAILED : NGL::NONE;
+        // Is n in the lub(x)?
+        return x.contains(n) ? NGL::FAILED : NGL::NONE;
     }
     ExecStatus
     ExcNGL::prune(Space& home) {
         return me_failed(x.include(home, n)) ? ES_FAILED : ES_OK;
     }
 
-}}} // namespace Gecode::Set::Branch
+} // namespace Gecode::Set::Branch
 
 // STATISTICS: set-branch

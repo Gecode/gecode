@@ -30,7 +30,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace ViewValGraph {
+namespace Gecode::Int::ViewValGraph {
 
     template <class T>
     forceinline
@@ -46,19 +46,19 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     template <class T>
     forceinline int
-    CombPtrFlag<T>::is_set(void) const {
+    CombPtrFlag<T>::is_set() const {
         return static_cast<int>(cpf & 0b1);
     }
 
     template <class T>
     forceinline void
-    CombPtrFlag<T>::set(void) {
+    CombPtrFlag<T>::set() {
         cpf |= 0b1;
     }
 
     template <class T>
     forceinline void
-    CombPtrFlag<T>::unset(void) {
+    CombPtrFlag<T>::unset() {
         cpf &= ~static_cast<Support::uptrint_t>(0b1);
     }
 
@@ -68,6 +68,6 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
         cpf = reinterpret_cast<Support::uptrint_t>(p1) ^ reinterpret_cast<Support::uptrint_t>(p2);
     }
 
-}}} // namespace Gecode::Int::ViewValGraph
+} // namespace Gecode::Int::ViewValGraph
 
 // STATISTICS: int-prop

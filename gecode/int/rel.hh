@@ -46,7 +46,7 @@
  * \brief Simple relation propagators
  */
 
-namespace Gecode { namespace Int { namespace Rel {
+namespace Gecode::Int::Rel {
 
     /*
      * Equality propagators
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Rel {
             /// \name Linkage access
             //@{
             /// Return next position
-            Pos* next(void) const;
+            Pos* next() const;
             //@}
 
             /// \name Memory management
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Rel {
         /// Stack of positions
         Pos* pos;
         /// Whether no more positions must be propagated
-        bool empty(void) const;
+        bool empty() const;
         /// Pop a position to be propagated and return it
         int pop(Space& home);
         /// Push a new position \a p to be propagated
@@ -693,7 +693,7 @@ namespace Gecode { namespace Int { namespace Rel {
         size_t dispose(Space& home) override;
     };
 
-}}} // namespace Gecode::Int::Rel
+} // namespace Gecode::Int::Rel
 
 #include <gecode/int/rel/eq.hpp>
 #include <gecode/int/rel/nq.hpp>

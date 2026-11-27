@@ -47,7 +47,7 @@
 
 #ifdef GECODE_ALLOCATOR
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief Default memory allocator
@@ -62,7 +62,7 @@ namespace Gecode { namespace Support {
     class Allocator {
     public:
         /// Default constructor
-        Allocator(void) = default;
+        Allocator() = default;
         /// Allocate memory block of size \a n
 #ifdef GECODE_MIMALLOC
         GECODE_SUPPORT_EXPORT
@@ -85,14 +85,17 @@ namespace Gecode { namespace Support {
 #ifndef GECODE_MIMALLOC
     forceinline void*
     Allocator::alloc(size_t n) {
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc): this is the heap allocator
         return ::malloc(n);
     }
     forceinline void*
     Allocator::realloc(void* p, size_t n) {
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc): this is the heap allocator
         return ::realloc(p, n);
     }
     forceinline void
     Allocator::free(void* p) {
+        // NOLINTNEXTLINE(cppcoreguidelines-no-malloc): this is the heap allocator
         ::free(p);
     }
 #endif
@@ -101,11 +104,11 @@ namespace Gecode { namespace Support {
         return ::memcpy(d, s, n);
     }
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 #endif
 
-namespace Gecode { namespace Support {
+namespace Gecode::Support {
 
     /**
      * \brief The single global default memory allocator
@@ -113,6 +116,6 @@ namespace Gecode { namespace Support {
      */
     extern GECODE_SUPPORT_EXPORT Allocator allocator;
 
-}} // namespace Gecode::Support
+} // namespace Gecode::Support
 
 // STATISTICS: support-any

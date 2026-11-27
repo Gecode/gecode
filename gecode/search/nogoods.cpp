@@ -32,10 +32,10 @@
 
 #include <gecode/search/nogoods.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     /// Help function to cancel and dispose a no-good literal
-    forceinline NGL*
+    static forceinline NGL*
     dispose_and_next(NGL* ngl, Space& home, Propagator& p, bool c) {
         NGL* n = ngl->next();
         if (c)
@@ -226,6 +226,6 @@ namespace Gecode { namespace Search {
         return sizeof(*this);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

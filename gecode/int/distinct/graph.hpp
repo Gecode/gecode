@@ -32,7 +32,7 @@
 
 #include <climits>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     template <class View>
     forceinline ExecStatus
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     forceinline bool
-    Graph<View>::sync(void) {
+    Graph<View>::sync() {
         using namespace ViewValGraph;
         Region r;
         // Stack for view nodes to be rematched
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     template <class View>
     forceinline bool
-    Graph<View>::mark(void) {
+    Graph<View>::mark() {
         using namespace ViewValGraph;
 
         Region r;
@@ -226,9 +226,8 @@ namespace Gecode { namespace Int { namespace Distinct {
         if (n_view_visited < n_view) {
             scc();
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     template <class View>
@@ -253,6 +252,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_OK;
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

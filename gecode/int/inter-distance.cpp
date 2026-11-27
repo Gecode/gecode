@@ -38,12 +38,13 @@
 #include <algorithm>
 #include <limits>
 #include <tuple>
+#include <utility>
 
-namespace Gecode { namespace Int { namespace InterDistance {
+namespace Gecode::Int::InterDistance {
 
     namespace {
-        typedef long long int Time;
-        typedef std::ptrdiff_t RegionIndex;
+        using Time = long long int;
+        using RegionIndex = std::ptrdiff_t;
 
         /// Task bounds and ranks in their sorted orders
         struct Task {
@@ -85,8 +86,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
             /// Change the active-key count at rank i
             void
             update(int i, int delta) {
-                for (unsigned int j = static_cast<unsigned int>(i) + 1; j <= static_cast<unsigned int>(key_count);
-                     j += j & -j)
+                for (unsigned int j = static_cast<unsigned int>(i) + 1; std::cmp_less_equal(j, key_count); j += j & -j)
                     counts[j] += delta;
                 active_count += delta;
             }
@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// First active key, or the end rank
             int
-            first_active(void) const {
+            first_active() const {
                 return next_active(0);
             }
             /// First active key greater than key, or the end rank
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
                 int pending = dc - 1;
                 for (int i = n; i--;) {
                     int rank = release[i]->max_rank;
-                    for (size_t j = static_cast<size_t>(rank) + 1; j <= static_cast<size_t>(dc); j += j & -j)
+                    for (size_t j = static_cast<size_t>(rank) + 1; std::cmp_less_equal(j, dc); j += j & -j)
                         loads[j]++;
                     int d = find(rank);
                     active = std::min(active, d);
@@ -499,7 +499,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
         private:
             /// Sort task pointers and record release ranks
             void
-            sort_tasks(void) {
+            sort_tasks() {
                 for (int i = 0; i < n; i++)
                     min_sorted[i] = max_sorted[i] = tasks + i;
                 std::sort(min_sorted, min_sorted + n, [](const Task* a, const Task* b) {
@@ -569,7 +569,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Tabulate earliest completions outside the forbidden start regions
             void
-            compute_earliest_completions(void) {
+            compute_earliest_completions() {
                 for (int i = 0; i < n; i++) {
                     ect_table[i] = min_sorted[i]->min;
                     int er = 0;
@@ -603,7 +603,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Initialize the adjustment list and the groups of variable bounds
             void
-            initialize_adjustments(void) {
+            initialize_adjustments() {
                 const Time infinity = std::numeric_limits<Time>::max();
                 regions[0] = {-infinity, -infinity, -1, 1};
                 regions[1] = {infinity, infinity, 0, -1};
@@ -650,7 +650,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Build and apply internal adjustments in deadline order
             void
-            apply_internal_adjustments(void) {
+            apply_internal_adjustments() {
                 const Time infinity = std::numeric_limits<Time>::max();
                 RegionIndex last_region = 0;
                 int min_p = n;
@@ -737,7 +737,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
 
             /// Apply external adjustments after reading each task's tightened bound
             void
-            apply_external_adjustments(void) {
+            apply_external_adjustments() {
                 // A variable is filtered before adding external intervals for its
                 // deadline, so it is never excluded by an interval it helped create.
                 for (int it = 0; it < n; it++) {
@@ -939,7 +939,7 @@ namespace Gecode { namespace Int { namespace InterDistance {
     template class Bnd<IntView>;
     template class Bnd<ConstIntView>;
 
-}}} // namespace Gecode::Int::InterDistance
+} // namespace Gecode::Int::InterDistance
 
 namespace Gecode {
 

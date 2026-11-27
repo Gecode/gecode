@@ -34,7 +34,7 @@
 
 #include <algorithm>
 
-namespace Gecode { namespace Int { namespace Distinct {
+namespace Gecode::Int::Distinct {
 
     PropCost
     EqIte::cost(const Space&, const ModEventDelta&) const {
@@ -75,8 +75,7 @@ namespace Gecode { namespace Int { namespace Distinct {
             GECODE_ME_CHECK(x0.nq(home, c0));
             if (eq_else == RT_TRUE)
                 return home.ES_SUBSUMED(*this);
-            else
-                GECODE_REWRITE(*this, (Rel::EqDom<IntView, IntView>::post(home(*this), x0, x1)));
+            GECODE_REWRITE(*this, (Rel::EqDom<IntView, IntView>::post(home(*this), x0, x1)));
         }
 
         if (eq_else == RT_FALSE) {
@@ -97,6 +96,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_FIX;
     }
 
-}}} // namespace Gecode::Int::Distinct
+} // namespace Gecode::Int::Distinct
 
 // STATISTICS: int-prop

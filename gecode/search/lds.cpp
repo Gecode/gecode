@@ -38,16 +38,15 @@
 
 #include <gecode/search/seq/lds.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode::Search {
 
     Engine*
     make_lds_engine(Space* s, const Options& o) {
         if (o.tracer)
             return new Seq::LDS<EdgeTraceRecorder>(s, o);
-        else
-            return new Seq::LDS<NoTraceRecorder>(s, o);
+        return new Seq::LDS<NoTraceRecorder>(s, o);
     }
 
-}} // namespace Gecode::Search
+} // namespace Gecode::Search
 
 // STATISTICS: search-other

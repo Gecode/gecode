@@ -37,7 +37,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /**
      * \brief Class for pair of index and view
@@ -72,21 +72,21 @@ namespace Gecode { namespace Int {
 
     public:
         /// Default constructor
-        IdxViewArray(void);
+        IdxViewArray();
         /// Copy constructor
         IdxViewArray(const IdxViewArray<View>&);
         /// Construct an IdxViewArray from \a x
-        IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
+        IdxViewArray(Space& home, const ViewToVarArg<View>::argtype& x);
         /// Construct an IdxViewArray of size \a n
         IdxViewArray(Space& home, int n);
 
         /// Return the current size
-        int size(void) const;
+        int size() const;
         /// Set the size to \a n
         void size(int n);
 
-        /// Access element \a n
-        IdxView<View>& operator[](int n);
+        /// Access element \a i
+        IdxView<View>& operator[](int i);
         /// Access element \a n
         const IdxView<View>& operator[](int) const;
 
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int {
         void reschedule(Space& home, Propagator& p, PropCond pc);
 
         /// Cloning
-        void update(Space& home, IdxViewArray<View>& x);
+        void update(Space& home, IdxViewArray<View>& a);
     };
 
     /**
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int {
     template <class Char, class Traits, class View>
     std::basic_ostream<Char, Traits>& operator<<(std::basic_ostream<Char, Traits>& os, const IdxViewArray<View>& x);
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
 #include <gecode/int/idx-view.hpp>
 

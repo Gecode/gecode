@@ -54,8 +54,8 @@ namespace Gecode {
         }
         GECODE_POST;
         bool all_one = true;
-        for (int i = 0; i < p.size(); i++) {
-            if (p[i] != 1) {
+        for (int pi : p) {
+            if (pi != 1) {
                 all_one = false;
                 break;
             }
@@ -96,8 +96,8 @@ namespace Gecode {
         }
         GECODE_POST;
         bool fixp = true;
-        for (int i = 0; i < t.size(); i++)
-            if (t[i] != TT_FIXED_PROCESSING) {
+        for (auto ti : t)
+            if (ti != TT_FIXED_PROCESSING) {
                 fixp = false;
                 break;
             }
@@ -125,8 +125,8 @@ namespace Gecode {
             Int::Limits::check(static_cast<long long int>(s[i].max()) + p[i], "Int::unary");
         }
         bool all_mandatory = true;
-        for (int i = 0; i < m.size(); i++) {
-            if (!m[i].one()) {
+        for (auto mi : m) {
+            if (!mi.one()) {
                 all_mandatory = false;
                 break;
             }
@@ -162,8 +162,8 @@ namespace Gecode {
         }
         GECODE_POST;
         bool all_mandatory = true;
-        for (int i = 0; i < m.size(); i++) {
-            if (!m[i].one()) {
+        for (auto mi : m) {
+            if (!mi.one()) {
                 all_mandatory = false;
                 break;
             }
@@ -193,13 +193,12 @@ namespace Gecode {
         if ((n_tasks != p.size()) || (n_tasks != e.size()))
             throw Int::ArgumentSizeMismatch("Int::unary");
         GECODE_POST;
-        for (int i = 0; i < p.size(); i++) {
-            IntView pi(p[i]);
+        for (IntView pi : p) {
             GECODE_ME_FAIL(pi.gq(home, 0));
         }
         bool fix_p = true;
-        for (int i = 0; i < p.size(); i++) {
-            if (!p[i].assigned()) {
+        for (auto pi : p) {
+            if (!pi.assigned()) {
                 fix_p = false;
                 break;
             }
@@ -226,13 +225,12 @@ namespace Gecode {
         if ((n_tasks != p.size()) || (n_tasks != m.size()) || (n_tasks != e.size()))
             throw Int::ArgumentSizeMismatch("Int::unary");
         GECODE_POST;
-        for (int i = 0; i < p.size(); i++) {
-            IntView pi(p[i]);
+        for (IntView pi : p) {
             GECODE_ME_FAIL(pi.gq(home, 0));
         }
         bool all_mandatory = true;
-        for (int i = 0; i < m.size(); i++) {
-            if (!m[i].one()) {
+        for (auto mi : m) {
+            if (!mi.one()) {
                 all_mandatory = false;
                 break;
             }

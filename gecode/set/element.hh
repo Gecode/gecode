@@ -42,25 +42,25 @@
 #include <gecode/set/rel.hh>
 #include <gecode/set/rel-op.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode::Int {
 
     /// VarArg type for %Set views
     template <>
     class ViewToVarArg<Gecode::Set::SetView> {
     public:
-        typedef Gecode::SetVarArgs argtype;
+        using argtype = Gecode::SetVarArgs;
     };
 
     /// VarArg type for singleton views
     template <>
     class ViewToVarArg<Gecode::Set::SingletonView> {
     public:
-        typedef Gecode::IntVarArgs argtype;
+        using argtype = Gecode::IntVarArgs;
     };
 
-}} // namespace Gecode::Int
+} // namespace Gecode::Int
 
-namespace Gecode { namespace Set { namespace Element {
+namespace Gecode::Set::Element {
 
     /**
      * \namespace Gecode::Set::Element
@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Element {
     template <class View, class View0, class View1>
     class ElementIntersection : public Propagator {
     public:
-        typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
+        using IdxViewArray = Gecode::Int::IdxViewArray<View>;
 
     protected:
         IntSet universe;
@@ -102,10 +102,10 @@ namespace Gecode { namespace Set { namespace Element {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
          *
-         * If \a y is empty, \a z will be constrained to be the given universe
+         * If \a x0 is empty, \a x1 will be constrained to be the given universe
          * \a u (as an empty intersection is the universe).
          */
-        static ExecStatus post(Home home, IdxViewArray& x, View0 y, View1 z, const IntSet& u);
+        static ExecStatus post(Home home, IdxViewArray& x, View0 x0, View1 x1, const IntSet& u);
     };
 
     /**
@@ -117,7 +117,7 @@ namespace Gecode { namespace Set { namespace Element {
     template <class View, class View0, class View1>
     class ElementUnion : public Propagator {
     public:
-        typedef Gecode::Int::IdxViewArray<View> IdxViewArray;
+        using IdxViewArray = Gecode::Int::IdxViewArray<View>;
 
     protected:
         IdxViewArray iv;
@@ -142,10 +142,10 @@ namespace Gecode { namespace Set { namespace Element {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
          *
-         * If \a y is empty, \a z will be constrained to be empty
+         * If \a x0 is empty, \a x1 will be constrained to be empty
          * (as an empty union is the empty set).
          */
-        static ExecStatus post(Home home, IdxViewArray& x, View0 y, View1 z);
+        static ExecStatus post(Home home, IdxViewArray& x, View0 x0, View1 x1);
     };
 
     /**
@@ -180,10 +180,10 @@ namespace Gecode { namespace Set { namespace Element {
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /** Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
          *
-         * If \a y is empty, \a z will be constrained to be empty
+         * If \a x1 is empty, \a x0 will be constrained to be empty
          * (as an empty union is the empty set).
          */
-        static ExecStatus post(Home home, SView z, const IntSetArgs& x, RView y);
+        static ExecStatus post(Home home, SView x0, const IntSetArgs& x, RView x1);
     };
 
     /**
@@ -195,7 +195,7 @@ namespace Gecode { namespace Set { namespace Element {
     template <class SView, class RView>
     class ElementDisjoint : public Propagator {
     public:
-        typedef Gecode::Int::IdxViewArray<SView> IdxViewArray;
+        using IdxViewArray = Gecode::Int::IdxViewArray<SView>;
 
     protected:
         IdxViewArray iv;
@@ -218,10 +218,10 @@ namespace Gecode { namespace Set { namespace Element {
         /// Perform propagation
         ExecStatus propagate(Space& home, const ModEventDelta& med) override;
         /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$
-        static ExecStatus post(Home home, IdxViewArray& x, RView y);
+        static ExecStatus post(Home home, IdxViewArray& x, RView x1);
     };
 
-}}} // namespace Gecode::Set::Element
+} // namespace Gecode::Set::Element
 
 #include <gecode/set/element/inter.hpp>
 #include <gecode/set/element/union.hpp>
