@@ -164,7 +164,7 @@ namespace Test::Assign {
         (void)root->status();
 
         for (int val = 0; val < n_int_assign; val++) {
-            IntTestSpace* clone = static_cast<IntTestSpace*>(root->clone());
+            IntTestSpace* clone = root->clone();
             Gecode::Search::Options o;
             o.a_d = _rand(10);
             o.c_d = _rand(10);
@@ -224,7 +224,7 @@ namespace Test::Assign {
         (void)root->status();
 
         for (int val = n_bool_assign; val--;) {
-            BoolTestSpace* clone = static_cast<BoolTestSpace*>(root->clone());
+            BoolTestSpace* clone = root->clone();
             Gecode::Search::Options o;
             o.a_d = _rand(10);
             o.c_d = _rand(10);
@@ -302,7 +302,7 @@ namespace Test::Assign {
         (void)root->status();
 
         for (int val = n_set_assign; val--;) {
-            SetTestSpace* clone = static_cast<SetTestSpace*>(root->clone());
+            SetTestSpace* clone = root->clone();
             Gecode::Search::Options o;
             o.a_d = _rand(10);
             o.c_d = _rand(10);
@@ -399,7 +399,7 @@ namespace Test::Assign {
         (void)root->status();
 
         for (int val = n_float_assign; val--;) {
-            FloatTestSpace* clone = static_cast<FloatTestSpace*>(root->clone());
+            FloatTestSpace* clone = root->clone();
             Gecode::Search::Options o;
             o.a_d = _rand(10);
             o.c_d = _rand(10);

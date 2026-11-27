@@ -2178,7 +2178,7 @@ namespace Test::Search {
 #endif
 
             UnsupportedObjective unsupported;
-            UnsupportedObjective* um = static_cast<UnsupportedObjective*>(unsupported.clone());
+            UnsupportedObjective* um = unsupported.clone();
             Gecode::Search::Engine* missing = Gecode::Search::make_bab_engine(um, Gecode::Search::Options());
             delete um;
             missing->constrain(unsupported);
@@ -3972,6 +3972,53 @@ namespace Test::Search {
     };
 
     PBSBuilderStop pbs_builder_stop;
+
+    /// Both portfolio constructors accept a model whose clone() hides Space::clone
+    class PBSHiddenClone : public Base {
+        /// Model whose own clone() returns a Space*
+        class Model : public SolveImmediate {
+        public:
+            /// Constructor for space creation
+            Model() : SolveImmediate(HTB_NONE, HTB_NONE, HTB_NONE) {}
+            /// Constructor for cloning \a s
+            // NOLINTNEXTLINE(modernize-use-equals-default)
+            Model(Model& s) : SolveImmediate(s) {}
+            /// Copy during cloning
+            Space*
+            copy() override {
+                return new Model(*this);
+            }
+            /// Clone as a Space, hiding the typed Space::clone
+            Space*
+            clone() const {
+                return Space::clone();
+            }
+        };
+        /// Return whether \a pbs finds a solution
+        static bool
+        solves(Gecode::PBS<Model, Gecode::DFS>& pbs) {
+            const std::unique_ptr<Model> s(pbs.next());
+            return s != nullptr;
+        }
+
+    public:
+        PBSHiddenClone() : Base("Search::PBS::HiddenClone") {}
+        bool
+        run() override {
+            Model root;
+            Gecode::Search::Options o;
+            o.assets = 2;
+            o.threads = 1;
+            Gecode::PBS<Model, Gecode::DFS> assets(&root, o);
+            Gecode::SEBs sebs(2);
+            sebs[0] = Gecode::dfs<Model>();
+            sebs[1] = Gecode::dfs<Model>();
+            Gecode::PBS<Model, Gecode::DFS> builders(&root, sebs, o);
+            return solves(assets) && solves(builders);
+        }
+    };
+
+    PBSHiddenClone pbs_hidden_clone;
 
     /// An exhausted asset ends a portfolio whose other asset never ends
     class PBSExhaustedAsset : public Base {

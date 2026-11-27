@@ -43,7 +43,7 @@ namespace Gecode::Search {
     template <class T>
     forceinline T*
     Base<T>::next() {
-        return dynamic_cast<T*>(e->next());
+        return down_cast<T*>(e->next());
     }
     template <class T>
     forceinline Statistics

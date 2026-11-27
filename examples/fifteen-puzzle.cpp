@@ -245,7 +245,7 @@ public:
         : Script(opt), tiles(*this, IntSet(0, 15), 16 * (opt.limit() + 1)),
           path(
               *this, IntSet(0, 15),
-              [](Space& home, OpenIntVarList x, int i) { static_cast<OpenPuzzle&>(home).transition(x, i); },
+              [](Space& home, OpenIntVarList x, int i) { down_cast<OpenPuzzle&>(home).transition(x, i); },
               opt.limit() + 1) {
         const Board initial = initial_board(opt);
         rel(*this, tiles.length() == 16 * path.length());
@@ -255,7 +255,7 @@ public:
         IntValBranch value_branch = INT_VAL_MIN();
         if (opt.branching() == PuzzleOptions::BRANCH_MANHATTAN)
             value_branch = INT_VAL([](const Space& home, IntVar next, int i) {
-                const OpenPuzzle& s = static_cast<const OpenPuzzle&>(home);
+                const OpenPuzzle& s = down_cast<const OpenPuzzle&>(home);
                 return manhattan_value(s.state(i - 1), s.path[i - 1].val(), next);
             });
         branch(*this, path, INT_VAR_NONE(), value_branch);
@@ -301,7 +301,7 @@ public:
     }
     void
     constrain(const Space& solution) override {
-        const OpenPuzzle& best = static_cast<const OpenPuzzle&>(solution);
+        const OpenPuzzle& best = down_cast<const OpenPuzzle&>(solution);
         rel(*this, path.length() < best.path.length().val());
     }
     void
@@ -342,11 +342,11 @@ public:
         IntValBranch value_branch = INT_VAL_MIN();
         if (opt.branching() == PuzzleOptions::BRANCH_MANHATTAN)
             value_branch = INT_VAL([](const Space& home, IntVar next, int i) {
-                const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
+                const FixedPuzzle& s = down_cast<const FixedPuzzle&>(home);
                 return manhattan_value(s.state(i - 1), s.path[i - 1].val(), next);
             });
         branch(*this, path, INT_VAR_NONE(), value_branch, [](const Space& home, IntVar, int i) {
-            const FixedPuzzle& s = static_cast<const FixedPuzzle&>(home);
+            const FixedPuzzle& s = down_cast<const FixedPuzzle&>(home);
             const int depth = s.depth();
             return values(s.state(depth)) != goal() && i == depth + 1;
         });
@@ -383,7 +383,7 @@ public:
     }
     void
     constrain(const Space& solution) override {
-        const FixedPuzzle& best = static_cast<const FixedPuzzle&>(solution);
+        const FixedPuzzle& best = down_cast<const FixedPuzzle&>(solution);
         rel(*this, length < best.length.val());
     }
     void
@@ -406,7 +406,7 @@ run(PuzzleOptions& opt) {
     case PuzzleOptions::SEARCH_ASTAR:
     case PuzzleOptions::SEARCH_CABS: {
         Search::HeuristicGuidance guidance(
-            Sense::Minimize, [](const Space& home) -> std::int64_t { return static_cast<const Model&>(home).bound(); });
+            Sense::Minimize, [](const Space& home) -> std::int64_t { return down_cast<const Model&>(home).bound(); });
         opt.guidance(&guidance);
         if (opt.search() == PuzzleOptions::SEARCH_ASTAR)
             Script::run<Model, AStar, PuzzleOptions>(opt);

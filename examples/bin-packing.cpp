@@ -364,7 +364,7 @@ public:
     /// Perform commit for choice \a _c and alternative \a a
     ExecStatus
     commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
-        const Choice& c = static_cast<const Choice&>(_c);
+        const Choice& c = down_cast<const Choice&>(_c);
         // This catches also the case that the choice has a single aternative only
         if (a == 0) {
             GECODE_ME_CHECK(bin[c.item].eq(home, c.same[0]));
@@ -383,7 +383,7 @@ public:
     /// Print explanation
     void
     print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
-        const Choice& c = static_cast<const Choice&>(_c);
+        const Choice& c = down_cast<const Choice&>(_c);
         if (a == 0) {
             o << "bin[" << c.item << "] = " << c.same[0];
         } else {

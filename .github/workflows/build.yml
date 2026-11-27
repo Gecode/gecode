@@ -127,7 +127,10 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y flex bison libgmp-dev libmpfr-dev
+        sudo apt-get install -y flex bison libgmp-dev libmpfr-dev g++-14
+        # Space::clone needs deducing this, which GCC 13 lacks.
+        echo "CC=gcc-14" >> "$GITHUB_ENV"
+        echo "CXX=g++-14" >> "$GITHUB_ENV"
 
     - name: Check generated source freshness
       # Ubuntu LTS keeps Bison 3.8.2 and Flex 2.6.4, while Homebrew moves on.
@@ -446,6 +449,10 @@ jobs:
 
   build-cmake-qt5-gist-smoke:
     runs-on: ubuntu-24.04
+    env:
+      # Space::clone needs deducing this, which GCC 13 lacks.
+      CC: gcc-14
+      CXX: g++-14
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -459,7 +466,7 @@ jobs:
       shell: bash
       run: |
         sudo apt-get update
-        sudo apt-get install -y qtbase5-dev qtbase5-dev-tools libgl1-mesa-dev
+        sudo apt-get install -y qtbase5-dev qtbase5-dev-tools libgl1-mesa-dev g++-14
 
     - name: Configure CMake with Qt 5/Gist
       shell: bash

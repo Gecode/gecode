@@ -82,7 +82,7 @@ namespace Test::Int::OpenList {
                 if (!source.list[i].assigned() || (source.list[i].val() != i))
                     return false;
 
-            OpenListSpace* clone = static_cast<OpenListSpace*>(source.clone());
+            OpenListSpace* clone = source.clone();
             rel(*clone, clone->list.length(), IRT_GQ, 5);
             const bool clone_ok = (clone->status() != SS_FAILED) && (clone->list.known_length() == 5) &&
                                   clone->list[4].assigned() && (clone->list[4].val() == 4);
@@ -311,7 +311,7 @@ namespace Test::Int::OpenList {
                 const Choice* restored = source.choice(archive);
                 bool valid = restored->alternatives() == (multi ? 3U : 2U);
                 for (unsigned int a = 0; a < restored->alternatives(); a++) {
-                    SelectorChoiceSpace* clone = static_cast<SelectorChoiceSpace*>(source.clone());
+                    SelectorChoiceSpace* clone = source.clone();
                     clone->commit(*restored, a);
                     const int expected[] = {5, 2, 0};
                     valid &= !clone->failed() && !clone->list[0].assigned() && !clone->list[1].assigned();
@@ -321,7 +321,7 @@ namespace Test::Int::OpenList {
                         valid &= !clone->list[2].in(5);
                     delete clone;
                 }
-                SelectorChoiceSpace* excluded = static_cast<SelectorChoiceSpace*>(source.clone());
+                SelectorChoiceSpace* excluded = source.clone();
                 NGL* literal = excluded->ngl(*restored, 0);
                 valid &= (literal != nullptr) && (literal->status(*excluded) == NGL::NONE);
                 if (literal)
@@ -445,7 +445,7 @@ namespace Test::Int::OpenList {
             source.list.append(source, first);
             if ((source.list.known_length() != 5) || (source.status() == SS_FAILED))
                 return false;
-            std::unique_ptr<AliasSpace<Var>> clone(static_cast<AliasSpace<Var>*>(source.clone()));
+            std::unique_ptr<AliasSpace<Var>> clone(source.clone());
             if (!clone->rejects(3))
                 return false;
             clone->list.append(*clone, Var(*clone, 0, 1));
@@ -513,7 +513,7 @@ namespace Test::Int::OpenList {
             FactorySpace source;
             if (source.status() == SS_FAILED)
                 return false;
-            FactorySpace* clone = static_cast<FactorySpace*>(source.clone());
+            FactorySpace* clone = source.clone();
 #ifdef GECODE_HAS_SET_VARS
             clone->sets.materialize(*clone, 3);
             clone->sets.close(*clone);
@@ -729,7 +729,7 @@ namespace Test::Int::OpenList {
                 (source.negative[0].min() != -7) || (source.negative[0].max() != -2))
                 return false;
 
-            std::unique_ptr<ViewSpace> clone(static_cast<ViewSpace*>(source.clone()));
+            std::unique_ptr<ViewSpace> clone(source.clone());
             clone->negative.materialize(*clone, 3);
             if (me_failed(clone->negative[0].eq(*clone, -5)) || me_failed(clone->direct.length().eq(*clone, 3)) ||
                 (clone->status() == SS_FAILED) || (clone->list.known_length() != 3) ||
@@ -935,7 +935,7 @@ namespace Test::Int::OpenList {
             if ((source.status() == SS_FAILED) || (source.list[0].min() != 5) || (source.list[1].min() != 6) ||
                 (source.list[0].max() != 7) || (source.list[1].max() != 7))
                 return false;
-            std::unique_ptr<BoundsSpace> clone(static_cast<BoundsSpace*>(source.clone()));
+            std::unique_ptr<BoundsSpace> clone(source.clone());
             clone->list.materialize(*clone, 3);
             if ((clone->status() == SS_FAILED) || (clone->list[2].min() != 5) || (clone->list[2].max() != 7) ||
                 (source.list.known_length() != 2))
@@ -1033,7 +1033,7 @@ namespace Test::Int::OpenList {
                 if ((source.status() == SS_FAILED) || !source.list[0].assigned())
                     return false;
 
-                std::unique_ptr<IncrementalSpace> clone(static_cast<IncrementalSpace*>(source.clone()));
+                std::unique_ptr<IncrementalSpace> clone(source.clone());
                 clone->list.materialize(*clone, 2);
                 clone->list.close(*clone);
                 if (kind == Constraint::Kind::MIN_MAX)
@@ -1165,8 +1165,8 @@ namespace Test::Int::OpenList {
                     return false;
             if (source.status() == SS_FAILED)
                 return false;
-            std::unique_ptr<SetSpace> clone(static_cast<SetSpace*>(source.clone()));
-            std::unique_ptr<SetSpace> sibling(static_cast<SetSpace*>(source.clone()));
+            std::unique_ptr<SetSpace> clone(source.clone());
+            std::unique_ptr<SetSpace> sibling(source.clone());
             std::set<int> clone_expected(expected);
             const IntSet growth({{-30, -29}, {-20, -19}, {14, 14}, {18, 18}, {26, 26}, {28, 28}, {30, 30}});
             if (!add(*clone, clone_expected, IntSet(26, 26)) || !add(*clone, clone_expected, growth) ||
@@ -1194,7 +1194,7 @@ namespace Test::Int::OpenList {
             source.list.append(source, IntVar(source, 1, 1));
             if (source.status() == SS_FAILED)
                 return false;
-            std::unique_ptr<CallbackSpace> duplicate(static_cast<CallbackSpace*>(source.clone()));
+            std::unique_ptr<CallbackSpace> duplicate(source.clone());
             // Reverse the chain so each assignment needs another pruning wave.
             for (int lower = 3; lower >= 1; lower--)
                 source.list.append(source, IntVar(source, lower, lower + 1));
@@ -1247,7 +1247,7 @@ namespace Test::Int::OpenList {
                 EmptyDistinctSpace source(Gecode::Int::Limits::max, ipl);
                 if (source.status() != SS_SOLVED)
                     return false;
-                std::unique_ptr<EmptyDistinctSpace> duplicate(static_cast<EmptyDistinctSpace*>(source.clone()));
+                std::unique_ptr<EmptyDistinctSpace> duplicate(source.clone());
                 source.list.append(source, IntVar(source, 1, 1));
                 source.list.append(source, IntVar(source, 0, 1));
                 if ((source.status() == SS_FAILED) || !source.list[1].assigned() || (source.list[1].val() != 0))
@@ -1361,7 +1361,7 @@ namespace Test::Int::OpenList {
                 delete source;
                 return false;
             }
-            CallbackSpace* clone = static_cast<CallbackSpace*>(source->clone());
+            CallbackSpace* clone = source->clone();
             delete source;
             const bool retained = (domain.use_count() > 1) && (transition.use_count() > 1);
             delete clone;
@@ -1512,7 +1512,7 @@ namespace Test::Int::OpenList {
             const Choice* choice = source.choice();
             bool valid = true;
             for (unsigned int alternative = 0; alternative < 2; alternative++) {
-                CallbackSpace* clone = static_cast<CallbackSpace*>(source.clone());
+                CallbackSpace* clone = source.clone();
                 rel(*clone, clone->list.length(), IRT_GQ, 2);
                 clone->commit(*choice, alternative);
                 valid &= !clone->failed() && (clone->list.known_length() == 1) && clone->list[0].assigned() &&
@@ -1546,7 +1546,7 @@ namespace Test::Int::OpenList {
             if (source.status() != SS_BRANCH)
                 return false;
             std::unique_ptr<const Choice> first(source.choice());
-            std::unique_ptr<CallbackSpace> replay(static_cast<CallbackSpace*>(source.clone()));
+            std::unique_ptr<CallbackSpace> replay(source.clone());
             source.commit(*first, 0);
             if ((source.status() != SS_BRANCH) || (source.list.known_length() != 2))
                 return false;
@@ -1701,7 +1701,7 @@ namespace Test::Int::OpenList {
             rel(source, source.list[0], IRT_EQ, 1);
             if (source.status() == SS_FAILED)
                 return false;
-            std::unique_ptr<PatternSpace> clone(static_cast<PatternSpace*>(source.clone()));
+            std::unique_ptr<PatternSpace> clone(source.clone());
             clone->list.materialize(*clone, 2);
             rel(*clone, clone->list[1], IRT_EQ, 1);
             if ((clone->status() == SS_FAILED) || !clone->list.length().assigned() ||
@@ -1720,7 +1720,7 @@ namespace Test::Int::OpenList {
             rel(later, later.list[1], IRT_EQ, 2);
             if ((later.status() == SS_FAILED) || later.list[0].assigned())
                 return false;
-            std::unique_ptr<PatternSpace> invalid(static_cast<PatternSpace*>(later.clone()));
+            std::unique_ptr<PatternSpace> invalid(later.clone());
             rel(*invalid, invalid->list[0], IRT_EQ, 2);
             if (invalid->status() != SS_FAILED)
                 return false;

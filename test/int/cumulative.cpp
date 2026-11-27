@@ -556,7 +556,7 @@ namespace Test::Int::Cumulative {
             VariableCapacityFixture root;
             if (root.status() == Gecode::SS_FAILED)
                 return false;
-            std::unique_ptr<VariableCapacityFixture> clone(static_cast<VariableCapacityFixture*>(root.clone()));
+            std::unique_ptr<VariableCapacityFixture> clone(root.clone());
             Gecode::rel(*clone, clone->capacity, Gecode::IRT_EQ, 3);
             return clone->status() == Gecode::SS_FAILED;
         }

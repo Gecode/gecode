@@ -77,6 +77,31 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Space::clone returns the static type of the space it is called on, so cloning
+a Model, or through a Model*, returns a Model* and needs no cast. Cloning through
+a Space* still returns a Space*. Space::clone is now a member function template
+with an explicit object parameter, so pointers to members to it no longer work.
+The address of a specialization, such as the one for Space itself, is an
+ordinary function pointer of type Space* (*)(const Space&). Gecode and code
+including its headers need GCC 14, Clang 18, AppleClang 17, or MSVC 19.32 or
+newer.
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add down_cast for downcasts whose target type a Gecode protocol guarantees,
+such as the space passed to Space::constrain and Space::compare, the choice
+passed to Brancher::commit, and the advisor passed to Propagator::advise. It
+asserts the type with dynamic_cast when assertions are enabled and is a
+static_cast otherwise.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

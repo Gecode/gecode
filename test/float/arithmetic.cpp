@@ -688,13 +688,13 @@ namespace Test::Float::Arithmetic {
                 olog << "Pow wide base failed for n=" << n << '\n';
                 return false;
             }
-            ZeroSpace* clone = static_cast<ZeroSpace*>(delayed.clone());
+            ZeroSpace* clone = delayed.clone();
             Gecode::rel(*clone, clone->x, Gecode::FRT_EQ, 0.0);
             if (n == 0) {
                 const bool zero_rejected =
                     (direct.status() == Gecode::SS_FAILED) && (clone->status() == Gecode::SS_FAILED);
                 delete clone;
-                ZeroSpace* non_zero = static_cast<ZeroSpace*>(delayed.clone());
+                ZeroSpace* non_zero = delayed.clone();
                 Gecode::rel(*non_zero, non_zero->x, Gecode::FRT_EQ, 0.5);
                 const bool non_zero_accepted = (non_zero->status() != Gecode::SS_FAILED) &&
                                                (non_zero->y.min() == 1.0) && (non_zero->y.max() == 1.0);
@@ -719,7 +719,7 @@ namespace Test::Float::Arithmetic {
                 olog << "Pow zero result failed for n=" << n << '\n';
                 return false;
             }
-            ZeroResultSpace* clone = static_cast<ZeroResultSpace*>(initial.clone());
+            ZeroResultSpace* clone = initial.clone();
             if (!direct)
                 Gecode::rel(*clone, clone->y, Gecode::FRT_EQ, 0.0);
             const bool contracted =
@@ -741,7 +741,7 @@ namespace Test::Float::Arithmetic {
             const bool actor_retained = (initial.status() != Gecode::SS_FAILED) && (initial.y.min() == 1.0) &&
                                         (initial.y.max() == 1.0) && (Gecode::PropagatorGroup::all.size(initial) > 0);
 
-            AdjacentZeroSpace* clone = static_cast<AdjacentZeroSpace*>(initial.clone());
+            AdjacentZeroSpace* clone = initial.clone();
             const bool clone_retained = (clone->status() != Gecode::SS_FAILED) && (clone->y.min() == 1.0) &&
                                         (clone->y.max() == 1.0) && (Gecode::PropagatorGroup::all.size(*clone) > 0);
             delete clone;
@@ -773,7 +773,7 @@ namespace Test::Float::Arithmetic {
                 olog << "Pow fixpoint instance failed" << '\n';
                 return false;
             }
-            FixpointSpace* twice = static_cast<FixpointSpace*>(once.clone());
+            FixpointSpace* twice = once.clone();
             Gecode::pow(*twice, twice->x, 2, twice->y);
             const bool fixpoint = (twice->status() != Gecode::SS_FAILED) && (once.x.min() == twice->x.min()) &&
                                   (once.x.max() == twice->x.max()) && (once.y.min() == twice->y.min()) &&
@@ -822,7 +822,7 @@ namespace Test::Float::Arithmetic {
                      << '\n';
                 return false;
             }
-            MultSpace* clone = static_cast<MultSpace*>(s.clone());
+            MultSpace* clone = s.clone();
             Gecode::mult(*clone, clone->x, clone->y, clone->z);
             const bool fixpoint = (clone->status() != Gecode::SS_FAILED) && (clone->x.min() == s.x.min()) &&
                                   (clone->x.max() == s.x.max()) && (clone->y.min() == s.y.min()) &&

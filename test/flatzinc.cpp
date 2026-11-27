@@ -86,11 +86,11 @@ namespace Test::FlatZinc {
                 std::unique_ptr<FlatZincSpace> fg(Gecode::FlatZinc::parse(ss, p, olog));
                 if (!fg || (fg->status() == Gecode::SS_FAILED))
                     return false;
-                std::unique_ptr<FlatZincSpace> best(static_cast<FlatZincSpace*>(fg->clone()));
+                std::unique_ptr<FlatZincSpace> best(fg->clone());
                 Gecode::rel(*best, best->fv[0], Gecode::FRT_EQ, 0.5);
                 if (best->status() == Gecode::SS_FAILED)
                     return false;
-                std::unique_ptr<FlatZincSpace> s(static_cast<FlatZincSpace*>(fg->clone()));
+                std::unique_ptr<FlatZincSpace> s(fg->clone());
                 s->constrain(*best);
                 if ((s->status() == Gecode::SS_FAILED) || s->fv[0].assigned())
                     return false;

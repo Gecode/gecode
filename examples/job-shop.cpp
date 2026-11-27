@@ -511,7 +511,7 @@ protected:
     /// Trampoline function for AFC-based cost
     static double
     afc_merit(const Space& home, BoolVar x, int i) {
-        return static_cast<const JobShopSolve&>(home).afc(x, i);
+        return down_cast<const JobShopSolve&>(home).afc(x, i);
     }
     /// Action information
     IntAction iaction;
@@ -524,7 +524,7 @@ protected:
     /// Trampoline function for Action-based cost
     static double
     action_merit(const Space& home, BoolVar, int i) {
-        return static_cast<const JobShopSolve&>(home).action(i);
+        return down_cast<const JobShopSolve&>(home).action(i);
     }
     /// CHB information
     IntCHB ichb;
@@ -537,7 +537,7 @@ protected:
     /// Trampoline function for CHB-based cost
     static double
     chb_merit(const Space& home, BoolVar, int i) {
-        return static_cast<const JobShopSolve&>(home).chb(i);
+        return down_cast<const JobShopSolve&>(home).chb(i);
     }
     /// Random number generator for probing and relaxation
     Rnd rnd;
@@ -730,7 +730,7 @@ solve(const JobShopOptions& opt) {
         std::cout << "\t\tBounds: [" << l << "," << u << "]" << '\n' << std::flush;
 
         for (unsigned int p = 0; p < opt.probes(); p++) {
-            JobShopProbe* jsp = static_cast<JobShopProbe*>(root->clone());
+            JobShopProbe* jsp = root->clone();
             jsp->branch(p, rnd.split(p));
             DFS<JobShopProbe> dfs(jsp, so);
             JobShopProbe* s = dfs.next();
@@ -783,7 +783,7 @@ solve(const JobShopOptions& opt) {
             bool stopped = false;
             while (l < u) {
                 std::cout << "\t\tBounds: [" << l << "," << u << "]" << '\n' << std::flush;
-                JobShopSolve* jss = static_cast<JobShopSolve*>(model->clone());
+                JobShopSolve* jss = model->clone();
                 int m = (l + u) / 2;
                 rel(*jss, jss->cost() >= l);
                 rel(*jss, jss->cost() <= m);

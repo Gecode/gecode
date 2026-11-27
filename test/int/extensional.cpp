@@ -930,7 +930,7 @@ namespace Test::Int::Extensional {
             source.list.append(source, source.x[0]);
             if ((source.status() == SS_FAILED) || (source.x[0].size() != 2))
                 return false;
-            OpenRegularSpace* clone = static_cast<OpenRegularSpace*>(source.clone());
+            OpenRegularSpace* clone = source.clone();
             rel(*clone, clone->list.length(), IRT_LQ, 3);
             const bool clone_ok = (clone->status() != SS_FAILED) && clone->x[0].assigned() && (clone->x[0].val() == 0);
             delete clone;
@@ -1017,7 +1017,7 @@ namespace Test::Int::Extensional {
             if (source.status() == SS_FAILED)
                 return false;
 
-            OpenRegularSpace* clone = static_cast<OpenRegularSpace*>(source.clone());
+            OpenRegularSpace* clone = source.clone();
             clone->list.append(*clone, clone->x[1]);
             clone->list.close(*clone);
             const bool clone_ok = (clone->status() != SS_FAILED) && (clone->list.known_length() == 2);
@@ -1766,7 +1766,7 @@ namespace Test::Int::Extensional {
                     return false;
                 }
 
-                CloneSpace* clone = static_cast<CloneSpace*>(source->clone());
+                CloneSpace* clone = source->clone();
                 PropagatorGroup::all.enable(*clone);
                 const bool clone_ok =
                     (clone->status() != SS_FAILED) && clone->x[1].assigned() && (clone->x[1].val() == 1);
@@ -1812,7 +1812,7 @@ namespace Test::Int::Extensional {
                     return s.x[1].size() == 3;
                 };
 
-                CloneSpace* clone = static_cast<CloneSpace*>(source->clone());
+                CloneSpace* clone = source->clone();
                 PropagatorGroup::all.enable(*clone);
                 const bool clone_ok = verify(*clone);
                 delete clone;

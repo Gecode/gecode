@@ -215,7 +215,7 @@ namespace Gecode::FlatZinc {
         Choice*
         choice(Space& home) override {
             done = true;
-            FlatZincSpace& fzs = static_cast<FlatZincSpace&>(*home.clone());
+            FlatZincSpace& fzs = *down_cast<FlatZincSpace&>(home).clone();
             fzs.need_aux_vars = false;
             branch(fzs, fzs.iv_aux, int_varsel, int_valsel);
             branch(fzs, fzs.bv_aux, bool_varsel, bool_valsel);

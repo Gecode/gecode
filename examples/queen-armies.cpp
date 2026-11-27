@@ -185,7 +185,7 @@ public:
         /// Check status of brancher, return true if alternatives left.
         bool
         status(const Space& home) const override {
-            const QueenArmies& q = static_cast<const QueenArmies&>(home);
+            const QueenArmies& q = down_cast<const QueenArmies&>(home);
             for (int i = start; i < q.n * q.n; ++i)
                 if (!q.white_matrix[i].assigned()) {
                     start = i;
@@ -197,7 +197,7 @@ public:
         /// Return choice
         Gecode::Choice*
         choice(Space& home) override {
-            const QueenArmies& q = static_cast<const QueenArmies&>(home);
+            const QueenArmies& q = down_cast<const QueenArmies&>(home);
             int maxsize = -1;
             int pos = -1;
 
@@ -229,15 +229,15 @@ public:
          */
         ExecStatus
         commit(Space& home, const Gecode::Choice& _c, unsigned int a) override {
-            QueenArmies& q = static_cast<QueenArmies&>(home);
-            const Choice& c = static_cast<const Choice&>(_c);
+            QueenArmies& q = down_cast<QueenArmies&>(home);
+            const Choice& c = down_cast<const Choice&>(_c);
             bool val = (a == 0) ? c.val : !c.val;
             return me_failed(Int::BoolView(q.white_matrix[c.pos]).eq(q, val)) ? ES_FAILED : ES_OK;
         }
         /// Print explanation
         void
         print(const Space&, const Gecode::Choice& _c, unsigned int a, std::ostream& o) const override {
-            const Choice& c = static_cast<const Choice&>(_c);
+            const Choice& c = down_cast<const Choice&>(_c);
             bool val = (a == 0) ? c.val : !c.val;
             o << "w[" << c.pos << "] = " << val;
         }

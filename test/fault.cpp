@@ -492,7 +492,7 @@ namespace Test::Fault {
             Support::FailPoint::reset();
             if (s.h.value() != 42)
                 return false;
-            LocalCopySpace* c = static_cast<LocalCopySpace*>(s.clone());
+            LocalCopySpace* c = s.clone();
             bool ok = (c != nullptr) && (c->h.value() == 42);
             delete c;
             return ok;
@@ -521,7 +521,7 @@ namespace Test::Fault {
             Support::FailPoint::reset();
             if (!s.advisors_point_to_source())
                 return false;
-            AdvisorCopySpace* c = static_cast<AdvisorCopySpace*>(s.clone());
+            AdvisorCopySpace* c = s.clone();
             bool ok = (c != nullptr);
             delete c;
             return ok && s.advisors_point_to_source();

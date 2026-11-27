@@ -355,7 +355,7 @@ public:
     /// Return cost
     void
     constrain(const Space& _best) override {
-        const CarSequencing& best = static_cast<const CarSequencing&>(_best);
+        const CarSequencing& best = down_cast<const CarSequencing&>(_best);
         rel(*this, stall_count, IRT_LT, best.stall_count.val());
     }
 
@@ -363,7 +363,7 @@ public:
     /// Compare objective values
     SpaceComparison
     compare(const Space& _other) const override {
-        const CarSequencing& other = static_cast<const CarSequencing&>(_other);
+        const CarSequencing& other = down_cast<const CarSequencing&>(_other);
         return compare_int(stall_count.val(), other.stall_count.val(), Sense::Minimize);
     }
 

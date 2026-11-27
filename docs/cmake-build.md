@@ -7,9 +7,11 @@ For modelling and search, use MPG and the API reference linked from the
 ## Requirements
 
 - CMake 3.21 or newer
-- A compiler with C++23 mode. Use features supported across the GCC, Clang,
-  AppleClang, and MSVC builds; enabling the language mode does not imply that
-  every C++23 library feature is available.
+- A compiler with C++23 mode and explicit object parameters (deducing this):
+  GCC 14, Clang 18, AppleClang 17, or MSVC 19.32 (Visual Studio 2022 17.2) or
+  newer. Use features supported across the GCC, Clang, AppleClang, and MSVC
+  builds; enabling the language mode does not imply that every C++23 library
+  feature is available.
 - `uv` on `PATH` for generated-script paths: documentation generation,
   `GECODE_REGENERATE_VARIMP=ON`, and manual helper execution. Ordinary CMake
   builds can use the checked-in generated headers without `uv`.
