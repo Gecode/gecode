@@ -70,7 +70,8 @@ namespace Gecode { namespace Float { namespace Arithmetic {
             return ES_FAILED;
         GECODE_ME_CHECK(x2.eq(home, x0.domain() / x1.domain()));
         GECODE_ME_CHECK(x0.eq(home, x2.domain() * x1.domain()));
-        if (!x2.assigned() || (x2.val() != 0.0))
+        // When x0 and x2 can both be zero, 0/x1=0 supports every nonzero x1
+        if (!x0.zero_in() || !x2.zero_in())
             GECODE_ME_CHECK(x1.eq(home, x0.domain() / x2.domain()));
         return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
     }
