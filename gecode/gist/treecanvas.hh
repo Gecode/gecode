@@ -34,20 +34,14 @@
 #define GECODE_GIST_TREECANVAS_HH
 
 #include <QtGui>
-#if QT_VERSION >= 0x050000
 #include <QtWidgets>
-#endif
 
 #include <gecode/kernel.hh>
 #include <gecode/gist.hh>
 
 #include <gecode/gist/visualnode.hh>
 
-#if QT_VERSION >= 0x060000
 typedef QRecursiveMutex GecodeQMutex;
-#else
-typedef QMutex GecodeQMutex;
-#endif
 
 namespace Gecode { namespace Gist {
 

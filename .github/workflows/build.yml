@@ -10,39 +10,18 @@ on:
 permissions:
   contents: read
 
+# A new push to a pull request supersedes its running checks.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
 
 jobs:
-  tidy:
-    runs-on: ubuntu-24.04
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Install clang-format 22
-      shell: bash
-      run: |
-        curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o "$RUNNER_TEMP/llvm.asc"
-        sudo install -m 644 "$RUNNER_TEMP/llvm.asc" /usr/share/keyrings/llvm.asc
-        echo 'deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm.list
-        sudo apt-get update
-        sudo apt-get install -y clang-format-22
-
-    - name: Formatting check
-      shell: bash
-      run: uv run misc/check.py format-check
-
-    - name: Tidy checks
-      shell: bash
-      run: uv run misc/tidy.py --check
-
+  # Formatting, changelog, generated sources, Clang build, clang-tidy, the
+  # full test suite with audit and fault injection, packages, and docs.
   check-extended:
     runs-on: ubuntu-24.04
 
@@ -60,6 +39,8 @@ jobs:
         curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o "$RUNNER_TEMP/llvm.asc"
         sudo install -m 644 "$RUNNER_TEMP/llvm.asc" /usr/share/keyrings/llvm.asc
         echo 'deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm.list
+        # The runner's packages.microsoft.com source has failed apt-get update with 403; no job needs it.
+        sudo find /etc/apt/sources.list.d -type f -exec grep -q packages.microsoft.com {} \; -delete
         sudo apt-get update
         sudo apt-get install -y clang-22 clang-format-22 clang-tidy-22 clang-tools-22 \
           ninja-build bison flex graphviz libgmp-dev libmpfr-dev \
@@ -69,7 +50,9 @@ jobs:
       shell: bash
       run: |
         archive="$RUNNER_TEMP/doxygen-1.18.0.linux.bin.tar.gz"
-        curl --fail --location --retry 3 https://www.doxygen.nl/files/doxygen-1.18.0.linux.bin.tar.gz -o "$archive"
+        # doxygen.nl has served runners a small HTML page instead of the archive.
+        curl --fail --location --retry 3 -o "$archive" \
+          https://github.com/doxygen/doxygen/releases/download/Release_1_18_0/doxygen-1.18.0.linux.bin.tar.gz
         printf '%s  %s\n' 14fa81bdc34171edb5f1f02b1d60e74802f0439b77fa44e592565d517d72df90 "$archive" | sha256sum --check
         mkdir -p "$RUNNER_TEMP/doxygen"
         tar -xzf "$archive" -C "$RUNNER_TEMP/doxygen" --strip-components=1
@@ -93,135 +76,19 @@ jobs:
       shell: bash
       run: uv run misc/check.py all --build-dir build/check-extended --jobs 4
 
-  build-cmake-unix:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-15
-            regenerate_varimp: OFF
-          - os: ubuntu-24.04
-            regenerate_varimp: ON
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Install clang-format 22
-      if: runner.os == 'Linux'
+    - name: Qt/Gist consumer smoke test
       shell: bash
-      run: |
-        curl --fail --location --retry 3 https://apt.llvm.org/llvm-snapshot.gpg.key -o "$RUNNER_TEMP/llvm.asc"
-        sudo install -m 644 "$RUNNER_TEMP/llvm.asc" /usr/share/keyrings/llvm.asc
-        echo 'deb [signed-by=/usr/share/keyrings/llvm.asc] https://apt.llvm.org/noble/ llvm-toolchain-noble-22 main' | sudo tee /etc/apt/sources.list.d/llvm.list
-        sudo apt-get update
-        sudo apt-get install -y clang-format-22
+      env:
+        CXX: clang++-22
+      run: bash .github/ci/qt-gist-consumer-smoke.sh "$GITHUB_WORKSPACE/build/check-extended/check-install"
 
-    - name: Install Ubuntu build deps
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y flex bison libgmp-dev libmpfr-dev
-
-    - name: Check generated source freshness
-      # Ubuntu LTS keeps Bison 3.8.2 and Flex 2.6.4, while Homebrew moves on.
-      if: runner.os == 'Linux'
-      shell: bash
-      run: bash .github/ci/generated-source-freshness.sh
-
-    - name: Create Build Environment
-      run: cmake -E make_directory ${{github.workspace}}/build
-
-    - name: Configure CMake
-      shell: bash
-      working-directory: ${{github.workspace}}/build
-      run: |
-        set -euxo pipefail
-        cmake_args=(
-          "$GITHUB_WORKSPACE"
-          "-DCMAKE_BUILD_TYPE=$BUILD_TYPE"
-          "-DGECODE_REGENERATE_VARIMP=${{ matrix.regenerate_varimp }}"
-        )
-        if [ "${{ matrix.os }}" = "ubuntu-24.04" ]; then
-          # Keep this path absolute to validate package config handling for absolute install dirs.
-          cmake_args+=(
-            "-DCMAKE_INSTALL_INCLUDEDIR=/tmp/gecode-install-abs-include"
-            "-DGECODE_ENABLE_FAULT_INJECTION=ON"
-          )
-        fi
-        cmake "${cmake_args[@]}"
-
-    - name: Build
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: cmake --build . --config $BUILD_TYPE
-
-    - name: Check
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: |
-        set -euxo pipefail
-        cmake --build . --config $BUILD_TYPE --target check
-
-    - name: Run public test harness smokes
-      if: matrix.os == 'ubuntu-24.04'
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: ctest --build-config "$BUILD_TYPE" --output-on-failure -R '^public-.*-smoke$'
-
-    - name: Install CMake package
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: cmake --install . --config $BUILD_TYPE --prefix "$GITHUB_WORKSPACE/install"
-
-    - name: Consumer smoke tests
-      shell: bash
-      run: |
-        set -euxo pipefail
-        if [ "${{ matrix.os }}" = "ubuntu-24.04" ]; then
-          bash .github/ci/cmake-consumer-smoke.sh \
-            "$GITHUB_WORKSPACE/install" \
-            "/tmp/gecode-install-abs-include" \
-            mpfr
-        else
-          bash .github/ci/cmake-consumer-smoke.sh \
-            "$GITHUB_WORKSPACE/install" \
-            "$GITHUB_WORKSPACE/install/include" \
-            core
-        fi
-
-    - name: Package version checks
-      shell: bash
-      run: bash .github/ci/cmake-package-version-checks.sh "$GITHUB_WORKSPACE/install"
-
-    - name: Disabled module closure checks
-      if: matrix.os == 'ubuntu-24.04'
-      shell: bash
-      run: bash .github/ci/cmake-closure-checks.sh
-
-    - name: CMake custom VIS checks
-      if: matrix.os == 'ubuntu-24.04'
-      shell: bash
-      run: bash .github/ci/cmake-custom-vis-smoke.sh
-
-    - name: Gist static macro compatibility
-      if: matrix.os == 'ubuntu-24.04'
-      shell: bash
-      run: bash .github/ci/gist-static-macro-smoke.sh
-
-    - name: Qt minimum version checks
-      if: matrix.os == 'ubuntu-24.04'
-      shell: bash
-      run: bash .github/ci/qt-minimum-version-checks.sh
-
-  build-cmake-unix-ninja:
-    runs-on: ubuntu-latest
+  # GCC Release build without experimental APIs, plus the installed-package,
+  # FlatZinc, allocator, and 32-bit smokes.
+  build-linux:
+    runs-on: ubuntu-24.04
+    env:
+      CC: gcc-14
+      CXX: g++-14
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -234,8 +101,10 @@ jobs:
     - name: Install build deps
       shell: bash
       run: |
+        # The runner's packages.microsoft.com source has failed apt-get update with 403; no job needs it.
+        sudo find /etc/apt/sources.list.d -type f -exec grep -q packages.microsoft.com {} \; -delete
         sudo apt-get update
-        sudo apt-get install -y libgmp-dev libmpfr-dev ninja-build
+        sudo apt-get install -y g++-14 g++-14-multilib libgmp-dev libmpfr-dev ninja-build
 
     - name: Install MiniZinc 2.10.1
       shell: bash
@@ -250,260 +119,76 @@ jobs:
         echo "$minizinc_dir/bin" >> "$GITHUB_PATH"
         "$minizinc_dir/bin/minizinc" --version
 
-    - name: Configure CMake with Ninja
+    - name: Configure CMake
       shell: bash
+      # The absolute include dir checks package config handling for absolute install dirs.
       run: >
-        cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build-ninja"
-        -DGECODE_ENABLE_EXPERIMENTAL=ON
-        -G Ninja
-        -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-        -DGECODE_ENABLE_QT=OFF
-        -DGECODE_ENABLE_GIST=OFF
-        -DGECODE_ENABLE_MPFR=OFF
+        cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build"
+        "-DCMAKE_BUILD_TYPE=$BUILD_TYPE"
+        -DGECODE_REGENERATE_VARIMP=ON
+        -DCMAKE_INSTALL_INCLUDEDIR=/tmp/gecode-install-abs-include
 
     - name: Build
       shell: bash
-      run: cmake --build "$GITHUB_WORKSPACE/build-ninja"
+      run: cmake --build "$GITHUB_WORKSPACE/build" --parallel 4
+
+    - name: Check
+      shell: bash
+      run: cmake --build "$GITHUB_WORKSPACE/build" --target check
+
+    - name: Run public test harness smokes
+      shell: bash
+      run: ctest --test-dir "$GITHUB_WORKSPACE/build" --output-on-failure -R '^public-.*-smoke$'
+
+    - name: Examples reading instance files
+      shell: bash
+      run: bash .github/ci/instance-example-smoke.sh "$GITHUB_WORKSPACE/build/bin"
+
+    - name: Install CMake package
+      shell: bash
+      run: cmake --install "$GITHUB_WORKSPACE/build" --prefix "$GITHUB_WORKSPACE/install"
+
+    - name: Consumer smoke tests
+      shell: bash
+      run: >
+        bash .github/ci/cmake-consumer-smoke.sh
+        "$GITHUB_WORKSPACE/install" /tmp/gecode-install-abs-include mpfr
+
+    - name: Package version checks
+      shell: bash
+      run: bash .github/ci/cmake-package-version-checks.sh "$GITHUB_WORKSPACE/install"
+
+    - name: FlatZinc tools smoke test
+      shell: bash
+      run: bash .github/ci/flatzinc-tools-smoke.sh "$GITHUB_WORKSPACE/install"
 
     - name: Example feature selection
       shell: bash
       run: bash .github/ci/cmake-example-feature-smoke.sh
 
-    - name: Examples reading instance files
+    - name: Disabled module closure checks
       shell: bash
-      run: bash .github/ci/instance-example-smoke.sh "$GITHUB_WORKSPACE/build-ninja/bin"
+      run: bash .github/ci/cmake-closure-checks.sh
 
-    - name: Check
+    - name: CMake custom VIS checks
       shell: bash
-      run: >
-        ctest --test-dir "$GITHUB_WORKSPACE/build-ninja"
-        --output-on-failure -R '^(build-gecode-test|test)$'
+      run: bash .github/ci/cmake-custom-vis-smoke.sh
 
-    - name: Configure CMake Debug audit smoke
+    - name: Gist static macro compatibility
       shell: bash
-      run: >
-        cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build-ninja-debug"
-        -G Ninja
-        -DCMAKE_BUILD_TYPE=Debug
-        -DGECODE_ENABLE_AUDIT=ON
-        -DGECODE_ENABLE_QT=OFF
-        -DGECODE_ENABLE_GIST=OFF
-        -DGECODE_ENABLE_MPFR=OFF
-        -DGECODE_ENABLE_EXAMPLES=OFF
-        -DGECODE_ENABLE_FLATZINC=OFF
+      run: bash .github/ci/gist-static-macro-smoke.sh
 
-    - name: Build Debug audit smoke
+    - name: Scoped mimalloc allocator
       shell: bash
-      run: cmake --build "$GITHUB_WORKSPACE/build-ninja-debug"
+      run: bash .github/ci/allocator-smoke.sh "$GITHUB_WORKSPACE" "$RUNNER_TEMP/gecode-allocator"
 
-    - name: Install and smoke test FlatZinc tools
-      shell: bash
-      run: |
-        set -euxo pipefail
-        cmake --install "$GITHUB_WORKSPACE/build-ninja" --prefix "$GITHUB_WORKSPACE/install-ninja"
-        bash .github/ci/flatzinc-tools-smoke.sh "$GITHUB_WORKSPACE/install-ninja"
-
-  build-cmake-allocator:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        variant: [static, both]
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Build and install allocator package
-      shell: bash
-      run: |
-        set -euxo pipefail
-        cmake -S . -B build-allocator \
-          -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-          -DGECODE_BUILD_SHARED=${{ matrix.variant == 'both' }} \
-          -DGECODE_BUILD_STATIC=ON \
-          -DGECODE_ENABLE_MIMALLOC=ON \
-          -DGECODE_ENABLE_GCC_VISIBILITY=OFF \
-          -DBUILD_TESTING=OFF -DGECODE_ENABLE_EXAMPLES=OFF \
-          -DGECODE_ENABLE_SEARCH=OFF -DGECODE_ENABLE_INT_VARS=OFF \
-          -DGECODE_ENABLE_SET_VARS=OFF -DGECODE_ENABLE_FLOAT_VARS=OFF \
-          -DGECODE_ENABLE_MINIMODEL=OFF -DGECODE_ENABLE_DRIVER=OFF \
-          -DGECODE_ENABLE_FLATZINC=OFF -DGECODE_ENABLE_QT=OFF -DGECODE_ENABLE_GIST=OFF
-        cmake --build build-allocator --config "$BUILD_TYPE" --parallel 2
-        cmake --install build-allocator --config "$BUILD_TYPE" --prefix "$GITHUB_WORKSPACE/install-allocator"
-
-    - name: Check private allocator exports
-      shell: bash
-      run: |
-        set -euxo pipefail
-        if test -f install-allocator/lib/libgecodesupport.so; then
-          nm -D --defined-only install-allocator/lib/libgecodesupport.so > build-allocator/exports.txt
-          if grep -E '[[:space:]](_*mi_[[:alnum:]_]+|gecode_+mi_[[:alnum:]_]+|malloc|calloc|realloc|free|aligned_alloc|posix_memalign)$' build-allocator/exports.txt; then
-            echo "Allocator implementation or malloc replacement exported by gecodesupport"
-            exit 1
-          fi
-        fi
-        if test -f install-allocator/lib/libgecodesupport.a; then
-          nm -g --defined-only install-allocator/lib/libgecodesupport.a > build-allocator/symbols.txt
-          if grep -E '[[:space:]](_*mi_[[:alnum:]_]+|malloc|calloc|realloc|free|aligned_alloc|posix_memalign)$' build-allocator/symbols.txt; then
-            echo "Unprefixed allocator symbol in static gecodesupport"
-            exit 1
-          fi
-          grep -q '[[:space:]]gecode_mi_malloc$' build-allocator/symbols.txt
-        fi
-
-    - name: Reject unsupported allocator combinations
-      shell: bash
-      run: |
-        set -euxo pipefail
-        if cmake -S . -B "$RUNNER_TEMP/mimalloc-custom" \
-          -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_ENABLE_ALLOCATOR=OFF > "$RUNNER_TEMP/mimalloc-custom.log" 2>&1; then
-          exit 1
-        fi
-        grep -q 'requires GECODE_ENABLE_ALLOCATOR=ON' "$RUNNER_TEMP/mimalloc-custom.log"
-        if cmake -S . -B "$RUNNER_TEMP/mimalloc-sanitizer" \
-          -DGECODE_ENABLE_MIMALLOC=ON -DGECODE_SANITIZER=address > "$RUNNER_TEMP/mimalloc-sanitizer.log" 2>&1; then
-          exit 1
-        fi
-        grep -q 'does not support GECODE_SANITIZER' "$RUNNER_TEMP/mimalloc-sanitizer.log"
-
-    - name: Installed allocator coexistence and thread transfer
-      shell: bash
-      run: |
-        set -euxo pipefail
-        for variant in shared static; do
-          if test "$variant" = "shared" && ! test -f install-allocator/lib/libgecodesupport.so; then continue; fi
-          if test "$variant" = "static" && ! test -f install-allocator/lib/libgecodesupport.a; then continue; fi
-          cmake -S test/package/allocator -B "build-allocator-consumer-$variant" \
-            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-            -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/install-allocator" \
-            -DGECODE_LINK_VARIANT="$variant" -DGECODE_EXPECT_MIMALLOC=ON \
-            -DGECODE_HOST_MIMALLOC_OVERRIDE=ON \
-            -DMIMALLOC_SOURCE_DIR="$GITHUB_WORKSPACE/build-allocator/_deps/gecode_mimalloc-src"
-          cmake --build "build-allocator-consumer-$variant" --config "$BUILD_TYPE" --parallel 2
-          ctest --test-dir "build-allocator-consumer-$variant" --build-config "$BUILD_TYPE" --output-on-failure
-        done
-        test -f install-allocator/share/licenses/gecode/mimalloc-LICENSE
-        test ! -f install-allocator/include/mimalloc.h
-
-  build-32-bit-linkage:
-    # g++-multilib had no installation candidate on ubuntu-latest (Ubuntu
-    # 26.04) in November 2026, so this job stays on Ubuntu 24.04 and GCC 14.
-    runs-on: ubuntu-24.04
-    env:
-      CC: gcc-14
-      CXX: g++-14
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install 32-bit toolchain
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y g++-14-multilib
-
-    - name: Build and link 32-bit stop consumer
+    - name: 32-bit linkage
       shell: bash
       run: bash .github/ci/32-bit-linkage-smoke.sh "$GITHUB_WORKSPACE" "$RUNNER_TEMP/gecode-32-bit-linkage"
 
-  build-cmake-qt-gist:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Install Qt build deps
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y qt6-base-dev qt6-base-dev-tools libgl1-mesa-dev
-
-    - name: Configure CMake with Qt/Gist
-      shell: bash
-      run: >
-        cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build-qt-gist"
-        -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-        -DGECODE_ENABLE_QT=ON
-        -DGECODE_ENABLE_GIST=ON
-        -DGECODE_ENABLE_MPFR=OFF
-        -DGECODE_ENABLE_EXAMPLES=OFF
-        -DGECODE_ENABLE_FLATZINC=ON
-
-    - name: Build and install Qt/Gist package
-      shell: bash
-      run: |
-        set -euxo pipefail
-        cmake --build "$GITHUB_WORKSPACE/build-qt-gist" --config $BUILD_TYPE -j4
-        cmake --install "$GITHUB_WORKSPACE/build-qt-gist" --config $BUILD_TYPE --prefix "$GITHUB_WORKSPACE/install-qt-gist"
-
-    - name: Qt/Gist consumer smoke test
-      shell: bash
-      run: bash .github/ci/qt-gist-consumer-smoke.sh "$GITHUB_WORKSPACE/install-qt-gist"
-
-  build-cmake-qt5-gist-smoke:
-    runs-on: ubuntu-24.04
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Install Qt 5 build deps
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y qtbase5-dev qtbase5-dev-tools libgl1-mesa-dev
-
-    - name: Configure CMake with Qt 5/Gist
-      shell: bash
-      run: |
-        set -euxo pipefail
-
-        qt5_config="$(dpkg-query -L qtbase5-dev | grep '/Qt5Config.cmake$')"
-        qt5_dir="${qt5_config%/*}"
-
-        cmake -S "$GITHUB_WORKSPACE" -B "$GITHUB_WORKSPACE/build-qt5-gist" \
-          -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-          -DQt5_DIR="$qt5_dir" \
-          -DGECODE_ENABLE_QT=ON \
-          -DGECODE_ENABLE_GIST=ON \
-          -DGECODE_ENABLE_MPFR=OFF \
-          -DGECODE_ENABLE_EXAMPLES=OFF \
-          -DGECODE_ENABLE_FLATZINC=OFF
-
-        grep -Eq '^Qt5_DIR:[^=]*=.*/Qt5$' "$GITHUB_WORKSPACE/build-qt5-gist/CMakeCache.txt"
-        grep -q '^Qt5Core_DIR:PATH=' "$GITHUB_WORKSPACE/build-qt5-gist/CMakeCache.txt"
-
-    - name: Build and install Qt 5/Gist package
-      shell: bash
-      run: |
-        set -euxo pipefail
-        cmake --build "$GITHUB_WORKSPACE/build-qt5-gist" --config $BUILD_TYPE -j4
-        cmake --install "$GITHUB_WORKSPACE/build-qt5-gist" --config $BUILD_TYPE --prefix "$GITHUB_WORKSPACE/install-qt5-gist"
-
-    - name: Qt 5/Gist consumer smoke test
-      shell: bash
-      run: bash .github/ci/qt5-gist-consumer-smoke.sh "$GITHUB_WORKSPACE/install-qt5-gist"
-
-  build-cmake-windows:
+  # MSVC shared build: catches MSVC-only compile errors and missing DLL exports.
+  build-windows:
     runs-on: windows-2022
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: shared
-            build_shared: ON
-            build_static: OFF
-          - name: static
-            build_shared: OFF
-            build_static: ON
 
     steps:
     - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
@@ -513,11 +198,6 @@ jobs:
       with:
         enable-cache: false
 
-    - name: Create Build Environment
-      shell: pwsh
-      run: cmake -E make_directory "${{ github.workspace }}\\build"
-
-    # Experimental APIs follow build_shared, so both settings are built
     - name: Configure CMake
       shell: pwsh
       run: >
@@ -526,9 +206,7 @@ jobs:
         -DGECODE_ENABLE_QT=OFF
         -DGECODE_ENABLE_GIST=OFF
         -DGECODE_ENABLE_MPFR=OFF
-        -DGECODE_BUILD_SHARED=${{ matrix.build_shared }}
-        -DGECODE_BUILD_STATIC=${{ matrix.build_static }}
-        -DGECODE_ENABLE_EXPERIMENTAL=${{ matrix.build_shared }}
+        -DGECODE_ENABLE_EXPERIMENTAL=ON
 
     - name: Build
       shell: pwsh
@@ -561,98 +239,3 @@ jobs:
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         $env:PATH = "$prefix\bin;$env:PATH"
         ctest --test-dir $build -C $env:BUILD_TYPE --output-on-failure
-
-  build-cmake-windows-vcpkg:
-    runs-on: windows-2022
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Install uv
-      uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
-      with:
-        enable-cache: false
-
-    - name: Cache vcpkg binary packages
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
-      with:
-        path: ${{ runner.temp }}\vcpkg-binary-cache
-        key: vcpkg-${{ runner.os }}-x64-windows-37bb045f3c7a747d3e5d1c13b6fe6a0aec4b5d00-${{ hashFiles('vcpkg.json') }}
-        restore-keys: |
-          vcpkg-${{ runner.os }}-x64-windows-37bb045f3c7a747d3e5d1c13b6fe6a0aec4b5d00-
-
-    - name: Setup vcpkg
-      shell: pwsh
-      run: |
-        $vcpkgRoot = Join-Path $env:RUNNER_TEMP "vcpkg"
-        $vcpkgBinaryCache = Join-Path $env:RUNNER_TEMP "vcpkg-binary-cache"
-        New-Item -ItemType Directory -Force -Path $vcpkgBinaryCache | Out-Null
-        git clone https://github.com/microsoft/vcpkg $vcpkgRoot
-        git -C $vcpkgRoot checkout 37bb045f3c7a747d3e5d1c13b6fe6a0aec4b5d00
-        & (Join-Path $vcpkgRoot "bootstrap-vcpkg.bat") -disableMetrics
-        "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-        "VCPKG_DEFAULT_BINARY_CACHE=$vcpkgBinaryCache" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-    - name: Configure CMake (preset)
-      shell: pwsh
-      run: cmake --preset vs2022-vcpkg
-
-    - name: Build
-      shell: pwsh
-      run: cmake --build --preset vs2022-vcpkg-release
-
-    - name: Check
-      shell: pwsh
-      run: cmake --build --preset vs2022-vcpkg-check
-
-    - name: Install CMake package
-      shell: pwsh
-      run: cmake --install "${{ github.workspace }}\\build\\vs2022-vcpkg" --config ${{ env.BUILD_TYPE }} --prefix "${{ github.workspace }}\\install-vcpkg"
-
-    - name: Consumer smoke tests
-      shell: pwsh
-      run: .\.github\ci\cmake-consumer-smoke-vcpkg.ps1 "${{ github.workspace }}\install-vcpkg"
-
-  build-cmake-windows-msys2:
-    runs-on: windows-2022
-
-    steps:
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
-
-    - name: Setup MSYS2
-      uses: msys2/setup-msys2@e9898307ac31d1a803454791be09ab9973336e1c
-      with:
-        msystem: UCRT64
-        update: true
-        install: >-
-          mingw-w64-ucrt-x86_64-cmake
-          mingw-w64-ucrt-x86_64-gcc
-          mingw-w64-ucrt-x86_64-ninja
-
-    - name: Configure CMake
-      shell: msys2 {0}
-      run: |
-        workspace=$(cygpath -u "$GITHUB_WORKSPACE")
-        cmake -S "$workspace" -B "$workspace/build-msys2" -G Ninja \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DGECODE_ENABLE_QT=OFF \
-          -DGECODE_ENABLE_GIST=OFF \
-          -DGECODE_ENABLE_MPFR=OFF \
-          -DGECODE_BUILD_SHARED=OFF \
-          -DGECODE_BUILD_STATIC=ON \
-          -DGECODE_ENABLE_EXPERIMENTAL=ON \
-          -DGECODE_ENABLE_EXAMPLES=OFF \
-          -DGECODE_ENABLE_FLATZINC=OFF
-
-    - name: Build and install static package
-      shell: msys2 {0}
-      run: |
-        workspace=$(cygpath -u "$GITHUB_WORKSPACE")
-        cmake --build "$workspace/build-msys2"
-        cmake --install "$workspace/build-msys2" --prefix "$workspace/install-msys2"
-
-    - name: Static package consumer smoke
-      shell: msys2 {0}
-      run: |
-        workspace=$(cygpath -u "$GITHUB_WORKSPACE")
-        bash "$workspace/.github/ci/cmake-consumer-smoke-msys2.sh" "$workspace/install-msys2"

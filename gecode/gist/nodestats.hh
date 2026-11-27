@@ -36,9 +36,7 @@
 #include <gecode/gist/visualnode.hh>
 
 #include <QtGui>
-#if QT_VERSION >= 0x050000
 #include <QtWidgets>
-#endif
 
 namespace Gecode { namespace Gist {
 

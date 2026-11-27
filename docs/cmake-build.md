@@ -16,10 +16,9 @@ For modelling and search, use MPG and the API reference linked from the
 - Python 3.11 or newer for helper scripts run through `uv`.
 - Optional dependencies based on enabled modules:
   - MPFR for float support with MPFR
-  - Qt 6 Core, or Qt 5.15+ Core, for FlatZinc plugin support when Qt support
-    is enabled or auto-detected
-  - Qt 6 Gui, Widgets, and PrintSupport, or the matching Qt 5.15+ components,
-    for Gist
+  - Qt 6 Core for FlatZinc plugin support when Qt support is enabled or
+    auto-detected
+  - Qt 6 Gui, Widgets, and PrintSupport for Gist
 
 ## Quick Start
 
@@ -132,7 +131,7 @@ to inspect test assignments.
 | `GECODE_BUILD_STATIC` | Default `OFF` |
 | `GECODE_ENABLE_THREAD` | Default `ON` |
 | `GECODE_ENABLE_OSX_UNFAIR_MUTEX` | Default `ON` |
-| `GECODE_ENABLE_QT` | `AUTO` by default; Qt 6 preferred; Qt 5.15+ supported |
+| `GECODE_ENABLE_QT` | `AUTO` by default; requires Qt 6 |
 | `GECODE_ENABLE_GIST` | `AUTO` by default except macOS; disabled automatically if Qt GUI support is unavailable |
 | `GECODE_ENABLE_CPPROFILER` | Default `ON` |
 | `GECODE_ENABLE_CBS` | Default `OFF` |
@@ -364,7 +363,7 @@ Deprecation horizon:
     use `AUTO` when dependency discovery should be best-effort.
   - `GECODE_ENABLE_GIST=ON` requires Qt discovery and a usable Qt link
     interface.
-  - Gecode requires Qt 5.15 or newer. Qt 6 is preferred for new builds.
+  - Gecode requires Qt 6.
   - On macOS, Gist defaults to `OFF`; enable it explicitly once the local
     Qt/OpenGL framework setup is known to link. Current macOS SDKs require a
     current Qt 6 build; older Qt packages can still reference removed system

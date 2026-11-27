@@ -210,15 +210,12 @@ endif()
 set(_gecode_qt_components "@GECODE_PACKAGE_QT_COMPONENTS@")
 set(_gecode_qt_version "@GECODE_PACKAGE_QT_VERSION@")
 set(_gecode_needs_qt FALSE)
-if(gist IN_LIST _gecode_component_closure OR
-   (flatzinc IN_LIST _gecode_component_closure AND
-    NOT "@GECODE_PACKAGE_QT_MAJOR@" STREQUAL ""))
+if(NOT _gecode_qt_components STREQUAL "" AND
+   (gist IN_LIST _gecode_component_closure OR flatzinc IN_LIST _gecode_component_closure))
   set(_gecode_needs_qt TRUE)
 endif()
-if(_gecode_needs_qt AND "@GECODE_PACKAGE_QT_MAJOR@" STREQUAL "6")
+if(_gecode_needs_qt)
   find_dependency(Qt6 ${_gecode_qt_version} COMPONENTS ${_gecode_qt_components})
-elseif(_gecode_needs_qt AND "@GECODE_PACKAGE_QT_MAJOR@" STREQUAL "5")
-  find_dependency(Qt5 ${_gecode_qt_version} COMPONENTS ${_gecode_qt_components})
 endif()
 unset(_gecode_qt_version)
 

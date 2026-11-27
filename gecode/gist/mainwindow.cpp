@@ -88,9 +88,7 @@ namespace Gecode { namespace Gist {
 
         QMenu* file_menu = menu_bar->addMenu(tr("&File"));
         file_menu->addAction(c->print);
-#if QT_VERSION >= 0x040400
         file_menu->addAction(c->export_whole_tree_pdf);
-#endif
         QAction* quit_action = file_menu->addAction(tr("Quit"));
         quit_action->setShortcut(QKeySequence("Ctrl+Q"));
         connect(quit_action, SIGNAL(triggered()), this, SLOT(close()));
@@ -138,9 +136,7 @@ namespace Gecode { namespace Gist {
         node_menu->addSeparator();
         node_menu->addAction(c->zoom_to_fit);
         node_menu->addAction(c->center);
-#if QT_VERSION >= 0x040400
         node_menu->addAction(c->export_pdf);
-#endif
 
         QMenu* search_menu = menu_bar->addMenu(tr("&Search"));
         search_menu->addAction(c->search_next);

@@ -77,6 +77,14 @@ This release contains breaking changes. See the entries below for the
 changes downstream code needs.
 
 [ENTRY]
+Module: gist
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Remove Qt 5 support. Gist and the Qt-backed FlatZinc features now
+require Qt 6.
+
+[ENTRY]
 Module: support
 What:   removed
 Rank:   minor
