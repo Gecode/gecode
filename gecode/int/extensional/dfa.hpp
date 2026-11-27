@@ -71,8 +71,6 @@ namespace Gecode {
         void fill(void);
         /// Initialize automaton implementation with \a nt transitions
         DFAI(int nt);
-        /// Initialize automaton implementation as empty
-        GECODE_INT_EXPORT DFAI(void);
         /// Delete automaton implemenentation
         ~DFAI(void) override;
     };

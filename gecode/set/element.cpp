@@ -172,6 +172,15 @@ namespace Gecode {
     }
 
     namespace {
+        /// Check that \a n elements form a non-empty matrix of width \a w and height \a h
+        void
+        check_matrix(int n, int w, int h) {
+            if (n == 0)
+                throw Set::TooFewArguments("Set::element");
+            if ((w < 1) || (h < 1) || (static_cast<long long int>(w) * h != n))
+                throw Set::ArgumentSizeMismatch("Set::element");
+        }
+
         IntVar
         pair(Home home, IntVar x, int w, IntVar y, int h) {
             IntVar xy(home, 0, w * h - 1);
@@ -183,20 +192,14 @@ namespace Gecode {
 
     void
     element(Home home, const IntSetArgs& a, IntVar x, int w, IntVar y, int h, SetVar z) {
-        if (a.size() == 0)
-            throw Set::TooFewArguments("Set::element");
-        if (a.size() != w * h)
-            throw Set::ArgumentSizeMismatch("Set::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair(home, x, w, y, h), z);
     }
 
     void
     element(Home home, const SetVarArgs& a, IntVar x, int w, IntVar y, int h, SetVar z) {
-        if (a.size() == 0)
-            throw Set::TooFewArguments("Set::element");
-        if (a.size() != w * h)
-            throw Set::ArgumentSizeMismatch("Set::element");
+        check_matrix(a.size(), w, h);
         GECODE_POST;
         element(home, a, pair(home, x, w, y, h), z);
     }

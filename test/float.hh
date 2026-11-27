@@ -61,9 +61,9 @@ namespace Test {
 
         /// Type for comparisons and solutions
         enum MaybeType {
-            MT_FALSE = 0, //< Does hold
-            MT_TRUE,      //< Does not hold
-            MT_MAYBE      //< Might or might not hold
+            MT_FALSE = 0, ///< Does not hold
+            MT_TRUE,      ///< Does hold
+            MT_MAYBE      ///< Might or might not hold
         };
 
         /// Three-valued conjunction of MaybeType

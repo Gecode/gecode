@@ -156,7 +156,7 @@ namespace Gecode { namespace Int {
 
     template <class View, PropCond pc, class CtrlView>
     forceinline
-    ReUnaryPropagator<View, pc, CtrlView>::ReUnaryPropagator(Space& home, ReUnaryPropagator<View, pc, CtrlView>& p)
+    ReUnaryPropagator<View, pc, CtrlView>::ReUnaryPropagator(Space& home, ReUnaryPropagator& p)
         : Propagator(home, p) {
         x0.update(home, p.x0);
         b.update(home, p.b);
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int {
 
     template <class View, PropCond pc, class CtrlView>
     forceinline
-    ReBinaryPropagator<View, pc, CtrlView>::ReBinaryPropagator(Space& home, ReBinaryPropagator<View, pc, CtrlView>& p)
+    ReBinaryPropagator<View, pc, CtrlView>::ReBinaryPropagator(Space& home, ReBinaryPropagator& p)
         : Propagator(home, p) {
         x0.update(home, p.x0);
         x1.update(home, p.x1);

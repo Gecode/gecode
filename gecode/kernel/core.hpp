@@ -3269,7 +3269,7 @@ namespace Gecode {
             }
             return p;
         } else {
-            rfree(b + m, m - n);
+            rfree(b + m, n - m);
             return b;
         }
     }
@@ -3352,7 +3352,7 @@ namespace Gecode {
             free<T>(b, n);
             return p;
         } else {
-            free<T>(b + m, m - n);
+            free<T>(b + m, n - m);
             return b;
         }
     }
@@ -3411,7 +3411,7 @@ namespace Gecode {
     template <class T>
     forceinline T**
     Space::realloc(T** b, long unsigned int n, long unsigned int m) {
-        return static_cast<T**>(rrealloc(b, n * sizeof(T), m * sizeof(T*)));
+        return static_cast<T**>(rrealloc(b, n * sizeof(T*), m * sizeof(T*)));
     }
     template <class T>
     forceinline T**
@@ -5138,8 +5138,10 @@ namespace Gecode {
 
     // Clang incorrectly reports an error on the access to u.idx[1] for BoolVarImp,
     // even though the access is guarded by pc_max > 0 which implies that the size is sufficient.
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warray-bounds"
+#endif
 
     template <class VIC>
     forceinline void
@@ -5222,7 +5224,9 @@ namespace Gecode {
             t[0] = static_cast<ActorLink*>(Support::join_pointer(p0, m0));
         }
     }
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
     template <class VIC>
     forceinline void

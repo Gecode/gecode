@@ -130,19 +130,20 @@ namespace Gecode {
     }
 
     void
-    assign(Home home, const IntVarArgs& x, const IntVarBranch& vars, const IntAssign& vals, IntBranchFilter bf,
+    assign(Home home, const IntVarArgs& x, IntVarBranch vars, const IntAssign& vals, IntBranchFilter bf,
            IntVarValPrint vvp) {
         using namespace Int;
         if (home.failed())
             return;
+        vars.expand(home, x);
         ViewArray<IntView> xv(home, x);
-        ViewSel<IntView>* vs[1] = {new (home) ViewSelNone<IntView>(home, vars)};
+        ViewSel<IntView>* vs[1] = {Branch::view_selection(home, vars)};
         post_view_value_brancher<IntView, 1, int, 1>(home, xv, vs, Branch::value_selection_commit(home, vals),
                                                      std::move(bf), std::move(vvp));
     }
 
     void
-    branch(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, const IntAssign& vals, IntBranchFilter bf,
+    assign(Home home, const IntVarArgs& x, TieBreak<IntVarBranch> vars, const IntAssign& vals, IntBranchFilter bf,
            IntVarValPrint vvp) {
         using namespace Int;
         if (home.failed())
@@ -158,7 +159,7 @@ namespace Gecode {
             vars.d = INT_VAR_NONE();
         vars.d.expand(home, x);
         if (vars.b.select() == IntVarBranch::SEL_NONE) {
-            assign(home, x, vars.a, vals, std::move(bf), std::move(vvp));
+            assign(home, x, std::move(vars.a), vals, std::move(bf), std::move(vvp));
         } else {
             ViewArray<IntView> xv(home, x);
             if (vars.c.select() == IntVarBranch::SEL_NONE) {
@@ -243,13 +244,14 @@ namespace Gecode {
     }
 
     void
-    assign(Home home, const BoolVarArgs& x, const BoolVarBranch& vars, const BoolAssign& vals, BoolBranchFilter bf,
+    assign(Home home, const BoolVarArgs& x, BoolVarBranch vars, const BoolAssign& vals, BoolBranchFilter bf,
            BoolVarValPrint vvp) {
         using namespace Int;
         if (home.failed())
             return;
+        vars.expand(home, x);
         ViewArray<BoolView> xv(home, x);
-        ViewSel<BoolView>* vs[1] = {new (home) ViewSelNone<BoolView>(home, vars)};
+        ViewSel<BoolView>* vs[1] = {Branch::view_selection(home, vars)};
         post_view_value_brancher<BoolView, 1, int, 1>(home, xv, vs, Branch::value_selection_commit(home, vals),
                                                       std::move(bf), std::move(vvp));
     }
@@ -271,7 +273,7 @@ namespace Gecode {
             vars.d = BOOL_VAR_NONE();
         vars.d.expand(home, x);
         if (vars.b.select() == BoolVarBranch::SEL_NONE) {
-            assign(home, x, vars.a, vals, std::move(bf), std::move(vvp));
+            assign(home, x, std::move(vars.a), vals, std::move(bf), std::move(vvp));
         } else {
             ViewArray<BoolView> xv(home, x);
             ValSelCommitBase<BoolView, int>* vsc = Branch::value_selection_commit(home, vals);

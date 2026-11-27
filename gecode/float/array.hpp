@@ -56,6 +56,11 @@ namespace Gecode {
     forceinline
     FloatValArgs::FloatValArgs(const std::vector<FloatVal>& x)
         : ArgArray<FloatVal>(x) {}
+
+    forceinline
+    FloatValArgs::FloatValArgs(std::initializer_list<FloatVal> x)
+        : ArgArray<FloatVal>(x) {}
+
     template <class InputIterator>
     forceinline
     FloatValArgs::FloatValArgs(InputIterator first, InputIterator last)

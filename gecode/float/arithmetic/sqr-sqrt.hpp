@@ -123,7 +123,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
     template <class View>
     forceinline
-    Sqr<View>::Sqr(Space& home, Sqr<View>& p)
+    Sqr<View>::Sqr(Space& home, Sqr& p)
         : BinaryPropagator<View, PC_FLOAT_BND>(home, p) {}
 
     template <class View>
