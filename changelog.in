@@ -77,6 +77,16 @@ This release fixes the FlatZinc blackbox_exec backend, which started a new
 external process for every propagation and never closed the old ones. Long
 runs used up the available file descriptors and stopped with an error.
 
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix blackbox_exec starting a new process for every propagation instead of
+reusing one per search thread. The processes were never closed, so long
+searches failed once they ran out of file descriptors; on macOS this showed
+as "starting blackbox process failed (errno 9)".
+
 [RELEASE]
 Version: 6.6.0
 Date: 2026-11-16

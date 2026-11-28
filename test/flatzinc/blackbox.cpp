@@ -280,6 +280,37 @@ namespace Test { namespace FlatZinc {
       }
     };
 
+#if defined(_WIN32) || defined(GECODE_HAS_POSIX_BLACKBOX_EXEC)
+    /// Test that calls from one thread reuse that thread's process
+    class NativeExecSessionReuse : public Base {
+    private:
+      std::string executable;
+    public:
+      explicit NativeExecSessionReuse(const std::string& executable0)
+        : Base("FlatZinc::blackbox::native_exec_session_reuse",
+               TestTags::check()),
+          executable(executable0) {}
+      virtual bool run(void) {
+        try {
+          Gecode::FlatZinc::BlackBoxExec black_box(executable, {});
+          // Without an integer input, the fixture answers with the
+          // number of requests its process has served.
+          for (int64_t expected = 1; expected <= 3; ++expected) {
+            std::vector<int64_t> int_out(1);
+            std::vector<double> float_out;
+            black_box.run({}, {}, int_out, float_out);
+            if (int_out[0] != expected) {
+              return false;
+            }
+          }
+        } catch (...) {
+          return false;
+        }
+        return true;
+      }
+    };
+#endif
+
 #ifdef GECODE_HAS_THREADS
     template<class T>
     bool
@@ -386,6 +417,7 @@ namespace Test { namespace FlatZinc {
         const char* exec = std::getenv("GECODE_TEST_BLACKBOX_EXEC");
         if (exec != nullptr) {
           const std::string executable(exec);
+          (void) new NativeExecSessionReuse(executable);
           (void) new FlatZincTest(TestTags::check(),"blackbox::constant_value",
             std::string(blackbox_decl) +
             "var 7..7: y :: output_var;\n"

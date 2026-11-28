@@ -13,33 +13,26 @@
 #define GECODE_FLATZINC_BLACKBOX_PROCESS_HH
 
 #include <string>
-#include <vector>
-
-#ifdef GECODE_HAS_THREADS
 #include <thread>
-#endif
+#include <vector>
 
 namespace Gecode { namespace FlatZinc {
 
-/// Platform process session used by the executable blackbox backend.
+/**
+ * \brief Platform process session used by the executable blackbox backend
+ *
+ * The layout must not depend on configuration macros: this header is
+ * included both before and after the Gecode configuration header, and
+ * every translation unit has to agree on where \a owner lives.
+ */
 class BlackBoxProcessSession {
 protected:
-#ifdef GECODE_HAS_THREADS
   std::thread::id owner;
-#endif
-  BlackBoxProcessSession(void)
-#ifdef GECODE_HAS_THREADS
-    : owner(std::this_thread::get_id())
-#endif
-  {}
+  BlackBoxProcessSession(void) : owner(std::this_thread::get_id()) {}
 public:
   virtual ~BlackBoxProcessSession(void) {}
   bool owned_by_current_thread(void) const {
-#ifdef GECODE_HAS_THREADS
     return owner == std::this_thread::get_id();
-#else
-    return true;
-#endif
   }
   virtual std::string exchange(const std::string& request) = 0;
 };
