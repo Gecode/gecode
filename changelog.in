@@ -70,6 +70,14 @@
 #
 
 [RELEASE]
+Version: 6.6.1
+Date: unreleased
+[DESCRIPTION]
+This release fixes the FlatZinc blackbox_exec backend, which started a new
+external process for every propagation and never closed the old ones. Long
+runs used up the available file descriptors and stopped with an error.
+
+[RELEASE]
 Version: 6.6.0
 Date: 2026-11-16
 [DESCRIPTION]
