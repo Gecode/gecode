@@ -3289,7 +3289,7 @@ ac_config_headers="$ac_config_headers gecode/support/config.hpp"
 
 
 
-ac_gecode_soversion=53
+ac_gecode_soversion=54
 GECODE_SOVERSION=${ac_gecode_soversion}
 
 
